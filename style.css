@@ -89,7 +89,7 @@ header {
   height: 100%;
   /* Gọi file ảnh trong thư mục assets của bạn */
   background-image: url('assets/math-pattern.png'); 
-  opacity: 0.15; /* Tăng nhẹ lên 15% để họa tiết hiện rõ nét và đẹp hơn trên nền xanh */
+  opacity: 0.4; /* Tăng nhẹ lên 15% để họa tiết hiện rõ nét và đẹp hơn trên nền xanh */
   pointer-events: none;
 }
 
