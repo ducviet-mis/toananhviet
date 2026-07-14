@@ -787,8 +787,8 @@ footer a {
 }
 
 .logo-img {
-  width: 80px; /* Độ rộng của logo (bạn có thể tăng giảm tùy ý) */
-  height: 80px; /* Chiều cao của logo */
+  width: 100px; /* Độ rộng của logo (bạn có thể tăng giảm tùy ý) */
+  height: 100px; /* Chiều cao của logo */
   object-fit: contain; /* Giữ nguyên tỉ lệ ảnh không bị móp méo */
   border-radius: 4px; /* Bo góc nhẹ cho ảnh logo */
 }
