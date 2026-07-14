@@ -113,7 +113,13 @@
 
       filtered.forEach(doc => {
         const cardHtml = `
-          <div class="doc-card">
+          filtered.forEach((doc, index) => {
+        // Lấy thông tin file gốc tương ứng từ danh sách nạp
+        const rawFileObj = jsonFiles[index]; 
+        const detailLink = rawFileObj ? `detail.html?file=${encodeURIComponent(rawFileObj.download_url)}` : '#';
+
+        const cardHtml = `
+          <div class="doc-card" style="cursor: pointer;" onclick="if('${detailLink}'!='#') window.location.href='${detailLink}'">
             <div class="doc-thumbnail-container">
               <img class="doc-thumbnail" src="${doc.thumbnail || 'https://via.placeholder.com/300x400?text=TailieuToan'}" alt="${doc.title}">
             </div>
@@ -125,7 +131,7 @@
               <h3 class="doc-title">${doc.title}</h3>
               <div class="doc-footer">
                 <span class="doc-date">📅 Đăng: ${doc.date}</span>
-                <a href="${doc.file}" class="btn-download" download target="_blank">📥 Tải tài liệu</a>
+                <a href="${detailLink}" class="btn-download">📖 Xem & Tải tài liệu</a>
               </div>
             </div>
           </div>
