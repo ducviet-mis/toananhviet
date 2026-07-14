@@ -68,11 +68,33 @@ header {
 }
 
 /* Khu vực giới thiệu (Hero Section) */
+/* Khu vực giới thiệu (Hero Section) - Đã nâng cấp họa tiết chìm */
 .hero {
+  position: relative; /* Thêm dòng này để cố định lớp phủ bên trong */
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: white;
   text-align: center;
   padding: 60px 20px;
+  overflow: hidden; /* Thêm dòng này để họa tiết không bị tràn ra ngoài */
+}
+
+/* Lớp phủ họa tiết toán học chìm */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://www.transparenttextures.com/patterns/old-mathematics.png'); 
+  opacity: 0.08; /* Độ mờ 8% giúp các nét vẽ ẩn hiện nhẹ nhàng */
+  pointer-events: none;
+}
+
+/* Đảm bảo toàn bộ chữ bên trong luôn nổi lên trên lớp họa tiết */
+.hero * {
+  position: relative;
+  z-index: 1;
 }
 
 .hero h1 {
@@ -86,7 +108,6 @@ header {
   margin: 0 auto 25px;
   opacity: 0.9;
 }
-
 /* Nội dung chính */
 main {
   max-width: 1200px;
