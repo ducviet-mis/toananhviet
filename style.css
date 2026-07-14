@@ -80,6 +80,7 @@ header {
 }
 
 /* Lớp phủ họa tiết toán học chìm */
+/* Lớp phủ họa tiết toán học chìm */
 .hero::before {
   content: "";
   position: absolute;
@@ -87,12 +88,17 @@ header {
   left: 0;
   width: 100%;
   height: 100%;
-  /* Gọi file ảnh trong thư mục assets của bạn */
-  background-image: url('assets/math-pattern.png'); 
-  opacity: 0.4; /* Tăng nhẹ lên 15% để họa tiết hiện rõ nét và đẹp hơn trên nền xanh */
+  /* Sửa đuôi ảnh thành .jpg cho đúng với file bạn đã up */
+  background-image: url('assets/math-pattern.jpg'); 
+  background-size: cover; /* Giúp ảnh phủ kín toàn bộ vùng xanh */
+  background-position: center;
+  
+  /* ĐỘ MỜ VÀ LỌC NỀN ĐEN: */
+  opacity: 0.12; /* Độ mờ 12% để ẩn hiện vừa mắt, không bị quá đậm che chữ */
+  mix-blend-mode: screen; /* Dòng này cực kỳ quan trọng: tự động xóa sạch nền đen, chỉ giữ lại nét vẽ công thức màu trắng! */
+  
   pointer-events: none;
 }
-
 /* Đảm bảo toàn bộ chữ bên trong luôn nổi lên trên lớp họa tiết */
 .hero * {
   position: relative;
