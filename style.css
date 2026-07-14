@@ -779,3 +779,16 @@ footer a {
 .contact-link:hover {
   color: var(--primary-color);
 }
+/* Căn chỉnh ảnh logo bên cạnh tên thương hiệu */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Khoảng cách giữa ảnh logo và chữ */
+}
+
+.logo-img {
+  width: 40px; /* Độ rộng của logo (bạn có thể tăng giảm tùy ý) */
+  height: 40px; /* Chiều cao của logo */
+  object-fit: contain; /* Giữ nguyên tỉ lệ ảnh không bị móp méo */
+  border-radius: 4px; /* Bo góc nhẹ cho ảnh logo */
+}
