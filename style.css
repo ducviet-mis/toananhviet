@@ -69,6 +69,7 @@ header {
 
 /* Khu vực giới thiệu (Hero Section) */
 /* Khu vực giới thiệu (Hero Section) - Đã nâng cấp họa tiết chìm */
+/* Khu vực giới thiệu (Hero Section) - Đã nâng cấp họa tiết chìm nội bộ */
 .hero {
   position: relative; /* Thêm dòng này để cố định lớp phủ bên trong */
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
@@ -86,8 +87,9 @@ header {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('https://www.transparenttextures.com/patterns/old-mathematics.png'); 
-  opacity: 0.08; /* Độ mờ 8% giúp các nét vẽ ẩn hiện nhẹ nhàng */
+  /* Gọi file ảnh trong thư mục assets của bạn */
+  background-image: url('assets/math-pattern.png'); 
+  opacity: 0.15; /* Tăng nhẹ lên 15% để họa tiết hiện rõ nét và đẹp hơn trên nền xanh */
   pointer-events: none;
 }
 
