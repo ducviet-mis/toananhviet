@@ -51,7 +51,7 @@
   </footer>
 
   <script>
-    let allDocuments = []; // Lưu trữ toàn bộ tài liệu đã nạp của lớp này để phục vụ việc lọc nhanh
+    let allDocuments = []; // Mảng chứa dữ liệu của tài liệu đã lọc đúng khối lớp
     let activeFilter = 'Tất cả';
 
     // Đọc tham số lớp (ví dụ ?grade=6) trên thanh địa chỉ
@@ -80,8 +80,10 @@
         for (const file of jsonFiles) {
           const res = await fetch(file.download_url);
           const doc = await res.json();
-          // Chỉ lấy tài liệu đúng của lớp học này (Ví dụ: "Toán 6")
+          // Chỉ lấy tài liệu đúng của lớp học này (Ví dụ: "Toán 8")
           if (doc.grade === currentGradeLabel) {
+            // Đính kèm thêm download_url gốc của file JSON từ GitHub vào đối tượng dữ liệu
+            doc.rawJsonUrl = file.download_url;
             tempDocs.push(doc);
           }
         }
@@ -102,7 +104,6 @@
       // Thực hiện lọc theo Loại tài liệu
       const filtered = allDocuments.filter(doc => {
         if (activeFilter === 'Tất cả') return true;
-        // Nếu chọn "Đề cương HK1" hoặc "Đề cương HK2", có thể hiển thị tương ứng
         return doc.category === activeFilter;
       });
 
@@ -112,14 +113,9 @@
       }
 
       filtered.forEach(doc => {
+        const detailLink = `detail.html?file=${encodeURIComponent(doc.rawJsonUrl)}`;
         const cardHtml = `
-          filtered.forEach((doc, index) => {
-        // Lấy thông tin file gốc tương ứng từ danh sách nạp
-        const rawFileObj = jsonFiles[index]; 
-        const detailLink = rawFileObj ? `detail.html?file=${encodeURIComponent(rawFileObj.download_url)}` : '#';
-
-        const cardHtml = `
-          <div class="doc-card" style="cursor: pointer;" onclick="if('${detailLink}'!='#') window.location.href='${detailLink}'">
+          <div class="doc-card" style="cursor: pointer;" onclick="window.location.href='${detailLink}'">
             <div class="doc-thumbnail-container">
               <img class="doc-thumbnail" src="${doc.thumbnail || 'https://via.placeholder.com/300x400?text=TailieuToan'}" alt="${doc.title}">
             </div>
@@ -144,7 +140,6 @@
     function filterCategory(categoryName) {
       activeFilter = categoryName;
       
-      // Đổi class "active" cho nút bấm lọc
       const buttons = document.querySelectorAll('.filter-btn');
       buttons.forEach(btn => {
         if (btn.innerText.includes(categoryName.replace('Đề thi ', '').replace('Đề cương học kì ', 'Đề cương HK'))) {
