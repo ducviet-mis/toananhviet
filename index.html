@@ -80,7 +80,12 @@
           
           // Tạo HTML cho mỗi thẻ tài liệu
           const cardHtml = `
-            <div class="doc-card">
+            // Chuẩn hóa đường dẫn file .json để gửi sang trang chi tiết
+          const detailLink = `detail.html?file=${encodeURIComponent(file.download_url)}`;
+          
+          // Tạo HTML cho mỗi thẻ tài liệu (đã đổi nút sang "Xem chi tiết & Tải đề")
+          const cardHtml = `
+            <div class="doc-card" style="cursor: pointer;" onclick="window.location.href='${detailLink}'">
               <div class="doc-thumbnail-container">
                 <img class="doc-thumbnail" src="${doc.thumbnail || 'https://via.placeholder.com/300x400?text=TailieuToan'}" alt="${doc.title}">
               </div>
@@ -92,7 +97,7 @@
                 <h3 class="doc-title">${doc.title}</h3>
                 <div class="doc-footer">
                   <span class="doc-date">📅 Đăng: ${doc.date}</span>
-                  <a href="${doc.file}" class="btn-download" download target="_blank">📥 Tải tài liệu</a>
+                  <a href="${detailLink}" class="btn-download">📖 Xem & Tải tài liệu</a>
                 </div>
               </div>
             </div>
