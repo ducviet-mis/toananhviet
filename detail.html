@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết tài liệu - Toán THCS</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* CSS trang trí riêng cho trang chi tiết tài liệu */
+    .detail-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+      margin-top: 20px;
+    }
+    @media (min-width: 768px) {
+      .detail-container {
+        grid-template-columns: 280px 1fr;
+      }
+    }
+    .detail-sidebar {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      height: fit-content;
+    }
+    .detail-main {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      min-height: 600px;
+    }
+    .doc-viewer {
+      width: 100%;
+      height: 650px;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      margin-top: 15px;
+      background-color: #f1f5f9;
+    }
+    .no-preview {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 300px;
+      color: #64748b;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Thanh Menu -->
+  <header>
+    <nav class="nav-container">
+      <a href="index.html" class="logo">📐 TOÁN THCS</a>
+      <ul class="nav-menu">
+        <li><a href="index.html">Trang chủ</a></li>
+        <li><a href="category.html?grade=6">Toán 6</a></li>
+        <li><a href="category.html?grade=7">Toán 7</a></li>
+        <li><a href="category.html?grade=8">Toán 8</a></li>
+        <li><a href="category.html?grade=9">Toán 9</a></li>
+        <li><a href="index.html#about">Lớp học Gia sư</a></li>
+        <li><a href="index.html#contact">Liên hệ</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="detail-container">
+      <!-- Cột bên trái: Ảnh đại diện & nút Tải về -->
+      <aside class="detail-sidebar">
+        <img id="detail-thumbnail" src="https://via.placeholder.com/300x400?text=Dang+tai..." alt="Ảnh tài liệu" style="width: 100%; border-radius: 6px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <div class="doc-badges" style="margin-bottom: 15px;">
+          <span class="badge badge-grade" id="detail-grade">-</span>
+          <span class="badge badge-cat" id="detail-cat">-</span>
+        </div>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;" id="detail-date">📅 Ngày đăng: --/--/----</p>
+        <a href="#" id="btn-download-direct" class="btn-download" download style="display: block; text-align: center;">📥 Tải trực tiếp file gốc</a>
+      </aside>
+
+      <!-- Cột bên phải: Tiêu đề & Trình đọc tài liệu trực quan giống Toanmath -->
+      <section class="detail-main">
+        <h1 id="detail-title" style="font-size: 22px; color: #1e293b; margin-bottom: 10px;">Đang tải tiêu đề...</h1>
+        <hr style="border: 0; border-top: 1px solid #e2e8f0; margin-bottom: 15px;">
+        
+        <h3 style="font-size: 16px; color: #0284c7;">📖 Xem trực tuyến tài liệu:</h3>
+        
+        <!-- Khung nhúng tài liệu trực quan -->
+        <div id="viewer-container">
+          <p style="text-align: center; padding: 50px 0;">Đang chuẩn bị trình đọc trực tuyến...</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2026 Website Gia Sư Toán THCS. Phát triển bởi Gia Sư Toán.</p>
+    <p>Hotline/Zalo hỗ trợ: 09x.xxx.xxxx - Địa chỉ: Hà Nội</p>
+  </footer>
+
+  <script>
+    // Hàm chuẩn hóa đường dẫn file để tránh lỗi 404 tệp tin
+    function getAbsoluteUrl(path) {
+      if (!path) return '';
+      if (path.startsWith('http://') || path.startsWith('https://')) return path;
+      const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+      return window.location.origin + '/' + cleanPath;
+    }
+
+    async function loadDocumentDetail() {
+      // Đọc tên file json cần xem từ đường dẫn (ví dụ: ?file=2026-07-14-de-thi.json)
+      const urlParams = new URLSearchParams(window.location.search);
+      const fileUrl = urlParams.get('file');
+
+      if (!fileUrl) {
+        document.getElementById('detail-title').innerText = "Không tìm thấy tài liệu!";
+        document.getElementById('viewer-container').innerHTML = `<p class="no-preview">Đường dẫn tài liệu không hợp lệ.</p>`;
+        return;
+      }
+
+      try {
+        // Tải nội dung chi tiết của file .json từ GitHub đưa xuống
+        const response = await fetch(fileUrl);
+        if (!response.ok) throw new Error();
+        const doc = await response.json();
+
+        // Điền dữ liệu vào trang chi tiết
+        document.getElementById('detail-title').innerText = doc.title;
+        document.title = doc.title + " - Gia sư Toán THCS";
+        document.getElementById('detail-grade').innerText = doc.grade;
+        document.getElementById('detail-cat').innerText = doc.category;
+        document.getElementById('detail-date').innerText = `📅 Ngày đăng: ${doc.date}`;
+        
+        // Chuẩn hóa ảnh và file tài liệu
+        const fullImgUrl = getAbsoluteUrl(doc.thumbnail);
+        const fullFileUrl = getAbsoluteUrl(doc.file);
+        
+        document.getElementById('detail-thumbnail').src = fullImgUrl || 'https://via.placeholder.com/300x400?text=TailieuToan';
+        
+        const downloadBtn = document.getElementById('btn-download-direct');
+        downloadBtn.href = fullFileUrl;
+
+        // Xử lý nhúng trình xem trực quan (PDF hoặc Word)
+        const viewerContainer = document.getElementById('viewer-container');
+        const fileExtension = fullFileUrl.split('.').pop().toLowerCase();
+
+        if (fileExtension === 'pdf') {
+          // Nếu là PDF -> Sử dụng trình xem PDF mặc định của trình duyệt cực đẹp
+          viewerContainer.innerHTML = `<iframe class="doc-viewer" src="${fullFileUrl}" type="application/pdf"></iframe>`;
+        } else if (fileExtension === 'docx' || fileExtension === 'doc') {
+          // Nếu là Word (.docx) -> Nhúng qua cổng bảo mật chính thức của Microsoft Office Online
+          const encodeUrl = encodeURIComponent(fullFileUrl);
+          viewerContainer.innerHTML = `<iframe class="doc-viewer" src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeUrl}" frameborder="0"></iframe>`;
+        } else {
+          // Định dạng khác không hỗ trợ xem trực tuyến
+          viewerContainer.innerHTML = `
+            <div class="no-preview">
+              <p>Tệp tin định dạng (.${fileExtension}) không hỗ trợ xem trước trực tuyến.</p>
+              <p>Vui lòng click nút <b>Tải trực tiếp file gốc</b> ở cột bên trái để tải về máy.</p>
+            </div>
+          `;
+        }
+      } catch (error) {
+        document.getElementById('detail-title').innerText = "Lỗi tải dữ liệu!";
+        document.getElementById('viewer-container').innerHTML = `<p class="no-preview">Đã xảy ra lỗi khi kết nối dữ liệu tài liệu.</p>`;
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadDocumentDetail);
+  </script>
+</body>
+</html>
