@@ -59,7 +59,7 @@
       const container = document.getElementById('latest-docs-container');
       try {
         // Netlify/GitHub API để quét các file json trong thư mục documents
-        const response = await fetch('https://api.github.com/repos/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/contents/documents');
+        const response = await fetch('https://api.github.com/repos/ducviet-mis/toananhviet/contents/documents');
         if (!response.ok) throw new Error('Không thể lấy danh sách file.');
         
         const files = await response.json();
