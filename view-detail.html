@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi Tiết Đề Thi - Toán Anh Việt</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background-color: #f1f5f9;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    header {
+      flex-shrink: 0;
+    }
+    /* Giao diện chia đôi màn hình thông minh */
+    .split-wrapper {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 80px);
+      overflow: hidden;
+    }
+    /* Cột bên trái: Trình đọc PDF */
+    .left-pane {
+      width: 58%;
+      height: 100%;
+      border-right: 3px solid #cbd5e1;
+      background: #475569;
+    }
+    .left-pane iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    /* Cột bên phải: Video giảng bài */
+    .right-pane {
+      width: 42%;
+      height: 100%;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .video-container {
+      width: 100%;
+      background: #000;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+    .video-container iframe {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: none;
+      display: block;
+    }
+    .info-container {
+      padding: 25px;
+      flex: 1;
+    }
+    .info-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    .meta-badge {
+      display: inline-block;
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      margin-bottom: 15px;
+    }
+    .study-tips {
+      background: #f8fafc;
+      border-left: 4px solid #0284c7;
+      padding: 15px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.9rem;
+      color: #475569;
+      line-height: 1.6;
+    }
+    /* Giao diện lỗi khi nhập sai ID */
+    .error-screen {
+      max-width: 500px;
+      margin: 80px auto;
+      text-align: center;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .back-btn {
+      display: inline-block;
+      background: #0284c7;
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-top: 15px;
+      transition: background 0.2s;
+    }
+    .back-btn:hover {
+      background: #0369a1;
+    }
+
+    /* Responsive hoàn hảo trên Điện thoại */
+    @media (max-width: 768px) {
+      .split-wrapper {
+        flex-direction: column;
+        overflow-y: auto;
+        height: auto;
+      }
+      .left-pane {
+        width: 100%;
+        height: 55vh; /* PDF nằm bên dưới */
+        order: 2;
+        border-right: none;
+        border-top: 3px solid #cbd5e1;
+      }
+      .right-pane {
+        width: 100%;
+        height: auto; /* Video cố định trên cùng */
+        order: 1;
+        overflow-y: visible;
+      }
+      .info-container {
+        padding: 15px;
+      }
+      .info-title {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Menu Điều Hướng -->
+  <header>
+    <nav class="nav-container">
+      <a href="index.html" class="logo">
+        <img src="assets/logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
+        TOÁN ANH VIỆT
+      </a>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="active">Trang chủ</a></li>
+        <li><a href="category.html?grade=6">Toán 6</a></li>
+        <li><a href="category.html?grade=7">Toán 7</a></li>
+        <li><a href="category.html?grade=8">Toán 8</a></li>
+        <li><a href="category.html?grade=9">Toán 9</a></li>
+        <li><a href="quiz-list.html">Thi Online</a></li>
+        <li><a href="index.html#about">Lớp học Gia sư</a></li>
+        <li><a href="index.html#contact">Liên hệ</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- VÙNG HIỂN THỊ NỘI DUNG CHỮA ĐỀ -->
+  <div id="main-content" class="split-wrapper">
+    <!-- Bên trái: Iframe đọc đề PDF -->
+    <div class="left-pane">
+      <iframe id="pdf-viewer" src=""></iframe>
+    </div>
+
+    <!-- Bên phải: Video Youtube và thông tin -->
+    <div class="right-pane">
+      <div class="video-container">
+        <iframe id="youtube-player" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <div class="info-container">
+        <span class="meta-badge" id="quiz-grade">Khối lớp: --</span>
+        <h1 class="info-title" id="quiz-title">Đang tải tiêu đề...</h1>
+        <div class="study-tips">
+          💡 <b>Hướng dẫn tự học:</b> Học sinh hãy xem kỹ video bài giảng chữa đề ở phía trên, kết hợp đối chiếu trực tiếp với đề bài/lời giải chi tiết bên cột trái để ghi nhớ phương pháp giải nhanh nhất.
+        </div>
+        <div style="margin-top: 20px;">
+          <a href="index.html" class="back-btn" style="background: #64748b;">← Tìm kiếm đề khác</a>
+          <a id="download-pdf-btn" href="#" download target="_blank" class="back-btn" style="background: #10b981; margin-left: 10px;">📥 Tải file gốc</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VÙNG HIỂN THỊ LỖI KHI NHẬP SAI ID -->
+  <div id="error-content" class="error-screen" style="display: none;">
+    <h2 style="color: #ef4444; font-size: 1.5rem; margin-bottom: 10px;">⚠️ Lỗi truy cập mã đề!</h2>
+    <p style="color: #64748b; line-height: 1.6;">Mã đề thi bạn yêu cầu không tồn tại hoặc đã bị gỡ bỏ khỏi hệ thống.</p>
+    <a href="index.html" class="back-btn">Quay lại Trang Chủ</a>
+  </div>
+
+  <script>
+    // Database mã đề để tra cứu tương ứng
+    const quizzesDatabase = {
+      "8G01": {
+        title: "Đề Khảo Sát Chất Lượng Giữa Học Kỳ 1 - Toán 8 (Năm học 2026-2027)",
+        pdfUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", // Thay bằng link PDF thật của bạn
+        videoUrl: "dQw4w9WgXcQ", // Thay bằng ID video YouTube thật của bạn (Ví dụ sau v=...)
+        grade: "Toán 8"
+      },
+      "8C02": {
+        title: "Đề Thi Học Kỳ 1 - Toán 8 bứt phá điểm số 9+",
+        pdfUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        videoUrl: "dQw4w9WgXcQ",
+        grade: "Toán 8"
+      }
+    };
+
+    // Hàm lấy tham số từ URL
+    function initDetailPage() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
+
+      if (id && quizzesDatabase[id.toUpperCase()]) {
+        const quiz = quizzesDatabase[id.toUpperCase()];
+        
+        // Hiển thị giao diện chính, ẩn màn hình lỗi
+        document.getElementById('main-content').style.display = 'flex';
+        document.getElementById('error-content').style.display = 'none';
+
+        // Điền dữ liệu vào giao diện
+        document.title = `${id} - Chữa Đề Chi Tiết - Toán Anh Việt`;
+        document.getElementById('quiz-title').innerText = quiz.title;
+        document.getElementById('quiz-grade').innerText = `Khối lớp: ${quiz.grade} (Mã đề: ${id.toUpperCase()})`;
+        
+        // Gắn link PDF và video Youtube
+        document.getElementById('pdf-viewer').src = `${quiz.pdfUrl}#toolbar=0&navpanes=0`;
+        document.getElementById('youtube-player').src = `https://www.youtube.com/embed/${quiz.videoUrl}?autoplay=1&rel=0`;
+        document.getElementById('download-pdf-btn').href = quiz.pdfUrl;
+      } else {
+        // Hiển thị màn hình lỗi nếu ID sai
+        document.getElementById('main-content').style.display = 'none';
+        document.getElementById('error-content').style.display = 'block';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initDetailPage);
+  </script>
+</body>
+</html>
