@@ -6,7 +6,6 @@
   <title>Thi Online - Toán Anh Việt</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* CSS bổ trợ riêng cho hệ thống Quiz */
     .filter-section {
       background: #ffffff;
       padding: 20px;
@@ -17,12 +16,9 @@
     .filter-group {
       margin-bottom: 15px;
     }
-    .filter-group:last-child {
-      margin-bottom: 0;
-    }
     .filter-label {
       font-weight: bold;
-      color: var(--text-dark, #1e293b);
+      color: #1e293b;
       margin-bottom: 8px;
       display: block;
       font-size: 0.95rem;
@@ -36,7 +32,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
     .quiz-card:hover {
       transform: translateY(-5px);
@@ -54,20 +50,16 @@
     .quiz-btn {
       display: block;
       text-align: center;
-      background-color: var(--primary-color, #0284c7);
+      background-color: #0284c7;
       color: white;
       text-decoration: none;
       padding: 10px;
       border-radius: 6px;
       font-weight: bold;
       font-size: 0.95rem;
-      transition: background-color 0.2s;
     }
     .quiz-btn:hover {
-      background-color: var(--primary-dark, #0369a1);
-    }
-    #semester-group {
-      transition: all 0.3s ease;
+      background-color: #0369a1;
     }
     .hidden {
       display: none !important;
@@ -76,7 +68,6 @@
 </head>
 <body>
 
-  <!-- Thanh Menu -->
   <header>
     <nav class="nav-container">
       <a href="index.html" class="logo">
@@ -99,9 +90,7 @@
   <main style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
     <h2 class="section-title">Hệ Thống Thi Trắc Nghiệm Online</h2>
     
-    <!-- Bộ lọc 2 tầng trực quan -->
     <div class="filter-section">
-      <!-- Tầng 1: Khối lớp -->
       <div class="filter-group">
         <span class="filter-label">Chọn khối lớp:</span>
         <div class="filter-container" id="grade-filters">
@@ -114,7 +103,6 @@
         </div>
       </div>
 
-      <!-- Tầng 2: Học kỳ (Ẩn khi chọn "Thi thử vào 10" hoặc "Tất cả") -->
       <div class="filter-group hidden" id="semester-group">
         <span class="filter-label">Chọn học kỳ:</span>
         <div class="filter-container" id="semester-filters">
@@ -127,7 +115,6 @@
       </div>
     </div>
 
-    <!-- Lưới hiển thị danh sách đề thi -->
     <div class="doc-grid" id="quiz-grid">
       <p style="text-align: center; grid-column: 1/-1;">Đang tải danh sách đề thi...</p>
     </div>
@@ -143,16 +130,12 @@
     let selectedGrade = 'all';
     let selectedSemester = 'all';
 
-    // Hàm gọi API của GitHub để nạp dữ liệu đề thi tĩnh
     async function loadQuizzes() {
       const grid = document.getElementById('quiz-grid');
       try {
-        // Gọi API lấy các file .json trong thư mục documents/quizzes
         const response = await fetch('https://api.github.com/repos/ducviet-mis/toananhviet/contents/documents/quizzes');
         if (!response.ok) {
-          // Nếu chưa có thư mục quizzes trên GitHub, tải dữ liệu demo
-          allQuizzes = getDemoData();
-          renderQuizzes();
+          grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Chưa có đề thi nào được đăng tải.</p>';
           return;
         }
         
@@ -163,21 +146,16 @@
         for (const file of jsonFiles) {
           const res = await fetch(file.download_url);
           const quizData = await res.json();
-          // Lưu kèm thuộc tính file_name để làm ID liên kết phòng thi
-          quizData.file_name = file.name;
           quizData.download_url = file.download_url;
           allQuizzes.push(quizData);
         }
         
         renderQuizzes();
       } catch (e) {
-        console.error("Lỗi nạp API GitHub, chuyển sang dùng dữ liệu demo:", e);
-        allQuizzes = getDemoData();
-        renderQuizzes();
+        grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Lỗi tải dữ liệu đề thi.</p>';
       }
     }
 
-    // Lọc và render giao diện
     function renderQuizzes() {
       const grid = document.getElementById('quiz-grid');
       grid.innerHTML = '';
@@ -194,8 +172,7 @@
       }
 
       filtered.forEach(quiz => {
-        // Nếu chạy trên Vercel thực tế, truyền download_url được mã hóa của file json để phòng thi tải về
-        const quizId = encodeURIComponent(quiz.download_url || quiz.file_name);
+        const quizId = encodeURIComponent(quiz.download_url);
         
         const card = document.createElement('div');
         card.className = 'quiz-card';
@@ -208,7 +185,7 @@
             <h3 style="font-size: 1.1rem; font-weight: bold; line-height: 1.4; color: #1e293b;">${quiz.title}</h3>
             <div class="quiz-meta">
               <span>⏱️ Thời gian: ${quiz.duration} phút</span>
-              <span>📝 Số câu: ${quiz.questions ? quiz.questions.length : 0} câu</span>
+              <span>📝 Số câu: ${quiz.answer_keys ? quiz.answer_keys.length : 0} câu</span>
               <span>💯 Tổng điểm: ${quiz.total_score || 10}đ</span>
             </div>
           </div>
@@ -218,7 +195,6 @@
       });
     }
 
-    // Thiết lập sự kiện click cho bộ lọc
     document.getElementById('grade-filters').addEventListener('click', (e) => {
       if (e.target.tagName === 'BUTTON') {
         document.querySelectorAll('#grade-filters button').forEach(b => b.classList.remove('active'));
@@ -246,40 +222,6 @@
         renderQuizzes();
       }
     });
-
-    // Dữ liệu giả lập phòng khi chưa cấu hình CMS hoặc lỗi kết nối API GitHub
-    function getDemoData() {
-      return [
-        {
-          title: "[TAV] Đề kiểm tra giữa học kì 1 Toán 8 năm học 2026-2027",
-          grade: "Lớp 8",
-          semester: "Giữa kì 1",
-          duration: 45,
-          total_score: 10,
-          file_name: "demo-gk1-toan8.json",
-          pdf_file: "assets/de-thi-gk1-toan-8.pdf",
-          auto_split_score: true,
-          questions: [
-            { q_number: 1, q_type: "multiple_choice", correct_choice: "A", explanation: "Áp dụng hằng đẳng thức đáng nhớ: $(A+B)^2 = A^2 + 2AB + B^2$." },
-            { q_number: 2, q_type: "short_answer", correct_short: "5", explanation: "Giải phương trình bậc nhất $2x - 10 = 0 \\Leftrightarrow x = 5$." },
-            { q_number: 3, q_type: "true_false", correct_tf: { a: "Đúng", b: "Sai", c: "Đúng", d: "Sai" }, explanation: "Phân tích các đặc điểm của tứ giác." }
-          ]
-        },
-        {
-          title: "[TAV] Đề khảo sát chất lượng tuyển sinh vào lớp 10 học kỳ 2",
-          grade: "Thi thử vào 10",
-          semester: "Cuối kì 2",
-          duration: 120,
-          total_score: 10,
-          file_name: "demo-tuyensinh10.json",
-          pdf_file: "assets/de-thi-thu-vao-10.pdf",
-          auto_split_score: false,
-          questions: [
-            { q_number: 1, q_type: "multiple_choice", correct_choice: "C", custom_score: 0.5, explanation: "Tính biệt thức $\\Delta = b^2 - 4ac$ để tìm số nghiệm." }
-          ]
-        }
-      ];
-    }
 
     document.addEventListener('DOMContentLoaded', loadQuizzes);
   </script>
