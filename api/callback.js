@@ -50,10 +50,10 @@ export default async function handler(req, res) {
           const target = window.opener || window.parent;
           if (target) {
             // Gửi tin nhắn về cho trang Admin chính
-            target.postMessage(
-              "authorization:github:success:" + JSON.stringify(${JSON.stringify(tokenData)}),
-              window.location.origin
-            );
+           target.postMessage(
+  "authorization:github:success:" + JSON.stringify(dataToSend),
+  "*"
+);
             // Ép cửa sổ này tự đóng ngay sau khi gửi tin nhắn
             setTimeout(() => {
               window.close();
