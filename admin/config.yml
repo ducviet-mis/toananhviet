@@ -40,30 +40,17 @@ collections:
       - { label: "Khối lớp", name: "grade", widget: "select", options: ["Lớp 6", "Lớp 7", "Lớp 8", "Lớp 9", "Thi thử vào 10"] }
       - { label: "Phân loại học kỳ", name: "semester", widget: "select", options: ["Giữa kì 1", "Cuối kì 1", "Giữa kì 2", "Cuối kì 2"] }
       - { label: "Thời gian làm bài (Phút)", name: "duration", widget: "number", value_type: "int", default: 45 }
-      - { label: "File PDF đề thi", name: "pdf_file", widget: "file" }
+      - { label: "File Đề thi (PDF hoặc Word)", name: "exam_file", widget: "file" }
       - { label: "Tổng điểm của đề", name: "total_score", widget: "number", value_type: "float", default: 10 }
-      - { label: "Tự động chia đều điểm", name: "auto_split_score", widget: "boolean", default: true }
-      - label: "Danh sách câu hỏi"
-        name: "questions"
+      - label: "Bảng đáp án đúng (Key)"
+        name: "answer_keys"
         widget: "list"
-        summary: "Câu {{fields.q_number}} - {{fields.q_type}}"
+        summary: "Câu {{fields.q_number}}: {{fields.correct_answer}}"
         fields:
           - { label: "Số thứ tự câu", name: "q_number", widget: "number", value_type: "int" }
           - { label: "Loại câu hỏi", name: "q_type", widget: "select", options: [
               { label: "Trắc nghiệm ABCD", value: "multiple_choice" },
-              { label: "Trả lời ngắn", value: "short_answer" },
-              { label: "Đúng / Sai", value: "true_false" }
+              { label: "Trả lời ngắn / Điền số", value: "short_answer" }
             ] }
-          - { label: "Đáp án Đúng (Trắc nghiệm ABCD)", name: "correct_choice", widget: "select", options: ["A", "B", "C", "D"], required: false }
-          - { label: "Đáp án Đúng (Trả lời ngắn)", name: "correct_short", widget: "string", required: false }
-          - label: "Đáp án Đúng (Đúng / Sai 4 ý)"
-            name: "correct_tf"
-            widget: "object"
-            required: false
-            fields:
-              - { label: "Ý a", name: "a", widget: "select", options: ["Đúng", "Sai"] }
-              - { label: "Ý b", name: "b", widget: "select", options: ["Đúng", "Sai"] }
-              - { label: "Ý c", name: "c", widget: "select", options: ["Đúng", "Sai"] }
-              - { label: "Ý d", name: "d", widget: "select", options: ["Đúng", "Sai"] }
-          - { label: "Điểm số riêng của câu (Nếu không chia đều)", name: "custom_score", widget: "number", value_type: "float", required: false, default: 0.2 }
-          - { label: "Giải thích chi tiết (Hỗ trợ LaTeX)", name: "explanation", widget: "text", required: false }
+          - { label: "Đáp án đúng", name: "correct_answer", widget: "string", hint: "Nếu là trắc nghiệm thì điền A, B, C, hoặc D. Nếu là điền số thì điền kết quả chính xác." }
+          - { label: "Lời giải chi tiết nhanh (Nếu có)", name: "explanation", widget: "string", required: false }
