@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thi Online - Toán Anh Việt</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* CSS bổ trợ riêng cho hệ thống Quiz */
+    .filter-section {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+    }
+    .filter-group {
+      margin-bottom: 15px;
+    }
+    .filter-group:last-child {
+      margin-bottom: 0;
+    }
+    .filter-label {
+      font-weight: bold;
+      color: var(--text-dark, #1e293b);
+      margin-bottom: 8px;
+      display: block;
+      font-size: 0.95rem;
+    }
+    .quiz-card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .quiz-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(2, 132, 199, 0.15);
+    }
+    .quiz-meta {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-top: 10px;
+      margin-bottom: 15px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+    .quiz-btn {
+      display: block;
+      text-align: center;
+      background-color: var(--primary-color, #0284c7);
+      color: white;
+      text-decoration: none;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      transition: background-color 0.2s;
+    }
+    .quiz-btn:hover {
+      background-color: var(--primary-dark, #0369a1);
+    }
+    #semester-group {
+      transition: all 0.3s ease;
+    }
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Thanh Menu -->
+  <header>
+    <nav class="nav-container">
+      <a href="index.html" class="logo">
+        <img src="assets/logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
+        TOÁN ANH VIỆT
+      </a>
+      <ul class="nav-menu">
+        <li><a href="index.html">Trang chủ</a></li>
+        <li><a href="category.html?grade=6">Toán 6</a></li>
+        <li><a href="category.html?grade=7">Toán 7</a></li>
+        <li><a href="category.html?grade=8">Toán 8</a></li>
+        <li><a href="category.html?grade=9">Toán 9</a></li>
+        <li><a href="quiz-list.html" class="active">Thi Online</a></li>
+        <li><a href="index.html#about">Lớp học Gia sư</a></li>
+        <li><a href="index.html#contact">Liên hệ</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+    <h2 class="section-title">Hệ Thống Thi Trắc Nghiệm Online</h2>
+    
+    <!-- Bộ lọc 2 tầng trực quan -->
+    <div class="filter-section">
+      <!-- Tầng 1: Khối lớp -->
+      <div class="filter-group">
+        <span class="filter-label">Chọn khối lớp:</span>
+        <div class="filter-container" id="grade-filters">
+          <button class="filter-btn active" data-grade="all">Tất cả</button>
+          <button class="filter-btn" data-grade="Lớp 6">Lớp 6</button>
+          <button class="filter-btn" data-grade="Lớp 7">Lớp 7</button>
+          <button class="filter-btn" data-grade="Lớp 8">Lớp 8</button>
+          <button class="filter-btn" data-grade="Lớp 9">Lớp 9</button>
+          <button class="filter-btn" data-grade="Thi thử vào 10">Thi thử vào 10</button>
+        </div>
+      </div>
+
+      <!-- Tầng 2: Học kỳ (Ẩn khi chọn "Thi thử vào 10" hoặc "Tất cả") -->
+      <div class="filter-group hidden" id="semester-group">
+        <span class="filter-label">Chọn học kỳ:</span>
+        <div class="filter-container" id="semester-filters">
+          <button class="filter-btn active" data-semester="all">Tất cả học kỳ</button>
+          <button class="filter-btn" data-semester="Giữa kì 1">Giữa kì 1</button>
+          <button class="filter-btn" data-semester="Cuối kì 1">Cuối kì 1</button>
+          <button class="filter-btn" data-semester="Giữa kì 2">Giữa kì 2</button>
+          <button class="filter-btn" data-semester="Cuối kì 2">Cuối kì 2</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lưới hiển thị danh sách đề thi -->
+    <div class="doc-grid" id="quiz-grid">
+      <p style="text-align: center; grid-column: 1/-1;">Đang tải danh sách đề thi...</p>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2026 Website Gia Sư Toán THCS. Phát triển bởi Gia Sư Toán.</p>
+    <p>Hotline/Zalo hỗ trợ: 0965193026 - Địa chỉ: Hà Nội</p>
+  </footer>
+
+  <script>
+    let allQuizzes = [];
+    let selectedGrade = 'all';
+    let selectedSemester = 'all';
+
+    // Hàm gọi API của GitHub để nạp dữ liệu đề thi tĩnh
+    async function loadQuizzes() {
+      const grid = document.getElementById('quiz-grid');
+      try {
+        // Gọi API lấy các file .json trong thư mục documents/quizzes
+        const response = await fetch('https://api.github.com/repos/ducviet-mis/toananhviet/contents/documents/quizzes');
+        if (!response.ok) {
+          // Nếu chưa có thư mục quizzes trên GitHub, tải dữ liệu demo
+          allQuizzes = getDemoData();
+          renderQuizzes();
+          return;
+        }
+        
+        const files = await response.json();
+        const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+        
+        allQuizzes = [];
+        for (const file of jsonFiles) {
+          const res = await fetch(file.download_url);
+          const quizData = await res.json();
+          // Lưu kèm thuộc tính file_name để làm ID liên kết phòng thi
+          quizData.file_name = file.name;
+          quizData.download_url = file.download_url;
+          allQuizzes.push(quizData);
+        }
+        
+        renderQuizzes();
+      } catch (e) {
+        console.error("Lỗi nạp API GitHub, chuyển sang dùng dữ liệu demo:", e);
+        allQuizzes = getDemoData();
+        renderQuizzes();
+      }
+    }
+
+    // Lọc và render giao diện
+    function renderQuizzes() {
+      const grid = document.getElementById('quiz-grid');
+      grid.innerHTML = '';
+
+      const filtered = allQuizzes.filter(quiz => {
+        const matchGrade = (selectedGrade === 'all' || quiz.grade === selectedGrade);
+        const matchSemester = (selectedSemester === 'all' || quiz.semester === selectedSemester || selectedGrade === 'Thi thử vào 10' || selectedGrade === 'all');
+        return matchGrade && matchSemester;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Chưa có đề thi nào phù hợp với bộ lọc này.</p>';
+        return;
+      }
+
+      filtered.forEach(quiz => {
+        // Nếu chạy trên Vercel thực tế, truyền download_url được mã hóa của file json để phòng thi tải về
+        const quizId = encodeURIComponent(quiz.download_url || quiz.file_name);
+        
+        const card = document.createElement('div');
+        card.className = 'quiz-card';
+        card.innerHTML = `
+          <div>
+            <div class="doc-badges" style="margin-bottom: 10px;">
+              <span class="badge badge-grade">${quiz.grade}</span>
+              <span class="badge badge-cat">${quiz.semester || 'Luyện thi'}</span>
+            </div>
+            <h3 style="font-size: 1.1rem; font-weight: bold; line-height: 1.4; color: #1e293b;">${quiz.title}</h3>
+            <div class="quiz-meta">
+              <span>⏱️ Thời gian: ${quiz.duration} phút</span>
+              <span>📝 Số câu: ${quiz.questions ? quiz.questions.length : 0} câu</span>
+              <span>💯 Tổng điểm: ${quiz.total_score || 10}đ</span>
+            </div>
+          </div>
+          <a href="quiz-room.html?id=${quizId}" class="quiz-btn">Vào làm bài 📝</a>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Thiết lập sự kiện click cho bộ lọc
+    document.getElementById('grade-filters').addEventListener('click', (e) => {
+      if (e.target.tagName === 'BUTTON') {
+        document.querySelectorAll('#grade-filters button').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        selectedGrade = e.target.getAttribute('data-grade');
+
+        const semGroup = document.getElementById('semester-group');
+        if (selectedGrade !== 'all' && selectedGrade !== 'Thi thử vào 10') {
+          semGroup.classList.remove('hidden');
+        } else {
+          semGroup.classList.add('hidden');
+          selectedSemester = 'all';
+          document.querySelectorAll('#semester-filters button').forEach(b => b.classList.remove('active'));
+          document.querySelector('#semester-filters button[data-semester="all"]').classList.add('active');
+        }
+        renderQuizzes();
+      }
+    });
+
+    document.getElementById('semester-filters').addEventListener('click', (e) => {
+      if (e.target.tagName === 'BUTTON') {
+        document.querySelectorAll('#semester-filters button').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        selectedSemester = e.target.getAttribute('data-semester');
+        renderQuizzes();
+      }
+    });
+
+    // Dữ liệu giả lập phòng khi chưa cấu hình CMS hoặc lỗi kết nối API GitHub
+    function getDemoData() {
+      return [
+        {
+          title: "[TAV] Đề kiểm tra giữa học kì 1 Toán 8 năm học 2026-2027",
+          grade: "Lớp 8",
+          semester: "Giữa kì 1",
+          duration: 45,
+          total_score: 10,
+          file_name: "demo-gk1-toan8.json",
+          pdf_file: "assets/de-thi-gk1-toan-8.pdf",
+          auto_split_score: true,
+          questions: [
+            { q_number: 1, q_type: "multiple_choice", correct_choice: "A", explanation: "Áp dụng hằng đẳng thức đáng nhớ: $(A+B)^2 = A^2 + 2AB + B^2$." },
+            { q_number: 2, q_type: "short_answer", correct_short: "5", explanation: "Giải phương trình bậc nhất $2x - 10 = 0 \\Leftrightarrow x = 5$." },
+            { q_number: 3, q_type: "true_false", correct_tf: { a: "Đúng", b: "Sai", c: "Đúng", d: "Sai" }, explanation: "Phân tích các đặc điểm của tứ giác." }
+          ]
+        },
+        {
+          title: "[TAV] Đề khảo sát chất lượng tuyển sinh vào lớp 10 học kỳ 2",
+          grade: "Thi thử vào 10",
+          semester: "Cuối kì 2",
+          duration: 120,
+          total_score: 10,
+          file_name: "demo-tuyensinh10.json",
+          pdf_file: "assets/de-thi-thu-vao-10.pdf",
+          auto_split_score: false,
+          questions: [
+            { q_number: 1, q_type: "multiple_choice", correct_choice: "C", custom_score: 0.5, explanation: "Tính biệt thức $\\Delta = b^2 - 4ac$ để tìm số nghiệm." }
+          ]
+        }
+      ];
+    }
+
+    document.addEventListener('DOMContentLoaded', loadQuizzes);
+  </script>
+</body>
+</html>
