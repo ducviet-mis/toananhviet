@@ -1083,3 +1083,338 @@ body {
   font-size: 0.85rem;
   color: #94a3b8;
 }
+/* ==========================================================================
+   EDTECH PREMIUM - TOÁN ANH VIỆT (EFFECTS, ANIMATIONS & LANDING UI)
+   ========================================================================== */
+
+/* 1. KHAI BÁO KEYFRAMES TẠO HIỆU ỨNG LƠ LỬNG LỆCH NHỊP */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes float-delay {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* Gắn class chuyển động mượt mà */
+.float-slow {
+  animation: float-slow 4s ease-in-out infinite;
+}
+
+.float-delay {
+  animation: float-delay 4.5s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
+/* 2. HEADER EDTECH TINH TẾ */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #f1f5f9;
+  transition: all 0.3s ease;
+}
+
+/* 3. HERO SECTION - NỀN LƯỚI DESCARTES & CHIỀU RỘNG TỐI GIẢN APPLE STYLE */
+.hero-descartes {
+  position: relative;
+  padding: 100px 20px;
+  background-color: #f8fafc; /* Nền xám nhạt cao cấp */
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(148, 163, 184, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.045) 1px, transparent 1px);
+  background-position: center center;
+  border-bottom: 1px solid #f1f5f9;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Giới hạn chiều rộng khối chữ */
+.hero-typography-container {
+  max-w-4xl: 800px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: #f0f9ff;
+  color: #0284c7;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid rgba(2, 132, 199, 0.1);
+  margin-bottom: 25px;
+}
+
+.hero-title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  margin-bottom: 20px;
+}
+
+.hero-title .text-accent {
+  color: #0284c7;
+}
+
+.hero-subtitle {
+  font-size: 1.05rem;
+  color: #64748b;
+  max-width: 580px;
+  margin: 0 auto 40px auto;
+  line-height: 1.6;
+}
+
+/* 4. BỐ CỤC KIỂU TRÁI - GIỮA - PHẢI NẰM NGANG (SEARCH LAYOUT) */
+.search-layout-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Thanh tìm kiếm trung tâm */
+.search-main-box {
+  width: 550px;
+  flex-shrink: 0;
+}
+
+.search-form-premium {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-form-premium:focus-within {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12);
+}
+
+.search-icon {
+  font-size: 1.1rem;
+  margin-left: 12px;
+  color: #94a3b8;
+}
+
+.search-form-premium input {
+  flex: 1;
+  border: none;
+  padding: 12px 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  color: #334155;
+  background: transparent;
+}
+
+.search-form-premium input::placeholder {
+  color: #94a3b8;
+}
+
+.search-btn {
+  background: #0f172a;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.search-btn:hover {
+  background: #0284c7;
+}
+
+.search-error-msg {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-top: 10px;
+  text-align: left;
+  padding-left: 15px;
+}
+
+/* Các khối đặc quyền mờ lơ lửng */
+.privilege-card {
+  width: 220px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 18px;
+  text-align: left;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.015);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.privilege-card:hover {
+  transform: translateY(-4px) scale(1.02) !important;
+  border-color: #0284c7;
+  box-shadow: 0 12px 25px rgba(2, 132, 199, 0.08);
+}
+
+.privilege-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #0284c7;
+  background: #f0f9ff;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.privilege-card h4 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.privilege-card p {
+  font-size: 0.72rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* 5. KHU VỰC THẺ TÀI LIỆU CAO CẤP */
+.recent-docs {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 0 20px;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.section-header h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 10px;
+}
+
+.section-header .divider {
+  width: 40px;
+  height: 3px;
+  background: #0284c7;
+  margin: 0 auto;
+  border-radius: 10px;
+}
+
+.doc-card-premium {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.01);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.doc-card-premium:hover {
+  transform: translateY(-8px);
+  border-color: #cbd5e1;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.card-badge {
+  background: #f0f9ff;
+  color: #0284c7;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.card-id {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+}
+
+.card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.4;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+}
+
+.doc-card-premium:hover .card-title {
+  color: #0284c7;
+}
+
+.card-desc {
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.card-footer {
+  border-top: 1px solid #f8fafc;
+  padding-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.card-action-btn {
+  color: #0284c7;
+  font-weight: 700;
+  transition: transform 0.2s ease;
+}
+
+.doc-card-premium:hover .card-action-btn {
+  transform: translateX(5px);
+}
+
+/* 6. RESPONSIVE HOÀN HẢO */
+@media (max-width: 992px) {
+  .search-layout-wrapper {
+    flex-direction: column;
+    width: 100%;
+    padding: 0 15px;
+  }
+  .search-main-box {
+    width: 100%;
+  }
+  .privilege-card {
+    display: none; /* Trên Mobile/Tablet ẩn bớt khối lề cho thoáng */
+  }
+}
