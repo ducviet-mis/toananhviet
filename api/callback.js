@@ -1,6 +1,4 @@
 // api/callback.js
-import axios from 'axios';
-
 export default async function handler(req, res) {
   const { code } = req.query;
 
@@ -9,22 +7,22 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1. Gửi yêu cầu lấy Access Token từ GitHub bằng các biến bảo mật đã cài trên Vercel
-    const response = await axios.post(
-      'https://github.com/login/oauth/access_token',
-      {
+    // 1. Gửi yêu cầu lấy Access Token từ GitHub bằng fetch thuần (không cần axios)
+    const response = await fetch('https://github.com/login/oauth/access_token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
         client_id: process.env.OAUTH_CLIENT_ID,
         client_secret: process.env.OAUTH_CLIENT_SECRET,
         code,
-      },
-      {
-        headers: {
-          accept: 'application/json',
-        },
-      }
-    );
+      }),
+    });
 
-    const { access_token, error, error_description } = response.data;
+    const data = await response.json();
+    const { access_token, error, error_description } = data;
 
     if (error) {
       return res.status(400).send(`GitHub OAuth Error: ${error_description || error}`);
