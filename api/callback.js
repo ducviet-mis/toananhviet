@@ -28,13 +28,13 @@ export default async function handler(req, res) {
       return res.status(400).send(`GitHub OAuth Error: ${error_description || error}`);
     }
 
-    // 2. Định nghĩa dữ liệu trả về
-    const payload = {
+    // 2. Định nghĩa dữ liệu gửi về cho Admin
+    const tokenData = {
       token: access_token,
-      provider: 'github'
+      provider: "github"
     };
 
-    // Tạo nội dung HTML chứa script gửi token an toàn, không bị lỗi cú pháp chuỗi
+    // Tạo nội dung HTML chứa script gửi token an toàn và tự động đóng cửa sổ sau 1 giây
     const content = `
       <!DOCTYPE html>
       <html>
@@ -42,20 +42,24 @@ export default async function handler(req, res) {
         <title>Authorizing...</title>
       </head>
       <body>
-        <p>Đang đăng nhập, vui lòng chờ...</p>
+        <div style="text-align: center; margin-top: 50px; font-family: sans-serif;">
+          <h3>Đăng nhập thành công!</h3>
+          <p>Đang chuyển hướng về trang quản trị, cửa sổ này sẽ tự đóng...</p>
+        </div>
         <script>
           const target = window.opener || window.parent;
           if (target) {
-            const dataToSend = {
-              token: "${access_token}",
-              provider: "github"
-            };
+            // Gửi tin nhắn về cho trang Admin chính
             target.postMessage(
-              "authorization:github:success:" + JSON.stringify(dataToSend),
-              "*"
+              "authorization:github:success:" + JSON.stringify(${JSON.stringify(tokenData)}),
+              window.location.origin
             );
+            // Ép cửa sổ này tự đóng ngay sau khi gửi tin nhắn
+            setTimeout(() => {
+              window.close();
+            }, 1000);
           } else {
-            document.body.innerHTML = "Đăng nhập thành công! Bạn có thể đóng cửa sổ này.";
+            document.body.innerHTML = "Không tìm thấy trang quản trị gốc. Bạn có thể tự đóng cửa sổ này.";
           }
         </script>
       </body>
