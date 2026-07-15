@@ -28,3 +28,42 @@ collections:
         ] }
       - { label: "Ảnh đại diện tài liệu", name: "thumbnail", widget: "image" }
       - { label: "File tài liệu (PDF/Word)", name: "file", widget: "file" }
+- name: "quizzes"
+    label: "Đề thi trắc nghiệm"
+    folder: "documents/quizzes"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    extension: "json"
+    format: "json"
+    fields:
+      - { label: "Tiêu đề đề thi", name: "title", widget: "string" }
+      - { label: "Khối lớp", name: "grade", widget: "select", options: ["Lớp 6", "Lớp 7", "Lớp 8", "Lớp 9", "Thi thử vào 10"] }
+      - { label: "Phân loại học kỳ", name: "semester", widget: "select", options: ["Giữa kì 1", "Cuối kì 1", "Giữa kì 2", "Cuối kì 2"] }
+      - { label: "Thời gian làm bài (Phút)", name: "duration", widget: "number", value_type: "int", default: 45 }
+      - { label: "File PDF đề thi", name: "pdf_file", widget: "file" }
+      - { label: "Tổng điểm của đề", name: "total_score", widget: "number", value_type: "float", default: 10 }
+      - { label: "Tự động chia đều điểm", name: "auto_split_score", widget: "boolean", default: true }
+      - label: "Danh sách câu hỏi"
+        name: "questions"
+        widget: "list"
+        summary: "Câu {{fields.q_number}} - {{fields.q_type}}"
+        fields:
+          - { label: "Số thứ tự câu", name: "q_number", widget: "number", value_type: "int" }
+          - { label: "Loại câu hỏi", name: "q_type", widget: "select", options: [
+              { label: "Trắc nghiệm ABCD", value: "multiple_choice" },
+              { label: "Trả lời ngắn", value: "short_answer" },
+              { label: "Đúng / Sai", value: "true_false" }
+            ] }
+          - { label: "Đáp án Đúng (Trắc nghiệm ABCD)", name: "correct_choice", widget: "select", options: ["A", "B", "C", "D"], required: false }
+          - { label: "Đáp án Đúng (Trả lời ngắn)", name: "correct_short", widget: "string", required: false }
+          - label: "Đáp án Đúng (Đúng / Sai 4 ý)"
+            name: "correct_tf"
+            widget: "object"
+            required: false
+            fields:
+              - { label: "Ý a", name: "a", widget: "select", options: ["Đúng", "Sai"] }
+              - { label: "Ý b", name: "b", widget: "select", options: ["Đúng", "Sai"] }
+              - { label: "Ý c", name: "c", widget: "select", options: ["Đúng", "Sai"] }
+              - { label: "Ý d", name: "d", widget: "select", options: ["Đúng", "Sai"] }
+          - { label: "Điểm số riêng của câu (Nếu không chia đều)", name: "custom_score", widget: "number", value_type: "float", required: false, default: 0.2 }
+          - { label: "Giải thích chi tiết (Hỗ trợ LaTeX)", name: "explanation", widget: "text", required: false }
