@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1. Gửi yêu cầu lấy Access Token từ GitHub bằng fetch thuần (không cần axios)
+    // 1. Gửi yêu cầu lấy Access Token từ GitHub
     const response = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
       headers: {
@@ -28,19 +28,38 @@ export default async function handler(req, res) {
       return res.status(400).send(`GitHub OAuth Error: ${error_description || error}`);
     }
 
-    // 2. Trả kết quả Token về cho Decap CMS ở trang Admin để tự động đăng nhập và đóng pop-up
+    // 2. Định nghĩa dữ liệu trả về
+    const payload = {
+      token: access_token,
+      provider: 'github'
+    };
+
+    // Tạo nội dung HTML chứa script gửi token an toàn, không bị lỗi cú pháp chuỗi
     const content = `
-      <script>
-        const target = window.opener || window.parent;
-        if (target) {
-          target.postMessage(
-            "authorization:github:success:${JSON.stringify({ token: access_token, provider: 'github' })}",
-            "*"
-          );
-        } else {
-          document.body.innerHTML = "Đăng nhập thành công! Bạn có thể đóng cửa sổ này.";
-        }
-      </script>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Authorizing...</title>
+      </head>
+      <body>
+        <p>Đang đăng nhập, vui lòng chờ...</p>
+        <script>
+          const target = window.opener || window.parent;
+          if (target) {
+            const dataToSend = {
+              token: "${access_token}",
+              provider: "github"
+            };
+            target.postMessage(
+              "authorization:github:success:" + JSON.stringify(dataToSend),
+              "*"
+            );
+          } else {
+            document.body.innerHTML = "Đăng nhập thành công! Bạn có thể đóng cửa sổ này.";
+          }
+        </script>
+      </body>
+      </html>
     `;
 
     res.setHeader('Content-Type', 'text/html');
