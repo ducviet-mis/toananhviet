@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Toán Anh Việt - Admin Vercel</title>
-    <!-- Dòng mới thêm vào để CMS tìm thấy đúng file config.yml -->
+    <!-- Chỉ định rõ đường dẫn file cấu hình -->
     <link href="/admin-vercel/config.yml" type="yaml" rel="cms-config-url" />
-    <!-- Thư viện Decap CMS -->
-    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   </head>
-  <body></body>
+  <body>
+    <!-- Import thư viện Decap CMS ở cuối body để đảm bảo DOM đã sẵn sàng -->
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  </body>
 </html>
