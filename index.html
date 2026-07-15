@@ -34,6 +34,26 @@
   <section class="hero">
     <h1>Chào mừng đến với Kho Tài Liệu Toán Anh Việt</h1>
     <p>Nơi chia sẻ hoàn toàn miễn phí các bộ đề thi giữa kì, cuối kì, đề cương ôn tập và chuyên đề Toán chuyên sâu dành cho học sinh từ lớp 6 đến lớp 9.</p>
+    <!-- THANH TÌM KIẾM ID ĐỀ MỚI -->
+<div class="search-container" style="max-width: 600px; margin: 30px auto 10px auto; padding: 0 15px;">
+  <form onsubmit="handleIdSearch(event)" style="display: flex; gap: 10px; background: white; padding: 6px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
+    <input 
+      type="text" 
+      id="search-id-input" 
+      placeholder="Nhập mã đề của bạn (VD: 8G01, 8C02)..." 
+      style="flex: 1; border: none; padding: 10px 20px; font-size: 1rem; outline: none; border-radius: 30px; font-weight: 600;"
+    >
+    <button 
+      type="submit" 
+      style="background: #0284c7; color: white; border: none; padding: 10px 25px; font-size: 1rem; font-weight: bold; border-radius: 30px; cursor: pointer; transition: background 0.2s;"
+      onmouseover="this.style.background='#0369a1'"
+      onmouseout="this.style.background='#0284c7'"
+    >
+      Tìm kiếm
+    </button>
+  </form>
+  <p id="search-error" style="color: #ef4444; font-size: 0.9rem; font-weight: bold; margin-top: 10px; display: none; text-shadow: 1px 1px 0px white;"></p>
+</div>
   </section>
 
   <!-- Phần hiển thị Tài liệu Mới nhất -->
@@ -327,5 +347,30 @@
       });
     }
   </script>
+  <script>
+  // Định nghĩa danh sách mã đề thi trực tiếp ở đây để đối chiếu nhanh
+  const validQuizzes = ["8G01", "8C02"]; // Bạn có thể thêm các mã đề khác vào mảng này sau này
+
+  function handleIdSearch(event) {
+    event.preventDefault();
+    const inputVal = document.getElementById('search-id-input').value.trim().toUpperCase();
+    const errorEl = document.getElementById('search-error');
+
+    if (!inputVal) {
+      errorEl.innerText = "⚠️ Vui lòng nhập mã đề thi!";
+      errorEl.style.display = "block";
+      return;
+    }
+
+    if (validQuizzes.includes(inputVal)) {
+      errorEl.style.display = "none";
+      // Chuyển hướng sang trang chi tiết kèm tham số id trên URL
+      window.location.href = `view-detail.html?id=${inputVal}`;
+    } else {
+      errorEl.innerText = "❌ Không tìm thấy mã đề này, bạn vui lòng kiểm tra lại nhé!";
+      errorEl.style.display = "block";
+    }
+  }
+</script>
 </body>
 </html>
