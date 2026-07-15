@@ -3,7 +3,7 @@ backend:
   repo: ducviet-mis1/toananhviet
   branch: main
   base_url: https://toananhviet.vercel.app
-  auth_endpoint: api/auth
+  auth_endpoint: /api/auth
 
 # Thêm 2 dòng khai báo thư mục lưu trữ bắt buộc này ở ngoài cùng lề trái
 media_folder: "assets/images/uploads"
