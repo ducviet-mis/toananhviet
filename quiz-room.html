@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phòng Thi Trắc Nghiệm - Toán Anh Việt</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Nhúng thư viện MathJax để render các ký hiệu Toán LaTeX mượt mà -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    body {
+      background-color: #f1f5f9;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    header {
+      flex-shrink: 0;
+    }
+    /* Giao diện Chia màn hình (Split-screen) trên PC */
+    .exam-wrapper {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 80px); /* Trừ đi chiều cao header */
+      overflow: hidden;
+      position: relative;
+    }
+    .pdf-pane {
+      width: 60%;
+      height: 100%;
+      border-right: 3px solid #cbd5e1;
+      background: #475569;
+    }
+    .pdf-pane iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .answersheet-pane {
+      width: 40%;
+      height: 100%;
+      background: #ffffff;
+      overflow-y: auto;
+      padding: 30px;
+      position: relative;
+    }
+    /* Đồng hồ đếm ngược */
+    .timer-badge {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #0284c7;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1.15rem;
+      text-align: center;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    /* Tab cho Mobile */
+    .mobile-tabs {
+      display: none;
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      flex-shrink: 0;
+    }
+    .tab-btn {
+      flex: 1;
+      text-align: center;
+      padding: 15px;
+      font-weight: bold;
+      font-size: 1rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: #64748b;
+      border-bottom: 3px solid transparent;
+    }
+    .tab-btn.active {
+      color: #0284c7;
+      border-bottom-color: #0284c7;
+    }
+    /* Câu hỏi & Lựa chọn */
+    .question-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: all 0.2s;
+    }
+    .question-box.correct {
+      border-left: 5px solid #22c55e;
+      background-color: #f0fdf4;
+    }
+    .question-box.incorrect {
+      border-left: 5px solid #ef4444;
+      background-color: #fef2f2;
+    }
+    .q-title {
+      font-weight: bold;
+      color: #1e293b;
+      margin-bottom: 12px;
+      font-size: 1rem;
+    }
+    /* Định dạng nút trắc nghiệm A, B, C, D */
+    .choice-group {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .choice-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 45px;
+      height: 45px;
+      border: 2px solid #cbd5e1;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .choice-group input[type="radio"] {
+      display: none;
+    }
+    .choice-group input[type="radio"]:checked + .choice-label {
+      background-color: #0284c7;
+      color: white;
+      border-color: #0284c7;
+    }
+    /* Trả lời ngắn */
+    .short-input {
+      width: 100%;
+      padding: 10px 15px;
+      border: 2px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 1rem;
+      outline: none;
+    }
+    .short-input:focus {
+      border-color: #0284c7;
+    }
+    /* Đúng / Sai dạng bảng */
+    .tf-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+    .tf-table td {
+      padding: 8px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .tf-btn-group {
+      display: flex;
+      gap: 10px;
+    }
+    .tf-btn {
+      padding: 6px 12px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 4px;
+      background: white;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tf-btn.selected-true {
+      background-color: #22c55e;
+      color: white;
+      border-color: #22c55e;
+    }
+    .tf-btn.selected-false {
+      background-color: #ef4444;
+      color: white;
+      border-color: #ef4444;
+    }
+    .explanation-box {
+      margin-top: 15px;
+      padding: 15px;
+      background: #f1f5f9;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: #334155;
+      display: none;
+    }
+    /* Kết quả chung cuộc */
+    #result-box {
+      background: #e0f2fe;
+      border: 2px dashed #0284c7;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      margin-bottom: 25px;
+      display: none;
+    }
+    /* Responsive trên Điện thoại */
+    @media (max-width: 768px) {
+      .exam-wrapper {
+        flex-direction: column;
+        height: calc(100vh - 130px);
+      }
+      .mobile-tabs {
+        display: flex;
+      }
+      .pdf-pane, .answersheet-pane {
+        width: 100%;
+        height: 100%;
+      }
+      .pdf-pane.hidden-mobile, .answersheet-pane.hidden-mobile {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Thanh Menu -->
+  <header>
+    <nav class="nav-container" style="padding: 10px 20px;">
+      <a href="index.html" class="logo">📐 TOÁN ANH VIỆT</a>
+      <span style="font-weight: bold; color: #0284c7;" id="exam-title-header">ĐANG TẢI ĐỀ THI...</span>
+    </nav>
+  </header>
+
+  <!-- Hệ thống Tab dành riêng cho hiển thị di động -->
+  <div class="mobile-tabs">
+    <button class="tab-btn active" id="tab-pdf" onclick="switchTab('pdf')">📋 Đề Bài (PDF)</button>
+    <button class="tab-btn" id="tab-sheet" onclick="switchTab('sheet')">✍️ Phiếu Trả Lời</button>
+  </div>
+
+  <div class="exam-wrapper">
+    <!-- CỘT BÊN TRÁI: Nhúng trực tiếp tệp đề PDF -->
+    <div class="pdf-pane" id="pane-pdf-container">
+      <iframe src="" id="pdf-viewer"></iframe>
+    </div>
+
+    <!-- CỘT BÊN PHẢI: Phiếu điền đáp án, chấm điểm -->
+    <div class="answersheet-pane id-answersheet" id="pane-sheet-container">
+      
+      <!-- Bảng trạng thái giờ thi & nộp bài -->
+      <div class="timer-badge">
+        <span id="countdown">Thời gian: --:--</span>
+        <button onclick="submitExam()" id="submit-btn" style="background: #e11d48; color: white; border: none; padding: 6px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;">NỘP BÀI</button>
+      </div>
+
+      <!-- Bảng báo kết quả sau khi nộp bài -->
+      <div id="result-box">
+        <h3 style="font-size: 1.5rem; font-weight: bold; color: #0369a1; margin-bottom: 5px;" id="result-score">-- / 10 điểm</h3>
+        <p id="result-detail" style="color: #0284c7; font-weight: 500;">Bạn đã làm đúng -- / -- câu</p>
+      </div>
+
+      <!-- Khu vực render các câu hỏi động -->
+      <div id="questions-list"></div>
+    </div>
+  </div>
+
+  <script>
+    let quizData = null;
+    let timeRemaining = 0; // Giây
+    let timerInterval = null;
+    let userAnswers = {}; // Lưu trữ kết quả học sinh chọn
+
+    // Lấy thông tin ID từ URL và tải file
+    async function loadQuizRoom() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const fileUrl = urlParams.get('id');
+
+      if (!fileUrl) {
+        alert("Đường dẫn đề thi không tồn tại!");
+        return;
+      }
+
+      try {
+        // Tải cấu hình chi tiết từ tệp JSON
+        const response = await fetch(decodeURIComponent(fileUrl));
+        if (!response.ok) throw new Error();
+        quizData = await response.json();
+
+        // Điền tiêu đề và nạp file PDF vào iFrame
+        document.getElementById('exam-title-header').innerText = quizData.title;
+        document.getElementById('pdf-viewer').src = quizData.pdf_file;
+
+        // Thiết lập bộ đếm giờ thi
+        timeRemaining = (quizData.duration || 45) * 60;
+        startTimer();
+
+        // Render cấu hình đáp án
+        renderAnswerSheet();
+      } catch (err) {
+        alert("Lỗi kết nối dữ liệu phòng thi!");
+      }
+    }
+
+    // Bộ đếm ngược thời gian làm bài
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          alert("Hết thời gian làm bài! Hệ thống tự động nộp bài.");
+          submitExam();
+          return;
+        }
+        timeRemaining--;
+        const mins = Math.floor(timeRemaining / 60);
+        const secs = timeRemaining % 60;
+        document.getElementById('countdown').innerText = `⏱️ Còn lại: ${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      }, 1000);
+    }
+
+    // Tạo các ô nhập liệu tương ứng với từng loại câu hỏi
+    function renderAnswerSheet() {
+      const list = document.getElementById('questions-list');
+      list.innerHTML = '';
+
+      quizData.questions.forEach((q, index) => {
+        userAnswers[q.q_number] = null; // Khởi tạo dữ liệu trống cho câu
+
+        const box = document.createElement('div');
+        box.className = 'question-box';
+        box.id = `q-box-${q.q_number}`;
+
+        let inputHtml = '';
+
+        if (q.q_type === 'multiple_choice') {
+          // 1. Loại Trắc nghiệm ABCD
+          inputHtml = `
+            <div class="choice-group">
+              ${['A', 'B', 'C', 'D'].map(char => `
+                <input type="radio" id="q-${q.q_number}-${char}" name="ans-${q.q_number}" value="${char}" onchange="saveChoiceAnswer(${q.q_number}, '${char}')">
+                <label for="q-${q.q_number}-${char}" class="choice-label">${char}</label>
+              `).join('')}
+            </div>
+          `;
+        } else if (q.q_type === 'short_answer') {
+          // 2. Loại điền từ / trả lời ngắn
+          inputHtml = `
+            <input type="text" class="short-input" placeholder="Nhập đáp án của bạn..." oninput="saveShortAnswer(${q.q_number}, this.value)">
+          `;
+        } else if (q.q_type === 'true_false') {
+          // 3. Loại câu hỏi Đúng / Sai
+          userAnswers[q.q_number] = { a: null, b: null, c: null, d: null }; // Cấu trúc riêng Đúng/Sai
+          inputHtml = `
+            <table class="tf-table">
+              ${['a', 'b', 'c', 'd'].map(char => `
+                <tr>
+                  <td><b>${char})</b></td>
+                  <td align="right">
+                    <div class="tf-btn-group">
+                      <button type="button" class="tf-btn" id="tf-${q.q_number}-${char}-true" onclick="saveTFAnswer(${q.q_number}, '${char}', 'Đúng')">Đúng</button>
+                      <button type="button" class="tf-btn" id="tf-${q.q_number}-${char}-false" onclick="saveTFAnswer(${q.q_number}, '${char}', 'Sai')">Sai</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </table>
+          `;
+        }
+
+        box.innerHTML = `
+          <div class="q-title">Câu ${q.q_number}: (Điểm: ${getQuestionMaxScore(q)}đ)</div>
+          ${inputHtml}
+          <div class="explanation-box" id="explain-${q.q_number}">
+            <strong>💡 Hướng dẫn giải:</strong><br>
+            <div class="explain-content">${q.explanation || 'Đang cập nhật...'}</div>
+          </div>
+        `;
+        list.appendChild(box);
+      });
+    }
+
+    // Tính điểm tối đa cho mỗi câu dựa trên file cấu hình
+    function getQuestionMaxScore(q) {
+      if (quizData.auto_split_score) {
+        return (quizData.total_score / quizData.questions.length).toFixed(2);
+      }
+      return q.custom_score || 0.2;
+    }
+
+    // Các hàm lưu trữ đáp án khi học sinh thao tác
+    function saveChoiceAnswer(qNum, char) {
+      userAnswers[qNum] = char;
+    }
+
+    function saveShortAnswer(qNum, val) {
+      userAnswers[qNum] = val.trim();
+    }
+
+    function saveTFAnswer(qNum, subChar, state) {
+      // Đổi trạng thái hiển thị của các nút bấm Đúng/Sai
+      const trueBtn = document.getElementById(`tf-${qNum}-${subChar}-true`);
+      const falseBtn = document.getElementById(`tf-${qNum}-${subChar}-false`);
+
+      if (state === 'Đúng') {
+        trueBtn.classList.add('selected-true');
+        falseBtn.classList.remove('selected-false');
+      } else {
+        falseBtn.classList.add('selected-false');
+        trueBtn.classList.remove('selected-true');
+      }
+
+      userAnswers[qNum][subChar] = state;
+    }
+
+    // Logic Chấm điểm tự động và Nộp bài
+    function submitExam() {
+      if (!confirm("Bạn có chắc chắn muốn nộp bài?")) return;
+      clearInterval(timerInterval);
+
+      // Khóa toàn bộ các thao tác chỉnh sửa sau khi nộp
+      document.querySelectorAll('input, select, button.tf-btn').forEach(el => el.disabled = true);
+      document.getElementById('submit-btn').style.display = 'none';
+
+      let totalEarnedScore = 0;
+      let totalCorrectCount = 0;
+
+      quizData.questions.forEach(q => {
+        const box = document.getElementById(`q-box-${q.q_number}`);
+        const explain = document.getElementById(`explain-${q.q_number}`);
+        const maxScore = parseFloat(getQuestionMaxScore(q));
+        let isCorrect = false;
+
+        if (q.q_type === 'multiple_choice') {
+          // Chấm trắc nghiệm ABCD
+          if (userAnswers[q.q_number] === q.correct_choice) {
+            isCorrect = true;
+            totalEarnedScore += maxScore;
+          }
+        } else if (q.q_type === 'short_answer') {
+          // Chấm trắc nghiệm Điền từ (Chuẩn hóa chữ hoa thường, khoảng cách)
+          if (userAnswers[q.q_number] && userAnswers[q.q_number].toLowerCase() === q.correct_short.toLowerCase()) {
+            isCorrect = true;
+            totalEarnedScore += maxScore;
+          }
+        } else if (q.q_type === 'true_false') {
+          // Chấm theo thang điểm lũy tiến chuyên đề Đúng / Sai
+          let subCorrectCount = 0;
+          const ans = userAnswers[q.q_number];
+          const correct = q.correct_tf;
+
+          if (ans.a === correct.a) subCorrectCount++;
+          if (ans.b === correct.b) subCorrectCount++;
+          if (ans.c === correct.c) subCorrectCount++;
+          if (ans.d === correct.d) subCorrectCount++;
+
+          let coefficient = 0; // Hệ số lũy tiến theo số ý đúng
+          if (subCorrectCount === 1) coefficient = 0.1;
+          else if (subCorrectCount === 2) coefficient = 0.25;
+          else if (subCorrectCount === 3) coefficient = 0.5;
+          else if (subCorrectCount === 4) {
+            coefficient = 1.0;
+            isCorrect = true;
+          }
+
+          totalEarnedScore += coefficient * maxScore;
+        }
+
+        // Tô màu đỏ / xanh cho thẻ câu hỏi
+        if (isCorrect) {
+          box.classList.add('correct');
+          totalCorrectCount++;
+        } else {
+          box.classList.add('incorrect');
+          // Chỉ hiển thị giải thích chi tiết cho những câu trả lời sai
+          explain.style.display = 'block';
+        }
+      });
+
+      // Hiển thị khung kết quả lên màn hình
+      const resultBox = document.getElementById('result-box');
+      resultBox.style.display = 'block';
+      document.getElementById('result-score').innerText = `${totalEarnedScore.toFixed(2)} / ${quizData.total_score} điểm`;
+      document.getElementById('result-detail').innerText = `Bạn đã làm đúng hoàn hảo ${totalCorrectCount} / ${quizData.questions.length} câu`;
+
+      // Cuộn lên đầu trang answersheet để phụ huynh học sinh xem điểm số
+      document.getElementById('pane-sheet-container').scrollTop = 0;
+
+      // Yêu cầu thư viện MathJax biên dịch lại các công thức toán vừa hiển thị
+      if (window.MathJax) {
+        window.MathJax.typesetPromise();
+      }
+    }
+
+    // Xử lý chuyển đổi Tab trên Giao diện Điện thoại
+    function switchTab(tabName) {
+      const tabPdf = document.getElementById('tab-pdf');
+      const tabSheet = document.getElementById('tab-sheet');
+      const panePdf = document.getElementById('pane-pdf-container');
+      const paneSheet = document.getElementById('pane-sheet-container');
+
+      if (tabName === 'pdf') {
+        tabPdf.classList.add('active');
+        tabSheet.classList.remove('active');
+        panePdf.classList.remove('hidden-mobile');
+        paneSheet.classList.add('hidden-mobile');
+      } else {
+        tabSheet.classList.add('active');
+        tabPdf.classList.remove('active');
+        paneSheet.classList.remove('hidden-mobile');
+        panePdf.classList.add('hidden-mobile');
+      }
+    }
+
+    // Tự động kiểm tra trạng thái màn hình khi khởi chạy
+    function checkResponsive() {
+      if (window.innerWidth <= 768) {
+        switchTab('pdf'); // Trên điện thoại thì ưu tiên mở Tab đề bài trước
+      } else {
+        document.getElementById('pane-pdf-container').classList.remove('hidden-mobile');
+        document.getElementById('pane-sheet-container').classList.remove('hidden-mobile');
+      }
+    }
+
+    window.addEventListener('resize', checkResponsive);
+    document.addEventListener('DOMContentLoaded', () => {
+      loadQuizRoom();
+      checkResponsive();
+    });
+  </script>
+</body>
+</html>
