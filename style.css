@@ -821,3 +821,265 @@ footer a {
   object-fit: contain; /* Giữ nguyên tỉ lệ ảnh không bị móp méo */
   border-radius: 4px; /* Bo góc nhẹ cho ảnh logo */
 }
+/* ==========================================================================
+   GIAO DIỆN EDTECH CAO CẤP TOÁN ANH VIỆT (PHONG CÁCH SẠCH - LƯỚI DESCARTES)
+   ========================================================================== */
+
+/* Thết lập font chữ Inter chuẩn mực */
+body {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  background-color: #ffffff;
+  color: #1e293b;
+}
+
+/* 1. Header tinh tế, mảnh và chuyên nghiệp */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* 2. Nền lưới tọa độ Descartes mờ ẩn sau phần Hero */
+.hero-descartes {
+  position: relative;
+  padding: 100px 20px;
+  background-color: #ffffff;
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+  background-position: center center;
+  border-bottom: 1px solid #f1f5f9;
+  text-align: center;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: #f0f9ff;
+  color: #0284c7;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid rgba(2, 132, 199, 0.1);
+  margin-bottom: 25px;
+}
+
+.hero-title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+.hero-title .text-accent {
+  color: #0284c7;
+}
+
+.hero-subtitle {
+  font-size: 1.05rem;
+  color: #64748b;
+  max-width: 580px;
+  margin: 0 auto 35px auto;
+  line-height: 1.6;
+}
+
+/* 3. Thanh tìm kiếm ID phẳng cao cấp */
+.search-box-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  transition: all 0.3s ease;
+}
+
+.search-form:focus-within {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+}
+
+.search-icon {
+  font-size: 1.1rem;
+  margin-left: 12px;
+  color: #94a3b8;
+}
+
+.search-form input {
+  flex: 1;
+  border: none;
+  padding: 12px 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  color: #334155;
+  background: transparent;
+}
+
+.search-form input::placeholder {
+  color: #94a3b8;
+}
+
+.search-btn {
+  background: #0f172a;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.search-btn:hover {
+  background: #0284c7;
+}
+
+.search-error-msg {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-top: 10px;
+  text-align: left;
+  padding-left: 15px;
+  display: none;
+}
+
+/* 4. Thẻ tài liệu mới sang trọng */
+.recent-docs {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 0 20px;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.section-header h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 10px;
+}
+
+.section-header .divider {
+  width: 40px;
+  height: 3px;
+  background: #0284c7;
+  margin: 0 auto;
+  border-radius: 10px;
+}
+
+.doc-card-premium {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.01);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.doc-card-premium:hover {
+  transform: translateY(-6px);
+  border-color: #cbd5e1;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+}
+
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.card-badge {
+  background: #f0f9ff;
+  color: #0284c7;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.card-id {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+}
+
+.card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.4;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+}
+
+.doc-card-premium:hover .card-title {
+  color: #0284c7;
+}
+
+.card-desc {
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.card-footer {
+  border-top: 1px solid #f8fafc;
+  padding-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.card-action-btn {
+  color: #0284c7;
+  font-weight: 700;
+  transition: transform 0.2s;
+}
+
+.doc-card-premium:hover .card-action-btn {
+  transform: translateX(4px);
+}
+
+/* Footer gọn gàng hơn */
+.site-footer {
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+  padding: 40px 20px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
