@@ -1,40 +1,55 @@
 // api/callback.js
+import axios from 'axios';
+
 export default async function handler(req, res) {
   const { code } = req.query;
-  const client_id = process.env.OAUTH_CLIENT_ID;
-  const client_secret = process.env.OAUTH_CLIENT_SECRET;
+
+  if (!code) {
+    return res.status(400).send('Missing code parameter');
+  }
 
   try {
-    const response = await fetch("https://github.com/login/oauth/access_token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        client_id,
-        client_secret,
+    // 1. Gửi yêu cầu lấy Access Token từ GitHub bằng các biến bảo mật đã cài trên Vercel
+    const response = await axios.post(
+      'https://github.com/login/oauth/access_token',
+      {
+        client_id: process.env.OAUTH_CLIENT_ID,
+        client_secret: process.env.OAUTH_CLIENT_SECRET,
         code,
-      }),
-    });
+      },
+      {
+        headers: {
+          accept: 'application/json',
+        },
+      }
+    );
 
-    const data = await response.json();
+    const { access_token, error, error_description } = response.data;
 
-    if (data.error) {
-      return res.status(400).send(`Xác thực thất bại: ${data.error_description}`);
+    if (error) {
+      return res.status(400).send(`GitHub OAuth Error: ${error_description || error}`);
     }
 
-    // Trả kết quả về cho Netlify/Decap CMS trên trình duyệt
-    res.send(`
+    // 2. Trả kết quả Token về cho Decap CMS ở trang Admin để tự động đăng nhập và đóng pop-up
+    const content = `
       <script>
-        const target = window.opener ? window.opener : window.parent;
-        target.postMessage('authorization:github:success:${JSON.stringify({
-          token: data.access_token,
-          provider: "github",
-        })}', '*');
+        const target = window.opener || window.parent;
+        if (target) {
+          target.postMessage(
+            "authorization:github:success:${JSON.stringify({ token: access_token, provider: 'github' })}",
+            "*"
+          );
+        } else {
+          document.body.innerHTML = "Đăng nhập thành công! Bạn có thể đóng cửa sổ này.";
+        }
       </script>
-    `);
-  } catch (error) {
-    res.status(500).send("Lỗi hệ thống cổng xác thực.");
+    `;
+
+    res.setHeader('Content-Type', 'text/html');
+    return res.status(200).send(content);
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send(`Internal Server Error: ${err.message}`);
   }
 }
