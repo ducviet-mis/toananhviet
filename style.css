@@ -1475,27 +1475,27 @@ body {
 
 /* Vị trí tinh tế 4 cuốn sách xung quanh khối text */
 .book-left-top {
-  width: px;
+  width: 200px;
   left: 8%;
   top: 15%;
 }
 
 .book-left-bottom {
-  width: 160px;
+  width: 200px;
   left: 12%;
-  bottom: 45%;
+  bottom: 40%;
 }
 
 .book-right-top {
-  width: 160px;
+  width: 200px;
   right: 8%;
   top: 18%;
 }
 
 .book-right-bottom {
-  width: 160px;
+  width: 200px;
   right: 12%;
-  bottom: 45%;
+  bottom: 40%;
 }
 
 /* 3. BẢO VỆ VÙNG TIÊU ĐỀ TRUNG TÂM */
