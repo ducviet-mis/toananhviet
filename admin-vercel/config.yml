@@ -1,0 +1,10 @@
+backend:
+  name: github
+  repo: ducviet-mis1/toananhviet # Đúng với tên repo GitHub của bạn
+  branch: main # Hoặc master tùy theo nhánh của bạn
+  base_url: https://toananhviet.vercel.app # Trang web Vercel của bạn
+  auth_endpoint: api/auth
+
+# CÁC PHẦN CẤU HÌNH COLLECTIONS BÊN DƯỚI:
+# Bạn chỉ cần copy y nguyên toàn bộ phần cấu hình bên dưới (từ "media_folder", "collections"...) 
+# của file config.yml cũ dán vào đây là xong.
