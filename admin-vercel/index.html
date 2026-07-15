@@ -4,11 +4,19 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Toán Anh Việt - Admin Vercel</title>
-    <!-- Chỉ định rõ đường dẫn file cấu hình -->
     <link href="/admin-vercel/config.yml" type="yaml" rel="cms-config-url" />
   </head>
   <body>
-    <!-- Import thư viện Decap CMS ở cuối body để đảm bảo DOM đã sẵn sàng -->
-    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <!-- Sử dụng bản CDN chính thức ổn định nhất của Decap CMS -->
+    <script src="https://unpkg.com/decap-cms@^3.10.0/dist/decap-cms.js"></script>
+    
+    <!-- Đoạn mã "mồi" để cưỡng ép trang chính lắng nghe token từ pop-up nếu Decap bị đơ -->
+    <script>
+      window.addEventListener('message', function(event) {
+        if (event.data && event.data.indexOf('authorization:github:success:') === 0) {
+          console.log("Đã nhận tín hiệu đăng nhập từ callback!");
+        }
+      }, false);
+    </script>
   </body>
 </html>
