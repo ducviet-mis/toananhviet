@@ -833,16 +833,81 @@ body {
 }
 
 /* 1. Header tinh tế, mảnh và chuyên nghiệp */
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid #f1f5f9;
+.site-header, header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 9999 !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
+  transition: all 0.3s ease !important;
+}
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
+.nav-menu li a {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569 !important;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 8px !important;
+  background: transparent !important; /* Xóa bỏ màu nền thô cũ */
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+/* Hiệu ứng di chuột qua các tab mềm mại */
+.nav-menu li a:hover {
+  background: #f1f5f9 !important;
+  color: #0284c7 !important;
+}
+
+/* Định dạng tab đang active */
+.nav-menu li a.active {
+  background: #e0f2fe !important;
+  color: #0369a1 !important;
+  font-weight: 600 !important;
+}
+
+/* Định dạng nút Lớp học gia sư / Nút nổi bật */
+.nav-menu li a.highlight {
+  background: #0284c7 !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+.nav-menu li a.highlight:hover {
+  background: #0369a1 !important;
+}
+
+/* Hiệu ứng di chuột qua các tab mềm mại */
+.nav-menu li a:hover {
+  background: #f1f5f9 !important;
+  color: #0284c7 !important;
+}
+
+/* Định dạng tab đang active */
+.nav-menu li a.active {
+  background: #e0f2fe !important;
+  color: #0369a1 !important;
+  font-weight: 600 !important;
+}
+
+/* Định dạng nút Lớp học gia sư / Nút nổi bật */
+.nav-menu li a.highlight {
+  background: #0284c7 !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+.nav-menu li a.highlight:hover {
+  background: #0369a1 !important;
+}
 /* 2. Nền lưới tọa độ Descartes mờ ẩn sau phần Hero */
 .hero-descartes {
   position: relative;
