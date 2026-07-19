@@ -161,11 +161,48 @@
         }
       });
 
-      renderDocuments();
-    }
+    // 3. Hàm render danh sách tài liệu ra cấu trúc HTML chuẩn của bạn
+    function renderDocuments() {
+      const container = document.getElementById('category-docs-container');
+      container.innerHTML = '';
 
-    // Chạy đồng bộ dữ liệu ngay khi trang web tải xong
-    document.addEventListener("DOMContentLoaded", fetchCategoryDocuments);
-  </script>
-</body>
-</html>
+      // Thực hiện bộ lọc theo Loại tài liệu (loai_de) khi click các nút bấm
+      const filtered = allDocuments.filter(doc => {
+        if (activeFilter === 'Tất cả') return true;
+        return doc.loai_de === activeFilter;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Không tìm thấy tài liệu nào thuộc danh mục này.</p>';
+        return;
+      }
+
+      filtered.forEach(doc => {
+        // Tự động lấy ảnh mẫu mặc định nếu không có ảnh tự chế
+        const thumbnailSrc = doc.anh_bia || 'https://via.placeholder.com/300x400?text=TailieuToan';
+        
+        // Tạo đường link chuyển tiếp sang trang detail.html
+        // Chúng ta sẽ truyền link_file, tieu_de, mo_ta, lop, loai_de qua URL để trang detail.html nhận diện
+        const detailLink = `detail.html?file=${encodeURIComponent(doc.link_file || '')}&title=${encodeURIComponent(doc.tieu_de || '')}&desc=${encodeURIComponent(doc.mo_ta || '')}&grade=${encodeURIComponent(doc.lop || '')}&cat=${encodeURIComponent(doc.loai_de || '')}&thumbnail=${encodeURIComponent(thumbnailSrc)}`;
+
+        const cardHtml = `
+          <div class="doc-card" style="cursor: pointer;" onclick="window.location.href='${detailLink}'">
+            <div class="doc-thumbnail-container">
+              <img class="doc-thumbnail" src="${thumbnailSrc}" alt="${doc.tieu_de}">
+            </div>
+            <div class="doc-info">
+              <div class="doc-badges">
+                <span class="badge badge-grade">Toán ${doc.lop}</span>
+                <span class="badge badge-cat">${doc.loai_de}</span>
+              </div>
+              <h3 class="doc-title">${doc.tieu_de}</h3>
+              <div class="doc-footer">
+                <span class="doc-date">🚀 Trạng thái: Sẵn sàng</span>
+                <a href="${detailLink}" class="btn-download" onclick="event.stopPropagation();">📖 Xem & Tải tài liệu</a>
+              </div>
+            </div>
+          </div>
+        `;
+        container.innerHTML += cardHtml;
+      });
+    }
