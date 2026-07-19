@@ -157,7 +157,7 @@
 
   <main>
     <div class="login-wrapper">
-      <h2 style="margin:0 0 10px 0; font-size:24px; color:#1e293b;">Học Viên Đăng Nhập</h2>
+      <h2 style="margin:0 0 10px 0; font-size:24px; color:#1e293b;">Đăng Nhập</h2>
       <p style="margin:0 0 30px 0; color:#64748b; font-size:14px;">Hệ thống tài liệu độc quyền Toán Anh Việt</p>
 
       <form id="login-form-submit" onsubmit="handleUserLogin(event)">
@@ -172,7 +172,7 @@
 
         <button type="submit" id="btn-submit-login" class="btn-submit-premium">
           <div id="btn-loading-spinner" class="spinner"></div>
-          <span id="btn-text-display">Xác nhận đăng nhập</span>
+          <span id="btn-text-display">Đăng nhập</span>
         </button>
       </form>
 
@@ -181,7 +181,7 @@
   </main>
 
   <script>
-    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+   const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -197,39 +197,39 @@
       const btnText = document.getElementById('btn-text-display');
       const toast = document.getElementById('success-toast');
 
-      // 1. Kích hoạt trạng thái xoay vòng mượt mà
       errorDiv.style.display = 'none';
       btnSubmit.disabled = true;
       spinner.style.display = 'block';
-    
+      
 
-      // 2. Gọi lệnh lên hệ thống Supabase xác thực
       const { data, error } = await _supabase.auth.signInWithPassword({
         email: email,
         password: password
       });
 
       if (error) {
-        // Tắt loading nếu gõ sai mật khẩu hoặc lỗi
         btnSubmit.disabled = false;
         spinner.style.display = 'none';
-        btnText.innerText = 'Xác nhận đăng nhập';
-        
+        btnText.innerText = 'Đăng nhập';
         errorDiv.innerText = 'Mật khẩu hoặc tài khoản chưa chính xác!';
         errorDiv.style.display = 'block';
       } else {
-        // 3. Nếu đúng mật khẩu -> Kích hoạt bảng trượt xanh lá cây từ trên xuống cực mượt
         btnText.innerText = 'Đăng nhập thành công!';
         toast.classList.add('show');
 
-        // Chờ 1.5 giây cho hiệu ứng chạy mượt rồi mới chuyển hướng về trang chủ
+        // Ghi nhớ phiên đăng nhập tức thì cho máy tính
+        localStorage.setItem('tav_user_session', JSON.stringify({
+          name: data.user.user_metadata.full_name || 'Học viên',
+          email: data.user.email,
+          avatar: data.user.user_metadata.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(data.user.email)}`
+        }));
+
         setTimeout(() => {
           window.location.href = 'index.html';
         }, 1500);
       }
     }
 
-    // Tự động kiểm tra nếu học sinh đăng nhập rồi thì đá thẳng ra trang chủ luôn
     async function checkActiveSession() {
       const { data: { user } } = await _supabase.auth.getUser();
       if (user) {
