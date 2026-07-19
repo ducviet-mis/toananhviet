@@ -60,7 +60,7 @@
     // 1. Cấu hình thông tin kết nối Supabase của dự án toananhviet
     const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
     
-    // Bạn hãy vào Project Settings > API lấy chuỗi "anon public key" dài ngoằng dán thay thế vào đây nhé
+    // ĐIỀN MÃ KEY CỦA BẠN VÀO GIỮA HAI DẤU NHÁY ĐƠN DƯỚI ĐÂY
     const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2'; 
 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -80,16 +80,14 @@
     const navActiveBtn = document.getElementById(`nav-g-${currentGradeNum}`);
     if (navActiveBtn) navActiveBtn.classList.add('active');
 
-    // 2. Hàm lấy dữ liệu trực tiếp từ bảng của Supabase
+    // 2. Hàm lấy dữ liệu trực tiếp từ bảng của Supabase (Cú pháp chuẩn không dùng dấu nháy kép)
     async function fetchCategoryDocuments() {
       const container = document.getElementById('category-docs-container');
       try {
-        // Lấy dữ liệu từ bảng "toananhviet", lọc đúng cột "lop" trùng với lớp đang xem (Ví dụ: "Toán 8" hoặc "8")
-        // Câu lệnh .or() này giúp lọc chính xác kể cả khi bạn nhập ở cột lop là "Toán 8" hay chỉ gõ số "8"
         const { data, error } = await _supabase
           .from('toananhviet')
           .select('*')
-          .or(`lop.eq.${currentGradeLabel},lop.eq.${currentGradeNum}`)
+          .or(`lop.eq.${currentGradeLabel},lop.eq.${currentGradeNum}`);
 
         if (error) throw error;
 
@@ -101,67 +99,7 @@
       }
     }
 
-    // 3. Hàm render danh sách tài liệu ra cấu trúc HTML cũ của bạn
-    function renderDocuments() {
-      const container = document.getElementById('category-docs-container');
-      container.innerHTML = '';
-
-      // Thực hiện bộ lọc theo Loại tài liệu (loai_de) khi click các nút bấm
-      const filtered = allDocuments.filter(doc => {
-        if (activeFilter === 'Tất cả') return true;
-        return doc.loai_de === activeFilter;
-      });
-
-      if (filtered.length === 0) {
-        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Không tìm thấy tài liệu nào thuộc danh mục này.</p>';
-        return;
-      }
-
-      filtered.forEach(doc => {
-        // Nếu không có link ảnh bia tự chế, hệ thống tự động lấy ảnh mẫu mặc định "Math Genius" cũ
-        const thumbnailSrc = doc.anh_bia || 'https://via.placeholder.com/300x400?text=TailieuToan';
-        
-        // Học sinh click vào thẻ card hoặc nút bấm sẽ mở trực tiếp file PDF/Word từ Supabase Storage
-        const fileLink = doc.link_file || '#';
-
-        const cardHtml = `
-          <div class="doc-card" style="cursor: pointer;" onclick="window.open('${fileLink}', '_blank')">
-            <div class="doc-thumbnail-container">
-              <img class="doc-thumbnail" src="${thumbnailSrc}" alt="${doc.tieu_de}">
-            </div>
-            <div class="doc-info">
-              <div class="doc-badges">
-                <span class="badge badge-grade">Toán ${doc.lop}</span>
-                <span class="badge badge-cat">${doc.loai_de}</span>
-              </div>
-              <h3 class="doc-title">${doc.tieu_de}</h3>
-              <div class="doc-footer">
-                <span class="doc-date">🚀 Trạng thái: Sẵn sàng</span>
-                <a href="${fileLink}" target="_blank" class="btn-download" onclick="event.stopPropagation();">📖 Xem & Tải tài liệu</a>
-              </div>
-            </div>
-          </div>
-        `;
-        container.innerHTML += cardHtml;
-      });
-    }
-
-    // 4. Hàm đổi bộ lọc loại tài liệu khi bạn bấm các nút
-    function filterCategory(categoryName) {
-      activeFilter = categoryName;
-      
-      const buttons = document.querySelectorAll('.filter-btn');
-      buttons.forEach(btn => {
-        if (btn.innerText.includes(categoryName.replace('Đề thi ', '').replace('Đề cương học kì ', 'Đề cương HK'))) {
-          btn.classList.add('active');
-        } else if (categoryName === 'Tất cả' && btn.innerText === 'Tất cả') {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
-      });
-
-    // 3. Hàm render danh sách tài liệu ra cấu trúc HTML chuẩn của bạn
+    // 3. Hàm render danh sách tài liệu ra cấu trúc HTML kết nối với trang detail.html
     function renderDocuments() {
       const container = document.getElementById('category-docs-container');
       container.innerHTML = '';
@@ -181,8 +119,7 @@
         // Tự động lấy ảnh mẫu mặc định nếu không có ảnh tự chế
         const thumbnailSrc = doc.anh_bia || 'https://via.placeholder.com/300x400?text=TailieuToan';
         
-        // Tạo đường link chuyển tiếp sang trang detail.html
-        // Chúng ta sẽ truyền link_file, tieu_de, mo_ta, lop, loai_de qua URL để trang detail.html nhận diện
+        // Tạo đường link chuyển tiếp sang trang detail.html kèm dữ liệu
         const detailLink = `detail.html?file=${encodeURIComponent(doc.link_file || '')}&title=${encodeURIComponent(doc.tieu_de || '')}&desc=${encodeURIComponent(doc.mo_ta || '')}&grade=${encodeURIComponent(doc.lop || '')}&cat=${encodeURIComponent(doc.loai_de || '')}&thumbnail=${encodeURIComponent(thumbnailSrc)}`;
 
         const cardHtml = `
@@ -206,3 +143,27 @@
         container.innerHTML += cardHtml;
       });
     }
+
+    // 4. Hàm đổi bộ lọc loại tài liệu khi bạn bấm các nút
+    function filterCategory(categoryName) {
+      activeFilter = categoryName;
+      
+      const buttons = document.querySelectorAll('.filter-btn');
+      buttons.forEach(btn => {
+        if (btn.innerText.includes(categoryName.replace('Đề thi ', '').replace('Đề cương học kì ', 'Đề cương HK'))) {
+          btn.classList.add('active');
+        } else if (categoryName === 'Tất cả' && btn.innerText === 'Tất cả') {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      renderDocuments();
+    }
+
+    // Chạy đồng bộ dữ liệu ngay khi trang web tải xong
+    document.addEventListener("DOMContentLoaded", fetchCategoryDocuments);
+  </script>
+</body>
+</html>
