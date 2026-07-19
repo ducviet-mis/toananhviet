@@ -104,14 +104,14 @@
       
       <form id="login-form" onsubmit="handleLogin(event)">
         <div class="form-group">
-          <label for="email">Email học sinh (Do thầy cấp):</label>
-          <input type="email" id="email" placeholder="viết_liền_không_dấu@toananhviet.com" required>
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="Email" required>
         </div>
         <div class="form-group">
-          <label for="password">Mật khẩu:</label>
+          <label for="password">Mật khẩu</label>
           <input type="password" id="password" placeholder="••••••••" required>
         </div>
-        <button type="submit" class="btn-login">🔑 Xác nhận đăng nhập</button>
+        <button type="submit" class="btn-login">Đăng nhập</button>
       </form>
       
       <div id="message-area" class="login-message"></div>
@@ -148,10 +148,10 @@
 
       if (error) {
         msgArea.style.color = '#ef4444';
-        msgArea.innerText = 'Sai tài khoản hoặc mật khẩu! Vui lòng liên hệ thầy Việt.';
+        msgArea.innerText = 'Sai tài khoản hoặc mật khẩu!';
       } else {
         msgArea.style.color = '#22c55e';
-        msgArea.innerText = 'Đăng nhập thành công! Đang chuyển hướng...';
+        msgArea.innerText = 'Đăng nhập thành công!';
         
         // Chờ hiệu ứng thông báo hiển thị xong rồi quay trở lại trang chủ
         setTimeout(() => {
