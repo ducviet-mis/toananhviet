@@ -225,7 +225,7 @@
 
       // Tiến hành đưa file lên Storage Bucket tên là avatars
       const { data, error } = await _supabase.storage
-        .from('avatars')
+        .from('avatar')
         .upload(filePath, file, { upsert: true });
 
       if (error) {
@@ -235,7 +235,7 @@
       }
 
       // Lấy đường dẫn URL Public trực tiếp của hình ảnh vừa tải lên
-      const { data: { publicUrl } } = _supabase.storage.from('avatars').getPublicUrl(filePath);
+      const { data: { publicUrl } } = _supabase.storage.from('avatar').getPublicUrl(filePath);
       
       document.getElementById('p-avatar-url').value = publicUrl;
       document.getElementById('user-avatar').src = publicUrl;
