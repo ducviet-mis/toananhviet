@@ -315,5 +315,93 @@
       }
     })();
   </script>
+  <!-- =========================================================================
+       KHỐI ĐỒNG BỘ MENU MODERN TỐC ĐỘ CAO CHO TRANG THI ONLINE (FIX TRIỆT ĐỂ MẤT AVATAR)
+       ========================================================================= -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (async function initQuizListAuth() {
+      const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+      const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+      const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+      // Đọc nhanh bộ nhớ máy tính để hiển thị Avatar ngay lập tức không giật lag
+      const cachedUser = localStorage.getItem('tav_user_session');
+      if (cachedUser) {
+        try {
+          const u = JSON.parse(cachedUser);
+          drawDropdownUI(u.name, u.email, u.avatar);
+        } catch(e) {}
+      }
+
+      // Xác thực lại trạng thái tài khoản ngầm từ hệ thống Supabase
+      const { data: { user } } = await _supabase.auth.getUser();
+      const loginLinks = document.querySelectorAll('a[href="login.html"]');
+
+      if (user) {
+        const meta = user.user_metadata || {};
+        const dName = meta.full_name || 'Học viên';
+        const aSrc = meta.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
+        
+        localStorage.setItem('tav_user_session', JSON.stringify({ name: dName, email: user.email, avatar: aSrc }));
+        drawDropdownUI(dName, user.email, aSrc);
+      } else {
+        localStorage.removeItem('tav_user_session');
+        if (loginLinks.length > 0) {
+          loginLinks[0].parentElement.innerHTML = `<a href="login.html">Đăng nhập</a>`;
+        }
+      }
+
+      function drawDropdownUI(name, email, avatar) {
+        const targetLinks = document.querySelectorAll('a[href="login.html"]');
+        if (targetLinks.length === 0) return;
+        const targetLi = targetLinks[0].parentElement;
+
+        if (!document.getElementById('instant-quiz-style')) {
+          const style = document.createElement('style');
+          style.id = 'instant-quiz-style';
+          style.innerHTML = `
+            .nav-menu li a[href="quiz-list.html"] { background: #e0f2fe !important; color: #0369a1 !important; font-weight: 600 !important; }
+            .user-profile-dropdown { position: relative; display: inline-block; cursor: pointer; margin-left: 8px; }
+            .menu-avatar-img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0284c7; object-fit: cover; vertical-align: middle; transition: all 0.2s ease; }
+            .user-profile-dropdown:hover .menu-avatar-img { transform: scale(1.05); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15); }
+            .dropdown-menu-box { display: none; position: absolute; right: 0; top: 100%; background-color: white; min-width: 210px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 10px; padding: 8px 0; z-index: 9999; margin-top: 12px; border: 1px solid #e2e8f0; transform-origin: top right; animation: fadeInDropdown 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+            @keyframes fadeInDropdown { from { opacity: 0; transform: scale(0.95) translateY(-5px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+            .user-profile-dropdown:hover .dropdown-menu-box { display: block; }
+            .dropdown-info-header { padding: 10px 16px; border-bottom: 1px solid #f1f5f9; margin-bottom: 4px; }
+            .dropdown-info-name { font-weight: 600; color: #1e293b; font-size: 14px; }
+            .dropdown-info-email { color: #64748b; font-size: 12px; }
+            .dropdown-item-link { display: block; padding: 10px 16px; color: #334155 !important; font-size: 14px; text-decoration: none; transition: background 0.15s; text-align: left; }
+            .dropdown-item-link:hover { background-color: #f1f5f9; color: #0284c7 !important; }
+            .dropdown-item-logout { border-top: 1px solid #f1f5f9; margin-top: 4px; color: #ef4444 !important; }
+            .dropdown-item-logout:hover { background-color: #fef2f2; }
+          `;
+          document.head.appendChild(style);
+        }
+
+        targetLi.innerHTML = `
+          <div class="user-profile-dropdown">
+            <img class="menu-avatar-img" src="${avatar}" alt="Avatar">
+            <div class="dropdown-menu-box">
+              <div class="dropdown-info-header">
+                <div class="dropdown-info-name">${name}</div>
+                <div class="dropdown-info-email">${email}</div>
+              </div>
+              <a href="profile.html" class="dropdown-item-link">Thông tin cá nhân</a>
+              <a href="category.html?grade=8" class="dropdown-item-link">Kho bài tập của tôi</a>
+              <a href="#" id="menu-btn-logout-action" class="dropdown-item-link dropdown-item-logout">Đăng xuất</a>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('menu-btn-logout-action')?.addEventListener('click', async (e) => {
+          e.preventDefault();
+          localStorage.removeItem('tav_user_session');
+          await _supabase.auth.signOut();
+          window.location.reload();
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
