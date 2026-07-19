@@ -876,14 +876,17 @@ body {
   font-weight: 600 !important;
 }
 
-/* Định dạng nút Lớp học gia sư / Nút nổi bật */
+/* ĐỒNG BỘ NÚT LỚP HỌC GIA SƯ GIỐNG CÁC NÚT KHÁC */
 .nav-menu li a.highlight {
-  background: #0284c7 !important;
-  color: white !important;
-  font-weight: 600 !important;
+  background: transparent !important;
+  color: #475569 !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
 }
+
 .nav-menu li a.highlight:hover {
-  background: #0369a1 !important;
+  background: #f1f5f9 !important;
+  color: #0284c7 !important;
 }
 
 /* Hiệu ứng di chuột qua các tab mềm mại */
