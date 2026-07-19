@@ -1625,3 +1625,23 @@ body {
     display: none !important;
   }
 }
+/* ÉP BUỘC ĐỒNG BỘ NÚT LỚP HỌC GIA SƯ GIỐNG 100% CÁC NÚT KHÁC */
+.nav-menu li a.highlight, 
+.nav-menu li a[href="#register"], 
+.nav-menu li a[href="index.html#register"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #475569 !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+/* Hiệu ứng hover đồng bộ */
+.nav-menu li a.highlight:hover, 
+.nav-menu li a[href="#register"]:hover, 
+.nav-menu li a[href="index.html#register"]:hover {
+  background: #f1f5f9 !important;
+  background-color: #f1f5f9 !important;
+  color: #0284c7 !important;
+}
