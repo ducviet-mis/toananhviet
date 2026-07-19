@@ -3,287 +3,350 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Danh mục tài liệu - Gia sư Toán THCS</title>
+  <title>Danh mục tài liệu - Gia sư Toán Anh Việt</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* CANH TÂN GIAO DIỆN THANH MENU TỐI GIẢN & HIỆN ĐẠI */
+    .site-header {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      transition: all 0.3s ease;
+    }
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+    }
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .nav-menu li a {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #475569;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .nav-menu li a:hover {
+      background: #f1f5f9;
+      color: #0284c7;
+    }
+    .nav-menu li a.active {
+      background: #e0f2fe;
+      color: #0369a1;
+      font-weight: 600;
+    }
+
+    /* ĐỔI MỚI DIỆN MẠO TAB HỆ THỐNG PHÂN LOẠI */
+    .category-tabs-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 30px auto;
+      flex-wrap: wrap;
+      max-width: 900px;
+    }
+    .tab-btn-modern {
+      font-family: 'Inter', sans-serif;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #64748b;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .tab-btn-modern:hover {
+      border-color: #cbd5e1;
+      color: #334155;
+      background: #f8fafc;
+      transform: translateY(-1px);
+    }
+    .tab-btn-modern.active {
+      background: #0284c7;
+      border-color: #0284c7;
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    }
+
+    /* AVATAR DROPDOWN UX SIÊU MƯỢT */
+    .user-profile-dropdown {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    .menu-avatar-img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid #0284c7;
+      object-fit: cover;
+      vertical-align: middle;
+      transition: all 0.2s ease;
+    }
+    .user-profile-dropdown:hover .menu-avatar-img {
+      transform: scale(1.05);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+    .dropdown-menu-box {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background-color: white;
+      min-width: 210px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      padding: 8px 0;
+      z-index: 9999;
+      margin-top: 12px;
+      border: 1px solid #e2e8f0;
+      transform-origin: top right;
+      animation: fadeInDropdown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes fadeInDropdown {
+      from { opacity: 0; transform: scale(0.95) translateY(-5px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .user-profile-dropdown:hover .dropdown-menu-box {
+      display: block;
+    }
+    .dropdown-info-header {
+      padding: 10px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      margin-bottom: 4px;
+    }
+    .dropdown-info-name { font-weight: 600; color: #1e293b; font-size: 14px; }
+    .dropdown-info-email { color: #64748b; font-size: 12px; }
+    .dropdown-item-link {
+      display: block;
+      padding: 10px 16px;
+      color: #334155 !important;
+      font-size: 14px;
+      text-decoration: none;
+      transition: background 0.15s;
+      text-align: left;
+    }
+    .dropdown-item-link:hover {
+      background-color: #f1f5f9;
+      color: #0284c7 !important;
+    }
+    .dropdown-item-logout { border-top: 1px solid #f1f5f9; margin-top: 4px; color: #ef4444 !important; }
+    .dropdown-item-logout:hover { background-color: #fef2f2; }
+    
+    /* Vùng chứa danh sách tài liệu */
+    .category-main { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+    .category-title-section { text-align: center; margin-bottom: 30px; }
+    .category-title-section h1 { font-size: 28px; color: #1e293b; font-family: 'Inter', sans-serif; }
+  </style>
 </head>
 <body>
 
-  <!-- Thanh Menu -->
-  <header>
+  <!-- 1. HEADER ĐỒNG BỘ HIỆN ĐẠI -->
+  <header class="site-header">
     <nav class="nav-container">
       <a href="index.html" class="logo">
-  <img src="assets/logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
-  TOÁN ANH VIỆT
-</a>
-   <ul class="nav-menu">
+        <img src="assets/logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
+        TOÁN ANH VIỆT
+      </a>
+      <ul class="nav-menu" id="main-nav-menu">
         <li><a href="index.html">Trang chủ</a></li>
-        <li><a href="category.html?grade=6">Toán 6</a></li>
-        <li><a href="category.html?grade=7">Toán 7</a></li>
-        <li><a href="category.html?grade=8">Toán 8</a></li>
-        <li><a href="category.html?grade=9">Toán 9</a></li>
+        <li><a href="category.html?grade=6" id="nav-g6">Toán 6</a></li>
+        <li><a href="category.html?grade=7" id="nav-g7">Toán 7</a></li>
+        <li><a href="category.html?grade=8" id="nav-g8">Toán 8</a></li>
+        <li><a href="category.html?grade=9" id="nav-g9">Toán 9</a></li>
         <li><a href="quiz-list.html">Thi Online</a></li>
-        <li><a href="index.html#about">Lớp học Gia sư</a></li>
-        <li><a href="login.html">Đăng nhập</a></li>
+        <li><a href="index.html#register">Lớp học Gia sư</a></li>
+        <li id="auth-menu-item"><a href="login.html">Đăng nhập</a></li>
       </ul>
     </nav>
   </header>
 
-  <main>
-    <h2 class="section-title" id="category-title">Tài liệu học tập</h2>
-
-    <!-- Bộ lọc nhanh loại đề thi/ tài liệu -->
-    <div class="filter-container">
-      <button class="filter-btn active" onclick="filterCategory('Tất cả')">Tất cả</button>
-      <button class="filter-btn" onclick="filterCategory('Đề thi giữa kì 1')">Đề giữa kì 1</button>
-      <button class="filter-btn" onclick="filterCategory('Đề thi cuối kì 1')">Đề cuối kì 1</button>
-      <button class="filter-btn" onclick="filterCategory('Đề thi giữa kì 2')">Đề giữa kì 2</button>
-      <button class="filter-btn" onclick="filterCategory('Đề thi cuối kì 2')">Đề cuối kì 2</button>
-      <button class="filter-btn" onclick="filterCategory('Đề cương học kì 1')">Đề cương HK1</button>
-      <button class="filter-btn" onclick="filterCategory('Đề cương học kì 2')">Đề cương HK2</button>
-      <button class="filter-btn" onclick="filterCategory('Chuyên đề Toán')">Chuyên đề Toán</button>
+  <!-- 2. NỘI DUNG CHÍNH TRANG CATEGORY -->
+  <main class="category-main">
+    <div class="category-title-section">
+      <h1 id="category-page-heading">Tài liệu môn Toán</h1>
     </div>
 
-    <!-- Danh sách tài liệu -->
+    <!-- HỆ THỐNG PHÂN LOẠI TAB DIỄN HỌA MƯỢT MÀ -->
+    <div class="category-tabs-container">
+      <button class="tab-btn-modern active" onclick="filterDocs('all', this)">Tất cả</button>
+      <button class="tab-btn-modern" onclick="filterDocs('Giữa kì 1', this)">Đề giữa kì 1</button>
+      <button class="tab-btn-modern" onclick="filterDocs('Cuối kì 1', this)">Đề cuối kì 1</button>
+      <button class="tab-btn-modern" onclick="filterDocs('Giữa kì 2', this)">Đề giữa kì 2</button>
+      <button class="tab-btn-modern" onclick="filterDocs('Cuối kì 2', this)">Đề cuối kì 2</button>
+      <button class="tab-btn-modern" onclick="filterDocs('Đề cương', this)">Đề cương HK</button>
+      <button class="tab-btn-modern" onclick="filterDocs('Chuyên đề', this)">Chuyên đề Toán</button>
+    </div>
+
     <div class="doc-grid" id="category-docs-container">
-      <p style="text-align: center; grid-column: 1/-1;">Đang nạp danh sách tài liệu...</p>
+      <p style="text-align: center; grid-column: 1/-1; color: #64748b;">Đang tải danh mục tài liệu chuyên sâu...</p>
     </div>
   </main>
 
-  <footer>
-    <p>© 2026 Website Gia Sư Toán THCS. Phát triển bởi Gia Sư Toán.</p>
-    <p>Hotline/Zalo hỗ trợ: 09x.xxx.xxxx - Địa chỉ: Hà Nội</p>
+  <footer style="text-align: center; padding: 30px; color: #64748b; border-top: 1px solid #e2e8f0; margin-top: 60px;">
+    <p>© 2026 Website Gia Sư Toán Anh Việt. Thiết kế đồng bộ bởi Anh Việt.</p>
   </footer>
 
+  <!-- TÍNH NĂNG ĐỒNG BỘ TỐC ĐỘ CAO KHÔNG TRỄ 0.5S -->
   <script>
-    let allDocuments = []; // Mảng chứa dữ liệu của tài liệu đã lọc đúng khối lớp
-    let activeFilter = 'Tất cả';
+    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Đọc tham số lớp (ví dụ ?grade=6) trên thanh địa chỉ
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentGradeNum = urlParams.get('grade') || '6';
-    const currentGradeLabel = "Toán " + currentGradeNum;
-
-    // Cập nhật giao diện theo khối lớp đang chọn
-    document.getElementById('category-title').innerText = `Tài liệu môn ${currentGradeLabel}`;
-    
-    // Highlight menu tương ứng
-    const navActiveBtn = document.getElementById(`nav-g-${currentGradeNum}`);
-    if (navActiveBtn) navActiveBtn.classList.add('active');
-
-    async function fetchCategoryDocuments() {
-      const container = document.getElementById('category-docs-container');
-      try {
-        // Kết nối API GitHub để tìm tài liệu
-        const response = await fetch('https://api.github.com/repos/ducviet-mis/toananhviet/contents/documents');
-        if (!response.ok) throw new Error('Không thể kết nối đến máy chủ chứa file.');
-
-        const files = await response.json();
-        const jsonFiles = files.filter(file => file.name.endsWith('.json')).reverse();
-        
-        const tempDocs = [];
-        for (const file of jsonFiles) {
-          const res = await fetch(file.download_url);
-          const doc = await res.json();
-          // Chỉ lấy tài liệu đúng của lớp học này (Ví dụ: "Toán 8")
-          if (doc.grade === currentGradeLabel) {
-            // Đính kèm thêm download_url gốc của file JSON từ GitHub vào đối tượng dữ liệu
-            doc.rawJsonUrl = file.download_url;
-            tempDocs.push(doc);
-          }
-        }
-
-        allDocuments = tempDocs;
-        renderDocuments();
-      } catch (error) {
-        console.error(error);
-        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Lỗi khi tải dữ liệu từ máy chủ.</p>';
+    // BƯỚC THẦN TỐC: Đọc nhanh bộ nhớ máy tính để vẽ ngay Avatar lập tức
+    (function renderInstantAvatar() {
+      const cachedUser = localStorage.getItem('tav_user_session');
+      if (cachedUser) {
+        try {
+          const u = JSON.parse(cachedUser);
+          drawDropdownUI(u.name, u.email, u.avatar);
+        } catch(e) { console.log(e); }
       }
-    }
+    })();
 
-    // Hàm render danh sách tài liệu ra HTML (có lọc)
-    function renderDocuments() {
-      const container = document.getElementById('category-docs-container');
-      container.innerHTML = '';
-
-      // Thực hiện lọc theo Loại tài liệu
-      const filtered = allDocuments.filter(doc => {
-        if (activeFilter === 'Tất cả') return true;
-        return doc.category === activeFilter;
-      });
-
-      if (filtered.length === 0) {
-        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Không tìm thấy tài liệu nào thuộc danh mục này.</p>';
-        return;
-      }
-
-      filtered.forEach(doc => {
-        const detailLink = `detail.html?file=${encodeURIComponent(doc.rawJsonUrl)}`;
-        const cardHtml = `
-          <div class="doc-card" style="cursor: pointer;" onclick="window.location.href='${detailLink}'">
-            <div class="doc-thumbnail-container">
-              <img class="doc-thumbnail" src="${doc.thumbnail || 'https://via.placeholder.com/300x400?text=TailieuToan'}" alt="${doc.title}">
-            </div>
-            <div class="doc-info">
-              <div class="doc-badges">
-                <span class="badge badge-grade">${doc.grade}</span>
-                <span class="badge badge-cat">${doc.category}</span>
-              </div>
-              <h3 class="doc-title">${doc.title}</h3>
-              <div class="doc-footer">
-                <span class="doc-date">📅 Đăng: ${doc.date}</span>
-                <a href="${detailLink}" class="btn-download">📖 Xem & Tải tài liệu</a>
-              </div>
-            </div>
-          </div>
-        `;
-        container.innerHTML += cardHtml;
-      });
-    }
-
-    // Hàm đổi bộ lọc loại tài liệu khi bấm nút bấm
-    function filterCategory(categoryName) {
-      activeFilter = categoryName;
-      
-      const buttons = document.querySelectorAll('.filter-btn');
-      buttons.forEach(btn => {
-        if (btn.innerText.includes(categoryName.replace('Đề thi ', '').replace('Đề cương học kì ', 'Đề cương HK'))) {
-          btn.classList.add('active');
-        } else if (categoryName === 'Tất cả' && btn.innerText === 'Tất cả') {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
-      });
-
-      renderDocuments();
-    }
-
-    document.addEventListener("DOMContentLoaded", fetchCategoryDocuments);
-  </script>
-  <!-- Nhúng thư viện kiểm tra session và dựng Avatar Dropdown cao cấp cho trang danh mục -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    (async function buildAvatarDropdownMenu() {
-      const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
-      const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
-      const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+    // Kiểm tra chính xác lại session ngầm từ Supabase
+    async function verifyAuthSession() {
       const { data: { user } } = await _supabase.auth.getUser();
-      if (!user) return; 
+      const authLI = document.getElementById('auth-menu-item');
 
-      const loginLinks = document.querySelectorAll('a[href="login.html"]');
-      if (loginLinks.length === 0) return;
-      
-      const targetLi = loginLinks[0].parentElement; 
-      
-      const meta = user.user_metadata || {};
-      const displayName = meta.full_name || 'Học viên';
-      const avatarSrc = meta.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
+      if (user) {
+        const meta = user.user_metadata || {};
+        const dName = meta.full_name || 'Học viên';
+        const aSrc = meta.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
+        
+        // Cập nhật đè lại cache mới nhất
+        localStorage.setItem('tav_user_session', JSON.stringify({ name: dName, email: user.email, avatar: aSrc }));
+        drawDropdownUI(dName, user.email, aSrc);
+      } else {
+        localStorage.removeItem('tav_user_session');
+        authLI.innerHTML = `<a href="login.html">Đăng nhập</a>`;
+      }
+    }
 
-      const style = document.createElement('style');
-      style.innerHTML = `
-        .user-profile-dropdown {
-          position: relative;
-          display: inline-block;
-          cursor: pointer;
-        }
-        .menu-avatar-img {
-          width: 38px;
-          height: 38px;
-          border-radius: 50%;
-          border: 2px solid #0284c7;
-          object-fit: cover;
-          vertical-align: middle;
-          transition: transform 0.2s;
-        }
-        .user-profile-dropdown:hover .menu-avatar-img {
-          transform: scale(1.05);
-        }
-        .dropdown-menu-box {
-          display: none;
-          position: absolute;
-          right: 0;
-          top: 100%;
-          background-color: white;
-          min-width: 200px;
-          box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-          border-radius: 8px;
-          padding: 10px 0;
-          z-index: 9999;
-          margin-top: 10px;
-          border: 1px solid #e2e8f0;
-        }
-        .user-profile-dropdown:hover .dropdown-menu-box {
-          display: block;
-        }
-        .dropdown-info-header {
-          padding: 8px 16px;
-          border-bottom: 1px solid #f1f5f9;
-          margin-bottom: 5px;
-        }
-        .dropdown-info-name {
-          font-weight: 600;
-          color: #1e293b;
-          font-size: 14px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .dropdown-info-email {
-          color: #64748b;
-          font-size: 12px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .dropdown-item-link {
-          display: block;
-          padding: 10px 16px;
-          color: #334155 !important;
-          font-size: 14px;
-          text-decoration: none;
-          transition: background 0.15s;
-          text-align: left;
-          font-weight: 500;
-        }
-        .dropdown-item-link:hover {
-          background-color: #f1f5f9;
-          color: #0284c7 !important;
-        }
-        .dropdown-item-logout {
-          border-top: 1px solid #f1f5f9;
-          margin-top: 5px;
-          color: #ef4444 !important;
-        }
-        .dropdown-item-logout:hover {
-          background-color: #fef2f2;
-        }
-      `;
-      document.head.appendChild(style);
-
-      targetLi.innerHTML = `
+    function drawDropdownUI(name, email, avatar) {
+      const authLI = document.getElementById('auth-menu-item');
+      if (!authLI) return;
+      authLI.innerHTML = `
         <div class="user-profile-dropdown">
-          <img class="menu-avatar-img" src="${avatarSrc}" alt="Avatar">
+          <img class="menu-avatar-img" src="${avatar}" alt="Avatar">
           <div class="dropdown-menu-box">
             <div class="dropdown-info-header">
-              <div class="dropdown-info-name">${displayName}</div>
-              <div class="dropdown-info-email">${user.email}</div>
+              <div class="dropdown-info-name">${name}</div>
+              <div class="dropdown-info-email">${email}</div>
             </div>
-            <a href="profile.html" class="dropdown-item-link">Thông tin cá nhân</a>
-            <a href="category.html?grade=8" class="dropdown-item-link">Kho bài tập của tôi</a>
-            <a href="#" id="menu-btn-logout-action" class="dropdown-item-link dropdown-item-logout">Đăng xuất</a>
+            <a href="profile.html" class="dropdown-item-link">👤 Thông tin cá nhân</a>
+            <a href="category.html?grade=8" class="dropdown-item-link">📚 Kho bài tập của tôi</a>
+            <a href="#" id="menu-btn-logout-action" class="dropdown-item-link dropdown-item-logout">🚪 Đăng xuất</a>
           </div>
         </div>
       `;
-
-      document.getElementById('menu-btn-logout-action').addEventListener('click', async (e) => {
+      
+      document.getElementById('menu-btn-logout-action')?.addEventListener('click', async (e) => {
         e.preventDefault();
+        localStorage.removeItem('tav_user_session');
         await _supabase.auth.signOut();
-        window.location.reload(); 
+        window.location.reload();
       });
+    }
 
-    })();
+    // LOGIC TỰ ĐỘNG BÓC TÁCH GRAD PARAMETER & RENDER FILE TÀI LIỆU KHỐI LỚP
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentGrade = urlParams.get('grade') || '6';
+    let allDocumentsData = [];
+
+    function highlightActiveTab() {
+      document.getElementById('nav-g' + currentGrade)?.classList.add('active');
+      document.getElementById('category-page-heading').innerText = `Tài liệu môn Toán lớp ${currentGrade}`;
+    }
+
+    async function loadGradeDocuments() {
+      highlightActiveTab();
+      verifyAuthSession(); // Gọi kiểm tra song song
+
+      const container = document.getElementById('category-docs-container');
+      try {
+        const response = await fetch('https://api.github.com/repos/ducviet-mis/toananhviet/contents/documents');
+        if (!response.ok) throw new Error();
+        
+        const files = await response.json();
+        const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+        
+        allDocumentsData = [];
+        for (const f of jsonFiles) {
+          const res = await fetch(f.download_url);
+          const doc = await res.json();
+          // Kiểm tra xem trường grade trong file json có trùng khớp lớp hiện tại không
+          if (String(doc.grade).includes(currentGrade)) {
+            doc.rawLink = `detail.html?file=${encodeURIComponent(f.download_url)}`;
+            allDocumentsData.push(doc);
+          }
+        }
+        renderCardsList(allDocumentsData);
+      } catch (err) {
+        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #ef4444;">Không thể tải danh sách tài liệu từ kho lưu trữ GitHub.</p>';
+      }
+    }
+
+    function renderCardsList(list) {
+      const container = document.getElementById('category-docs-container');
+      if (list.length === 0) {
+        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #64748b; padding: 40px 0;">Thầy Việt đang cập nhật bộ tài liệu cho chuyên mục này, học sinh quay lại sau nhé!</p>';
+        return;
+      }
+      container.innerHTML = list.map(doc => `
+        <div class="doc-card-premium" onclick="window.location.href='${doc.rawLink}'">
+          <div class="card-meta">
+            <span class="card-badge">Toán ${currentGrade}</span>
+            <span class="card-id">${doc.category}</span>
+          </div>
+          <h3 class="card-title">${doc.title}</h3>
+          <p class="card-desc">Tài liệu chuẩn hóa bám sát cấu trúc đề thi mới, đi kèm lời giải chi tiết và video sửa bài trực quan.</p>
+          <div class="card-footer">
+            <span>📅 Ngày đăng: ${doc.date || 'Gần đây'}</span>
+            <span class="card-action-btn">Xem chi tiết →</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Bộ lọc Tab phân loại mượt mà không load lại trang
+    function filterDocs(keyword, btnElement) {
+      document.querySelectorAll('.tab-btn-modern').forEach(b => b.classList.remove('active'));
+      btnElement.classList.add('active');
+
+      if (keyword === 'all') {
+        renderCardsList(allDocumentsData);
+      } else {
+        const filtered = allDocumentsData.filter(d => String(d.category).toLowerCase().includes(keyword.toLowerCase()) || String(d.title).toLowerCase().includes(keyword.toLowerCase()));
+        renderCardsList(filtered);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadGradeDocuments);
   </script>
 </body>
 </html>
