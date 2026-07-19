@@ -510,22 +510,18 @@
         </div>
       `;
 
-     // Cài đặt hành động xử lý nút bấm Đăng xuất nằm trong khối dải xuống
+      // Cài đặt hành động xử lý nút bấm Đăng xuất nằm trong khối dải xuống
       document.getElementById('menu-btn-logout-action').addEventListener('click', async (e) => {
         e.preventDefault();
         await _supabase.auth.signOut();
         window.location.reload(); // Tải lại trang để quay về menu Đăng nhập tĩnh
       });
-
-      // ==========================================
+// ==========================================
       // KÍCH HOẠT TÍNH NĂNG FORM ĐĂNG KÝ HỌC THỬ
       // ==========================================
       const registerForm = document.querySelector('form'); // Tìm form trên trang chủ
       if (registerForm) {
-        // Khóa tính năng gửi dữ liệu tĩnh lên server Vercel để tránh lỗi 405
-        registerForm.removeAttribute('action');
-        registerForm.setAttribute('method', 'dialog'); // Đổi cơ chế xử lý form nội bộ
-
+        // Gắn sự kiện khi học sinh bấm nút gửi form
         registerForm.addEventListener('submit', async (e) => {
           e.preventDefault(); // Chặn trang web bị tải lại
 
@@ -535,6 +531,7 @@
           const areaInput = registerForm.querySelector('input[placeholder*="Cầu Giấy"]')?.value;
           const fbInput = registerForm.querySelector('input[placeholder*="facebook.com"]')?.value;
           
+          // Lấy dữ liệu từ 2 ô chọn Select
           const selects = registerForm.querySelectorAll('select');
           const gradeInput = selects[0]?.value;
           const statusInput = selects[1]?.value;
@@ -561,10 +558,12 @@
           if (error) {
             alert("Gặp sự cố khi gửi đăng ký: " + error.message);
           } else {
-            alert(" Đăng ký thành công! Thầy Việt sẽ liên hệ tư vấn cho bạn sớm nhất nhé.");
+            alert("Đăng ký thành công! Thầy Việt sẽ liên hệ tư vấn cho bạn sớm nhất nhé.");
             registerForm.reset(); // Xóa sạch dữ liệu cũ trên form để người khác điền
           }
         });
       }
-
     })();
+  </script>
+</body>
+</html>
