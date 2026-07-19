@@ -388,75 +388,103 @@
     }
   </script>
 
-  <!-- =========================================================================
-       KHỐI ĐIỀU KHIỂN HỆ THỐNG GỘP CAO CẤP (AVATAR DROPDOWN + XỬ LÝ FORM SUPABASE)
-       ========================================================================= -->
+  <!-- ==========================================================================================
+       KHỐI ĐIỀU KHIỂN HỆ THỐNG GỘP CAO CẤP ĐỒNG BỘ SIÊU TỐC - THẦY VIỆT HOÀN THIỆN (KHÔNG ĐỘ TRỄ UX)
+       ========================================================================================== -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     (async function initToanAnhVietSystem() {
-      // 1. Kết nối kho dữ liệu Supabase bằng key chính chủ của Việt
       const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
       const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
       const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      // 2. Đồng bộ hiển thị Avatar dải xuống thông minh khi đã Đăng nhập thành công
+      // BƯỚC ĐỌC CACHE THẦN TỐC: Vẽ Avatar ngay lập tức từ bộ nhớ máy tính không chờ đợi
+      const cachedUser = localStorage.getItem('tav_user_session');
+      if (cachedUser) {
+        try {
+          const u = JSON.parse(cachedUser);
+          drawDropdownUI(u.name, u.email, u.avatar);
+        } catch(e) { console.log(e); }
+      }
+
+      // Kiểm tra chính xác lại trạng thái phiên ngầm từ Supabase để đồng bộ thông tin mới nhất
       const { data: { user } } = await _supabase.auth.getUser();
+      const loginLinks = document.querySelectorAll('a[href="login.html"]');
       
       if (user) {
-        const loginLinks = document.querySelectorAll('a[href="login.html"]');
+        const meta = user.user_metadata || {};
+        const dName = meta.full_name || 'Học viên';
+        const aSrc = meta.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
+        
+        localStorage.setItem('tav_user_session', JSON.stringify({ name: dName, email: user.email, avatar: aSrc }));
+        drawDropdownUI(dName, user.email, aSrc);
+      } else {
+        localStorage.removeItem('tav_user_session');
         if (loginLinks.length > 0) {
-          const targetLi = loginLinks[0].parentElement;
-          const meta = user.user_metadata || {};
-          const displayName = meta.full_name || 'Học viên';
-          const avatarSrc = meta.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
+          loginLinks[0].parentElement.innerHTML = `<a href="login.html">Đăng nhập</a>`;
+        }
+      }
 
+      function drawDropdownUI(name, email, avatar) {
+        const targetLinks = document.querySelectorAll('a[href="login.html"]');
+        if (targetLinks.length === 0) return;
+        const targetLi = targetLinks[0].parentElement;
+
+        // Chèn các thuộc tính CSS bo góc mềm mại, làm mờ sương mượt mà giống trang category
+        if (!document.getElementById('instant-header-style')) {
           const style = document.createElement('style');
+          style.id = 'instant-header-style';
           style.innerHTML = `
-            .user-profile-dropdown { position: relative; display: inline-block; cursor: pointer; }
-            .menu-avatar-img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid #0284c7; object-fit: cover; vertical-align: middle; transition: transform 0.2s; }
-            .user-profile-dropdown:hover .menu-avatar-img { transform: scale(1.05); }
-            .dropdown-menu-box { display: none; position: absolute; right: 0; top: 100%; background-color: white; min-width: 200px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-radius: 8px; padding: 10px 0; z-index: 9999; margin-top: 10px; border: 1px solid #e2e8f0; }
+            .site-header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); transition: all 0.3s ease; }
+            .nav-menu li a { border-radius: 8px; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+            .nav-menu li a:hover { background: #f1f5f9; color: #0284c7; }
+            .nav-menu li a.highlight { background: #0284c7 !important; color: white !important; border-radius: 8px; }
+            .user-profile-dropdown { position: relative; display: inline-block; cursor: pointer; margin-left: 8px; }
+            .menu-avatar-img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0284c7; object-fit: cover; vertical-align: middle; transition: all 0.2s ease; }
+            .user-profile-dropdown:hover .menu-avatar-img { transform: scale(1.05); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15); }
+            .dropdown-menu-box { display: none; position: absolute; right: 0; top: 100%; background-color: white; min-width: 210px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 10px; padding: 8px 0; z-index: 9999; margin-top: 12px; border: 1px solid #e2e8f0; transform-origin: top right; animation: fadeInDropdown 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+            @keyframes fadeInDropdown { from { opacity: 0; transform: scale(0.95) translateY(-5px); } to { opacity: 1; transform: scale(1) translateY(0); } }
             .user-profile-dropdown:hover .dropdown-menu-box { display: block; }
-            .dropdown-info-header { padding: 8px 16px; border-bottom: 1px solid #f1f5f9; margin-bottom: 5px; }
-            .dropdown-info-name { font-weight: 600; color: #1e293b; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-            .dropdown-info-email { color: #64748b; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-            .dropdown-item-link { display: block; padding: 10px 16px; color: #334155 !important; font-size: 14px; text-decoration: none; transition: background 0.15s; text-align: left; font-weight: 500; }
+            .dropdown-info-header { padding: 10px 16px; border-bottom: 1px solid #f1f5f9; margin-bottom: 4px; }
+            .dropdown-info-name { font-weight: 600; color: #1e293b; font-size: 14px; }
+            .dropdown-info-email { color: #64748b; font-size: 12px; }
+            .dropdown-item-link { display: block; padding: 10px 16px; color: #334155 !important; font-size: 14px; text-decoration: none; transition: background 0.15s; text-align: left; }
             .dropdown-item-link:hover { background-color: #f1f5f9; color: #0284c7 !important; }
-            .dropdown-item-logout { border-top: 1px solid #f1f5f9; margin-top: 5px; color: #ef4444 !important; }
+            .dropdown-item-logout { border-top: 1px solid #f1f5f9; margin-top: 4px; color: #ef4444 !important; }
             .dropdown-item-logout:hover { background-color: #fef2f2; }
           `;
           document.head.appendChild(style);
-
-          targetLi.innerHTML = `
-            <div class="user-profile-dropdown">
-              <img class="menu-avatar-img" src="${avatarSrc}" alt="Avatar">
-              <div class="dropdown-menu-box">
-                <div class="dropdown-info-header">
-                  <div class="dropdown-info-name">${displayName}</div>
-                  <div class="dropdown-info-email">${user.email}</div>
-                </div>
-                <a href="profile.html" class="dropdown-item-link">Thông tin cá nhân</a>
-                <a href="category.html?grade=8" class="dropdown-item-link">Kho bài tập của tôi</a>
-                <a href="#" id="menu-btn-logout-action" class="dropdown-item-link dropdown-item-logout">Đăng xuất</a>
-              </div>
-            </div>
-          `;
-
-          document.getElementById('menu-btn-logout-action').addEventListener('click', async (e) => {
-            e.preventDefault();
-            await _supabase.auth.signOut();
-            window.location.reload();
-          });
         }
+
+        targetLi.innerHTML = `
+          <div class="user-profile-dropdown">
+            <img class="menu-avatar-img" src="${avatar}" alt="Avatar">
+            <div class="dropdown-menu-box">
+              <div class="dropdown-info-header">
+                <div class="dropdown-info-name">${name}</div>
+                <div class="dropdown-info-email">${email}</div>
+              </div>
+              <a href="profile.html" class="dropdown-item-link">👤 Thông tin cá nhân</a>
+              <a href="category.html?grade=8" class="dropdown-item-link">📚 Kho bài tập của tôi</a>
+              <a href="#" id="menu-btn-logout-action" class="dropdown-item-link dropdown-item-logout">🚪 Đăng xuất</a>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('menu-btn-logout-action')?.addEventListener('click', async (e) => {
+          e.preventDefault();
+          localStorage.removeItem('tav_user_session');
+          await _supabase.auth.signOut();
+          window.location.reload();
+        });
       }
 
       // 3. Xử lý đẩy dữ liệu từ form "Đăng ký học thử" lên thẳng bảng registrations Supabase
       const registerForm = document.getElementById('tuvangiasu-form');
       if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
-          e.preventDefault(); // Ngăn chặn tải lại trang
+          e.preventDefault();
 
-          // Lấy giá trị từ các ô nhập liệu
           const nameInput = document.getElementById('fullname')?.value;
           const phoneInput = document.getElementById('phone')?.value;
           const areaInput = document.getElementById('address')?.value;
@@ -469,7 +497,6 @@
             return;
           }
 
-          // Gọi lệnh thêm dữ liệu ngầm vào database
           const { error } = await _supabase
             .from('registrations')
             .insert([
@@ -487,7 +514,7 @@
             alert("Gặp sự cố khi gửi đăng ký: " + error.message);
           } else {
             alert("🎉 Đăng ký thành công! Thầy Việt sẽ liên hệ tư vấn cho bạn sớm nhất nhé.");
-            registerForm.reset(); // Xóa sạch dữ liệu trên giao diện sau khi gửi thành công
+            registerForm.reset();
           }
         });
       }
