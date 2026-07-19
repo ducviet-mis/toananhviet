@@ -161,5 +161,129 @@
 
     document.addEventListener("DOMContentLoaded", fetchCategoryDocuments);
   </script>
+  <!-- Nhúng thư viện kiểm tra session và dựng Avatar Dropdown cao cấp cho trang danh mục -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (async function buildAvatarDropdownMenu() {
+      const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+      const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+      const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+      const { data: { user } } = await _supabase.auth.getUser();
+      if (!user) return; 
+
+      const loginLinks = document.querySelectorAll('a[href="login.html"]');
+      if (loginLinks.length === 0) return;
+      
+      const targetLi = loginLinks[0].parentElement; 
+      
+      const meta = user.user_metadata || {};
+      const displayName = meta.full_name || 'Học viên';
+      const avatarSrc = meta.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
+
+      const style = document.createElement('style');
+      style.innerHTML = `
+        .user-profile-dropdown {
+          position: relative;
+          display: inline-block;
+          cursor: pointer;
+        }
+        .menu-avatar-img {
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          border: 2px solid #0284c7;
+          object-fit: cover;
+          vertical-align: middle;
+          transition: transform 0.2s;
+        }
+        .user-profile-dropdown:hover .menu-avatar-img {
+          transform: scale(1.05);
+        }
+        .dropdown-menu-box {
+          display: none;
+          position: absolute;
+          right: 0;
+          top: 100%;
+          background-color: white;
+          min-width: 200px;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+          border-radius: 8px;
+          padding: 10px 0;
+          z-index: 9999;
+          margin-top: 10px;
+          border: 1px solid #e2e8f0;
+        }
+        .user-profile-dropdown:hover .dropdown-menu-box {
+          display: block;
+        }
+        .dropdown-info-header {
+          padding: 8px 16px;
+          border-bottom: 1px solid #f1f5f9;
+          margin-bottom: 5px;
+        }
+        .dropdown-info-name {
+          font-weight: 600;
+          color: #1e293b;
+          font-size: 14px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .dropdown-info-email {
+          color: #64748b;
+          font-size: 12px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .dropdown-item-link {
+          display: block;
+          padding: 10px 16px;
+          color: #334155 !important;
+          font-size: 14px;
+          text-decoration: none;
+          transition: background 0.15s;
+          text-align: left;
+          font-weight: 500;
+        }
+        .dropdown-item-link:hover {
+          background-color: #f1f5f9;
+          color: #0284c7 !important;
+        }
+        .dropdown-item-logout {
+          border-top: 1px solid #f1f5f9;
+          margin-top: 5px;
+          color: #ef4444 !important;
+        }
+        .dropdown-item-logout:hover {
+          background-color: #fef2f2;
+        }
+      `;
+      document.head.appendChild(style);
+
+      targetLi.innerHTML = `
+        <div class="user-profile-dropdown">
+          <img class="menu-avatar-img" src="${avatarSrc}" alt="Avatar">
+          <div class="dropdown-menu-box">
+            <div class="dropdown-info-header">
+              <div class="dropdown-info-name">${displayName}</div>
+              <div class="dropdown-info-email">${user.email}</div>
+            </div>
+            <a href="profile.html" class="dropdown-item-link">Thông tin cá nhân</a>
+            <a href="category.html?grade=8" class="dropdown-item-link">Kho bài tập của tôi</a>
+            <a href="#" id="menu-btn-logout-action" class="dropdown-item-link dropdown-item-logout">Đăng xuất</a>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('menu-btn-logout-action').addEventListener('click', async (e) => {
+        e.preventDefault();
+        await _supabase.auth.signOut();
+        window.location.reload(); 
+      });
+
+    })();
+  </script>
 </body>
 </html>
