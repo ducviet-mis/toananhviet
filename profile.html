@@ -26,14 +26,41 @@
     }
     .avatar-wrapper {
       position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
     }
     .avatar-img {
-      width: 90px;
-      height: 90px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
       object-fit: cover;
       border: 3px solid #0284c7;
       background: #f1f5f9;
+    }
+    .upload-btn-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+    }
+    .btn-upload {
+      border: 1px dashed #0284c7;
+      color: #0284c7;
+      background-color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .upload-btn-wrapper input[type=file] {
+      font-size: 100px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      cursor: pointer;
     }
     .form-grid {
       display: grid;
@@ -60,10 +87,6 @@
       border-radius: 6px;
       font-size: 14px;
       box-sizing: border-box;
-    }
-    .form-group input:disabled {
-      background: #f8fafc;
-      color: #94a3b8;
     }
     .btn-save {
       width: 100%;
@@ -99,7 +122,7 @@
         <img src="assets/logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
         TOÁN ANH VIỆT
       </a>
-      <ul class="nav-menu" id="nav-menu-container">
+      <ul class="nav-menu">
         <li><a href="index.html">Trang chủ</a></li>
         <li><a href="category.html?grade=6">Toán 6</a></li>
         <li><a href="category.html?grade=7">Toán 7</a></li>
@@ -116,7 +139,11 @@
     <div class="profile-container">
       <div class="profile-header">
         <div class="avatar-wrapper">
-          <img id="user-avatar" class="avatar-img" src="https://api.dicebear.com/7.x/bottts/svg?seed=default" alt="Avatar">
+          <img id="user-avatar" class="avatar-img" src="https://api.dicebear.com/7.x/identicon/svg?seed=default" alt="Avatar">
+          <div class="upload-btn-wrapper">
+            <button class="btn-upload">📷 Chọn ảnh từ máy</button>
+            <input type="file" id="avatar-file-input" accept="image/*" onchange="uploadAvatarFile(this)">
+          </div>
         </div>
         <div>
           <h2 id="welcome-title" style="margin:0; font-size:20px; color:#1e293b;">Học viên Toán Anh Việt</h2>
@@ -143,11 +170,8 @@
               <option value="9">Lớp 9</option>
             </select>
           </div>
-          <div class="form-group full-width">
-            <label>Link ảnh Avatar (URL hình ảnh):</label>
-            <input type="url" id="p-avatar-url" placeholder="Dán link ảnh online bất kỳ vào đây để đổi avatar" onchange="document.getElementById('user-avatar').src=this.value">
-          </div>
         </div>
+        <input type="hidden" id="p-avatar-url">
         <button type="submit" class="btn-save">💾 Lưu thay đổi thông tin</button>
       </form>
 
@@ -166,26 +190,57 @@
     async function checkUserSession() {
       const { data: { user } } = await _supabase.auth.getUser();
       if (!user) {
-        alert("Bạn chưa đăng nhập! Vui lòng đăng nhập để xem thông tin.");
         window.location.href = 'login.html';
         return;
       }
       currentUser = user;
       document.getElementById('user-email-display').innerText = user.email;
 
-      // Đọc metadata (thông tin cá nhân tự tạo) từ Supabase lưu trữ
       const meta = user.user_metadata || {};
       if(meta.full_name) document.getElementById('p-name').value = meta.full_name;
       if(meta.phone) document.getElementById('p-phone').value = meta.phone;
       if(meta.grade) document.getElementById('p-grade').value = meta.grade;
+      
       if(meta.avatar_url) {
         document.getElementById('p-avatar-url').value = meta.avatar_url;
         document.getElementById('user-avatar').src = meta.avatar_url;
       } else {
-        // Tự tạo avatar ngẫu nhiên theo email học sinh cho đẹp nếu chưa có ảnh
         document.getElementById('user-avatar').src = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
       }
       if(meta.full_name) document.getElementById('welcome-title').innerText = "Xin chào, " + meta.full_name;
+    }
+
+    // Logic xử lý đẩy trực tiếp file hình ảnh lên Supabase Storage
+    async function uploadAvatarFile(inputElement) {
+      if (!inputElement.files || inputElement.files.length === 0) return;
+      const file = inputElement.files[0];
+      const msg = document.getElementById('status-msg');
+      
+      msg.style.color = '#0284c7';
+      msg.innerText = 'Đang tải ảnh lên kho lưu trữ...';
+
+      // Tạo đường dẫn file duy nhất dựa vào UID của học sinh
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${currentUser.id}/avatar_${Date.now()}.${fileExt}`;
+
+      // Tiến hành đưa file lên Storage Bucket tên là avatars
+      const { data, error } = await _supabase.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true });
+
+      if (error) {
+        msg.style.color = '#ef4444';
+        msg.innerText = 'Lỗi upload ảnh: ' + error.message;
+        return;
+      }
+
+      // Lấy đường dẫn URL Public trực tiếp của hình ảnh vừa tải lên
+      const { data: { publicUrl } } = _supabase.storage.from('avatars').getPublicUrl(filePath);
+      
+      document.getElementById('p-avatar-url').value = publicUrl;
+      document.getElementById('user-avatar').src = publicUrl;
+      msg.style.color = '#22c55e';
+      msg.innerText = 'Tải ảnh lên thành công! Bấm nút Lưu phía dưới để hoàn tất.';
     }
 
     async function saveProfile(e) {
@@ -199,14 +254,8 @@
       const grade = document.getElementById('p-grade').value;
       const avatarUrl = document.getElementById('p-avatar-url').value;
 
-      // Cập nhật đè thông tin bổ sung vào phần user_metadata của Supabase Auth
-      const { data, error } = await _supabase.auth.updateUser({
-        data: { 
-          full_name: name,
-          phone: phone,
-          grade: grade,
-          avatar_url: avatarUrl
-        }
+      const { error } = await _supabase.auth.updateUser({
+        data: { full_name: name, phone: phone, grade: grade, avatar_url: avatarUrl }
       });
 
       if (error) {
@@ -214,7 +263,7 @@
         msg.innerText = 'Gặp lỗi khi lưu: ' + error.message;
       } else {
         msg.style.color = '#22c55e';
-        msg.innerText = 'Cập nhật hồ sơ học viên thành công!';
+        msg.innerText = 'Cập nhật hồ sơ thành công!';
         document.getElementById('welcome-title').innerText = "Xin chào, " + name;
       }
     }
