@@ -6,8 +6,6 @@
   <title>Danh mục tài liệu - Gia sư Toán THCS</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="assets/favicon.png">
-  <!-- Nhúng thư viện Supabase cần thiết để kết nối Database -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -15,9 +13,9 @@
   <header>
     <nav class="nav-container">
       <a href="index.html" class="logo">
-        <img src="assets/logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
-        TOÁN ANH VIỆT
-      </a>
+  <img src="assets/logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
+  TOÁN ANH VIỆT
+</a>
       <ul class="nav-menu">
         <li><a href="index.html">Trang chủ</a></li>
         <li><a href="category.html?grade=6" id="nav-g-6">Toán 6</a></li>
@@ -57,57 +55,60 @@
   </footer>
 
   <script>
-    // 1. Cấu hình thông tin kết nối Supabase của dự án toananhviet
-    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
-    
-    // ĐIỀN MÃ KEY CỦA BẠN VÀO GIỮA HAI DẤU NHÁY ĐƠN DƯỚI ĐÂY
-    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2'; 
-
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    let allDocuments = []; // Mảng chứa dữ liệu của tài liệu đã lấy từ Supabase
+    let allDocuments = []; // Mảng chứa dữ liệu của tài liệu đã lọc đúng khối lớp
     let activeFilter = 'Tất cả';
 
-    // Đọc tham số lớp (ví dụ ?grade=8) trên thanh địa chỉ
+    // Đọc tham số lớp (ví dụ ?grade=6) trên thanh địa chỉ
     const urlParams = new URLSearchParams(window.location.search);
     const currentGradeNum = urlParams.get('grade') || '6';
     const currentGradeLabel = "Toán " + currentGradeNum;
 
-    // Cập nhật giao diện tiêu đề theo khối lớp đang chọn
+    // Cập nhật giao diện theo khối lớp đang chọn
     document.getElementById('category-title').innerText = `Tài liệu môn ${currentGradeLabel}`;
     
-    // Sáng đèn (Highlight) nút menu tương ứng
+    // Highlight menu tương ứng
     const navActiveBtn = document.getElementById(`nav-g-${currentGradeNum}`);
     if (navActiveBtn) navActiveBtn.classList.add('active');
 
-    // 2. Hàm lấy dữ liệu trực tiếp từ bảng của Supabase (Cú pháp chuẩn không dùng dấu nháy kép)
     async function fetchCategoryDocuments() {
       const container = document.getElementById('category-docs-container');
       try {
-        const { data, error } = await _supabase
-          .from('toananhviet')
-          .select('*')
-          .or(`lop.eq.${currentGradeLabel},lop.eq.${currentGradeNum}`);
+        // Kết nối API GitHub để tìm tài liệu
+        const response = await fetch('https://api.github.com/repos/ducviet-mis/toananhviet/contents/documents');
+        if (!response.ok) throw new Error('Không thể kết nối đến máy chủ chứa file.');
 
-        if (error) throw error;
+        const files = await response.json();
+        const jsonFiles = files.filter(file => file.name.endsWith('.json')).reverse();
+        
+        const tempDocs = [];
+        for (const file of jsonFiles) {
+          const res = await fetch(file.download_url);
+          const doc = await res.json();
+          // Chỉ lấy tài liệu đúng của lớp học này (Ví dụ: "Toán 8")
+          if (doc.grade === currentGradeLabel) {
+            // Đính kèm thêm download_url gốc của file JSON từ GitHub vào đối tượng dữ liệu
+            doc.rawJsonUrl = file.download_url;
+            tempDocs.push(doc);
+          }
+        }
 
-        allDocuments = data || [];
+        allDocuments = tempDocs;
         renderDocuments();
       } catch (error) {
-        console.error("Lỗi khi đồng bộ dữ liệu từ Supabase:", error);
-        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Lỗi khi tải dữ liệu từ cơ sở dữ liệu Supabase.</p>';
+        console.error(error);
+        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Lỗi khi tải dữ liệu từ máy chủ.</p>';
       }
     }
 
-    // 3. Hàm render danh sách tài liệu ra cấu trúc HTML kết nối với trang detail.html
+    // Hàm render danh sách tài liệu ra HTML (có lọc)
     function renderDocuments() {
       const container = document.getElementById('category-docs-container');
       container.innerHTML = '';
 
-      // Thực hiện bộ lọc theo Loại tài liệu (loai_de) khi click các nút bấm
+      // Thực hiện lọc theo Loại tài liệu
       const filtered = allDocuments.filter(doc => {
         if (activeFilter === 'Tất cả') return true;
-        return doc.loai_de === activeFilter;
+        return doc.category === activeFilter;
       });
 
       if (filtered.length === 0) {
@@ -116,26 +117,21 @@
       }
 
       filtered.forEach(doc => {
-        // Tự động lấy ảnh mẫu mặc định nếu không có ảnh tự chế
-        const thumbnailSrc = doc.anh_bia || 'https://via.placeholder.com/300x400?text=TailieuToan';
-        
-        // Tạo đường link chuyển tiếp sang trang detail.html kèm dữ liệu
-        const detailLink = `detail.html?file=${encodeURIComponent(doc.link_file || '')}&title=${encodeURIComponent(doc.tieu_de || '')}&desc=${encodeURIComponent(doc.mo_ta || '')}&grade=${encodeURIComponent(doc.lop || '')}&cat=${encodeURIComponent(doc.loai_de || '')}&thumbnail=${encodeURIComponent(thumbnailSrc)}`;
-
+        const detailLink = `detail.html?file=${encodeURIComponent(doc.rawJsonUrl)}`;
         const cardHtml = `
           <div class="doc-card" style="cursor: pointer;" onclick="window.location.href='${detailLink}'">
             <div class="doc-thumbnail-container">
-              <img class="doc-thumbnail" src="${thumbnailSrc}" alt="${doc.tieu_de}">
+              <img class="doc-thumbnail" src="${doc.thumbnail || 'https://via.placeholder.com/300x400?text=TailieuToan'}" alt="${doc.title}">
             </div>
             <div class="doc-info">
               <div class="doc-badges">
-                <span class="badge badge-grade">Toán ${doc.lop}</span>
-                <span class="badge badge-cat">${doc.loai_de}</span>
+                <span class="badge badge-grade">${doc.grade}</span>
+                <span class="badge badge-cat">${doc.category}</span>
               </div>
-              <h3 class="doc-title">${doc.tieu_de}</h3>
+              <h3 class="doc-title">${doc.title}</h3>
               <div class="doc-footer">
-                <span class="doc-date">🚀 Trạng thái: Sẵn sàng</span>
-                <a href="${detailLink}" class="btn-download" onclick="event.stopPropagation();">📖 Xem & Tải tài liệu</a>
+                <span class="doc-date">📅 Đăng: ${doc.date}</span>
+                <a href="${detailLink}" class="btn-download">📖 Xem & Tải tài liệu</a>
               </div>
             </div>
           </div>
@@ -144,7 +140,7 @@
       });
     }
 
-    // 4. Hàm đổi bộ lọc loại tài liệu khi bạn bấm các nút
+    // Hàm đổi bộ lọc loại tài liệu khi bấm nút bấm
     function filterCategory(categoryName) {
       activeFilter = categoryName;
       
@@ -162,7 +158,6 @@
       renderDocuments();
     }
 
-    // Chạy đồng bộ dữ liệu ngay khi trang web tải xong
     document.addEventListener("DOMContentLoaded", fetchCategoryDocuments);
   </script>
 </body>
