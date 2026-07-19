@@ -90,7 +90,6 @@
           .from('toananhviet')
           .select('*')
           .or(`lop.eq.${currentGradeLabel},lop.eq.${currentGradeNum}`)
-          .order('id', { ascending: false }); // Bài mới đăng xếp lên đầu tiên
 
         if (error) throw error;
 
