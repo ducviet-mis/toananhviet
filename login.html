@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập - Toán Anh Việt</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <!-- Nhúng thư viện Supabase Auth -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* CSS trang trí riêng cho khung đăng nhập */
+    .login-container {
+      max-width: 400px;
+      margin: 60px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    .login-title {
+      font-size: 24px;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+    .login-subtitle {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 25px;
+    }
+    .form-group {
+      text-align: left;
+      margin-bottom: 18px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      color: #475569;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #0284c7;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+    }
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      background: #0284c7;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+    .btn-login:hover {
+      background: #0369a1;
+    }
+    .login-message {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Thanh Menu đầy đủ không lo mất tính năng cũ -->
+  <header>
+    <nav class="nav-container">
+      <a href="index.html" class="logo">
+        <img src="assets/logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
+        TOÁN ANH VIỆT
+      </a>
+      <ul class="nav-menu">
+        <li><a href="index.html">Trang chủ</a></li>
+        <li><a href="category.html?grade=6">Toán 6</a></li>
+        <li><a href="category.html?grade=7">Toán 7</a></li>
+        <li><a href="category.html?grade=8">Toán 8</a></li>
+        <li><a href="category.html?grade=9">Toán 9</a></li>
+        <li><a href="quiz-list.html">Thi Online</a></li>
+        <li><a href="index.html#about">Lớp học Gia sư</a></li>
+        <li><a href="login.html" class="active">Đăng nhập</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="login-container">
+      <h2 class="login-title">Học Viên Đăng Nhập</h2>
+      <p class="login-subtitle">Hệ thống tài liệu độc quyền Toán Anh Việt</p>
+      
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="email">Email học sinh (Do thầy cấp):</label>
+          <input type="email" id="email" placeholder="viết_liền_không_dấu@toananhviet.com" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Mật khẩu:</label>
+          <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-login">🔑 Xác nhận đăng nhập</button>
+      </form>
+      
+      <div id="message-area" class="login-message"></div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2026 Website Gia Sư Toán THCS. Phát triển bởi Anh Việt.</p>
+  </footer>
+
+  <script>
+    // Kết nối thông tin API Supabase của dự án toananhviet
+    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+    
+    // Bạn hãy dán mã "Publishable key" dán vào giữa hai dấu nháy đơn dưới đây nhé
+    const SUPABASE_KEY = 'DÁN_MÃ_PUBLISHABLE_KEY_CỦA_BẠN_VÀO_ĐÂY'; 
+    
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const msgArea = document.getElementById('message-area');
+
+      msgArea.style.color = '#0284c7';
+      msgArea.innerText = 'Đang xác thực tài khoản học viên...';
+
+      // Gửi lệnh kiểm tra tài khoản lên hệ thống Supabase Auth
+      const { data, error } = await _supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+
+      if (error) {
+        msgArea.style.color = '#ef4444';
+        msgArea.innerText = 'Sai tài khoản hoặc mật khẩu! Vui lòng liên hệ thầy Việt.';
+      } else {
+        msgArea.style.color = '#22c55e';
+        msgArea.innerText = 'Đăng nhập thành công! Đang chuyển hướng...';
+        
+        // Chờ hiệu ứng thông báo hiển thị xong rồi quay trở lại trang chủ
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 1500);
+      }
+    }
+  </script>
+</body>
+</html>
