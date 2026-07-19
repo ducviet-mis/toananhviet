@@ -380,12 +380,12 @@
             errorEl.style.display = "none";
             window.location.href = `view-detail.html?id=${inputVal}`;
           } else {
-            errorEl.innerText = "❌ Không tìm thấy mã đề này, bạn vui lòng kiểm tra lại nhé!";
+            errorEl.innerText = "❌Không tìm thấy mã đề này, bạn vui lòng kiểm tra lại nhé!";
             errorEl.style.color = "#ef4444";
           }
         }
       } catch (e) {
-        errorEl.innerText = "❌ Lỗi kết nối mạng, vui lòng thử lại!";
+        errorEl.innerText = "❌Lỗi kết nối mạng, vui lòng thử lại!";
         errorEl.style.color = "#ef4444";
       }
     }
@@ -503,9 +503,9 @@
               <div class="dropdown-info-name">${displayName}</div>
               <div class="dropdown-info-email">${user.email}</div>
             </div>
-            <a href="profile.html" class="dropdown-item-link">👤 Thông tin cá nhân</a>
-            <a href="category.html?grade=8" class="dropdown-item-link">📚 Kho bài tập của tôi</a>
-            <a href="#" id="menu-btn-logout-action" class="dropdown-item-link dropdown-item-logout">🚪 Đăng xuất</a>
+            <a href="profile.html" class="dropdown-item-link">Thông tin cá nhân</a>
+            <a href="category.html?grade=8" class="dropdown-item-link">Kho bài tập của tôi</a>
+            <a href="#" id="menu-btn-logout-action" class="dropdown-item-link dropdown-item-logout">Đăng xuất</a>
           </div>
         </div>
       `;
