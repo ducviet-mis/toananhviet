@@ -516,7 +516,53 @@
         await _supabase.auth.signOut();
         window.location.reload(); // Tải lại trang để quay về menu Đăng nhập tĩnh
       });
+// ==========================================
+      // KÍCH HOẠT TÍNH NĂNG FORM ĐĂNG KÝ HỌC THỬ
+      // ==========================================
+      const registerForm = document.querySelector('form'); // Tìm form trên trang chủ
+      if (registerForm) {
+        // Gắn sự kiện khi học sinh bấm nút gửi form
+        registerForm.addEventListener('submit', async (e) => {
+          e.preventDefault(); // Chặn trang web bị tải lại
 
+          // Thu thập toàn bộ dữ liệu học sinh gõ vào các ô
+          const nameInput = registerForm.querySelector('input[placeholder*="Nguyễn Văn A"]')?.value;
+          const phoneInput = registerForm.querySelector('input[placeholder*="09xxxxxxx"]')?.value;
+          const areaInput = registerForm.querySelector('input[placeholder*="Cầu Giấy"]')?.value;
+          const fbInput = registerForm.querySelector('input[placeholder*="facebook.com"]')?.value;
+          
+          // Lấy dữ liệu từ 2 ô chọn Select
+          const selects = registerForm.querySelectorAll('select');
+          const gradeInput = selects[0]?.value;
+          const statusInput = selects[1]?.value;
+
+          if(!nameInput || !phoneInput) {
+            alert("Vui lòng điền Họ tên và Số điện thoại để thầy Việt liên hệ nhé!");
+            return;
+          }
+
+          // Tiến hành đẩy trực tiếp dữ liệu vào bảng registrations trên Supabase
+          const { error } = await _supabase
+            .from('registrations')
+            .insert([
+              { 
+                name: nameInput, 
+                phone: phoneInput, 
+                area: areaInput, 
+                facebook: fbInput, 
+                grade: gradeInput, 
+                status: statusInput 
+              }
+            ]);
+
+          if (error) {
+            alert("Gặp sự cố khi gửi đăng ký: " + error.message);
+          } else {
+            alert("Đăng ký thành công! Thầy Việt sẽ liên hệ tư vấn cho bạn sớm nhất nhé.");
+            registerForm.reset(); // Xóa sạch dữ liệu cũ trên form để người khác điền
+          }
+        });
+      }
     })();
   </script>
 </body>
