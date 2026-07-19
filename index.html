@@ -33,7 +33,6 @@
   </header>
 
   <!-- 2. HERO SECTION (LƯỚI DESCARTES & HỆ THỐNG SEARCH ID ĐẲNG CẤP) -->
-<!-- 2. HERO SECTION (LƯỚI DESCARTES, SÁCH BAY LƠ LỬNG & HỆ THỐNG SEARCH ID ĐẲNG CẤP) -->
   <section class="hero-descartes">
     
     <!-- ==========================================
@@ -90,9 +89,6 @@
     </div>
   </section>
 
-    </div>
-  </section>
-
   <!-- 3. PHẦN TÀI LIỆU MỚI ĐĂNG TẢI (RECENT DOCUMENTS) -->
   <main class="recent-docs">
     <div class="section-header">
@@ -105,7 +101,7 @@
   </main>
 
   <!-- =======================================================
-       PHẦN 1: GIỚI THIỆU GIÁO VIÊN (TEACHER PROFILE) - GIỮ NGUYÊN 100%
+       PHẦN 1: GIỚI THIỆU GIÁO VIÊN (TEACHER PROFILE)
        ======================================================= -->
   <section class="tutor-section" id="teacher">
     <div class="teacher-profile">
@@ -146,7 +142,7 @@
   <hr class="section-divider">
 
   <!-- =======================================================
-       PHẦN 2: SƠ ĐỒ LỘ TRÌNH HỌC TẬP (TIMELINE) - GIỮ NGUYÊN 100%
+       PHẦN 2: SƠ ĐỒ LỘ TRÌNH HỌC TẬP (TIMELINE)
        ======================================================= -->
   <section class="timeline-section" id="curriculum">
     <h2 class="section-title">LỘ TRÌNH HỌC TẬP TOÀN DIỆN</h2>
@@ -197,7 +193,7 @@
   <hr class="section-divider">
 
   <!-- =======================================================
-       PHẦN 3: ĐĂNG KÝ TƯ VẤN & QUÀ TẶNG (NETLIFY FORMS) - GIỮ NGUYÊN 100%
+       PHẦN 3: ĐĂNG KÝ TƯ VẤN & QUÀ TẶNG (SỬA THÀNH ONSUBMIT KHÓA 405)
        ======================================================= -->
   <section class="tutor-section" id="register">
     <div class="registration-container">
@@ -226,7 +222,8 @@
       <div class="form-column">
         <h3>ĐĂNG KÝ HỌC THỬ & NHẬN QUÀ</h3>
         
-        <form name="tuvangiasu" method="POST" data-netlify="true">
+        <!-- FIX LỖI 405 BẰNG CÁCH KHÓA ONSUBMIT CỦA THẺ FORM -->
+        <form id="tuvangiasu-form" onsubmit="return false;">
           <div class="form-grid">
             <div class="form-group">
               <label for="fullname">Họ tên học sinh:</label>
@@ -390,158 +387,89 @@
       }
     }
   </script>
- <!-- Nhúng thư viện kiểm tra session và dựng Avatar Dropdown cao cấp -->
+
+  <!-- =========================================================================
+       KHỐI ĐIỀU KHIỂN HỆ THỐNG GỘP CAO CẤP (AVATAR DROPDOWN + XỬ LÝ FORM SUPABASE)
+       ========================================================================= -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    (async function buildAvatarDropdownMenu() {
+    (async function initToanAnhVietSystem() {
+      // 1. Kết nối kho dữ liệu Supabase bằng key chính chủ của Việt
       const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
-      const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2'; // Dán mã Anon Key (eyJ...) của bạn vào đây
+      const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
       const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+      // 2. Đồng bộ hiển thị Avatar dải xuống thông minh khi đã Đăng nhập thành công
       const { data: { user } } = await _supabase.auth.getUser();
-      if (!user) return; // Nếu chưa đăng nhập thì giữ nguyên nút Đăng nhập tĩnh
-
-      // Tìm thẻ menu Đăng nhập hiện tại để tiến hành thay thế giao diện
-      const loginLinks = document.querySelectorAll('a[href="login.html"]');
-      if (loginLinks.length === 0) return;
       
-      const targetLi = loginLinks[0].parentElement; // Lấy thẻ cha <li> của nút đăng nhập
-      
-      // Lấy dữ liệu tên và ảnh đại diện từ tài khoản học sinh
-      const meta = user.user_metadata || {};
-      const displayName = meta.full_name || 'Học viên';
-      const avatarSrc = meta.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
+      if (user) {
+        const loginLinks = document.querySelectorAll('a[href="login.html"]');
+        if (loginLinks.length > 0) {
+          const targetLi = loginLinks[0].parentElement;
+          const meta = user.user_metadata || {};
+          const displayName = meta.full_name || 'Học viên';
+          const avatarSrc = meta.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
 
-      // Chèn CSS định hình cấu trúc Hover dải xuống (Dropdown) trực tiếp ngầm
-      const style = document.createElement('style');
-      style.innerHTML = `
-        .user-profile-dropdown {
-          position: relative;
-          display: inline-block;
-          cursor: pointer;
-        }
-        .menu-avatar-img {
-          width: 38px;
-          height: 38px;
-          border-radius: 50%;
-          border: 2px solid #0284c7;
-          object-fit: cover;
-          vertical-align: middle;
-          transition: transform 0.2s;
-        }
-        .user-profile-dropdown:hover .menu-avatar-img {
-          transform: scale(1.05);
-        }
-        .dropdown-menu-box {
-          display: none;
-          position: absolute;
-          right: 0;
-          top: 100%;
-          background-color: white;
-          min-width: 200px;
-          box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-          border-radius: 8px;
-          padding: 10px 0;
-          z-index: 9999;
-          margin-top: 10px;
-          border: 1px solid #e2e8f0;
-        }
-        .user-profile-dropdown:hover .dropdown-menu-box {
-          display: block;
-        }
-        .dropdown-info-header {
-          padding: 8px 16px;
-          border-bottom: 1px solid #f1f5f9;
-          margin-bottom: 5px;
-        }
-        .dropdown-info-name {
-          font-weight: 600;
-          color: #1e293b;
-          font-size: 14px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .dropdown-info-email {
-          color: #64748b;
-          font-size: 12px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .dropdown-item-link {
-          display: block;
-          padding: 10px 16px;
-          color: #334155 !important;
-          font-size: 14px;
-          text-decoration: none;
-          transition: background 0.15s;
-          text-align: left;
-          font-weight: 500;
-        }
-        .dropdown-item-link:hover {
-          background-color: #f1f5f9;
-          color: #0284c7 !important;
-        }
-        .dropdown-item-logout {
-          border-top: 1px solid #f1f5f9;
-          margin-top: 5px;
-          color: #ef4444 !important;
-        }
-        .dropdown-item-logout:hover {
-          background-color: #fef2f2;
-        }
-      `;
-      document.head.appendChild(style);
+          const style = document.createElement('style');
+          style.innerHTML = `
+            .user-profile-dropdown { position: relative; display: inline-block; cursor: pointer; }
+            .menu-avatar-img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid #0284c7; object-fit: cover; vertical-align: middle; transition: transform 0.2s; }
+            .user-profile-dropdown:hover .menu-avatar-img { transform: scale(1.05); }
+            .dropdown-menu-box { display: none; position: absolute; right: 0; top: 100%; background-color: white; min-width: 200px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-radius: 8px; padding: 10px 0; z-index: 9999; margin-top: 10px; border: 1px solid #e2e8f0; }
+            .user-profile-dropdown:hover .dropdown-menu-box { display: block; }
+            .dropdown-info-header { padding: 8px 16px; border-bottom: 1px solid #f1f5f9; margin-bottom: 5px; }
+            .dropdown-info-name { font-weight: 600; color: #1e293b; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .dropdown-info-email { color: #64748b; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .dropdown-item-link { display: block; padding: 10px 16px; color: #334155 !important; font-size: 14px; text-decoration: none; transition: background 0.15s; text-align: left; font-weight: 500; }
+            .dropdown-item-link:hover { background-color: #f1f5f9; color: #0284c7 !important; }
+            .dropdown-item-logout { border-top: 1px solid #f1f5f9; margin-top: 5px; color: #ef4444 !important; }
+            .dropdown-item-logout:hover { background-color: #fef2f2; }
+          `;
+          document.head.appendChild(style);
 
-      // Thay đổi cấu trúc HTML thô kệch thành cấu trúc khối Avatar + Khung dải xuống thông minh
-      targetLi.innerHTML = `
-        <div class="user-profile-dropdown">
-          <img class="menu-avatar-img" src="${avatarSrc}" alt="Avatar">
-          <div class="dropdown-menu-box">
-            <div class="dropdown-info-header">
-              <div class="dropdown-info-name">${displayName}</div>
-              <div class="dropdown-info-email">${user.email}</div>
+          targetLi.innerHTML = `
+            <div class="user-profile-dropdown">
+              <img class="menu-avatar-img" src="${avatarSrc}" alt="Avatar">
+              <div class="dropdown-menu-box">
+                <div class="dropdown-info-header">
+                  <div class="dropdown-info-name">${displayName}</div>
+                  <div class="dropdown-info-email">${user.email}</div>
+                </div>
+                <a href="profile.html" class="dropdown-item-link">👤 Thông tin cá nhân</a>
+                <a href="category.html?grade=8" class="dropdown-item-link">📚 Kho bài tập của tôi</a>
+                <a href="#" id="menu-btn-logout-action" class="dropdown-item-link dropdown-item-logout">🚪 Đăng xuất</a>
+              </div>
             </div>
-            <a href="profile.html" class="dropdown-item-link">Thông tin cá nhân</a>
-            <a href="category.html?grade=8" class="dropdown-item-link">Kho bài tập của tôi</a>
-            <a href="#" id="menu-btn-logout-action" class="dropdown-item-link dropdown-item-logout">Đăng xuất</a>
-          </div>
-        </div>
-      `;
+          `;
 
-      // Cài đặt hành động xử lý nút bấm Đăng xuất nằm trong khối dải xuống
-      document.getElementById('menu-btn-logout-action').addEventListener('click', async (e) => {
-        e.preventDefault();
-        await _supabase.auth.signOut();
-        window.location.reload(); // Tải lại trang để quay về menu Đăng nhập tĩnh
-      });
-// ==========================================
-      // KÍCH HOẠT TÍNH NĂNG FORM ĐĂNG KÝ HỌC THỬ
-      // ==========================================
-      const registerForm = document.querySelector('form'); // Tìm form trên trang chủ
+          document.getElementById('menu-btn-logout-action').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await _supabase.auth.signOut();
+            window.location.reload();
+          });
+        }
+      }
+
+      // 3. Xử lý đẩy dữ liệu từ form "Đăng ký học thử" lên thẳng bảng registrations Supabase
+      const registerForm = document.getElementById('tuvangiasu-form');
       if (registerForm) {
-        // Gắn sự kiện khi học sinh bấm nút gửi form
         registerForm.addEventListener('submit', async (e) => {
-          e.preventDefault(); // Chặn trang web bị tải lại
+          e.preventDefault(); // Ngăn chặn tải lại trang
 
-          // Thu thập toàn bộ dữ liệu học sinh gõ vào các ô
-          const nameInput = registerForm.querySelector('input[placeholder*="Nguyễn Văn A"]')?.value;
-          const phoneInput = registerForm.querySelector('input[placeholder*="09xxxxxxx"]')?.value;
-          const areaInput = registerForm.querySelector('input[placeholder*="Cầu Giấy"]')?.value;
-          const fbInput = registerForm.querySelector('input[placeholder*="facebook.com"]')?.value;
-          
-          // Lấy dữ liệu từ 2 ô chọn Select
-          const selects = registerForm.querySelectorAll('select');
-          const gradeInput = selects[0]?.value;
-          const statusInput = selects[1]?.value;
+          // Lấy giá trị từ các ô nhập liệu
+          const nameInput = document.getElementById('fullname')?.value;
+          const phoneInput = document.getElementById('phone')?.value;
+          const areaInput = document.getElementById('address')?.value;
+          const fbInput = document.getElementById('social')?.value;
+          const gradeInput = document.getElementById('grade-select')?.value;
+          const statusInput = document.getElementById('demand')?.value;
 
-          if(!nameInput || !phoneInput) {
-            alert("Vui lòng điền Họ tên và Số điện thoại để thầy Việt liên hệ nhé!");
+          if (!nameInput || !phoneInput) {
+            alert("Vui lòng điền Họ tên và Số điện thoại nhé!");
             return;
           }
 
-          // Tiến hành đẩy trực tiếp dữ liệu vào bảng registrations trên Supabase
+          // Gọi lệnh thêm dữ liệu ngầm vào database
           const { error } = await _supabase
             .from('registrations')
             .insert([
@@ -558,8 +486,8 @@
           if (error) {
             alert("Gặp sự cố khi gửi đăng ký: " + error.message);
           } else {
-            alert("Đăng ký thành công! Thầy Việt sẽ liên hệ tư vấn cho bạn sớm nhất nhé.");
-            registerForm.reset(); // Xóa sạch dữ liệu cũ trên form để người khác điền
+            alert("🎉 Đăng ký thành công! Thầy Việt sẽ liên hệ tư vấn cho bạn sớm nhất nhé.");
+            registerForm.reset(); // Xóa sạch dữ liệu trên giao diện sau khi gửi thành công
           }
         });
       }
