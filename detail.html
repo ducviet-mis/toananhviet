@@ -60,9 +60,9 @@
   <header>
     <nav class="nav-container">
       <a href="index.html" class="logo">
-  <img src="assets/logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
-  TOÁN ANH VIỆT
-</a>
+        <img src="assets/logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
+        TOÁN ANH VIỆT
+      </a>
       <ul class="nav-menu">
         <li><a href="index.html">Trang chủ</a></li>
         <li><a href="category.html?grade=6">Toán 6</a></li>
@@ -84,8 +84,8 @@
           <span class="badge badge-grade" id="detail-grade">-</span>
           <span class="badge badge-cat" id="detail-cat">-</span>
         </div>
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;" id="detail-date">📅 Ngày đăng: --/--/----</p>
-        <a href="#" id="btn-download-direct" class="btn-download" download style="display: block; text-align: center;">📥 Tải trực tiếp file gốc</a>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;" id="detail-date">🚀 Trạng thái: Sẵn sàng</p>
+        <a href="#" id="btn-download-direct" class="btn-download" target="_blank" style="display: block; text-align: center;">📥 Tải trực tiếp file gốc</a>
       </aside>
 
       <!-- Cột bên phải: Tiêu đề & Trình đọc tài liệu trực quan giống Toanmath -->
@@ -109,18 +109,14 @@
   </footer>
 
   <script>
-    // Hàm chuẩn hóa đường dẫn file để tránh lỗi 404 tệp tin
-    function getAbsoluteUrl(path) {
-      if (!path) return '';
-      if (path.startsWith('http://') || path.startsWith('https://')) return path;
-      const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-      return window.location.origin + '/' + cleanPath;
-    }
-
-    async function loadDocumentDetail() {
-      // Đọc tên file json cần xem từ đường dẫn (ví dụ: ?file=2026-07-14-de-thi.json)
+    function loadDocumentDetail() {
+      // Đọc toàn bộ các tham số dữ liệu được truyền từ Supabase qua URL
       const urlParams = new URLSearchParams(window.location.search);
       const fileUrl = urlParams.get('file');
+      const title = urlParams.get('title');
+      const grade = urlParams.get('grade');
+      const cat = urlParams.get('cat');
+      const thumbnail = urlParams.get('thumbnail');
 
       if (!fileUrl) {
         document.getElementById('detail-title').innerText = "Không tìm thấy tài liệu!";
@@ -129,40 +125,40 @@
       }
 
       try {
-        // Tải nội dung chi tiết của file .json từ GitHub đưa xuống
-        const response = await fetch(fileUrl);
-        if (!response.ok) throw new Error();
-        const doc = await response.json();
-
-        // Điền dữ liệu vào trang chi tiết
-        document.getElementById('detail-title').innerText = doc.title;
-        document.title = doc.title + " - Gia sư Toán THCS";
-        document.getElementById('detail-grade').innerText = doc.grade;
-        document.getElementById('detail-cat').innerText = doc.category;
-        document.getElementById('detail-date').innerText = `📅 Ngày đăng: ${doc.date}`;
+        // Đổ dữ liệu chữ vào trang chi tiết
+        document.getElementById('detail-title').innerText = title || "Tài liệu học tập";
+        document.title = (title || "Tài liệu") + " - Gia sư Toán THCS";
         
-        // Chuẩn hóa ảnh và file tài liệu
-        const fullImgUrl = getAbsoluteUrl(doc.thumbnail);
-        const fullFileUrl = getAbsoluteUrl(doc.file);
+        // Chuẩn hóa hiển thị khối lớp (ví dụ: biến "8" thành "Toán 8")
+        if (grade) {
+          document.getElementById('detail-grade').innerText = grade.includes('Toán') ? grade : `Toán ${grade}`;
+        }
+        if (cat) {
+          document.getElementById('detail-cat').innerText = cat;
+        }
         
-        document.getElementById('detail-thumbnail').src = fullImgUrl || 'https://via.placeholder.com/300x400?text=TailieuToan';
+        // Đổ ảnh bìa thu nhỏ
+        document.getElementById('detail-thumbnail').src = thumbnail || 'https://via.placeholder.com/300x400?text=TailieuToan';
         
+        // Gắn link gốc từ Supabase Storage cho nút Tải file
         const downloadBtn = document.getElementById('btn-download-direct');
-        downloadBtn.href = fullFileUrl;
+        downloadBtn.href = fileUrl;
 
-        // Xử lý nhúng trình xem trực quan (PDF hoặc Word)
+        // Xử lý hiển thị trình xem PDF hoặc Word trực tuyến
         const viewerContainer = document.getElementById('viewer-container');
-        const fileExtension = fullFileUrl.split('.').pop().toLowerCase();
+        
+        // Tách lấy đuôi file để kiểm tra (ví dụ: .pdf hoặc .docx)
+        const fileExtension = fileUrl.split('?')[0].split('.').pop().toLowerCase();
 
         if (fileExtension === 'pdf') {
-          // Nếu là PDF -> Sử dụng trình xem PDF mặc định của trình duyệt cực đẹp
-          viewerContainer.innerHTML = `<iframe class="doc-viewer" src="${fullFileUrl}" type="application/pdf"></iframe>`;
+          // Nếu là file PDF -> Nhúng trực tiếp xem bằng trình duyệt
+          viewerContainer.innerHTML = `<iframe class="doc-viewer" src="${fileUrl}" type="application/pdf"></iframe>`;
         } else if (fileExtension === 'docx' || fileExtension === 'doc') {
-          // Nếu là Word (.docx) -> Nhúng qua cổng bảo mật chính thức của Microsoft Office Online
-          const encodeUrl = encodeURIComponent(fullFileUrl);
+          // Nếu là file Word (.docx) -> Nhúng qua viewer chính thức của Microsoft Office Online
+          const encodeUrl = encodeURIComponent(fileUrl);
           viewerContainer.innerHTML = `<iframe class="doc-viewer" src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeUrl}" frameborder="0"></iframe>`;
         } else {
-          // Định dạng khác không hỗ trợ xem trực tuyến
+          // Các định dạng file khác
           viewerContainer.innerHTML = `
             <div class="no-preview">
               <p>Tệp tin định dạng (.${fileExtension}) không hỗ trợ xem trước trực tuyến.</p>
@@ -171,6 +167,7 @@
           `;
         }
       } catch (error) {
+        console.error(error);
         document.getElementById('detail-title').innerText = "Lỗi tải dữ liệu!";
         document.getElementById('viewer-container').innerHTML = `<p class="no-preview">Đã xảy ra lỗi khi kết nối dữ liệu tài liệu.</p>`;
       }
