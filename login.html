@@ -6,78 +6,136 @@
   <title>Đăng nhập - Toán Anh Việt</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="assets/favicon.png">
-  <!-- Nhúng thư viện Supabase Auth -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* CSS trang trí riêng cho khung đăng nhập */
-    .login-container {
-      max-width: 400px;
+    .login-wrapper {
+      max-width: 450px;
       margin: 60px auto;
-      padding: 30px;
+      padding: 40px 30px;
       background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
       text-align: center;
-    }
-    .login-title {
-      font-size: 24px;
-      color: #1e293b;
-      margin-bottom: 8px;
-    }
-    .login-subtitle {
-      font-size: 14px;
-      color: #64748b;
-      margin-bottom: 25px;
+      position: relative;
     }
     .form-group {
       text-align: left;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
     .form-group label {
       display: block;
       font-size: 14px;
+      font-weight: 500;
       color: #475569;
       margin-bottom: 6px;
-      font-weight: 500;
     }
     .form-group input {
       width: 100%;
-      padding: 10px 12px;
+      padding: 12px;
       border: 1px solid #cbd5e1;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 15px;
       box-sizing: border-box;
+      transition: border 0.2s;
     }
     .form-group input:focus {
-      outline: none;
       border-color: #0284c7;
-      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+      outline: none;
     }
-    .btn-login {
+    
+    /* CẤU HÌNH NÚT BẤM CÓ HIỆU ỨNG QUAY XOAY */
+    .btn-submit-premium {
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       background: #0284c7;
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 10px;
-      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background 0.2s, opacity 0.2s;
     }
-    .btn-login:hover {
+    .btn-submit-premium:hover {
       background: #0369a1;
     }
-    .login-message {
-      margin-top: 15px;
+    .btn-submit-premium:disabled {
+      opacity: 0.8;
+      cursor: not-allowed;
+    }
+
+    /* VÒNG XOAY XOAY LOADING */
+    .spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin-animation 0.8s linear infinite;
+    }
+    @keyframes spin-animation {
+      to { transform: rotate(360deg); }
+    }
+
+    /* BẢNG THÔNG BÁO THÀNH CÔNG TRƯỢT MƯỢT MÀ (TOAST) */
+    .toast-notification {
+      position: fixed;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ffffff;
+      border-left: 5px solid #22c55e;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      padding: 14px 24px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 99999;
+      transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .toast-notification.show {
+      top: 30px;
+    }
+    .toast-icon {
+      background: #22c55e;
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .toast-text {
+      font-weight: 600;
+      color: #1e293b;
       font-size: 14px;
+    }
+    .error-display-msg {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #ef4444;
+      font-weight: 500;
+      display: none;
     }
   </style>
 </head>
 <body>
 
-  <!-- Thanh Menu đầy đủ không lo mất tính năng cũ -->
+  <!-- Khung thông báo trượt từ trên xuống -->
+  <div id="success-toast" class="toast-notification">
+    <div class="toast-icon">✓</div>
+    <div class="toast-text">Đăng nhập thành công! </div>
+  </div>
+
   <header>
     <nav class="nav-container">
       <a href="index.html" class="logo">
@@ -91,74 +149,94 @@
         <li><a href="category.html?grade=8">Toán 8</a></li>
         <li><a href="category.html?grade=9">Toán 9</a></li>
         <li><a href="quiz-list.html">Thi Online</a></li>
-        <li><a href="index.html#about">Lớp học Gia sư</a></li>
+        <li><a href="index.html#register">Lớp học Gia sư</a></li>
         <li><a href="login.html" class="active">Đăng nhập</a></li>
       </ul>
     </nav>
   </header>
 
   <main>
-    <div class="login-container">
-      <h2 class="login-title">Học Viên Đăng Nhập</h2>
-      <p class="login-subtitle">Hệ thống tài liệu độc quyền Toán Anh Việt</p>
-      
-      <form id="login-form" onsubmit="handleLogin(event)">
+    <div class="login-wrapper">
+      <h2 style="margin:0 0 10px 0; font-size:24px; color:#1e293b;">Học Viên Đăng Nhập</h2>
+      <p style="margin:0 0 30px 0; color:#64748b; font-size:14px;">Hệ thống tài liệu độc quyền Toán Anh Việt</p>
+
+      <form id="login-form-submit" onsubmit="handleUserLogin(event)">
         <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" placeholder="Email" required>
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="VD: hocsinhgioi@toananhviet.com" required>
         </div>
         <div class="form-group">
-          <label for="password">Mật khẩu</label>
-          <input type="password" id="password" placeholder="••••••••" required>
+          <label>Mật khẩu</label>
+          <input type="password" id="login-password" placeholder="••••••••" required>
         </div>
-        <button type="submit" class="btn-login">Đăng nhập</button>
+
+        <button type="submit" id="btn-submit-login" class="btn-submit-premium">
+          <div id="btn-loading-spinner" class="spinner"></div>
+          <span id="btn-text-display">Xác nhận đăng nhập</span>
+        </button>
       </form>
-      
-      <div id="message-area" class="login-message"></div>
+
+      <div id="error-output" class="error-display-msg"></div>
     </div>
   </main>
 
-  <footer>
-    <p>© 2026 Website Gia Sư Toán THCS. Phát triển bởi Anh Việt.</p>
-  </footer>
-
   <script>
-    // Kết nối thông tin API Supabase của dự án toananhviet
     const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
-    
-    // Bạn hãy dán mã "Publishable key" dán vào giữa hai dấu nháy đơn dưới đây nhé
-    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2'; 
-    
+    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function handleLogin(e) {
+    async function handleUserLogin(e) {
       e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const msgArea = document.getElementById('message-area');
 
-      msgArea.style.color = '#0284c7';
-      msgArea.innerText = 'Đang xác thực tài khoản học viên...';
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorDiv = document.getElementById('error-output');
+      
+      const btnSubmit = document.getElementById('btn-submit-login');
+      const spinner = document.getElementById('btn-loading-spinner');
+      const btnText = document.getElementById('btn-text-display');
+      const toast = document.getElementById('success-toast');
 
-      // Gửi lệnh kiểm tra tài khoản lên hệ thống Supabase Auth
+      // 1. Kích hoạt trạng thái xoay vòng mượt mà
+      errorDiv.style.display = 'none';
+      btnSubmit.disabled = true;
+      spinner.style.display = 'block';
+    
+
+      // 2. Gọi lệnh lên hệ thống Supabase xác thực
       const { data, error } = await _supabase.auth.signInWithPassword({
         email: email,
-        password: password,
+        password: password
       });
 
       if (error) {
-        msgArea.style.color = '#ef4444';
-        msgArea.innerText = 'Sai tài khoản hoặc mật khẩu!';
-      } else {
-        msgArea.style.color = '#22c55e';
-        msgArea.innerText = 'Đăng nhập thành công!';
+        // Tắt loading nếu gõ sai mật khẩu hoặc lỗi
+        btnSubmit.disabled = false;
+        spinner.style.display = 'none';
+        btnText.innerText = 'Xác nhận đăng nhập';
         
-        // Chờ hiệu ứng thông báo hiển thị xong rồi quay trở lại trang chủ
+        errorDiv.innerText = 'Mật khẩu hoặc tài khoản chưa chính xác!';
+        errorDiv.style.display = 'block';
+      } else {
+        // 3. Nếu đúng mật khẩu -> Kích hoạt bảng trượt xanh lá cây từ trên xuống cực mượt
+        btnText.innerText = 'Đăng nhập thành công!';
+        toast.classList.add('show');
+
+        // Chờ 1.5 giây cho hiệu ứng chạy mượt rồi mới chuyển hướng về trang chủ
         setTimeout(() => {
           window.location.href = 'index.html';
         }, 1500);
       }
     }
+
+    // Tự động kiểm tra nếu học sinh đăng nhập rồi thì đá thẳng ra trang chủ luôn
+    async function checkActiveSession() {
+      const { data: { user } } = await _supabase.auth.getUser();
+      if (user) {
+        window.location.href = 'index.html';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', checkActiveSession);
   </script>
 </body>
 </html>
