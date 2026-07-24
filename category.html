@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* CANH TÂN GIAO DIỆN THANH MENU TỐI GIẢN & HIỆN ĐẠI */
+    /* 1. THANH MENU NAVBAR TỐI GIẢN & HIỆN ĐẠI */
     .site-header {
       background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(12px);
@@ -56,39 +56,45 @@
       font-weight: 600;
     }
 
-    /* ĐỔI MỚI DIỆN MẠO TAB HỆ THỐNG PHÂN LOẠI */
-    .category-tabs-container {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 30px auto;
-      flex-wrap: wrap;
-      max-width: 900px;
+    /* DROPDOWN BÀI GIẢNG & ĐỀ THI */
+    .nav-dropdown {
+      position: relative;
+      display: inline-block;
     }
-    .tab-btn-modern {
-      font-family: 'Inter', sans-serif;
-      padding: 10px 20px;
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #ffffff;
+      min-width: 160px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      border-radius: 10px;
+      padding: 8px 0;
+      z-index: 1000;
+      border: 1px solid #e2e8f0;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+    .dropdown-content a {
+      color: #334155 !important;
+      padding: 10px 16px !important;
+      text-decoration: none;
+      display: block;
       font-size: 14px;
       font-weight: 500;
-      color: #64748b;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 0 !important;
+      transition: all 0.15s ease;
     }
-    .tab-btn-modern:hover {
-      border-color: #cbd5e1;
-      color: #334155;
-      background: #f8fafc;
-      transform: translateY(-1px);
+    .dropdown-content a:hover {
+      background-color: #f1f5f9 !important;
+      color: #0284c7 !important;
     }
-    .tab-btn-modern.active {
-      background: #0284c7;
-      border-color: #0284c7;
-      color: white;
-      font-weight: 600;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    .nav-dropdown:hover .dropdown-content {
+      display: block;
+    }
+    .dropbtn::after {
+      content: " ▾";
+      font-size: 12px;
     }
 
     /* AVATAR DROPDOWN UX SIÊU MƯỢT */
@@ -156,16 +162,106 @@
     }
     .dropdown-item-logout { border-top: 1px solid #f1f5f9; margin-top: 4px; color: #ef4444 !important; }
     .dropdown-item-logout:hover { background-color: #fef2f2; }
-    
-    /* Vùng chứa danh sách tài liệu */
-    .category-main { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-    .category-title-section { text-align: center; margin-bottom: 30px; }
-    .category-title-section h1 { font-size: 28px; color: #1e293b; font-family: 'Inter', sans-serif; }
+
+    /* 2. BỐ CỤC 2 CỘT CHO TRANG CATEGORY (SIDEBAR TRÁI + MAIN RIGHT) */
+    .category-container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    /* Cột TRÁI: Sidebar Sticky Menu Dọc */
+    .category-sidebar {
+      width: 250px;
+      flex-shrink: 0;
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      position: sticky;
+      top: 85px; /* Cố định khi cuộn trang */
+    }
+
+    .sidebar-heading {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 0;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f1f5f9;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .vertical-filter-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .vertical-filter-btn {
+      width: 100%;
+      text-align: left;
+      font-family: 'Inter', sans-serif;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #64748b;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .vertical-filter-btn:hover {
+      background: #f8fafc;
+      color: #0284c7;
+    }
+
+    .vertical-filter-btn.active {
+      background: #0284c7;
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    }
+
+    /* Cột PHẢI: Nội dung chính & Lưới Cards */
+    .category-content {
+      flex-grow: 1;
+      min-width: 0; /* Tránh vỡ flexbox */
+    }
+
+    .category-page-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    @media (max-width: 768px) {
+      .category-container {
+        flex-direction: column;
+      }
+      .category-sidebar {
+        width: 100%;
+        position: static;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <!-- 1. HEADER ĐỒNG BỘ HIỆN ĐẠI -->
+  <!-- 1. HEADER DÙNG DROPDOWN "BÀI GIẢNG & ĐỀ THI" -->
   <header class="site-header">
     <nav class="nav-container">
       <a href="index.html" class="logo">
@@ -174,10 +270,18 @@
       </a>
       <ul class="nav-menu" id="main-nav-menu">
         <li><a href="index.html">Trang chủ</a></li>
-        <li><a href="category.html?grade=6" id="nav-g6">Toán 6</a></li>
-        <li><a href="category.html?grade=7" id="nav-g7">Toán 7</a></li>
-        <li><a href="category.html?grade=8" id="nav-g8">Toán 8</a></li>
-        <li><a href="category.html?grade=9" id="nav-g9">Toán 9</a></li>
+        
+        <!-- DROPDOWN BÀI GIẢNG & ĐỀ THI -->
+        <li class="nav-dropdown">
+          <a href="#" class="dropbtn active">Bài giảng & Đề thi</a>
+          <div class="dropdown-content">
+            <a href="category.html?grade=6">Toán 6</a>
+            <a href="category.html?grade=7">Toán 7</a>
+            <a href="category.html?grade=8">Toán 8</a>
+            <a href="category.html?grade=9">Toán 9</a>
+          </div>
+        </li>
+
         <li><a href="quiz-list.html">Thi Online</a></li>
         <li><a href="index.html#register">Lớp học Gia sư</a></li>
         <li id="auth-menu-item"><a href="login.html">Đăng nhập</a></li>
@@ -185,26 +289,32 @@
     </nav>
   </header>
 
-  <!-- 2. NỘI DUNG CHÍNH TRANG CATEGORY -->
-  <main class="category-main">
-    <div class="category-title-section">
-      <h1 id="category-page-heading">Tài liệu môn Toán</h1>
-    </div>
+  <!-- 2. NỘI DUNG CHÍNH BỐ CỤC 2 CỘT -->
+  <main class="category-container">
+    
+    <!-- CỘT TRÁI: SIDEBAR LỌC DANH MỤC ĐỀ (VERTICAL MENU STICKY) -->
+    <aside class="category-sidebar">
+      <h3 class="sidebar-heading">Danh mục đề</h3>
+      <div class="vertical-filter-menu">
+        <button class="vertical-filter-btn active" onclick="filterDocs('all', this)">Tất cả</button>
+        <button class="vertical-filter-btn" onclick="filterDocs('Giữa kì 1', this)">Đề giữa kì 1</button>
+        <button class="vertical-filter-btn" onclick="filterDocs('Cuối kì 1', this)">Đề cuối kì 1</button>
+        <button class="vertical-filter-btn" onclick="filterDocs('Giữa kì 2', this)">Đề giữa kì 2</button>
+        <button class="vertical-filter-btn" onclick="filterDocs('Cuối kì 2', this)">Đề cuối kì 2</button>
+        <button class="vertical-filter-btn" onclick="filterDocs('Đề cương', this)">Đề cương HK</button>
+        <button class="vertical-filter-btn" onclick="filterDocs('Chuyên đề', this)">Chuyên đề Toán</button>
+      </div>
+    </aside>
 
-    <!-- HỆ THỐNG PHÂN LOẠI TAB DIỄN HỌA MƯỢT MÀ -->
-    <div class="category-tabs-container">
-      <button class="tab-btn-modern active" onclick="filterDocs('all', this)">Tất cả</button>
-      <button class="tab-btn-modern" onclick="filterDocs('Giữa kì 1', this)">Đề giữa kì 1</button>
-      <button class="tab-btn-modern" onclick="filterDocs('Cuối kì 1', this)">Đề cuối kì 1</button>
-      <button class="tab-btn-modern" onclick="filterDocs('Giữa kì 2', this)">Đề giữa kì 2</button>
-      <button class="tab-btn-modern" onclick="filterDocs('Cuối kì 2', this)">Đề cuối kì 2</button>
-      <button class="tab-btn-modern" onclick="filterDocs('Đề cương', this)">Đề cương HK</button>
-      <button class="tab-btn-modern" onclick="filterDocs('Chuyên đề', this)">Chuyên đề Toán</button>
-    </div>
+    <!-- CỘT PHẢI: TIÊU ĐỀ & LƯỚI CARD TÀI LIỆU -->
+    <section class="category-content">
+      <h1 class="category-page-title" id="category-page-heading">Tài liệu môn Toán lớp 6</h1>
 
-    <div class="doc-grid" id="category-docs-container">
-      <p style="text-align: center; grid-column: 1/-1; color: #64748b;">Đang tải danh mục tài liệu chuyên sâu...</p>
-    </div>
+      <div class="doc-grid" id="category-docs-container">
+        <p style="text-align: center; grid-column: 1/-1; color: #64748b;">Đang tải danh mục tài liệu chuyên sâu...</p>
+      </div>
+    </section>
+
   </main>
 
   <footer style="text-align: center; padding: 30px; color: #64748b; border-top: 1px solid #e2e8f0; margin-top: 60px;">
@@ -273,18 +383,17 @@
       });
     }
 
-    // LOGIC TỰ ĐỘNG BÓC TÁCH GRAD PARAMETER & RENDER FILE TÀI LIỆU KHỐI LỚP
+    // LOGIC TỰ ĐỘNG BÓC TÁCH GRADE PARAMETER & RENDER FILE TÀI LIỆU KHỐI LỚP
     const urlParams = new URLSearchParams(window.location.search);
     const currentGrade = urlParams.get('grade') || '6';
     let allDocumentsData = [];
 
-    function highlightActiveTab() {
-      document.getElementById('nav-g' + currentGrade)?.classList.add('active');
+    function updatePageHeading() {
       document.getElementById('category-page-heading').innerText = `Tài liệu môn Toán lớp ${currentGrade}`;
     }
 
     async function loadGradeDocuments() {
-      highlightActiveTab();
+      updatePageHeading();
       verifyAuthSession(); // Gọi kiểm tra song song
 
       const container = document.getElementById('category-docs-container');
@@ -333,9 +442,9 @@
       `).join('');
     }
 
-    // Bộ lọc Tab phân loại mượt mà không load lại trang
+    // Bộ lọc Vertical Menu dọc mượt mà không load lại trang
     function filterDocs(keyword, btnElement) {
-      document.querySelectorAll('.tab-btn-modern').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.vertical-filter-btn').forEach(b => b.classList.remove('active'));
       btnElement.classList.add('active');
 
       if (keyword === 'all') {
