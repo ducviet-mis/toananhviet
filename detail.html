@@ -368,13 +368,13 @@
         <p style="font-size: 13px; color: #64748b; margin-bottom: 6px;" id="detail-date">Ngày đăng: --/--/----</p>
         <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;" id="detail-views">Lượt xem: 1,240</p>
         
-        <a href="#" id="btn-download-direct" class="btn-action btn-download" download>📥 Tải trực tiếp file gốc</a>
+        <a href="#" id="btn-download-direct" class="btn-action btn-download" download>Tải trực tiếp file gốc</a>
         
         <!-- Nút báo lỗi & Chia sẻ -->
         <div class="share-buttons">
           <a href="#" id="btn-share-fb" target="_blank" class="share-btn share-fb">Facebook</a>
           <a href="#" id="btn-share-zalo" target="_blank" class="share-btn share-zalo">Zalo</a>
-          <button onclick="copyDocumentLink()" class="share-btn share-copy">📋 Copy Link</button>
+          <button onclick="copyDocumentLink()" class="share-btn share-copy">Copy Link</button>
         </div>
 
         <button onclick="reportError()" style="width:100%; margin-top:15px; background:none; border:none; color:#ef4444; font-size:12px; cursor:pointer; text-decoration:underline;">
@@ -409,7 +409,7 @@
 
         <!-- Mục Tài liệu liên quan -->
         <div class="related-section">
-          <h3 style="font-size: 16px; color: #1e293b; margin: 0; font-weight: 700;">📚 Tài liệu cùng khối lớp</h3>
+          <h3 style="font-size: 16px; color: #1e293b; margin: 0; font-weight: 700;">Tài liệu cùng khối lớp</h3>
           <div id="related-docs-container" class="related-grid">
             <p style="font-size: 13px; color: #94a3b8;">Đang tìm tài liệu liên quan...</p>
           </div>
@@ -514,8 +514,7 @@
         // Cập nhật thông tin lên Giao diện
         document.getElementById('detail-title').innerText = doc.title || "Tài liệu Toán THCS";
         document.title = (doc.title || "Chi tiết tài liệu") + " - Gia sư Toán Anh Việt";
-        
-        document.getElementById('detail-grade').innerText = doc.grade ? `Toán ${doc.grade}` : 'Toán THCS';
+        document.getElementById('detail-grade').innerText = doc.grade || 'Toán THCS';
         document.getElementById('detail-cat').innerText = doc.category || 'Tài liệu chung';
         document.getElementById('detail-date').innerText = `Ngày đăng: ${doc.date || 'Mới cập nhật'}`;
         
