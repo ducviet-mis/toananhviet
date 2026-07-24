@@ -7,46 +7,205 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    .filter-section {
+    /* 1. HEADER & DROPDOWN DÙNG CHUNG */
+    .site-header {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+    }
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+    }
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .nav-menu li a {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #475569;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .nav-menu li a:hover {
+      background: #f1f5f9;
+      color: #0284c7;
+    }
+    .nav-menu li a.active {
+      background: #e0f2fe !important;
+      color: #0369a1 !important;
+      font-weight: 600 !important;
+    }
+
+    /* DROPDOWN MENU BÀI GIẢNG & ĐỀ THI */
+    .nav-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #ffffff;
+      min-width: 160px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      border-radius: 10px;
+      padding: 8px 0;
+      z-index: 1000;
+      border: 1px solid #e2e8f0;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+    .dropdown-content a {
+      color: #334155 !important;
+      padding: 10px 16px !important;
+      text-decoration: none;
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 0 !important;
+      transition: all 0.15s ease;
+    }
+    .dropdown-content a:hover {
+      background-color: #f1f5f9 !important;
+      color: #0284c7 !important;
+    }
+    .nav-dropdown:hover .dropdown-content {
+      display: block;
+    }
+    .dropbtn::after {
+      content: " ▾";
+      font-size: 12px;
+    }
+
+    /* 2. BỐ CỤC 2 CỘT CHO TRANG THI ONLINE (SIDEBAR TRÁI + MAIN CONTENT PHẢI) */
+    .quiz-layout-container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    /* Cột TRÁI: Sidebar lọc đề thi dạng menu dọc */
+    .quiz-sidebar {
+      width: 260px;
+      flex-shrink: 0;
       background: #ffffff;
       padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      margin-bottom: 30px;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      position: sticky;
+      top: 85px; /* Cố định khi cuộn trang */
     }
+
     .filter-group {
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
+    .filter-group:last-child {
+      margin-bottom: 0;
+    }
+
     .filter-label {
-      font-weight: bold;
+      font-size: 15px;
+      font-weight: 700;
       color: #1e293b;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       display: block;
-      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #f1f5f9;
     }
+
+    .vertical-filter-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .v-filter-btn {
+      width: 100%;
+      text-align: left;
+      font-family: 'Inter', sans-serif;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #64748b;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .v-filter-btn:hover {
+      background: #f8fafc;
+      color: #0284c7;
+    }
+
+    .v-filter-btn.active {
+      background: #0284c7;
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    }
+
+    /* Cột PHẢI: Danh sách các đề thi trắc nghiệm */
+    .quiz-content-main {
+      flex-grow: 1;
+      min-width: 0;
+    }
+
+    .page-main-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-family: 'Inter', sans-serif;
+    }
+
     .quiz-card {
       background: #ffffff;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
       border: 1px solid #e2e8f0;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: transform 0.3s, box-shadow 0.3s;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
     .quiz-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(2, 132, 199, 0.15);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.12);
     }
     .quiz-meta {
       font-size: 0.85rem;
       color: #64748b;
-      margin-top: 10px;
-      margin-bottom: 15px;
+      margin-top: 12px;
+      margin-bottom: 16px;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 5px;
+      gap: 6px;
     }
     .quiz-btn {
       display: block;
@@ -55,9 +214,10 @@
       color: white;
       text-decoration: none;
       padding: 10px;
-      border-radius: 6px;
-      font-weight: bold;
+      border-radius: 8px;
+      font-weight: 600;
       font-size: 0.95rem;
+      transition: background 0.2s;
     }
     .quiz-btn:hover {
       background-color: #0369a1;
@@ -65,65 +225,91 @@
     .hidden {
       display: none !important;
     }
+
+    @media (max-width: 768px) {
+      .quiz-layout-container {
+        flex-direction: column;
+      }
+      .quiz-sidebar {
+        width: 100%;
+        position: static;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <header>
+  <!-- 1. HEADER ĐỒNG BỘ HIỆN ĐẠI -->
+  <header class="site-header">
     <nav class="nav-container">
       <a href="index.html" class="logo">
         <img src="assets/logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
         TOÁN ANH VIỆT
       </a>
-      <ul class="nav-menu">
+      <ul class="nav-menu" id="main-nav-menu">
         <li><a href="index.html">Trang chủ</a></li>
-        <li><a href="category.html?grade=6">Toán 6</a></li>
-        <li><a href="category.html?grade=7">Toán 7</a></li>
-        <li><a href="category.html?grade=8">Toán 8</a></li>
-        <li><a href="category.html?grade=9">Toán 9</a></li>
+        
+        <!-- DROPDOWN BÀI GIẢNG & ĐỀ THI -->
+        <li class="nav-dropdown">
+          <a href="#" class="dropbtn">Bài giảng & Đề thi</a>
+          <div class="dropdown-content">
+            <a href="category.html?grade=6">Toán 6</a>
+            <a href="category.html?grade=7">Toán 7</a>
+            <a href="category.html?grade=8">Toán 8</a>
+            <a href="category.html?grade=9">Toán 9</a>
+          </div>
+        </li>
+
         <li><a href="quiz-list.html" class="active">Thi Online</a></li>
-        <li><a href="index.html#register" class="highlight">Lớp học Gia sư</a></li>
-        <li><a href="login.html">Đăng nhập</a></li>
+        <li><a href="index.html#register">Lớp học Gia sư</a></li>
+        <li id="auth-menu-item"><a href="login.html">Đăng nhập</a></li>
       </ul>
     </nav>
   </header>
 
-  <main style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
-    <h2 class="section-title">Hệ Thống Thi Trắc Nghiệm Online</h2>
+  <!-- 2. BỐ CỤC 2 CỘT CHÍNH (SIDEBAR TRÁI + NỘI DUNG PHẢI) -->
+  <main class="quiz-layout-container">
     
-    <div class="filter-section">
+    <!-- CỘT BÊN TRÁI: SIDEBAR BỘ LỌC ĐỀ THI DỌC -->
+    <aside class="quiz-sidebar">
       <div class="filter-group">
-        <span class="filter-label">Chọn khối lớp:</span>
-        <div class="filter-container" id="grade-filters">
-          <button class="filter-btn active" data-grade="all">Tất cả</button>
-          <button class="filter-btn" data-grade="Lớp 6">Lớp 6</button>
-          <button class="filter-btn" data-grade="Lớp 7">Lớp 7</button>
-          <button class="filter-btn" data-grade="Lớp 8">Lớp 8</button>
-          <button class="filter-btn" data-grade="Lớp 9">Lớp 9</button>
-          <button class="filter-btn" data-grade="Thi thử vào 10">Thi thử vào 10</button>
+        <span class="filter-label">Chọn khối lớp</span>
+        <div class="vertical-filter-list" id="grade-filters">
+          <button class="v-filter-btn active" data-grade="all">Tất cả các lớp</button>
+          <button class="v-filter-btn" data-grade="Lớp 6">Lớp 6</button>
+          <button class="v-filter-btn" data-grade="Lớp 7">Lớp 7</button>
+          <button class="v-filter-btn" data-grade="Lớp 8">Lớp 8</button>
+          <button class="v-filter-btn" data-grade="Lớp 9">Lớp 9</button>
+          <button class="v-filter-btn" data-grade="Thi thử vào 10">Thi thử vào 10</button>
         </div>
       </div>
 
       <div class="filter-group hidden" id="semester-group">
-        <span class="filter-label">Chọn học kỳ:</span>
-        <div class="filter-container" id="semester-filters">
-          <button class="filter-btn active" data-semester="all">Tất cả học kỳ</button>
-          <button class="filter-btn" data-semester="Giữa kì 1">Giữa kì 1</button>
-          <button class="filter-btn" data-semester="Cuối kì 1">Cuối kì 1</button>
-          <button class="filter-btn" data-semester="Giữa kì 2">Giữa kì 2</button>
-          <button class="filter-btn" data-semester="Cuối kì 2">Cuối kì 2</button>
+        <span class="filter-label">Chọn học kỳ</span>
+        <div class="vertical-filter-list" id="semester-filters">
+          <button class="v-filter-btn active" data-semester="all">Tất cả học kỳ</button>
+          <button class="v-filter-btn" data-semester="Giữa kì 1">Giữa kì 1</button>
+          <button class="v-filter-btn" data-semester="Cuối kì 1">Cuối kì 1</button>
+          <button class="v-filter-btn" data-semester="Giữa kì 2">Giữa kì 2</button>
+          <button class="v-filter-btn" data-semester="Cuối kì 2">Cuối kì 2</button>
         </div>
       </div>
-    </div>
+    </aside>
 
-    <div class="doc-grid" id="quiz-grid">
-      <p style="text-align: center; grid-column: 1/-1;">Đang tải danh sách đề thi...</p>
-    </div>
+    <!-- CỘT BÊN PHẢI: HIỂN THỊ DANH SÁCH BỘ ĐỀ THI TRẮC NGHIỆM -->
+    <section class="quiz-content-main">
+      <h1 class="page-main-title">Hệ Thống Thi Trắc Nghiệm Online</h1>
+      
+      <div class="doc-grid" id="quiz-grid">
+        <p style="text-align: center; grid-column: 1/-1; color: #64748b;">Đang tải danh sách đề thi...</p>
+      </div>
+    </section>
+
   </main>
 
-  <footer>
+  <footer style="text-align: center; padding: 30px; color: #64748b; border-top: 1px solid #e2e8f0; margin-top: 60px;">
     <p>© 2026 Website Gia Sư Toán Anh Việt. Phát triển bởi Gia Sư Toán.</p>
-    <p>Hotline/Zalo hỗ trợ: 0965193026 - Địa chỉ: Bắc Từ Liêm - Hà Nội</p>
+    <p style="font-size: 13px; margin-top: 5px;">Hotline/Zalo hỗ trợ: 0965193026 - Địa chỉ: Bắc Từ Liêm - Hà Nội</p>
   </footer>
 
   <!-- SCRIPT HỆ THỐNG LỌC VÀ TẢI ĐỀ THI GITHUB -->
@@ -137,7 +323,7 @@
       try {
         const response = await fetch('https://api.github.com/repos/ducviet-mis/toananhviet/contents/documents/quizzes');
         if (!response.ok) {
-          grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Chưa có đề thi nào được đăng tải.</p>';
+          grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #64748b;">Chưa có đề thi nào được đăng tải.</p>';
           return;
         }
         
@@ -154,7 +340,7 @@
         
         renderQuizzes();
       } catch (e) {
-        grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Lỗi tải dữ liệu đề thi.</p>';
+        grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #ef4444;">Lỗi tải dữ liệu đề thi.</p>';
       }
     }
 
@@ -169,7 +355,7 @@
       });
 
       if (filtered.length === 0) {
-        grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Chưa có đề thi nào phù hợp với bộ lọc này.</p>';
+        grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #64748b; padding: 40px 0;">Chưa có đề thi nào phù hợp với bộ lọc này.</p>';
         return;
       }
 
@@ -180,11 +366,11 @@
         card.className = 'quiz-card';
         card.innerHTML = `
           <div>
-            <div class="doc-badges" style="margin-bottom: 10px;">
-              <span class="badge badge-grade">${quiz.grade}</span>
-              <span class="badge badge-cat">${quiz.semester || 'Luyện thi'}</span>
+            <div class="doc-badges" style="margin-bottom: 10px; display: flex; gap: 6px;">
+              <span class="badge badge-grade" style="background:#0284c7; color:white; padding:3px 8px; border-radius:4px; font-size:12px;">${quiz.grade}</span>
+              <span class="badge badge-cat" style="background:#e0f2fe; color:#0369a1; padding:3px 8px; border-radius:4px; font-size:12px;">${quiz.semester || 'Luyện thi'}</span>
             </div>
-            <h3 style="font-size: 1.1rem; font-weight: bold; line-height: 1.4; color: #1e293b;">${quiz.title}</h3>
+            <h3 style="font-size: 1.1rem; font-weight: bold; line-height: 1.4; color: #1e293b; margin: 0;">${quiz.title}</h3>
             <div class="quiz-meta">
               <span>⏱️ Thời gian: ${quiz.duration} phút</span>
               <span>📝 Số câu: ${quiz.answer_keys ? quiz.answer_keys.length : 0} câu</span>
@@ -229,7 +415,7 @@
   </script>
 
   <!-- =========================================================================
-       KHỐI ĐỒNG BỘ MENU MODERN TỐC ĐỘ CAO CHO TRANG THI ONLINE (FIX TRIỆT ĐỂ MẤT AVATAR)
+       KHỐI ĐỒNG BỘ MENU MODERN TỐC ĐỘ CAO CHO TRANG THI ONLINE (AVATAR SUPABASE AUTH)
        ========================================================================= -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -249,7 +435,7 @@
 
       // 2. Xác thực lại trạng thái tài khoản ngầm từ hệ thống Supabase để đồng bộ cache mới
       const { data: { user } } = await _supabase.auth.getUser();
-      const loginLinks = document.querySelectorAll('a[href="login.html"]');
+      const authLI = document.getElementById('auth-menu-item');
 
       if (user) {
         const meta = user.user_metadata || {};
@@ -260,22 +446,18 @@
         drawDropdownUI(dName, user.email, aSrc);
       } else {
         localStorage.removeItem('tav_user_session');
-        if (loginLinks.length > 0) {
-          loginLinks[0].parentElement.innerHTML = `<a href="login.html">Đăng nhập</a>`;
-        }
+        if (authLI) authLI.innerHTML = `<a href="login.html">Đăng nhập</a>`;
       }
 
       function drawDropdownUI(name, email, avatar) {
-        const targetLinks = document.querySelectorAll('a[href="login.html"]');
-        if (targetLinks.length === 0) return;
-        const targetLi = targetLinks[0].parentElement;
+        const authLI = document.getElementById('auth-menu-item');
+        if (!authLI) return;
 
-        // Chèn ép cấu trúc CSS menu mờ sương đồng bộ
+        // Chèn cấu trúc CSS menu mờ sương đồng bộ
         if (!document.getElementById('instant-quiz-style')) {
           const style = document.createElement('style');
           style.id = 'instant-quiz-style';
           style.innerHTML = `
-            .nav-menu li a[href="quiz-list.html"] { background: #e0f2fe !important; color: #0369a1 !important; font-weight: 600 !important; }
             .user-profile-dropdown { position: relative; display: inline-block; cursor: pointer; margin-left: 8px; }
             .menu-avatar-img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0284c7; object-fit: cover; vertical-align: middle; transition: all 0.2s ease; }
             .user-profile-dropdown:hover .menu-avatar-img { transform: scale(1.05); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15); }
@@ -293,7 +475,7 @@
           document.head.appendChild(style);
         }
 
-        targetLi.innerHTML = `
+        authLI.innerHTML = `
           <div class="user-profile-dropdown">
             <img class="menu-avatar-img" src="${avatar}" alt="Avatar">
             <div class="dropdown-menu-box">
