@@ -13,14 +13,17 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      margin: 0;
     }
     header {
       flex-shrink: 0;
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
     }
     .exam-wrapper {
       display: flex;
       flex: 1;
-      height: calc(100vh - 80px);
+      height: calc(100vh - 65px);
       overflow: hidden;
       position: relative;
     }
@@ -36,7 +39,7 @@
       height: 100%;
       border: none;
     }
-    /* Cột phải: Phiếu trả lời trắc nghiệm gọn gàng */
+    /* Cột phải: Phiếu trả lời trắc nghiệm */
     .answersheet-pane {
       width: 40%;
       height: 100%;
@@ -44,6 +47,7 @@
       overflow-y: auto;
       padding: 25px;
       position: relative;
+      box-sizing: border-box;
     }
     .timer-badge {
       position: sticky;
@@ -84,7 +88,6 @@
       color: #0284c7;
       border-bottom-color: #0284c7;
     }
-    /* Thiết kế dòng câu trả lời gọn nhẹ */
     .answer-row {
       display: flex;
       align-items: center;
@@ -109,7 +112,6 @@
       color: #1e293b;
       min-width: 60px;
     }
-    /* Các nút chọn tròn A, B, C, D nằm ngang */
     .bubble-group {
       display: flex;
       gap: 10px;
@@ -147,7 +149,6 @@
     .short-input-field:focus {
       border-color: #0284c7;
     }
-    /* Hiển thị đáp án đúng sau khi nộp */
     .result-key-info {
       font-size: 0.85rem;
       margin-top: 5px;
@@ -166,7 +167,7 @@
     @media (max-width: 768px) {
       .exam-wrapper {
         flex-direction: column;
-        height: calc(100vh - 130px);
+        height: calc(100vh - 115px);
       }
       .mobile-tabs {
         display: flex;
@@ -184,9 +185,11 @@
 <body>
 
   <header>
-    <nav class="nav-container" style="padding: 10px 20px;">
-      <a href="index.html" class="logo">📐 TOÁN ANH VIỆT</a>
-      <span style="font-weight: bold; color: #0284c7; font-size: 1rem;" id="exam-title-header">Đang tải đề thi...</span>
+    <nav class="nav-container" style="padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;">
+      <a href="quiz-list.html" class="logo" style="text-decoration: none; font-weight: 800; color: #0284c7; display: flex; align-items: center; gap: 8px;">
+        ← TOÁN ANH VIỆT
+      </a>
+      <span style="font-weight: 700; color: #1e293b; font-size: 1rem;" id="exam-title-header">Đang tải đề thi...</span>
     </nav>
   </header>
 
@@ -206,7 +209,7 @@
       
       <div class="timer-badge">
         <span id="countdown">Thời gian: --:--</span>
-        <button onclick="submitExam()" id="submit-btn" style="background: #e11d48; color: white; border: none; padding: 6px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;">NỘP BÀI</button>
+        <button onclick="submitExam()" id="submit-btn" style="background: #e11d48; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold;">NỘP BÀI</button>
       </div>
 
       <div id="result-box">
@@ -225,10 +228,8 @@
     let timerInterval = null;
     let userAnswers = {};
 
-    // Hàm chuẩn hóa link xem tài liệu (Nhúng Word qua Office Online)
     function getDocViewerUrl(filePath) {
       if (!filePath) return '';
-      // Lấy link tuyệt đối của file
       let absoluteUrl = filePath;
       if (!filePath.startsWith('http://') && !filePath.startsWith('https://')) {
         absoluteUrl = window.location.origin + (filePath.startsWith('/') ? '' : '/') + filePath;
@@ -236,9 +237,8 @@
 
       const fileExtension = absoluteUrl.split('.').pop().toLowerCase();
       if (fileExtension === 'pdf') {
-        return absoluteUrl; // Nếu là PDF thì mở trực tiếp
+        return absoluteUrl;
       } else {
-        // Nếu là Word (.docx, .doc), nhúng qua Office Apps Live Viewer
         return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(absoluteUrl)}`;
       }
     }
@@ -258,8 +258,6 @@
         quizData = await response.json();
 
         document.getElementById('exam-title-header').innerText = quizData.title;
-        
-        // Nhúng file PDF hoặc Word
         document.getElementById('pdf-viewer').src = getDocViewerUrl(quizData.exam_file);
 
         timeRemaining = (quizData.duration || 45) * 60;
@@ -286,7 +284,6 @@
       }, 1000);
     }
 
-    // Render phiếu điền đáp án cực kỳ gọn gàng
     function renderAnswerSheet() {
       const list = document.getElementById('questions-list');
       list.innerHTML = '';
@@ -301,7 +298,6 @@
         let actionHtml = '';
 
         if (item.q_type === 'multiple_choice') {
-          // Trắc nghiệm ABCD tròn
           actionHtml = `
             <div class="bubble-group">
               ${['A', 'B', 'C', 'D'].map(char => `
@@ -311,7 +307,6 @@
             </div>
           `;
         } else {
-          // Trả lời ngắn bằng ô nhập chữ/số
           actionHtml = `
             <input type="text" class="short-input-field" placeholder="Nhập đáp án..." oninput="saveAnswer(${item.q_number}, this.value)">
           `;
@@ -333,7 +328,6 @@
       userAnswers[qNum] = value.trim();
     }
 
-    // Chấm điểm tự động và Khóa bài thi
     function submitExam() {
       if (!confirm("Bạn muốn nộp bài thi?")) return;
       clearInterval(timerInterval);
@@ -362,7 +356,6 @@
           }
         }
 
-        // Đổi màu hiển thị phiếu trả lời
         if (isCorrect) {
           row.classList.add('correct');
           earnedScore += scorePerQuestion;
@@ -371,11 +364,9 @@
           row.classList.add('incorrect');
         }
 
-        // Hiện đáp án đúng và giải thích
         keyInfo.style.display = 'block';
       });
 
-      // Show kết quả
       const resultBox = document.getElementById('result-box');
       resultBox.style.display = 'block';
       document.getElementById('result-score').innerText = `${earnedScore.toFixed(2)} / ${quizData.total_score} điểm`;
