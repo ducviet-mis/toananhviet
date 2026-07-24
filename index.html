@@ -9,6 +9,57 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Nhúng thư viện Netlify Identity Widget -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <style>
+    /* CSS Bổ sung cho Dropdown Môn Toán */
+    .nav-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #ffffff;
+      min-width: 150px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 8px 0;
+      z-index: 1000;
+      border: 1px solid #e2e8f0;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .dropdown-content a {
+      color: #334155;
+      padding: 10px 16px;
+      text-decoration: none;
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #f1f5f9;
+      color: #0284c7;
+    }
+
+    .nav-dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropbtn::after {
+      content: " ▾";
+      font-size: 12px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
 
@@ -21,10 +72,18 @@
       </a>
       <ul class="nav-menu">
         <li><a href="index.html" class="active">Trang chủ</a></li>
-        <li><a href="category.html?grade=6">Toán 6</a></li>
-        <li><a href="category.html?grade=7">Toán 7</a></li>
-        <li><a href="category.html?grade=8">Toán 8</a></li>
-        <li><a href="category.html?grade=9">Toán 9</a></li>
+        
+        <!-- DROPDOWN KHO TÀI LIỆU TOÁN -->
+        <li class="nav-dropdown">
+          <a href="#" class="dropbtn">Tài liệu Toán</a>
+          <div class="dropdown-content">
+            <a href="category.html?grade=6">Toán 6</a>
+            <a href="category.html?grade=7">Toán 7</a>
+            <a href="category.html?grade=8">Toán 8</a>
+            <a href="category.html?grade=9">Toán 9</a>
+          </div>
+        </li>
+
         <li><a href="quiz-list.html">Thi Online</a></li>
         <li><a href="#register" class="highlight">Lớp học Gia sư</a></li>
         <li><a href="login.html">Đăng nhập</a></li>
@@ -438,8 +497,8 @@
             .site-header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); transition: all 0.3s ease; }
             .nav-menu li a { border-radius: 8px; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
             .nav-menu li a:hover { background: #f1f5f9; color: #0284c7; }
-           .nav-menu li a.highlight { background: transparent !important; background-color: transparent !important; color: #475569 !important; font-weight: 500 !important; border-radius: 8px !important; }
-.nav-menu li a.highlight:hover { background: #f1f5f9 !important; background-color: #f1f5f9 !important; color: #0284c7 !important; }
+            .nav-menu li a.highlight { background: transparent !important; background-color: transparent !important; color: #475569 !important; font-weight: 500 !important; border-radius: 8px !important; }
+            .nav-menu li a.highlight:hover { background: #f1f5f9 !important; background-color: #f1f5f9 !important; color: #0284c7 !important; }
             .user-profile-dropdown { position: relative; display: inline-block; cursor: pointer; margin-left: 8px; }
             .menu-avatar-img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0284c7; object-fit: cover; vertical-align: middle; transition: all 0.2s ease; }
             .user-profile-dropdown:hover .menu-avatar-img { transform: scale(1.05); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15); }
