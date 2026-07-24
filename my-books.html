@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sách Của Tôi - Toán Anh Việt</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col font-sans">
+
+  <!-- HEADER -->
+  <header class="bg-white shadow-sm border-b sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2 text-xl font-bold text-blue-600">
+        <i class="fa-solid fa-book-open-reader text-2xl"></i>
+        <span>TOÁN ANH VIỆT</span>
+      </a>
+      <div id="user-info" class="flex items-center gap-3">
+        <span id="user-email" class="text-sm font-medium text-gray-600">Đang tải...</span>
+        <a href="profile.html" class="text-gray-500 hover:text-blue-600 transition">
+          <i class="fa-solid fa-circle-user text-2xl"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full">
+    
+    <!-- KHU VỰC KÍCH HOẠT SÁCH -->
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 md:p-8 text-white shadow-lg mb-10">
+      <div class="max-w-2xl">
+        <h1 class="text-2xl md:text-3xl font-extrabold mb-2">Kích Hoạt Sách Mới</h1>
+        <p class="text-blue-100 mb-6 text-sm md:text-base">
+          Nhập mã kích hoạt (Activation Code) được in trong sách hoặc nhận qua đơn hàng để mở khóa tài liệu học tập.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input 
+            type="text" 
+            id="activation-code-input" 
+            placeholder="Ví dụ: CPT8-T1-2611" 
+            class="flex-1 px-4 py-3 rounded-xl text-gray-900 font-semibold uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-yellow-400 placeholder-gray-400 text-sm md:text-base shadow-inner"
+          />
+          <button 
+            onclick="activateBook()" 
+            id="btn-activate"
+            class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold px-6 py-3 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-md active:scale-95"
+          >
+            <i class="fa-solid fa-key"></i>
+            <span>Kích Hoạt ngay</span>
+          </button>
+        </div>
+        <p id="activation-message" class="mt-3 text-sm font-medium hidden"></p>
+      </div>
+    </div>
+
+    <!-- DANH SÁCH SÁCH CỦA TÔI -->
+    <div>
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl md:text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <i class="fa-solid fa-bookmark text-blue-600"></i>
+          <span>Tủ Sách Của Tôi</span>
+        </h2>
+        <span id="book-count" class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">0 cuốn</span>
+      </div>
+
+      <!-- Trạng thái Đang tải -->
+      <div id="loading-spinner" class="py-12 text-center text-gray-500">
+        <i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600 mb-3"></i>
+        <p>Đang kiểm tra tủ sách của bạn...</p>
+      </div>
+
+      <!-- Trạng thái Tủ sách trống -->
+      <div id="empty-state" class="hidden text-center py-12 bg-white rounded-2xl border border-dashed border-gray-300 p-8">
+        <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+          <i class="fa-solid fa-book"></i>
+        </div>
+        <h3 class="text-lg font-bold text-gray-800 mb-1">Chưa có cuốn sách nào</h3>
+        <p class="text-gray-500 text-sm max-w-md mx-auto mb-4">
+          Bạn chưa kích hoạt cuốn sách nào. Hãy nhập mã kích hoạt ở trên để bổ sung sách vào tủ nhé!
+        </p>
+      </div>
+
+      <!-- Lưới danh sách sách -->
+      <div id="books-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+        <!-- Các cuốn sách sẽ được JS tự động đổ vào đây -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t py-6 text-center text-sm text-gray-500 mt-auto">
+    <p>© 2026 Toán Anh Việt. Bản quyền thuộc về Thầy Việt.</p>
+  </footer>
+
+  <!-- JAVASCRIPT XỬ LÝ SUPABASE -->
+  <script>
+    // 1. CẤU HÌNH SUPABASE (Dùng thông tin từ Project của cậu)
+    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+    const eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsbHRmZ2ZieWRnb2p1dWlwcnNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0NDQwNDYsImV4cCI6MjEwMDAyMDA0Nn0.KWnpDDjZ3SiEtbMWAyxoGeb_JdW66aL9rUlu0NoMsA0 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsbHRmZ2ZieWRnb2p1dWlwcnNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkyMzg3MjksImV4cCI6MjA3NDgxNDcyOX0.gIsFfUoN5BvIs8Tky46Q_36Z8H96iXN4sKz3_lO2Bf0'; // Bạn nhớ gõ đúng Key Anon trong Project Settings -> API của bạn nhé
+    
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let currentUser = null;
+
+    // 2. KHỞI TẠO KHI TRANG TẢI XONG
+    document.addEventListener('DOMContentLoaded', async () => {
+      await checkUserLogin();
+      if (currentUser) {
+        await loadMyBooks();
+      }
+    });
+
+    // 3. KIỂM TRA ĐĂNG NHẬP
+    async function checkUserLogin() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        // Nếu chưa đăng nhập, chuyển hướng sang trang login
+        window.location.href = 'login.html';
+        return;
+      }
+      currentUser = user;
+      document.getElementById('user-email').innerText = user.email;
+    }
+
+    // 4. HÀM KÍCH HOẠT SÁCH (Bấm nút "Kích hoạt ngay")
+    async function activateBook() {
+      const inputEl = document.getElementById('activation-code-input');
+      const msgEl = document.getElementById('activation-message');
+      const btnEl = document.getElementById('btn-activate');
+      const code = inputEl.value.trim();
+
+      if (!code) {
+        showMessage('Vui lòng nhập mã kích hoạt!', 'error');
+        return;
+      }
+
+      // Khóa nút tránh spam
+      btnEl.disabled = true;
+      btnEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Đang xử lý...</span>`;
+      msgEl.classList.add('hidden');
+
+      try {
+        // Bước A: Kiểm tra xem mã có tồn tại trong bảng activation_codes không
+        const { data: codeData, error: codeError } = await supabase
+          .from('activation_codes')
+          .select('*')
+          .eq('code', code)
+          .single();
+
+        if (codeError || !codeData) {
+          showMessage('Mã kích hoạt không hợp lệ hoặc không tồn tại!', 'error');
+          resetBtn();
+          return;
+        }
+
+        // Bước B: Kiểm tra xem mã đã dùng chưa
+        if (codeData.is_used) {
+          showMessage('Mã kích hoạt này đã được sử dụng trước đó!', 'error');
+          resetBtn();
+          return;
+        }
+
+        // Bước C: Cập nhật trạng thái is_used = true và gán email học sinh
+        const { error: updateError } = await supabase
+          .from('activation_codes')
+          .update({ 
+            is_used: true, 
+            used_by_email: currentUser.email 
+          })
+          .eq('code', code);
+
+        if (updateError) {
+          showMessage('Có lỗi xảy ra khi kích hoạt. Vui lòng thử lại!', 'error');
+          resetBtn();
+          return;
+        }
+
+        // Bước D: Thành công! Thông báo và tải lại tủ sách
+        showMessage('🎉 Kích hoạt sách thành công!', 'success');
+        inputEl.value = '';
+        await loadMyBooks();
+
+      } catch (err) {
+        console.error(err);
+        showMessage('Có lỗi kết nối đến máy chủ!', 'error');
+      } finally {
+        resetBtn();
+      }
+    }
+
+    // 5. HÀM TẢI DANH SÁCH SÁCH ĐÃ KÍCH HOẠT
+    async function loadMyBooks() {
+      const spinner = document.getElementById('loading-spinner');
+      const emptyState = document.getElementById('empty-state');
+      const grid = document.getElementById('books-grid');
+      const countEl = document.getElementById('book-count');
+
+      spinner.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+      grid.innerHTML = '';
+
+      try {
+        // Bước A: Tìm tất cả mã kích hoạt thuộc về email người dùng hiện tại
+        const { data: activatedCodes, error: codesError } = await supabase
+          .from('activation_codes')
+          .select('book_id')
+          .eq('used_by_email', currentUser.email)
+          .eq('is_used', true);
+
+        if (codesError) throw codesError;
+
+        if (!activatedCodes || activatedCodes.length === 0) {
+          spinner.classList.add('hidden');
+          emptyState.classList.remove('hidden');
+          countEl.innerText = '0 cuốn';
+          return;
+        }
+
+        // Lấy danh sách các book_id
+        const bookIds = activatedCodes.map(item => item.book_id);
+
+        // Bước B: Tra cứu thông tin chi tiết các cuốn sách từ bảng books
+        const { data: books, error: booksError } = await supabase
+          .from('books')
+          .select('*')
+          .in('book_id', bookIds);
+
+        if (booksError) throw booksError;
+
+        spinner.classList.add('hidden');
+        countEl.innerText = `${books.length} cuốn`;
+
+        // Bước C: Hiển thị sách ra giao diện
+        books.forEach(book => {
+          const bookCard = `
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition duration-200 flex flex-col group">
+              <div class="aspect-[3/4] bg-gray-100 overflow-hidden relative">
+                <img 
+                  src="${book.cover_img}" 
+                  alt="${book.title}" 
+                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  onerror="this.src='https://via.placeholder.com/300x400?text=Toan+Anh+Viet'"
+                />
+                <span class="absolute top-2 right-2 bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">
+                  Lớp ${book.grade || '8'}
+                </span>
+              </div>
+              <div class="p-3 flex-1 flex flex-col justify-between">
+                <h3 class="font-bold text-gray-800 text-sm line-clamp-2 mb-2 group-hover:text-blue-600 transition">
+                  ${book.title}
+                </h3>
+                <a 
+                  href="view-detail.html?book_id=${book.book_id}" 
+                  class="w-full bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white font-semibold text-xs py-2 rounded-lg text-center transition duration-200 block"
+                >
+                  Vào Học Ngay
+                </a>
+              </div>
+            </div>
+          `;
+          grid.innerHTML += bookCard;
+        });
+
+      } catch (err) {
+        console.error('Lỗi tải danh sách sách:', err);
+        spinner.classList.add('hidden');
+      }
+    }
+
+    // UTILS: Hiển thị thông báo
+    function showMessage(text, type) {
+      const msgEl = document.getElementById('activation-message');
+      msgEl.innerText = text;
+      msgEl.classList.remove('hidden', 'text-green-300', 'text-yellow-300');
+      
+      if (type === 'success') {
+        msgEl.classList.add('text-green-300');
+      } else {
+        msgEl.classList.add('text-yellow-300');
+      }
+    }
+
+    function resetBtn() {
+      const btnEl = document.getElementById('btn-activate');
+      btnEl.disabled = false;
+      btnEl.innerHTML = `<i class="fa-solid fa-key"></i> <span>Kích Hoạt ngay</span>`;
+    }
+  </script>
+</body>
+</html>
