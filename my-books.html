@@ -4,293 +4,359 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sách Của Tôi - Toán Anh Việt</title>
+  
+  <!-- FontAwesome & CSS Gốc -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Supabase JS Client -->
+
+  <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col font-sans">
 
-  <!-- HEADER -->
+  <!-- HEADER CHUẨN GIAO DIỆN GỐC -->
   <header class="bg-white shadow-sm border-b sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-2 text-xl font-bold text-blue-600">
-        <i class="fa-solid fa-book-open-reader text-2xl"></i>
-        <span>TOÁN ANH VIỆT</span>
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      
+      <!-- Logo Genius Maths -->
+      <a href="index.html" class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
+          <div class="bg-blue-600 text-white font-black text-xs px-2 py-1 rounded tracking-tighter leading-none text-center">
+            GENIUS<br><span class="text-[9px] font-normal">MATHS</span>
+          </div>
+          <span class="text-xl font-extrabold text-blue-600 tracking-tight">TOÁN ANH VIỆT</span>
+        </div>
       </a>
-      <div id="user-info" class="flex items-center gap-3">
-        <span id="user-email" class="text-sm font-medium text-gray-600">Đang tải...</span>
-        <a href="profile.html" class="text-gray-500 hover:text-blue-600 transition">
-          <i class="fa-solid fa-circle-user text-2xl"></i>
-        </a>
+
+      <!-- Menu Navigation -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
+        <a href="index.html" class="hover:text-blue-600 transition">Trang chủ</a>
+        <a href="category.html?grade=8" class="hover:text-blue-600 transition">Tài liệu Toán</a>
+        <a href="quiz-list.html" class="hover:text-blue-600 transition">Thi Online</a>
+        <a href="#" class="hover:text-blue-600 transition">Lớp học Gia sư</a>
+      </nav>
+
+      <!-- Avatar & Dropdown -->
+      <div class="relative group" id="user-header-box">
+        <button id="avatar-btn" class="flex items-center gap-2 focus:outline-none">
+          <img id="user-avatar-img" src="https://via.placeholder.com/40" class="w-9 h-9 rounded-full object-cover border border-blue-500 shadow-sm" alt="Avatar">
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
+          <div class="px-4 py-2.5 border-b border-gray-100">
+            <p id="user-display-name" class="font-bold text-gray-800 text-sm truncate">Đang tải...</p>
+            <p id="user-display-email" class="text-xs text-gray-400 truncate"></p>
+          </div>
+          <a href="profile.html" class="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+            <i class="fa-regular fa-user text-gray-400 w-4"></i> Thông tin cá nhân
+          </a>
+          <a href="my-books.html" class="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 font-semibold text-blue-600">
+            <i class="fa-solid fa-book-bookmark text-blue-600 w-4"></i> Sách của tôi
+          </a>
+          <button onclick="openActivateModal()" class="w-full text-left flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+            <i class="fa-solid fa-key text-gray-400 w-4"></i> Kích hoạt sách
+          </button>
+          <div class="border-t border-gray-100 mt-1 pt-1">
+            <button id="btn-logout" class="w-full text-left flex items-center gap-2.5 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+              <i class="fa-solid fa-arrow-right-from-bracket w-4"></i> Đăng xuất
+            </button>
+          </div>
+        </div>
       </div>
+
     </div>
   </header>
 
-  <!-- MAIN CONTENT -->
+  <!-- MAIN KHO SÁCH CỦA TÔI -->
   <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full">
     
-    <!-- KHU VỰC KÍCH HOẠT SÁCH -->
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 md:p-8 text-white shadow-lg mb-10">
-      <div class="max-w-2xl">
-        <h1 class="text-2xl md:text-3xl font-extrabold mb-2">Kích Hoạt Sách Mới</h1>
-        <p class="text-blue-100 mb-6 text-sm md:text-base">
-          Nhập mã kích hoạt (Activation Code) được in trong sách hoặc nhận qua đơn hàng để mở khóa tài liệu học tập.
-        </p>
-        
-        <div class="flex flex-col sm:flex-row gap-3">
-          <input 
-            type="text" 
-            id="activation-code-input" 
-            placeholder="Ví dụ: CPT8-T1-2611" 
-            class="flex-1 px-4 py-3 rounded-xl text-gray-900 font-semibold uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-yellow-400 placeholder-gray-400 text-sm md:text-base shadow-inner"
-          />
-          <button 
-            onclick="activateBook()" 
-            id="btn-activate"
-            class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold px-6 py-3 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-md active:scale-95"
-          >
-            <i class="fa-solid fa-key"></i>
-            <span>Kích Hoạt ngay</span>
-          </button>
-        </div>
-        <p id="activation-message" class="mt-3 text-sm font-medium hidden"></p>
+    <div class="flex items-center justify-between mb-8 pb-4 border-b">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <i class="fa-solid fa-book-open text-blue-600"></i>
+          <span>Kho Sách Của Tôi</span>
+        </h1>
+        <p class="text-xs md:text-sm text-gray-500 mt-1">Danh sách các cuốn sách điện tử bạn đã kích hoạt tài khoản.</p>
       </div>
+
+      <button onclick="openActivateModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs md:text-sm px-4 py-2.5 rounded-lg shadow transition flex items-center gap-2">
+        <i class="fa-solid fa-key"></i>
+        <span>Kích hoạt sách mới</span>
+      </button>
     </div>
 
-    <!-- DANH SÁCH SÁCH CỦA TÔI -->
-    <div>
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl md:text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <i class="fa-solid fa-bookmark text-blue-600"></i>
-          <span>Tủ Sách Của Tôi</span>
-        </h2>
-        <span id="book-count" class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">0 cuốn</span>
-      </div>
-
-      <!-- Trạng thái Đang tải -->
-      <div id="loading-spinner" class="py-12 text-center text-gray-500">
-        <i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600 mb-3"></i>
-        <p>Đang kiểm tra tủ sách của bạn...</p>
-      </div>
-
-      <!-- Trạng thái Tủ sách trống -->
-      <div id="empty-state" class="hidden text-center py-12 bg-white rounded-2xl border border-dashed border-gray-300 p-8">
-        <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-          <i class="fa-solid fa-book"></i>
-        </div>
-        <h3 class="text-lg font-bold text-gray-800 mb-1">Chưa có cuốn sách nào</h3>
-        <p class="text-gray-500 text-sm max-w-md mx-auto mb-4">
-          Bạn chưa kích hoạt cuốn sách nào. Hãy nhập mã kích hoạt ở trên để bổ sung sách vào tủ nhé!
-        </p>
-      </div>
-
-      <!-- Lưới danh sách sách -->
-      <div id="books-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-        <!-- Các cuốn sách sẽ được JS tự động đổ vào đây -->
-      </div>
+    <!-- Trạng thái Đang tải -->
+    <div id="loading-spinner" class="py-16 text-center text-gray-500">
+      <i class="fa-solid fa-circle-notch fa-spin text-3xl text-blue-600 mb-3"></i>
+      <p class="text-sm font-medium">Đang kiểm tra kho sách của bạn...</p>
     </div>
+
+    <!-- Trạng thái Kho sách trống -->
+    <div id="empty-state" class="hidden text-center py-16 bg-white rounded-2xl border border-dashed border-gray-200 p-8 shadow-sm">
+      <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+        <i class="fa-solid fa-book"></i>
+      </div>
+      <h3 class="text-lg font-bold text-gray-800 mb-1">Bạn chưa có cuốn sách nào</h3>
+      <p class="text-gray-500 text-sm max-w-md mx-auto mb-6">
+        Hãy sử dụng mã kích hoạt được cấp để mở khóa các tài liệu học tập trong kho nhé!
+      </p>
+      <button onclick="openActivateModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition">
+        Kích Hoạt Ngay
+      </button>
+    </div>
+
+    <!-- Danh sách Grid hiển thị Sách -->
+    <div id="books-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
 
   </main>
 
+  <!-- POPUP (MODAL) KÍCH HOẠT SÁCH NỔI -->
+  <div id="activate-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative transform transition-all">
+      
+      <!-- Nút đóng popup -->
+      <button onclick="closeActivateModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-lg w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="p-6">
+        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4 text-xl">
+          <i class="fa-solid fa-key"></i>
+        </div>
+
+        <h3 class="text-xl font-bold text-gray-900 mb-1">Kích Hoạt Sách</h3>
+        <p class="text-xs text-gray-500 mb-6">Nhập mã kích hoạt được in trên bìa sách hoặc phiếu quà tặng để mở khóa.</p>
+
+        <form id="activate-form" onsubmit="handleActivate(event)">
+          <div class="mb-4">
+            <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">Mã kích hoạt (Code)</label>
+            <input 
+              type="text" 
+              id="input-activation-code" 
+              placeholder="VD: CPT8-T1-2611" 
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl font-bold text-gray-800 uppercase focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm"
+              required
+            />
+          </div>
+
+          <div id="modal-msg" class="text-xs font-medium mb-4 hidden p-3 rounded-lg"></div>
+
+          <button 
+            type="submit" 
+            id="btn-submit-activate"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-md active:scale-95 text-sm"
+          >
+            Kích Hoạt Ngay
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
   <!-- FOOTER -->
-  <footer class="bg-white border-t py-6 text-center text-sm text-gray-500 mt-auto">
-    <p>© 2026 Toán Anh Việt. Bản quyền thuộc về Thầy Việt.</p>
+  <footer class="bg-white border-t py-6 text-center text-xs text-gray-500 mt-auto">
+    <p>© 2026 Website Gia Sư Toán Anh Việt. Thiết kế đồng bộ bởi Anh Việt.</p>
   </footer>
 
-  <!-- JAVASCRIPT XỬ LÝ SUPABASE -->
+  <!-- SCRIPT XỬ LÝ SUPABASE & POPUP -->
   <script>
-    // 1. CẤU HÌNH SUPABASE (Dùng thông tin từ Project của cậu)
     const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
-    const eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsbHRmZ2ZieWRnb2p1dWlwcnNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0NDQwNDYsImV4cCI6MjEwMDAyMDA0Nn0.KWnpDDjZ3SiEtbMWAyxoGeb_JdW66aL9rUlu0NoMsA0 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsbHRmZ2ZieWRnb2p1dWlwcnNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkyMzg3MjksImV4cCI6MjA3NDgxNDcyOX0.gIsFfUoN5BvIs8Tky46Q_36Z8H96iXN4sKz3_lO2Bf0'; // Bạn nhớ gõ đúng Key Anon trong Project Settings -> API của bạn nhé
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsbHRmZ2ZieWRnb2p1dWlwcnNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkyMzg3MjksImV4cCI6MjA3NDgxNDcyOX0.gIsFfUoN5BvIs8Tky46Q_36Z8H96iXN4sKz3_lO2Bf0';
     
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    let currentUser = null;
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let userSession = null;
 
-    // 2. KHỞI TẠO KHI TRANG TẢI XONG
     document.addEventListener('DOMContentLoaded', async () => {
-      await checkUserLogin();
-      if (currentUser) {
-        await loadMyBooks();
+      // Toggle dropdown avatar
+      const avatarBtn = document.getElementById('avatar-btn');
+      const dropdown = document.getElementById('user-dropdown');
+      
+      avatarBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('hidden');
+      });
+
+      document.addEventListener('click', () => dropdown.classList.add('hidden'));
+
+      // Kiểm tra người dùng
+      await initUser();
+
+      // Kiểm tra URL nếu có hash #activate thì mở luôn Modal Popup
+      if (window.location.hash === '#activate') {
+        openActivateModal();
       }
     });
 
-    // 3. KIỂM TRA ĐĂNG NHẬP
-    async function checkUserLogin() {
-      const { data: { user } } = await supabase.auth.getUser();
+    // 1. KHỞI TẠO VÀ LẤY THÔNG TIN USER
+    async function initUser() {
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      
       if (!user) {
-        // Nếu chưa đăng nhập, chuyển hướng sang trang login
-        window.location.href = 'login.html';
-        return;
+        // Thử lấy từ localStorage cũ nếu có
+        const localUser = JSON.parse(localStorage.getItem('tav_user_session') || 'null');
+        if (localUser) {
+          userSession = localUser;
+        } else {
+          // Chưa đăng nhập -> sang trang login
+          window.location.href = 'login.html';
+          return;
+        }
+      } else {
+        userSession = user;
       }
-      currentUser = user;
-      document.getElementById('user-email').innerText = user.email;
+
+      // Điền thông tin lên Header Avatar
+      document.getElementById('user-display-email').innerText = userSession.email || '';
+      document.getElementById('user-display-name').innerText = userSession.user_metadata?.full_name || userSession.email?.split('@')[0] || 'Tài khoản';
+      
+      if (userSession.user_metadata?.avatar_url) {
+        document.getElementById('user-avatar-img').src = userSession.user_metadata.avatar_url;
+      }
+
+      // Tải danh sách sách
+      await loadUserBooks();
     }
 
-    // 4. HÀM KÍCH HOẠT SÁCH (Bấm nút "Kích hoạt ngay")
-    async function activateBook() {
-      const inputEl = document.getElementById('activation-code-input');
-      const msgEl = document.getElementById('activation-message');
-      const btnEl = document.getElementById('btn-activate');
-      const code = inputEl.value.trim();
-
-      if (!code) {
-        showMessage('Vui lòng nhập mã kích hoạt!', 'error');
-        return;
-      }
-
-      // Khóa nút tránh spam
-      btnEl.disabled = true;
-      btnEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Đang xử lý...</span>`;
-      msgEl.classList.add('hidden');
-
-      try {
-        // Bước A: Kiểm tra xem mã có tồn tại trong bảng activation_codes không
-        const { data: codeData, error: codeError } = await supabase
-          .from('activation_codes')
-          .select('*')
-          .eq('code', code)
-          .single();
-
-        if (codeError || !codeData) {
-          showMessage('Mã kích hoạt không hợp lệ hoặc không tồn tại!', 'error');
-          resetBtn();
-          return;
-        }
-
-        // Bước B: Kiểm tra xem mã đã dùng chưa
-        if (codeData.is_used) {
-          showMessage('Mã kích hoạt này đã được sử dụng trước đó!', 'error');
-          resetBtn();
-          return;
-        }
-
-        // Bước C: Cập nhật trạng thái is_used = true và gán email học sinh
-        const { error: updateError } = await supabase
-          .from('activation_codes')
-          .update({ 
-            is_used: true, 
-            used_by_email: currentUser.email 
-          })
-          .eq('code', code);
-
-        if (updateError) {
-          showMessage('Có lỗi xảy ra khi kích hoạt. Vui lòng thử lại!', 'error');
-          resetBtn();
-          return;
-        }
-
-        // Bước D: Thành công! Thông báo và tải lại tủ sách
-        showMessage('🎉 Kích hoạt sách thành công!', 'success');
-        inputEl.value = '';
-        await loadMyBooks();
-
-      } catch (err) {
-        console.error(err);
-        showMessage('Có lỗi kết nối đến máy chủ!', 'error');
-      } finally {
-        resetBtn();
-      }
-    }
-
-    // 5. HÀM TẢI DANH SÁCH SÁCH ĐÃ KÍCH HOẠT
-    async function loadMyBooks() {
+    // 2. TẢI DANH SÁCH SÁCH ĐÃ KÍCH HOẠT
+    async function loadUserBooks() {
       const spinner = document.getElementById('loading-spinner');
       const emptyState = document.getElementById('empty-state');
       const grid = document.getElementById('books-grid');
-      const countEl = document.getElementById('book-count');
 
       spinner.classList.remove('hidden');
       emptyState.classList.add('hidden');
       grid.innerHTML = '';
 
       try {
-        // Bước A: Tìm tất cả mã kích hoạt thuộc về email người dùng hiện tại
-        const { data: activatedCodes, error: codesError } = await supabase
+        const { data: codes, error: codesErr } = await supabaseClient
           .from('activation_codes')
           .select('book_id')
-          .eq('used_by_email', currentUser.email)
+          .eq('used_by_email', userSession.email)
           .eq('is_used', true);
 
-        if (codesError) throw codesError;
+        if (codesErr) throw codesErr;
 
-        if (!activatedCodes || activatedCodes.length === 0) {
+        if (!codes || codes.length === 0) {
           spinner.classList.add('hidden');
           emptyState.classList.remove('hidden');
-          countEl.innerText = '0 cuốn';
           return;
         }
 
-        // Lấy danh sách các book_id
-        const bookIds = activatedCodes.map(item => item.book_id);
+        const bookIds = codes.map(c => c.book_id);
 
-        // Bước B: Tra cứu thông tin chi tiết các cuốn sách từ bảng books
-        const { data: books, error: booksError } = await supabase
+        const { data: books, error: booksErr } = await supabaseClient
           .from('books')
           .select('*')
           .in('book_id', bookIds);
 
-        if (booksError) throw booksError;
+        if (booksErr) throw booksErr;
 
         spinner.classList.add('hidden');
-        countEl.innerText = `${books.length} cuốn`;
 
-        // Bước C: Hiển thị sách ra giao diện
         books.forEach(book => {
-          const bookCard = `
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition duration-200 flex flex-col group">
-              <div class="aspect-[3/4] bg-gray-100 overflow-hidden relative">
-                <img 
-                  src="${book.cover_img}" 
-                  alt="${book.title}" 
-                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                  onerror="this.src='https://via.placeholder.com/300x400?text=Toan+Anh+Viet'"
-                />
-                <span class="absolute top-2 right-2 bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">
-                  Lớp ${book.grade || '8'}
-                </span>
+          grid.innerHTML += `
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition flex flex-col group">
+              <div class="aspect-[3/4] bg-gray-100 relative overflow-hidden">
+                <img src="${book.cover_img}" alt="${book.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://via.placeholder.com/300x400?text=Toan+Anh+Viet'"/>
               </div>
               <div class="p-3 flex-1 flex flex-col justify-between">
-                <h3 class="font-bold text-gray-800 text-sm line-clamp-2 mb-2 group-hover:text-blue-600 transition">
-                  ${book.title}
-                </h3>
-                <a 
-                  href="view-detail.html?book_id=${book.book_id}" 
-                  class="w-full bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white font-semibold text-xs py-2 rounded-lg text-center transition duration-200 block"
-                >
+                <h3 class="font-bold text-gray-800 text-xs md:text-sm line-clamp-2 mb-2 group-hover:text-blue-600 transition">${book.title}</h3>
+                <a href="view-detail.html?book_id=${book.book_id}" class="w-full bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white font-semibold text-xs py-2 rounded-lg text-center transition block">
                   Vào Học Ngay
                 </a>
               </div>
             </div>
           `;
-          grid.innerHTML += bookCard;
         });
 
-      } catch (err) {
-        console.error('Lỗi tải danh sách sách:', err);
+      } catch (e) {
+        console.error(e);
         spinner.classList.add('hidden');
+        emptyState.classList.remove('hidden');
       }
     }
 
-    // UTILS: Hiển thị thông báo
-    function showMessage(text, type) {
-      const msgEl = document.getElementById('activation-message');
-      msgEl.innerText = text;
-      msgEl.classList.remove('hidden', 'text-green-300', 'text-yellow-300');
+    // 3. ĐÓNG / MỞ POPUP MODAL KÍCH HOẠT SÁCH
+    function openActivateModal() {
+      document.getElementById('activate-modal').classList.remove('hidden');
+      document.getElementById('input-activation-code').focus();
+    }
+
+    function closeActivateModal() {
+      document.getElementById('activate-modal').classList.add('hidden');
+      document.getElementById('modal-msg').classList.add('hidden');
+      document.getElementById('input-activation-code').value = '';
+    }
+
+    // 4. XỬ LÝ KÍCH HOẠT SÁCH TRONG POPUP
+    async function handleActivate(e) {
+      e.preventDefault();
+      const codeInput = document.getElementById('input-activation-code').value.trim();
+      const msgBox = document.getElementById('modal-msg');
+      const btn = document.getElementById('btn-submit-activate');
+
+      if (!codeInput) return;
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...`;
+      msgBox.classList.add('hidden');
+
+      try {
+        const { data: codeData, error: codeErr } = await supabaseClient
+          .from('activation_codes')
+          .select('*')
+          .eq('code', codeInput)
+          .single();
+
+        if (codeErr || !codeData) {
+          showModalMsg('Mã kích hoạt không đúng hoặc không tồn tại!', 'error');
+          return;
+        }
+
+        if (codeData.is_used) {
+          showModalMsg('Mã kích hoạt này đã được sử dụng!', 'error');
+          return;
+        }
+
+        const { error: updateErr } = await supabaseClient
+          .from('activation_codes')
+          .update({ is_used: true, used_by_email: userSession.email })
+          .eq('code', codeInput);
+
+        if (updateErr) {
+          showModalMsg('Lỗi kích hoạt, vui lòng thử lại sau!', 'error');
+          return;
+        }
+
+        showModalMsg('🎉 Kích hoạt sách thành công!', 'success');
+        setTimeout(() => {
+          closeActivateModal();
+          loadUserBooks();
+        }, 1200);
+
+      } catch (err) {
+        showModalMsg('Có lỗi xảy ra khi kết nối!', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `Kích Hoạt Ngay`;
+      }
+    }
+
+    function showModalMsg(text, type) {
+      const msgBox = document.getElementById('modal-msg');
+      msgBox.innerText = text;
+      msgBox.classList.remove('hidden', 'bg-red-50', 'text-red-600', 'bg-green-50', 'text-green-600');
       
       if (type === 'success') {
-        msgEl.classList.add('text-green-300');
+        msgBox.classList.add('bg-green-50', 'text-green-600');
       } else {
-        msgEl.classList.add('text-yellow-300');
+        msgBox.classList.add('bg-red-50', 'text-red-600');
       }
-    }
-
-    function resetBtn() {
-      const btnEl = document.getElementById('btn-activate');
-      btnEl.disabled = false;
-      btnEl.innerHTML = `<i class="fa-solid fa-key"></i> <span>Kích Hoạt ngay</span>`;
     }
   </script>
 </body>
