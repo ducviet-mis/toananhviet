@@ -3,361 +3,791 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sách Của Tôi - Toán Anh Việt</title>
-  
-  <!-- FontAwesome & CSS Gốc -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Sách Của Tôi - Gia sư Toán Anh Việt</title>
   <link rel="stylesheet" href="style.css">
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Supabase SDK -->
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* 1. THANH MENU NAVBAR TỐI GIẢN & HIỆN ĐẠI */
+    .site-header {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      transition: all 0.3s ease;
+    }
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+    }
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .nav-menu li a {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #475569;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .nav-menu li a:hover {
+      background: #f1f5f9;
+      color: #0284c7;
+    }
+    .nav-menu li a.active {
+      background: #e0f2fe;
+      color: #0369a1;
+      font-weight: 600;
+    }
+
+    /* DROPDOWN BÀI GIẢNG & ĐỀ THI */
+    .nav-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #ffffff;
+      min-width: 160px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      border-radius: 10px;
+      padding: 8px 0;
+      z-index: 1000;
+      border: 1px solid #e2e8f0;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+    .dropdown-content a {
+      color: #334155 !important;
+      padding: 10px 16px !important;
+      text-decoration: none;
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 0 !important;
+      transition: all 0.15s ease;
+    }
+    .dropdown-content a:hover {
+      background-color: #f1f5f9 !important;
+      color: #0284c7 !important;
+    }
+    .nav-dropdown:hover .dropdown-content {
+      display: block;
+    }
+    .dropbtn::after {
+      content: " ▾";
+      font-size: 12px;
+    }
+
+    /* AVATAR DROPDOWN UX SIÊU MƯỢT */
+    .user-profile-dropdown {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    .menu-avatar-img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid #0284c7;
+      object-fit: cover;
+      vertical-align: middle;
+      transition: all 0.2s ease;
+    }
+    .user-profile-dropdown:hover .menu-avatar-img {
+      transform: scale(1.05);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+    .dropdown-menu-box {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background-color: white;
+      min-width: 210px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      padding: 8px 0;
+      z-index: 9999;
+      margin-top: 12px;
+      border: 1px solid #e2e8f0;
+      transform-origin: top right;
+      animation: fadeInDropdown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes fadeInDropdown {
+      from { opacity: 0; transform: scale(0.95) translateY(-5px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .user-profile-dropdown:hover .dropdown-menu-box {
+      display: block;
+    }
+    .dropdown-info-header {
+      padding: 10px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      margin-bottom: 4px;
+    }
+    .dropdown-info-name { font-weight: 600; color: #1e293b; font-size: 14px; }
+    .dropdown-info-email { color: #64748b; font-size: 12px; }
+    .dropdown-item-link {
+      display: block;
+      padding: 10px 16px;
+      color: #334155 !important;
+      font-size: 14px;
+      text-decoration: none;
+      transition: background 0.15s;
+      text-align: left;
+    }
+    .dropdown-item-link:hover {
+      background-color: #f1f5f9;
+      color: #0284c7 !important;
+    }
+    .dropdown-item-logout { border-top: 1px solid #f1f5f9; margin-top: 4px; color: #ef4444 !important; }
+    .dropdown-item-logout:hover { background-color: #fef2f2; }
+
+    /* 2. BỐ CỤC 2 CỘT CHO TRANG MY-BOOKS */
+    .category-container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    /* Cột TRÁI: Sidebar Sticky Menu Dọc */
+    .category-sidebar {
+      width: 250px;
+      flex-shrink: 0;
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      position: sticky;
+      top: 85px;
+    }
+
+    .sidebar-heading {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 0;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f1f5f9;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .vertical-filter-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .vertical-filter-btn {
+      width: 100%;
+      text-align: left;
+      font-family: 'Inter', sans-serif;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #64748b;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .vertical-filter-btn:hover {
+      background: #f8fafc;
+      color: #0284c7;
+    }
+
+    .vertical-filter-btn.active {
+      background: #0284c7;
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    }
+
+    /* Cột PHẢI: Nội dung chính & Lưới Cards Sách */
+    .category-content {
+      flex-grow: 1;
+      min-width: 0;
+    }
+
+    .books-page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .category-page-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-activate-modal-open {
+      background-color: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+    }
+
+    .btn-activate-modal-open:hover {
+      background-color: #0369a1;
+      transform: translateY(-1px);
+    }
+
+    /* Lưới Card Sách */
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .book-card-item {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      overflow: hidden;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .book-card-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+      border-color: #cbd5e1;
+    }
+
+    .book-cover-wrap {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background-color: #f8fafc;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .book-cover-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .book-info-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: space-between;
+    }
+
+    .book-title-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 12px 0;
+      line-height: 1.4;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .book-read-btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 8px 0;
+      background-color: #e0f2fe;
+      color: #0369a1;
+      font-weight: 600;
+      font-size: 13px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    }
+
+    .book-read-btn:hover {
+      background-color: #0284c7;
+      color: #ffffff;
+    }
+
+    /* 3. MODAL POPUP KÍCH HOẠT SÁCH (STYLING GIỐNG CỰC ĐẸP) */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      position: relative;
+      transform: scale(0.95);
+      transition: all 0.25s ease;
+      box-sizing: border-box;
+    }
+
+    .modal-overlay.active .modal-box {
+      transform: scale(1);
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: #94a3b8;
+      cursor: pointer;
+    }
+
+    .modal-close-btn:hover { color: #334155; }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 6px 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .modal-sub {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 20px;
+    }
+
+    .form-group-code {
+      margin-bottom: 16px;
+    }
+
+    .form-label-code {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .input-code-field {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      text-transform: uppercase;
+      box-sizing: border-box;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .input-code-field:focus {
+      border-color: #0284c7;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+
+    .btn-submit-code {
+      width: 100%;
+      padding: 12px;
+      background-color: #0284c7;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-submit-code:hover {
+      background-color: #0369a1;
+    }
+
+    .modal-status-msg {
+      font-size: 13px;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      display: none;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .modal-status-msg.error { background-color: #fef2f2; color: #ef4444; }
+    .modal-status-msg.success { background-color: #f0fdf4; color: #16a34a; }
+
+    @media (max-width: 768px) {
+      .category-container {
+        flex-direction: column;
+      }
+      .category-sidebar {
+        width: 100%;
+        position: static;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col font-sans">
+<body>
 
-  <!-- HEADER CHUẨN GIAO DIỆN GỐC -->
-  <header class="bg-white shadow-sm border-b sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-      
-      <!-- Logo Genius Maths -->
-      <a href="index.html" class="flex items-center gap-3">
-        <div class="flex items-center gap-2">
-          <div class="bg-blue-600 text-white font-black text-xs px-2 py-1 rounded tracking-tighter leading-none text-center">
-            GENIUS<br><span class="text-[9px] font-normal">MATHS</span>
-          </div>
-          <span class="text-xl font-extrabold text-blue-600 tracking-tight">TOÁN ANH VIỆT</span>
-        </div>
+  <!-- 1. HEADER CHUẨN GÓC TỪ CATEGORY.HTML -->
+  <header class="site-header">
+    <nav class="nav-container">
+      <a href="index.html" class="logo">
+        <img src="assets/logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
+        TOÁN ANH VIỆT
       </a>
-
-      <!-- Menu Navigation -->
-      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
-        <a href="index.html" class="hover:text-blue-600 transition">Trang chủ</a>
-        <a href="category.html?grade=8" class="hover:text-blue-600 transition">Tài liệu Toán</a>
-        <a href="quiz-list.html" class="hover:text-blue-600 transition">Thi Online</a>
-        <a href="#" class="hover:text-blue-600 transition">Lớp học Gia sư</a>
-      </nav>
-
-      <!-- Avatar & Dropdown -->
-      <div class="relative group" id="user-header-box">
-        <button id="avatar-btn" class="flex items-center gap-2 focus:outline-none">
-          <img id="user-avatar-img" src="https://via.placeholder.com/40" class="w-9 h-9 rounded-full object-cover border border-blue-500 shadow-sm" alt="Avatar">
-        </button>
-
-        <!-- Dropdown Menu -->
-        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
-          <div class="px-4 py-2.5 border-b border-gray-100">
-            <p id="user-display-name" class="font-bold text-gray-800 text-sm truncate">Đang tải...</p>
-            <p id="user-display-email" class="text-xs text-gray-400 truncate"></p>
+      <ul class="nav-menu" id="main-nav-menu">
+        <li><a href="index.html">Trang chủ</a></li>
+        
+        <!-- DROPDOWN BÀI GIẢNG & ĐỀ THI -->
+        <li class="nav-dropdown">
+          <a href="#" class="dropbtn">Tài liệu Toán</a>
+          <div class="dropdown-content">
+            <a href="category.html?grade=6">Toán 6</a>
+            <a href="category.html?grade=7">Toán 7</a>
+            <a href="category.html?grade=8">Toán 8</a>
+            <a href="category.html?grade=9">Toán 9</a>
           </div>
-          <a href="profile.html" class="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-            <i class="fa-regular fa-user text-gray-400 w-4"></i> Thông tin cá nhân
-          </a>
-          <a href="my-books.html" class="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 font-semibold text-blue-600">
-            <i class="fa-solid fa-book-bookmark text-blue-600 w-4"></i> Sách của tôi
-          </a>
-          <button onclick="openActivateModal()" class="w-full text-left flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-            <i class="fa-solid fa-key text-gray-400 w-4"></i> Kích hoạt sách
-          </button>
-          <div class="border-t border-gray-100 mt-1 pt-1">
-            <button id="btn-logout" class="w-full text-left flex items-center gap-2.5 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-              <i class="fa-solid fa-arrow-right-from-bracket w-4"></i> Đăng xuất
-            </button>
-          </div>
-        </div>
-      </div>
+        </li>
 
-    </div>
+        <li><a href="quiz-list.html">Thi Online</a></li>
+        <li><a href="index.html#register">Lớp học Gia sư</a></li>
+        <li id="auth-menu-item"><a href="login.html">Đăng nhập</a></li>
+      </ul>
+    </nav>
   </header>
 
-  <!-- MAIN KHO SÁCH CỦA TÔI -->
-  <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full">
+  <!-- 2. NỘI DUNG CHÍNH BỐ CỤC 2 CỘT GỐC -->
+  <main class="category-container">
     
-    <div class="flex items-center justify-between mb-8 pb-4 border-b">
-      <div>
-        <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <i class="fa-solid fa-book-open text-blue-600"></i>
-          <span>Kho Sách Của Tôi</span>
-        </h1>
-        <p class="text-xs md:text-sm text-gray-500 mt-1">Danh sách các cuốn sách điện tử bạn đã kích hoạt tài khoản.</p>
+    <!-- CỘT TRÁI: SIDEBAR LỌC KHỐI LỚP SÁCH -->
+    <aside class="category-sidebar">
+      <h3 class="sidebar-heading">Danh mục sách</h3>
+      <div class="vertical-filter-menu">
+        <button class="vertical-filter-btn active" onclick="filterBooks('all', this)">Tất cả sách</button>
+        <button class="vertical-filter-btn" onclick="filterBooks('6', this)">Sách Toán 6</button>
+        <button class="vertical-filter-btn" onclick="filterBooks('7', this)">Sách Toán 7</button>
+        <button class="vertical-filter-btn" onclick="filterBooks('8', this)">Sách Toán 8</button>
+        <button class="vertical-filter-btn" onclick="filterBooks('9', this)">Sách Toán 9</button>
+        <button class="vertical-filter-btn" onclick="filterBooks('10', this)">Ôn thi vào 10</button>
+      </div>
+    </aside>
+
+    <!-- CỘT PHẢI: TIÊU ĐỀ, NÚT KÍCH HOẠT & LƯỚI CARD SÁCH -->
+    <section class="category-content">
+      <div class="books-page-header">
+        <h1 class="category-page-title">Sách của tôi</h1>
+        <button class="btn-activate-modal-open" onclick="openActivateModal()">+ Kích hoạt sách</button>
       </div>
 
-      <button onclick="openActivateModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs md:text-sm px-4 py-2.5 rounded-lg shadow transition flex items-center gap-2">
-        <i class="fa-solid fa-key"></i>
-        <span>Kích hoạt sách mới</span>
-      </button>
-    </div>
-
-    <!-- Trạng thái Đang tải -->
-    <div id="loading-spinner" class="py-16 text-center text-gray-500">
-      <i class="fa-solid fa-circle-notch fa-spin text-3xl text-blue-600 mb-3"></i>
-      <p class="text-sm font-medium">Đang kiểm tra kho sách của bạn...</p>
-    </div>
-
-    <!-- Trạng thái Kho sách trống -->
-    <div id="empty-state" class="hidden text-center py-16 bg-white rounded-2xl border border-dashed border-gray-200 p-8 shadow-sm">
-      <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-        <i class="fa-solid fa-book"></i>
+      <div class="books-grid" id="my-books-container">
+        <p style="text-align: center; grid-column: 1/-1; color: #64748b; padding: 40px 0;">Đang tải tủ sách của bạn...</p>
       </div>
-      <h3 class="text-lg font-bold text-gray-800 mb-1">Bạn chưa có cuốn sách nào</h3>
-      <p class="text-gray-500 text-sm max-w-md mx-auto mb-6">
-        Hãy sử dụng mã kích hoạt được cấp để mở khóa các tài liệu học tập trong kho nhé!
-      </p>
-      <button onclick="openActivateModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition">
-        Kích Hoạt Ngay
-      </button>
-    </div>
-
-    <!-- Danh sách Grid hiển thị Sách -->
-    <div id="books-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
+    </section>
 
   </main>
 
-  <!-- POPUP (MODAL) KÍCH HOẠT SÁCH NỔI -->
-  <div id="activate-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative transform transition-all">
-      
-      <!-- Nút đóng popup -->
-      <button onclick="closeActivateModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-lg w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+  <!-- 3. MODAL POPUP KÍCH HOẠT SÁCH NỔI UP -->
+  <div class="modal-overlay" id="activate-modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeActivateModal()">✕</button>
+      <h3 class="modal-title">Kích hoạt sách</h3>
+      <p class="modal-sub">Nhập mã kích hoạt (Code) được cấp để mở khóa tài liệu sách.</p>
 
-      <div class="p-6">
-        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4 text-xl">
-          <i class="fa-solid fa-key"></i>
+      <div class="modal-status-msg" id="modal-msg-box"></div>
+
+      <form onsubmit="handleActivateCode(event)">
+        <div class="form-group-code">
+          <label class="form-label-code">Mã kích hoạt (Code)</label>
+          <input type="text" id="input-code-val" class="input-code-field" placeholder="VD: CPT8-T1-2611" required />
         </div>
-
-        <h3 class="text-xl font-bold text-gray-900 mb-1">Kích Hoạt Sách</h3>
-        <p class="text-xs text-gray-500 mb-6">Nhập mã kích hoạt được in trên bìa sách hoặc phiếu quà tặng để mở khóa.</p>
-
-        <form id="activate-form" onsubmit="handleActivate(event)">
-          <div class="mb-4">
-            <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wider">Mã kích hoạt (Code)</label>
-            <input 
-              type="text" 
-              id="input-activation-code" 
-              placeholder="VD: CPT8-T1-2611" 
-              class="w-full px-4 py-3 border border-gray-300 rounded-xl font-bold text-gray-800 uppercase focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm"
-              required
-            />
-          </div>
-
-          <div id="modal-msg" class="text-xs font-medium mb-4 hidden p-3 rounded-lg"></div>
-
-          <button 
-            type="submit" 
-            id="btn-submit-activate"
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-md active:scale-95 text-sm"
-          >
-            Kích Hoạt Ngay
-          </button>
-        </form>
-      </div>
-
+        <button type="submit" id="btn-submit-code-action" class="btn-submit-code">Kích hoạt ngay</button>
+      </form>
     </div>
   </div>
 
-  <!-- FOOTER -->
-  <footer class="bg-white border-t py-6 text-center text-xs text-gray-500 mt-auto">
+  <footer style="text-align: center; padding: 30px; color: #64748b; border-top: 1px solid #e2e8f0; margin-top: 60px;">
     <p>© 2026 Website Gia Sư Toán Anh Việt. Thiết kế đồng bộ bởi Anh Việt.</p>
   </footer>
 
-  <!-- SCRIPT XỬ LÝ SUPABASE & POPUP -->
+  <!-- JAVASCRIPT ĐỒNG BỘ MƯỢT MÀ VỚI SUPABASE -->
   <script>
     const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsbHRmZ2ZieWRnb2p1dWlwcnNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkyMzg3MjksImV4cCI6MjA3NDgxNDcyOX0.gIsFfUoN5BvIs8Tky46Q_36Z8H96iXN4sKz3_lO2Bf0';
-    
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    let userSession = null;
+    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      // Toggle dropdown avatar
-      const avatarBtn = document.getElementById('avatar-btn');
-      const dropdown = document.getElementById('user-dropdown');
-      
-      avatarBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        dropdown.classList.toggle('hidden');
-      });
+    let currentAuthUser = null;
+    let allUserBooksData = [];
 
-      document.addEventListener('click', () => dropdown.classList.add('hidden'));
-
-      // Kiểm tra người dùng
-      await initUser();
-
-      // Kiểm tra URL nếu có hash #activate thì mở luôn Modal Popup
-      if (window.location.hash === '#activate') {
-        openActivateModal();
+    // BƯỚC THẦN TỐC: Đọc nhanh bộ nhớ máy tính để vẽ ngay Avatar lập tức
+    (function renderInstantAvatar() {
+      const cachedUser = localStorage.getItem('tav_user_session');
+      if (cachedUser) {
+        try {
+          const u = JSON.parse(cachedUser);
+          drawDropdownUI(u.name, u.email, u.avatar);
+        } catch(e) { console.log(e); }
       }
-    });
+    })();
 
-    // 1. KHỞI TẠO VÀ LẤY THÔNG TIN USER
-    async function initUser() {
-      const { data: { user } } = await supabaseClient.auth.getUser();
-      
-      if (!user) {
-        // Thử lấy từ localStorage cũ nếu có
-        const localUser = JSON.parse(localStorage.getItem('tav_user_session') || 'null');
-        if (localUser) {
-          userSession = localUser;
-        } else {
-          // Chưa đăng nhập -> sang trang login
-          window.location.href = 'login.html';
-          return;
-        }
+    // Kiểm tra chính xác lại session ngầm từ Supabase
+    async function verifyAuthSession() {
+      const { data: { user } } = await _supabase.auth.getUser();
+      const authLI = document.getElementById('auth-menu-item');
+
+      if (user) {
+        currentAuthUser = user;
+        const meta = user.user_metadata || {};
+        const dName = meta.full_name || 'Học viên';
+        const aSrc = meta.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
+        
+        localStorage.setItem('tav_user_session', JSON.stringify({ name: dName, email: user.email, avatar: aSrc }));
+        drawDropdownUI(dName, user.email, aSrc);
+        loadActivatedBooks();
       } else {
-        userSession = user;
+        localStorage.removeItem('tav_user_session');
+        authLI.innerHTML = `<a href="login.html">Đăng nhập</a>`;
+        window.location.href = 'login.html'; // Yêu cầu đăng nhập để xem sách
       }
-
-      // Điền thông tin lên Header Avatar
-      document.getElementById('user-display-email').innerText = userSession.email || '';
-      document.getElementById('user-display-name').innerText = userSession.user_metadata?.full_name || userSession.email?.split('@')[0] || 'Tài khoản';
-      
-      if (userSession.user_metadata?.avatar_url) {
-        document.getElementById('user-avatar-img').src = userSession.user_metadata.avatar_url;
-      }
-
-      // Tải danh sách sách
-      await loadUserBooks();
     }
 
-    // 2. TẢI DANH SÁCH SÁCH ĐÃ KÍCH HOẠT
-    async function loadUserBooks() {
-      const spinner = document.getElementById('loading-spinner');
-      const emptyState = document.getElementById('empty-state');
-      const grid = document.getElementById('books-grid');
+    function drawDropdownUI(name, email, avatar) {
+      const authLI = document.getElementById('auth-menu-item');
+      if (!authLI) return;
+      authLI.innerHTML = `
+        <div class="user-profile-dropdown">
+          <img class="menu-avatar-img" src="${avatar}" alt="Avatar">
+          <div class="dropdown-menu-box">
+            <div class="dropdown-info-header">
+              <div class="dropdown-info-name">${name}</div>
+              <div class="dropdown-info-email">${email}</div>
+            </div>
+            <a href="profile.html" class="dropdown-item-link">Thông tin cá nhân</a>
+            <a href="my-books.html" class="dropdown-item-link" style="color: #0284c7 !important; font-weight: 600;">Sách của tôi</a>
+            <a href="javascript:void(0)" onclick="openActivateModal()" class="dropdown-item-link">Kích hoạt sách</a>
+            <a href="#" id="menu-btn-logout-action" class="dropdown-item-link dropdown-item-logout">Đăng xuất</a>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('menu-btn-logout-action')?.addEventListener('click', async (e) => {
+        e.preventDefault();
+        localStorage.removeItem('tav_user_session');
+        await _supabase.auth.signOut();
+        window.location.reload();
+      });
+    }
 
-      spinner.classList.remove('hidden');
-      emptyState.classList.add('hidden');
-      grid.innerHTML = '';
-
+    // TẢI DANH SÁCH SÁCH ĐÃ KÍCH HOẠT TỪ SUPABASE
+    async function loadActivatedBooks() {
+      const container = document.getElementById('my-books-container');
       try {
-        const { data: codes, error: codesErr } = await supabaseClient
+        const { data: codes, error: codesErr } = await _supabase
           .from('activation_codes')
           .select('book_id')
-          .eq('used_by_email', userSession.email)
+          .eq('used_by_email', currentAuthUser.email)
           .eq('is_used', true);
 
         if (codesErr) throw codesErr;
 
         if (!codes || codes.length === 0) {
-          spinner.classList.add('hidden');
-          emptyState.classList.remove('hidden');
+          container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #64748b; padding: 40px 0;">Bạn chưa kích hoạt cuốn sách nào. Bấm nút <b>"+ Kích hoạt sách"</b> ở trên để mở khóa nhé!</p>';
           return;
         }
 
         const bookIds = codes.map(c => c.book_id);
 
-        const { data: books, error: booksErr } = await supabaseClient
+        const { data: books, error: booksErr } = await _supabase
           .from('books')
           .select('*')
           .in('book_id', bookIds);
 
         if (booksErr) throw booksErr;
 
-        spinner.classList.add('hidden');
+        allUserBooksData = books;
+        renderBooksGrid(allUserBooksData);
 
-        books.forEach(book => {
-          grid.innerHTML += `
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition flex flex-col group">
-              <div class="aspect-[3/4] bg-gray-100 relative overflow-hidden">
-                <img src="${book.cover_img}" alt="${book.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://via.placeholder.com/300x400?text=Toan+Anh+Viet'"/>
-              </div>
-              <div class="p-3 flex-1 flex flex-col justify-between">
-                <h3 class="font-bold text-gray-800 text-xs md:text-sm line-clamp-2 mb-2 group-hover:text-blue-600 transition">${book.title}</h3>
-                <a href="view-detail.html?book_id=${book.book_id}" class="w-full bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white font-semibold text-xs py-2 rounded-lg text-center transition block">
-                  Vào Học Ngay
-                </a>
-              </div>
-            </div>
-          `;
-        });
-
-      } catch (e) {
-        console.error(e);
-        spinner.classList.add('hidden');
-        emptyState.classList.remove('hidden');
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #ef4444; padding: 40px 0;">Có lỗi xảy ra khi tải danh sách sách. Vui lòng thử lại sau!</p>';
       }
     }
 
-    // 3. ĐÓNG / MỞ POPUP MODAL KÍCH HOẠT SÁCH
+    function renderBooksGrid(list) {
+      const container = document.getElementById('my-books-container');
+      if (list.length === 0) {
+        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #64748b; padding: 40px 0;">Không có cuốn sách nào thuộc danh mục này.</p>';
+        return;
+      }
+
+      container.innerHTML = list.map(book => `
+        <div class="book-card-item">
+          <div class="book-cover-wrap">
+            <img src="${book.cover_img}" alt="${book.title}" class="book-cover-img" onerror="this.src='https://via.placeholder.com/300x400?text=Toan+Anh+Viet'">
+          </div>
+          <div class="book-info-body">
+            <h3 class="book-title-text">${book.title}</h3>
+            <a href="view-detail.html?book_id=${book.book_id}" class="book-read-btn">Vào học ngay →</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Bộ lọc Vertical Menu theo Lớp
+    function filterBooks(grade, btnElement) {
+      document.querySelectorAll('.vertical-filter-btn').forEach(b => b.classList.remove('active'));
+      btnElement.classList.add('active');
+
+      if (grade === 'all') {
+        renderBooksGrid(allUserBooksData);
+      } else {
+        const filtered = allUserBooksData.filter(b => String(b.grade) === String(grade) || String(b.book_id).includes(grade));
+        renderBooksGrid(filtered);
+      }
+    }
+
+    // QUẢN LÝ MODAL POPUP KÍCH HOẠT SÁCH
     function openActivateModal() {
-      document.getElementById('activate-modal').classList.remove('hidden');
-      document.getElementById('input-activation-code').focus();
+      document.getElementById('activate-modal').classList.add('active');
+      document.getElementById('input-code-val').focus();
     }
 
     function closeActivateModal() {
-      document.getElementById('activate-modal').classList.add('hidden');
-      document.getElementById('modal-msg').classList.add('hidden');
-      document.getElementById('input-activation-code').value = '';
+      document.getElementById('activate-modal').classList.remove('active');
+      const msgBox = document.getElementById('modal-msg-box');
+      msgBox.style.display = 'none';
+      document.getElementById('input-code-val').value = '';
     }
 
-    // 4. XỬ LÝ KÍCH HOẠT SÁCH TRONG POPUP
-    async function handleActivate(e) {
+    async function handleActivateCode(e) {
       e.preventDefault();
-      const codeInput = document.getElementById('input-activation-code').value.trim();
-      const msgBox = document.getElementById('modal-msg');
-      const btn = document.getElementById('btn-submit-activate');
+      const codeVal = document.getElementById('input-code-val').value.trim();
+      const msgBox = document.getElementById('modal-msg-box');
+      const btn = document.getElementById('btn-submit-code-action');
 
-      if (!codeInput) return;
+      if (!codeVal) return;
 
       btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...`;
-      msgBox.classList.add('hidden');
+      btn.innerText = 'Đang xử lý...';
+      msgBox.style.display = 'none';
 
       try {
-        const { data: codeData, error: codeErr } = await supabaseClient
+        const { data: codeData, error: codeErr } = await _supabase
           .from('activation_codes')
           .select('*')
-          .eq('code', codeInput)
+          .eq('code', codeVal)
           .single();
 
         if (codeErr || !codeData) {
-          showModalMsg('Mã kích hoạt không đúng hoặc không tồn tại!', 'error');
+          showMsg('Mã kích hoạt không hợp lệ!', 'error');
           return;
         }
 
         if (codeData.is_used) {
-          showModalMsg('Mã kích hoạt này đã được sử dụng!', 'error');
+          showMsg('Mã kích hoạt này đã được sử dụng!', 'error');
           return;
         }
 
-        const { error: updateErr } = await supabaseClient
+        const { error: updateErr } = await _supabase
           .from('activation_codes')
-          .update({ is_used: true, used_by_email: userSession.email })
-          .eq('code', codeInput);
+          .update({ is_used: true, used_by_email: currentAuthUser.email })
+          .eq('code', codeVal);
 
         if (updateErr) {
-          showModalMsg('Lỗi kích hoạt, vui lòng thử lại sau!', 'error');
+          showMsg('Có lỗi xảy ra, vui lòng thử lại!', 'error');
           return;
         }
 
-        showModalMsg('🎉 Kích hoạt sách thành công!', 'success');
+        showMsg('🎉 Kích hoạt sách thành công!', 'success');
         setTimeout(() => {
           closeActivateModal();
-          loadUserBooks();
+          loadActivatedBooks();
         }, 1200);
 
       } catch (err) {
-        showModalMsg('Có lỗi xảy ra khi kết nối!', 'error');
+        showMsg('Lỗi kết nối máy chủ!', 'error');
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `Kích Hoạt Ngay`;
+        btn.innerText = 'Kích hoạt ngay';
       }
     }
 
-    function showModalMsg(text, type) {
-      const msgBox = document.getElementById('modal-msg');
+    function showMsg(text, type) {
+      const msgBox = document.getElementById('modal-msg-box');
       msgBox.innerText = text;
-      msgBox.classList.remove('hidden', 'bg-red-50', 'text-red-600', 'bg-green-50', 'text-green-600');
-      
-      if (type === 'success') {
-        msgBox.classList.add('bg-green-50', 'text-green-600');
-      } else {
-        msgBox.classList.add('bg-red-50', 'text-red-600');
-      }
+      msgBox.className = `modal-status-msg ${type}`;
+      msgBox.style.display = 'block';
     }
+
+    // Tự động mở Modal nếu URL có chứa #activate
+    document.addEventListener('DOMContentLoaded', () => {
+      verifyAuthSession();
+      if (window.location.hash === '#activate') {
+        openActivateModal();
+      }
+    });
   </script>
 </body>
 </html>
