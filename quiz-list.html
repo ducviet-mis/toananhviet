@@ -7,9 +7,7 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       padding: 0;
@@ -17,7 +15,7 @@
       font-family: 'Inter', sans-serif;
     }
 
-    /* 1. HEADER FULL WIDTH */
+    /* HEADER FULL WIDTH */
     .site-header {
       background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(12px);
@@ -33,7 +31,7 @@
       justify-content: space-between;
       align-items: center;
       width: 100%;
-      max-width: 100%; /* Mở rộng toàn màn hình */
+      max-width: 100%;
       padding: 12px 30px;
     }
     .nav-menu {
@@ -104,10 +102,10 @@
       font-size: 12px;
     }
 
-    /* 2. BỐ CỤC FULL MÀN HÌNH (SIDEBAR TRÁI + MAIN CONTENT PHẢI) */
+    /* BỐ CỤC FULL MÀN HÌNH */
     .quiz-layout-container {
       width: 100%;
-      max-width: 100%; /* Mở tràn viền màn hình */
+      max-width: 100%;
       margin: 20px 0;
       padding: 0 30px;
       display: flex;
@@ -115,7 +113,6 @@
       align-items: flex-start;
     }
 
-    /* Cột TRÁI: Sidebar */
     .quiz-sidebar {
       width: 280px;
       flex-shrink: 0;
@@ -128,12 +125,8 @@
       top: 85px;
     }
 
-    .filter-group {
-      margin-bottom: 20px;
-    }
-    .filter-group:last-child {
-      margin-bottom: 0;
-    }
+    .filter-group { margin-bottom: 20px; }
+    .filter-group:last-child { margin-bottom: 0; }
 
     .filter-label {
       font-size: 15px;
@@ -177,7 +170,6 @@
       box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
     }
 
-    /* Cột PHẢI: Lưới card đề thi phủ toàn bộ khoảng trống */
     .quiz-content-main {
       flex-grow: 1;
       min-width: 0;
@@ -193,7 +185,7 @@
 
     .doc-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Tự điều chỉnh số cột theo độ phân giải màn hình */
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 20px;
     }
 
@@ -233,28 +225,21 @@
       font-size: 0.95rem;
       transition: background 0.2s;
     }
-    .quiz-btn:hover {
-      background-color: #0369a1;
-    }
-    .hidden {
-      display: none !important;
-    }
+    .quiz-btn:hover { background-color: #0369a1; }
+    .hidden { display: none !important; }
 
     @media (max-width: 768px) {
       .quiz-layout-container {
         flex-direction: column;
         padding: 0 15px;
       }
-      .quiz-sidebar {
-        width: 100%;
-        position: static;
-      }
+      .quiz-sidebar { width: 100%; position: static; }
     }
   </style>
 </head>
 <body>
 
-  <!-- 1. HEADER -->
+  <!-- HEADER -->
   <header class="site-header">
     <nav class="nav-container">
       <a href="index.html" class="logo" style="text-decoration:none; font-weight:800; color:#0284c7; font-size:18px; display:flex; align-items:center; gap:8px;">
@@ -263,7 +248,6 @@
       </a>
       <ul class="nav-menu" id="main-nav-menu">
         <li><a href="index.html">Trang chủ</a></li>
-        
         <li class="nav-dropdown">
           <a href="#" class="dropbtn">Tài liệu Toán</a>
           <div class="dropdown-content">
@@ -273,7 +257,6 @@
             <a href="category.html?grade=9">Toán 9</a>
           </div>
         </li>
-
         <li><a href="quiz-list.html" class="active">Thi Online</a></li>
         <li><a href="index.html#register">Lớp học Gia sư</a></li>
         <li id="auth-menu-item"><a href="login.html">Đăng nhập</a></li>
@@ -281,10 +264,8 @@
     </nav>
   </header>
 
-  <!-- 2. BỐ CỤC FULL MÀN HÌNH -->
+  <!-- BỐ CỤC CHÍNH -->
   <main class="quiz-layout-container">
-    
-    <!-- SIDEBAR BỘ LỌC -->
     <aside class="quiz-sidebar">
       <div class="filter-group">
         <span class="filter-label">Chọn khối lớp</span>
@@ -310,15 +291,12 @@
       </div>
     </aside>
 
-    <!-- NỘI DUNG CHÍNH -->
     <section class="quiz-content-main">
       <h1 class="page-main-title">Hệ Thống Thi Trắc Nghiệm Online</h1>
-      
       <div class="doc-grid" id="quiz-grid">
         <p style="text-align: center; grid-column: 1/-1; color: #64748b;">Đang tải danh sách đề thi...</p>
       </div>
     </section>
-
   </main>
 
   <footer style="text-align: center; padding: 30px; color: #64748b; border-top: 1px solid #e2e8f0; margin-top: 60px; width:100%;">
@@ -326,7 +304,6 @@
     <p style="font-size: 13px; margin-top: 5px;">Hotline/Zalo hỗ trợ: 0965193026 - Địa chỉ: Bắc Từ Liêm - Hà Nội</p>
   </footer>
 
-  <!-- SCRIPT -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
@@ -430,7 +407,6 @@
   <script>
     (async function initQuizListAuth() {
       const _supabase = supabaseClient;
-
       const cachedUser = localStorage.getItem('tav_user_session');
       if (cachedUser) {
         try {
