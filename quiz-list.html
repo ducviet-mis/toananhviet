@@ -7,7 +7,17 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    /* 1. HEADER & DROPDOWN DÙNG CHUNG */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* 1. HEADER FULL WIDTH */
     .site-header {
       background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(12px);
@@ -16,14 +26,15 @@
       position: sticky;
       top: 0;
       z-index: 9999;
+      width: 100%;
     }
     .nav-container {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 12px 20px;
+      width: 100%;
+      max-width: 100%; /* Mở rộng toàn màn hình */
+      padding: 12px 30px;
     }
     .nav-menu {
       display: flex;
@@ -34,7 +45,6 @@
       padding: 0;
     }
     .nav-menu li a {
-      font-family: 'Inter', sans-serif;
       font-size: 14px;
       font-weight: 500;
       color: #475569;
@@ -53,7 +63,7 @@
       font-weight: 600 !important;
     }
 
-    /* DROPDOWN MENU BÀI GIẢNG & ĐỀ THI */
+    /* DROPDOWN MENU */
     .nav-dropdown {
       position: relative;
       display: inline-block;
@@ -94,19 +104,20 @@
       font-size: 12px;
     }
 
-    /* 2. BỐ CỤC 2 CỘT CHO TRANG THI ONLINE (SIDEBAR TRÁI + MAIN CONTENT PHẢI) */
+    /* 2. BỐ CỤC FULL MÀN HÌNH (SIDEBAR TRÁI + MAIN CONTENT PHẢI) */
     .quiz-layout-container {
-      max-width: 1200px;
-      margin: 30px auto;
-      padding: 0 20px;
+      width: 100%;
+      max-width: 100%; /* Mở tràn viền màn hình */
+      margin: 20px 0;
+      padding: 0 30px;
       display: flex;
       gap: 32px;
       align-items: flex-start;
     }
 
-    /* Cột TRÁI: Sidebar lọc đề thi dạng menu dọc */
+    /* Cột TRÁI: Sidebar */
     .quiz-sidebar {
-      width: 260px;
+      width: 280px;
       flex-shrink: 0;
       background: #ffffff;
       padding: 20px;
@@ -114,7 +125,7 @@
       border: 1px solid #e2e8f0;
       box-shadow: 0 4px 12px rgba(0,0,0,0.03);
       position: sticky;
-      top: 85px; /* Cố định khi cuộn trang */
+      top: 85px;
     }
 
     .filter-group {
@@ -130,7 +141,6 @@
       color: #1e293b;
       margin-bottom: 12px;
       display: block;
-      font-family: 'Inter', sans-serif;
       padding-bottom: 6px;
       border-bottom: 2px solid #f1f5f9;
     }
@@ -144,7 +154,6 @@
     .v-filter-btn {
       width: 100%;
       text-align: left;
-      font-family: 'Inter', sans-serif;
       padding: 10px 14px;
       font-size: 14px;
       font-weight: 500;
@@ -168,7 +177,7 @@
       box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
     }
 
-    /* Cột PHẢI: Danh sách các đề thi trắc nghiệm */
+    /* Cột PHẢI: Lưới card đề thi phủ toàn bộ khoảng trống */
     .quiz-content-main {
       flex-grow: 1;
       min-width: 0;
@@ -180,7 +189,12 @@
       color: #1e293b;
       margin-top: 0;
       margin-bottom: 24px;
-      font-family: 'Inter', sans-serif;
+    }
+
+    .doc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Tự điều chỉnh số cột theo độ phân giải màn hình */
+      gap: 20px;
     }
 
     .quiz-card {
@@ -229,6 +243,7 @@
     @media (max-width: 768px) {
       .quiz-layout-container {
         flex-direction: column;
+        padding: 0 15px;
       }
       .quiz-sidebar {
         width: 100%;
@@ -239,17 +254,16 @@
 </head>
 <body>
 
-  <!-- 1. HEADER ĐỒNG BỘ HIỆN ĐẠI -->
+  <!-- 1. HEADER -->
   <header class="site-header">
     <nav class="nav-container">
-      <a href="index.html" class="logo">
-        <img src="assets/logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
+      <a href="index.html" class="logo" style="text-decoration:none; font-weight:800; color:#0284c7; font-size:18px; display:flex; align-items:center; gap:8px;">
+        <img src="assets/logo.png" alt="Logo" class="logo-img" style="height:35px;" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
         TOÁN ANH VIỆT
       </a>
       <ul class="nav-menu" id="main-nav-menu">
         <li><a href="index.html">Trang chủ</a></li>
         
-        <!-- DROPDOWN BÀI GIẢNG & ĐỀ THI -->
         <li class="nav-dropdown">
           <a href="#" class="dropbtn">Tài liệu Toán</a>
           <div class="dropdown-content">
@@ -267,10 +281,10 @@
     </nav>
   </header>
 
-  <!-- 2. BỐ CỤC 2 CỘT CHÍNH (SIDEBAR TRÁI + NỘI DUNG PHẢI) -->
+  <!-- 2. BỐ CỤC FULL MÀN HÌNH -->
   <main class="quiz-layout-container">
     
-    <!-- CỘT BÊN TRÁI: SIDEBAR BỘ LỌC ĐỀ THI DỌC -->
+    <!-- SIDEBAR BỘ LỌC -->
     <aside class="quiz-sidebar">
       <div class="filter-group">
         <span class="filter-label">Chọn khối lớp</span>
@@ -296,7 +310,7 @@
       </div>
     </aside>
 
-    <!-- CỘT BÊN PHẢI: HIỂN THỊ DANH SÁCH BỘ ĐỀ THI TRẮC NGHIỆM -->
+    <!-- NỘI DUNG CHÍNH -->
     <section class="quiz-content-main">
       <h1 class="page-main-title">Hệ Thống Thi Trắc Nghiệm Online</h1>
       
@@ -307,12 +321,12 @@
 
   </main>
 
-  <footer style="text-align: center; padding: 30px; color: #64748b; border-top: 1px solid #e2e8f0; margin-top: 60px;">
+  <footer style="text-align: center; padding: 30px; color: #64748b; border-top: 1px solid #e2e8f0; margin-top: 60px; width:100%;">
     <p>© 2026 Website Gia Sư Toán Anh Việt. Phát triển bởi Gia Sư Toán.</p>
     <p style="font-size: 13px; margin-top: 5px;">Hotline/Zalo hỗ trợ: 0965193026 - Địa chỉ: Bắc Từ Liêm - Hà Nội</p>
   </footer>
 
-  <!-- SCRIPT HỆ THỐNG LỌC VÀ TẢI ĐỀ THI TỪ SUPABASE -->
+  <!-- SCRIPT -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
@@ -413,12 +427,10 @@
     document.addEventListener('DOMContentLoaded', loadQuizzes);
   </script>
 
-  <!-- KHỐI ĐỒNG BỘ MENU MODERN TỐC ĐỘ CAO CHO TRANG THI ONLINE (AVATAR SUPABASE AUTH) -->
   <script>
     (async function initQuizListAuth() {
       const _supabase = supabaseClient;
 
-      // 1. Đọc nhanh bộ nhớ máy tính để hiển thị Avatar ngay lập tức không giật lag
       const cachedUser = localStorage.getItem('tav_user_session');
       if (cachedUser) {
         try {
@@ -427,7 +439,6 @@
         } catch(e) {}
       }
 
-      // 2. Xác thực lại trạng thái tài khoản ngầm từ hệ thống Supabase để đồng bộ cache mới
       const { data: { user } } = await _supabase.auth.getUser();
       const authLI = document.getElementById('auth-menu-item');
 
@@ -447,7 +458,6 @@
         const authLI = document.getElementById('auth-menu-item');
         if (!authLI) return;
 
-        // Chèn cấu trúc CSS menu mờ sương đồng bộ
         if (!document.getElementById('instant-quiz-style')) {
           const style = document.createElement('style');
           style.id = 'instant-quiz-style';
