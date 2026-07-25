@@ -113,7 +113,7 @@
       position: relative;
     }
 
-    /* Sticky Header Đếm ngược & Nộp bài GỌN GÀNG */
+    /* Sticky Header Đếm ngược & Nộp bài THU NHỎ HOÀN TOÀN */
     .timer-badge {
       position: sticky;
       top: 0;
@@ -138,23 +138,28 @@
       gap: 4px;
       white-space: nowrap;
     }
+
+    /* ÉP BẮT BUỘC NÚT NỘP BÀI GỌN GÀNG KHÔNG BỊ KÉO GIÃN */
     .btn-submit {
-      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-      color: white;
-      border: none;
-      padding: 6px 8px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 0.82rem;
-      white-space: nowrap;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 3px 10px rgba(249, 115, 22, 0.3);
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+      color: white !important;
+      border: none !important;
+      padding: 6px 14px !important;
+      width: auto !important;
+      max-width: 110px !important;
+      flex: 0 0 auto !important;
+      border-radius: 8px !important;
+      cursor: pointer !important;
+      font-weight: 700 !important;
+      font-size: 0.82rem !important;
+      white-space: nowrap !important;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      box-shadow: 0 3px 10px rgba(249, 115, 22, 0.3) !important;
     }
     .btn-submit:hover {
-      background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
-      transform: translateY(-1px);
-      box-shadow: 0 5px 14px rgba(249, 115, 22, 0.4);
+      background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%) !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 5px 14px rgba(249, 115, 22, 0.4) !important;
     }
 
     /* CARD TỔNG KẾT ĐIỂM DẠNG DONUT CHART VÀ MINI CARDS */
