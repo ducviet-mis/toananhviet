@@ -6,6 +6,7 @@
   <title>Phòng Thi Trắc Nghiệm - Toán Anh Việt</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-shim/0.35.6/es6-shim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       background-color: #f1f5f9;
@@ -223,6 +224,10 @@
   </div>
 
   <script>
+    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     let quizData = null;
     let timeRemaining = 0;
     let timerInterval = null;
@@ -245,17 +250,25 @@
 
     async function loadQuizRoom() {
       const urlParams = new URLSearchParams(window.location.search);
-      const fileUrl = urlParams.get('id');
+      const quizId = urlParams.get('id');
 
-      if (!fileUrl) {
-        alert("Không tìm thấy đường dẫn đề thi!");
+      if (!quizId) {
+        alert("Không tìm thấy mã đề thi!");
         return;
       }
 
       try {
-        const response = await fetch(decodeURIComponent(fileUrl));
-        if (!response.ok) throw new Error();
-        quizData = await response.json();
+        const { data, error } = await supabaseClient
+          .from('quizzes')
+          .select('*')
+          .eq('id', quizId)
+          .single();
+
+        if (error || !data) {
+          throw new Error("Không thể tìm thấy bài thi trong cơ sở dữ liệu.");
+        }
+
+        quizData = data;
 
         document.getElementById('exam-title-header').innerText = quizData.title;
         document.getElementById('pdf-viewer').src = getDocViewerUrl(quizData.exam_file);
@@ -265,7 +278,7 @@
 
         renderAnswerSheet();
       } catch (err) {
-        alert("Lỗi tải phòng thi!");
+        alert("Lỗi tải phòng thi: " + err.message);
       }
     }
 
@@ -287,6 +300,8 @@
     function renderAnswerSheet() {
       const list = document.getElementById('questions-list');
       list.innerHTML = '';
+
+      if (!quizData.answer_keys || !Array.isArray(quizData.answer_keys)) return;
 
       quizData.answer_keys.forEach((item) => {
         userAnswers[item.q_number] = '';
@@ -335,7 +350,9 @@
       document.querySelectorAll('input, button').forEach(el => el.disabled = true);
       document.getElementById('submit-btn').style.display = 'none';
 
-      let scorePerQuestion = quizData.total_score / quizData.answer_keys.length;
+      let totalScore = quizData.total_score || 10;
+      let totalQuestions = quizData.answer_keys.length;
+      let scorePerQuestion = totalScore / totalQuestions;
       let earnedScore = 0;
       let correctCount = 0;
 
@@ -369,8 +386,8 @@
 
       const resultBox = document.getElementById('result-box');
       resultBox.style.display = 'block';
-      document.getElementById('result-score').innerText = `${earnedScore.toFixed(2)} / ${quizData.total_score} điểm`;
-      document.getElementById('result-detail').innerText = `Bạn làm đúng ${correctCount} / ${quizData.answer_keys.length} câu`;
+      document.getElementById('result-score').innerText = `${earnedScore.toFixed(2)} / ${totalScore} điểm`;
+      document.getElementById('result-detail').innerText = `Bạn làm đúng ${correctCount} / ${totalQuestions} câu`;
 
       document.getElementById('pane-sheet-container').scrollTop = 0;
     }
