@@ -27,7 +27,7 @@
       flex-direction: column;
     }
 
-    /* 1. HEADER FULL WIDTH */
+    /* HEADER FULL WIDTH */
     header {
       flex-shrink: 0;
       width: 100%;
@@ -75,7 +75,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.02);
     }
 
-    /* 2. BỐ CỤC PHÒNG THI FULL MÀN HÌNH */
+    /* BỐ CỤC PHÒNG THI */
     .exam-wrapper {
       display: flex;
       flex: 1;
@@ -85,7 +85,6 @@
       position: relative;
     }
 
-    /* Cột trái: Đề PDF tràn 72% chiều rộng màn hình */
     .pdf-pane {
       width: 72%;
       height: 100%;
@@ -107,7 +106,6 @@
       border: none;
     }
 
-    /* Cột phải: Bảng trả lời chiếm 28% */
     .answersheet-pane {
       width: 28%;
       height: 100%;
@@ -118,7 +116,6 @@
       position: relative;
     }
 
-    /* Sticky Header Đếm ngược & Nộp bài */
     .timer-badge {
       position: sticky;
       top: 0;
@@ -283,9 +280,7 @@
       display: flex;
       gap: 6px;
     }
-    .bubble-group input[type="radio"] {
-      display: none;
-    }
+    .bubble-group input[type="radio"] { display: none; }
     .bubble-label {
       width: 34px;
       height: 34px;
@@ -328,7 +323,6 @@
       box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
     }
 
-    /* MÀU ĐÚNG/SAI */
     .answer-row.correct-row {
       border: 1.5px solid #10b981;
       background-color: #ecfdf5;
@@ -362,6 +356,46 @@
       border-top: 1px dashed #cbd5e1;
       display: none;
       line-height: 1.4;
+    }
+
+    /* BẢNG XÁC NHẬN BẮT ĐẦU LÀM BÀI (FULLSCREEN MODAL) */
+    .start-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .start-modal-card {
+      background: #ffffff;
+      padding: 30px 40px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 420px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    .start-modal-btn {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 20px;
+      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.35);
+      transition: all 0.2s;
+    }
+    .start-modal-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.5);
     }
 
     /* MOBILE TỐI ƯU */
@@ -399,16 +433,12 @@
         flex-direction: column;
         height: calc(100vh - 105px);
       }
-      .mobile-tabs {
-        display: flex;
-      }
+      .mobile-tabs { display: flex; }
       .pdf-pane, .answersheet-pane {
         width: 100% !important;
         height: 100% !important;
       }
-      .answersheet-pane {
-        padding-bottom: 80px;
-      }
+      .answersheet-pane { padding-bottom: 80px; }
       .exam-title-head {
         font-size: 0.8rem;
         max-width: 160px;
@@ -416,13 +446,23 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .hidden-mobile {
-        display: none !important;
-      }
+      .hidden-mobile { display: none !important; }
     }
   </style>
 </head>
 <body>
+
+  <!-- MODAL XÁC NHẬN KÍCH HOẠT FULLSCREEN -->
+  <div class="start-modal-overlay" id="start-exam-modal">
+    <div class="start-modal-card">
+      <div style="font-size: 3rem; margin-bottom: 10px;">📝</div>
+      <h2 style="margin: 0 0 10px 0; color: #0f172a;">Sẵn sàng làm bài?</h2>
+      <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0;">
+        Hệ thống sẽ chuyển sang <b>Chế độ Toàn màn hình</b>. Vui lòng tập trung làm bài và không thoát màn hình trong quá trình thi.
+      </p>
+      <button class="start-modal-btn" onclick="confirmStartExam()">🚀 BẮT ĐẦU LÀM BÀI</button>
+    </div>
+  </div>
 
   <header>
     <nav class="nav-container">
@@ -434,16 +474,13 @@
   </header>
 
   <div class="exam-wrapper">
-    <!-- KHUNG PDF FULL HEIGHT/WIDTH -->
     <div class="pdf-pane" id="pane-pdf-container">
       <div class="pdf-pane-inner">
         <iframe src="" id="pdf-viewer"></iframe>
       </div>
     </div>
 
-    <!-- PHIẾU TRẢ LỜI -->
     <div class="answersheet-pane" id="pane-sheet-container">
-      
       <div class="timer-badge">
         <span class="timer-text" id="countdown">⏱️ --:--</span>
         <button onclick="submitExam()" id="submit-btn" class="btn-submit">NỘP BÀI</button>
@@ -510,6 +547,19 @@
       }
     }
 
+    // NÚT BẮT ĐẦU: ÉP TRÌNH DUYỆT FULLSCREEN VÀ CHẠY ĐỒNG HỒ
+    function confirmStartExam() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      }
+
+      document.getElementById('start-exam-modal').style.display = 'none';
+      startTimer();
+    }
+
     async function loadQuizRoom() {
       const urlParams = new URLSearchParams(window.location.search);
       const quizId = urlParams.get('id');
@@ -537,7 +587,6 @@
 
         totalDuration = (quizData.duration || 45) * 60;
         timeRemaining = totalDuration;
-        startTimer();
 
         renderAnswerSheet();
       } catch (err) {
@@ -712,6 +761,13 @@
         document.getElementById('pane-sheet-container').classList.remove('hidden-mobile');
       }
     }
+
+    // CẢNH BÁO KHI THOÁT TOÀN MÀN HÌNH
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement && document.getElementById('start-exam-modal').style.display === 'none') {
+        alert("⚠️ Cảnh báo: Bạn vừa thoát chế độ Toàn màn hình! Vui lòng tập trung làm bài.");
+      }
+    });
 
     window.addEventListener('resize', checkResponsive);
     document.addEventListener('DOMContentLoaded', () => {
