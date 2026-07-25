@@ -5,179 +5,311 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Phòng Thi Trắc Nghiệm - Toán Anh Việt</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-shim/0.35.6/es6-shim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
     body {
-      background-color: #f1f5f9;
+      background-color: #f8fafc;
       height: 100vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
       margin: 0;
+      color: #1e293b;
     }
+
+    /* 1. HEADER DÙNG CHUNG */
     header {
       flex-shrink: 0;
-      background: white;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid #e2e8f0;
+      z-index: 50;
     }
+    .nav-container {
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    .back-btn {
+      text-decoration: none;
+      font-weight: 700;
+      color: #0284c7;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .back-btn:hover {
+      background: #e0f2fe;
+    }
+    .exam-title-head {
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 1.05rem;
+      background: #f1f5f9;
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* 2. BẤU CỤC KHU VỰC THI */
     .exam-wrapper {
       display: flex;
       flex: 1;
-      height: calc(100vh - 65px);
+      height: calc(100vh - 61px);
       overflow: hidden;
       position: relative;
     }
-    /* Cột trái: Hiển thị file Đề thi (Word/PDF) */
+
+    /* Cột trái: Trình xem Đề thi */
     .pdf-pane {
-      width: 60%;
+      width: 62%;
       height: 100%;
-      border-right: 3px solid #cbd5e1;
-      background: #475569;
+      background: #334155;
+      border-right: 1px solid #cbd5e1;
+      position: relative;
     }
     .pdf-pane iframe {
       width: 100%;
       height: 100%;
       border: none;
     }
-    /* Cột phải: Phiếu trả lời trắc nghiệm */
+
+    /* Cột phải: Phiếu trả lời */
     .answersheet-pane {
-      width: 40%;
+      width: 38%;
       height: 100%;
       background: #ffffff;
       overflow-y: auto;
-      padding: 25px;
+      padding: 20px 24px 80px 24px;
       position: relative;
-      box-sizing: border-box;
     }
+
+    /* Thanh đếm ngược & Nộp bài floating */
     .timer-badge {
       position: sticky;
       top: 0;
-      z-index: 10;
-      background: #0284c7;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 1.1rem;
-      text-align: center;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid #e2e8f0;
+      padding: 12px 18px;
+      border-radius: 12px;
       margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.2);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     }
-    .mobile-tabs {
-      display: none;
-      background: #ffffff;
-      border-bottom: 1px solid #e2e8f0;
-      flex-shrink: 0;
-    }
-    .tab-btn {
-      flex: 1;
-      text-align: center;
-      padding: 15px;
-      font-weight: bold;
-      font-size: 1rem;
-      border: none;
-      background: none;
-      cursor: pointer;
-      color: #64748b;
-      border-bottom: 3px solid transparent;
-    }
-    .tab-btn.active {
+    .timer-text {
+      font-weight: 700;
       color: #0284c7;
-      border-bottom-color: #0284c7;
-    }
-    .answer-row {
+      font-size: 1.05rem;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 12px 15px;
+      gap: 6px;
+    }
+    .btn-submit {
+      background: #e11d48;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25);
+    }
+    .btn-submit:hover {
+      background: #be123c;
+      transform: translateY(-1px);
+    }
+
+    /* Kết quả bài thi */
+    #result-box {
+      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+      border: 1px solid #38bdf8;
+      padding: 20px;
+      border-radius: 14px;
+      text-align: center;
+      margin-bottom: 24px;
+      display: none;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+    }
+    #result-score {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #0369a1;
+      margin: 0 0 4px 0;
+    }
+
+    /* Danh sách câu hỏi */
+    .answer-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px 16px;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      margin-bottom: 10px;
+      border-radius: 12px;
+      margin-bottom: 12px;
       transition: all 0.2s;
     }
-    .answer-row.correct {
-      border-left: 5px solid #22c55e;
-      background-color: #f0fdf4;
+    .answer-row:hover {
+      border-color: #cbd5e1;
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     }
-    .answer-row.incorrect {
-      border-left: 5px solid #ef4444;
-      background-color: #fef2f2;
+    .answer-row-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .q-num-label {
-      font-weight: bold;
-      color: #1e293b;
-      min-width: 60px;
+      font-weight: 700;
+      color: #334155;
+      font-size: 0.95rem;
     }
+
+    /* Các ô chọn A, B, C, D */
     .bubble-group {
       display: flex;
       gap: 10px;
+      width: 100%;
+    }
+    .bubble-item {
+      flex: 1;
+    }
+    .bubble-group input[type="radio"] {
+      display: none;
     }
     .bubble-label {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 36px;
-      height: 36px;
-      border: 2px solid #cbd5e1;
-      border-radius: 50%;
+      height: 40px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
       cursor: pointer;
-      font-weight: bold;
-      font-size: 0.9rem;
-      transition: all 0.2s;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #475569;
+      background: #ffffff;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       user-select: none;
     }
-    .bubble-group input[type="radio"] {
-      display: none;
+    .bubble-label:hover {
+      border-color: #0284c7;
+      color: #0284c7;
+      background: #f0f9ff;
     }
     .bubble-group input[type="radio"]:checked + .bubble-label {
       background-color: #0284c7;
       color: white;
       border-color: #0284c7;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
     }
+
+    /* Ô nhập tự luận/ngắn */
     .short-input-field {
-      width: 180px;
-      padding: 8px 12px;
+      width: 100%;
+      padding: 10px 14px;
       border: 1.5px solid #cbd5e1;
-      border-radius: 6px;
-      font-size: 0.9rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
       outline: none;
+      transition: border-color 0.2s;
     }
     .short-input-field:focus {
       border-color: #0284c7;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+
+    /* Trạng thái Đúng / Sai sau khi nộp */
+    .answer-row.correct {
+      border: 1.5px solid #22c55e;
+      background-color: #f0fdf4;
+    }
+    .answer-row.incorrect {
+      border: 1.5px solid #ef4444;
+      background-color: #fef2f2;
     }
     .result-key-info {
-      font-size: 0.85rem;
-      margin-top: 5px;
-      color: #475569;
+      font-size: 0.88rem;
+      margin-top: 6px;
+      padding-top: 8px;
+      border-top: 1px dashed #cbd5e1;
       display: none;
+      line-height: 1.5;
     }
-    #result-box {
-      background: #e0f2fe;
-      border: 2px dashed #0284c7;
-      padding: 20px;
-      border-radius: 10px;
+
+    /* 3. MOBILE NAVIGATION TỐI ƯU */
+    .mobile-tabs {
+      display: none;
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+    }
+    .tab-btn {
+      flex: 1;
       text-align: center;
-      margin-bottom: 25px;
-      display: none;
+      padding: 14px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: #64748b;
+      transition: all 0.2s;
     }
+    .tab-btn.active {
+      color: #0284c7;
+      background: #f0f9ff;
+      border-top: 3px solid #0284c7;
+    }
+
     @media (max-width: 768px) {
       .exam-wrapper {
         flex-direction: column;
-        height: calc(100vh - 115px);
+        height: calc(100vh - 120px);
       }
       .mobile-tabs {
         display: flex;
       }
       .pdf-pane, .answersheet-pane {
-        width: 100%;
-        height: 100%;
+        width: 100% !important;
+        height: 100% !important;
       }
-      .pdf-pane.hidden-mobile, .answersheet-pane.hidden-mobile {
+      .answersheet-pane {
+        padding-bottom: 90px;
+      }
+      .exam-title-head {
+        font-size: 0.85rem;
+        max-width: 180px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .hidden-mobile {
         display: none !important;
       }
     }
@@ -185,42 +317,47 @@
 </head>
 <body>
 
+  <!-- HEADER DỒNG BỘ -->
   <header>
-    <nav class="nav-container" style="padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;">
-      <a href="quiz-list.html" class="logo" style="text-decoration: none; font-weight: 800; color: #0284c7; display: flex; align-items: center; gap: 8px;">
-        ← TOÁN ANH VIỆT
+    <nav class="nav-container">
+      <a href="quiz-list.html" class="back-btn">
+        <span>←</span> Trang danh sách
       </a>
-      <span style="font-weight: 700; color: #1e293b; font-size: 1rem;" id="exam-title-header">Đang tải đề thi...</span>
+      <span class="exam-title-head" id="exam-title-header">Đang tải đề thi...</span>
     </nav>
   </header>
 
-  <div class="mobile-tabs">
-    <button class="tab-btn active" id="tab-pdf" onclick="switchTab('pdf')">📋 Đọc Đề Bài</button>
-    <button class="tab-btn" id="tab-sheet" onclick="switchTab('sheet')">✍️ Phiếu Trả Lời</button>
-  </div>
-
+  <!-- KHU VỰC CHÍNH -->
   <div class="exam-wrapper">
-    <!-- CỘT BÊN TRÁI: Trình xem tài liệu (Hỗ trợ cả Word và PDF) -->
+    <!-- CỘT BÊN TRÁI: ĐỀ THI (PDF/WORD) -->
     <div class="pdf-pane" id="pane-pdf-container">
       <iframe src="" id="pdf-viewer"></iframe>
     </div>
 
-    <!-- CỘT BÊN PHẢI: Phiếu điền đáp án chấm điểm tự động -->
+    <!-- CỘT BÊN PHẢI: PHIẾU TRẢ LỜI -->
     <div class="answersheet-pane" id="pane-sheet-container">
       
+      <!-- BẢNG ĐẾM NGỜI & NỘP BÀI -->
       <div class="timer-badge">
-        <span id="countdown">Thời gian: --:--</span>
-        <button onclick="submitExam()" id="submit-btn" style="background: #e11d48; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold;">NỘP BÀI</button>
+        <span class="timer-text" id="countdown">⏱️ --:--</span>
+        <button onclick="submitExam()" id="submit-btn" class="btn-submit">NỘP BÀI</button>
       </div>
 
+      <!-- KHỐI HỌC SINH XEM KẾT QUẢ -->
       <div id="result-box">
-        <h3 style="font-size: 1.5rem; color: #0369a1; margin-bottom: 5px;" id="result-score">-- / 10 điểm</h3>
-        <p id="result-detail" style="color: #0284c7; font-weight: 500;">Bạn làm đúng -- / -- câu</p>
+        <div id="result-score">-- / 10</div>
+        <div id="result-detail" style="color: #0369a1; font-weight: 600;">Bạn làm đúng -- / -- câu</div>
       </div>
 
-      <!-- Danh sách các ô chọn đáp án -->
+      <!-- DANH SÁCH Ô ĐÁP ÁN -->
       <div id="questions-list"></div>
     </div>
+  </div>
+
+  <!-- TAB DÀNH RIÊNG CHO MOBILE (CỐ ĐỊNH Ở ĐÁY MÀN HÌNH) -->
+  <div class="mobile-tabs">
+    <button class="tab-btn active" id="tab-pdf" onclick="switchTab('pdf')">Đề Bài</button>
+    <button class="tab-btn" id="tab-sheet" onclick="switchTab('sheet')"> Phiếu Trả Lời</button>
   </div>
 
   <script>
@@ -293,7 +430,7 @@
         timeRemaining--;
         const mins = Math.floor(timeRemaining / 60);
         const secs = timeRemaining % 60;
-        document.getElementById('countdown').innerText = `⏱️ Còn lại: ${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        document.getElementById('countdown').innerHTML = `⏱️ Còn lại: <strong>${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}</strong>`;
       }, 1000);
     }
 
@@ -316,23 +453,27 @@
           actionHtml = `
             <div class="bubble-group">
               ${['A', 'B', 'C', 'D'].map(char => `
-                <input type="radio" id="b-${item.q_number}-${char}" name="ans-${item.q_number}" value="${char}" onchange="saveAnswer(${item.q_number}, '${char}')">
-                <label for="b-${item.q_number}-${char}" class="bubble-label">${char}</label>
+                <div class="bubble-item">
+                  <input type="radio" id="b-${item.q_number}-${char}" name="ans-${item.q_number}" value="${char}" onchange="saveAnswer(${item.q_number}, '${char}')">
+                  <label for="b-${item.q_number}-${char}" class="bubble-label">${char}</label>
+                </div>
               `).join('')}
             </div>
           `;
         } else {
           actionHtml = `
-            <input type="text" class="short-input-field" placeholder="Nhập đáp án..." oninput="saveAnswer(${item.q_number}, this.value)">
+            <input type="text" class="short-input-field" placeholder="Nhập đáp án của bạn..." oninput="saveAnswer(${item.q_number}, this.value)">
           `;
         }
 
         row.innerHTML = `
-          <div class="q-num-label">Câu ${item.q_number}:</div>
+          <div class="answer-row-header">
+            <span class="q-num-label">Câu ${item.q_number}</span>
+          </div>
           ${actionHtml}
           <div class="result-key-info" id="key-info-${item.q_number}">
-            <span style="color: #22c55e; font-weight: bold;">Đáp án đúng: ${item.correct_answer}</span>
-            ${item.explanation ? `<br><span style="color: #64748b;">Giải thích: ${item.explanation}</span>` : ''}
+            <div style="color: #16a34a; font-weight: 700;">Đáp án đúng: ${item.correct_answer}</div>
+            ${item.explanation ? `<div style="color: #64748b; margin-top: 2px;">💡 ${item.explanation}</div>` : ''}
           </div>
         `;
         list.appendChild(row);
@@ -344,7 +485,7 @@
     }
 
     function submitExam() {
-      if (!confirm("Bạn muốn nộp bài thi?")) return;
+      if (!confirm("Bạn có chắc chắn muốn nộp bài thi này?")) return;
       clearInterval(timerInterval);
 
       document.querySelectorAll('input, button').forEach(el => el.disabled = true);
@@ -387,7 +528,7 @@
       const resultBox = document.getElementById('result-box');
       resultBox.style.display = 'block';
       document.getElementById('result-score').innerText = `${earnedScore.toFixed(2)} / ${totalScore} điểm`;
-      document.getElementById('result-detail').innerText = `Bạn làm đúng ${correctCount} / ${totalQuestions} câu`;
+      document.getElementById('result-detail').innerText = `Bạn đã làm đúng ${correctCount} / ${totalQuestions} câu`;
 
       document.getElementById('pane-sheet-container').scrollTop = 0;
     }
