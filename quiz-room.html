@@ -35,11 +35,11 @@
       z-index: 50;
     }
     .nav-container {
-      padding: 12px 24px;
+      padding: 10px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      max-width: 1440px;
+      max-width: 100%;
       margin: 0 auto;
     }
     .back-btn {
@@ -48,9 +48,9 @@
       color: #0284c7;
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.95rem;
-      padding: 6px 14px;
+      gap: 6px;
+      font-size: 0.88rem;
+      padding: 5px 12px;
       border-radius: 8px;
       background: #f0f9ff;
       border: 1px solid #bae6fd;
@@ -63,36 +63,36 @@
     .exam-title-head {
       font-weight: 700;
       color: #0f172a;
-      font-size: 1rem;
+      font-size: 0.92rem;
       background: #ffffff;
-      padding: 6px 16px;
+      padding: 5px 14px;
       border-radius: 20px;
       border: 1px solid #e2e8f0;
       box-shadow: 0 2px 6px rgba(0,0,0,0.02);
     }
 
-    /* 2. BỐ CỤC PHÒNG THI */
+    /* 2. BỐ CỤC PHÒNG THI (TỈ LỆ 70% - 30%) */
     .exam-wrapper {
       display: flex;
       flex: 1;
-      height: calc(100vh - 61px);
+      height: calc(100vh - 53px);
       overflow: hidden;
       position: relative;
     }
 
-    /* Khung xem đề PDF */
+    /* Cột trái: Đề PDF rộng rãi (70%) */
     .pdf-pane {
-      width: 60%;
+      width: 70%;
       height: 100%;
       background: #1e293b;
-      border-right: 1px solid #e2e8f0;
-      padding: 12px;
+      border-right: 1px solid #cbd5e1;
+      padding: 8px;
       box-sizing: border-box;
     }
     .pdf-pane-inner {
       width: 100%;
       height: 100%;
-      border-radius: 12px;
+      border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
@@ -102,83 +102,85 @@
       border: none;
     }
 
-    /* Bảng trả lời */
+    /* Cột phải: Bảng trả lời nhỏ gọn (30%) */
     .answersheet-pane {
-      width: 40%;
+      width: 30%;
       height: 100%;
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(8px);
       overflow-y: auto;
-      padding: 20px 24px 80px 24px;
+      padding: 14px 16px 80px 16px;
       position: relative;
     }
 
-    /* Sticky Header Đếm ngược & Nộp bài */
+    /* Sticky Header Đếm ngược & Nộp bài GỌN GÀNG */
     .timer-badge {
       position: sticky;
       top: 0;
       z-index: 20;
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(10px);
       border: 1.5px solid #bae6fd;
-      padding: 10px 18px;
-      border-radius: 30px;
-      margin-bottom: 20px;
+      padding: 8px 14px;
+      border-radius: 12px;
+      margin-bottom: 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 8px 20px rgba(2, 132, 199, 0.08);
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
     }
     .timer-text {
       font-weight: 700;
       color: #0284c7;
-      font-size: 1rem;
+      font-size: 0.88rem;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
+      white-space: nowrap;
     }
     .btn-submit {
       background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
       color: white;
       border: none;
-      padding: 10px 22px;
-      border-radius: 20px;
+      padding: 7px 16px;
+      border-radius: 8px;
       cursor: pointer;
       font-weight: 700;
-      font-size: 0.9rem;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
+      font-size: 0.82rem;
+      white-space: nowrap;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 3px 10px rgba(249, 115, 22, 0.3);
     }
     .btn-submit:hover {
       background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(249, 115, 22, 0.45);
+      transform: translateY(-1px);
+      box-shadow: 0 5px 14px rgba(249, 115, 22, 0.4);
     }
 
-    /* CARD TỔNG KẾT ĐIỂM + DONUT CHART */
+    /* CARD TỔNG KẾT ĐIỂM DẠNG DONUT CHART VÀ MINI CARDS */
     #result-box {
       background: #ffffff;
       border: 1px solid #e2e8f0;
-      padding: 20px;
-      border-radius: 16px;
-      margin-bottom: 24px;
+      padding: 14px;
+      border-radius: 12px;
+      margin-bottom: 16px;
       display: none;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
       animation: fadeIn 0.3s ease-in-out;
     }
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
+      from { opacity: 0; transform: translateY(-8px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .result-summary-container {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 12px;
     }
     .donut-chart-wrapper {
       position: relative;
-      width: 100px;
-      height: 100px;
+      width: 70px;
+      height: 70px;
       flex-shrink: 0;
     }
     .donut-chart-wrapper svg {
@@ -189,12 +191,12 @@
     .donut-bg {
       fill: none;
       stroke: #f1f5f9;
-      stroke-width: 3.8;
+      stroke-width: 4;
     }
     .donut-ring {
       fill: none;
       stroke: #f97316;
-      stroke-width: 3.8;
+      stroke-width: 4;
       stroke-dasharray: 100;
       stroke-dashoffset: 100;
       transition: stroke-dashoffset 1s ease-in-out;
@@ -208,82 +210,88 @@
       text-align: center;
     }
     .donut-score {
-      font-size: 1.25rem;
+      font-size: 1.05rem;
       font-weight: 800;
       color: #0284c7;
       line-height: 1;
     }
     .donut-label {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       color: #64748b;
       font-weight: 600;
     }
     .result-stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 6px;
       flex-grow: 1;
     }
     .mini-stat-card {
       background: #f8fafc;
       border: 1px solid #f1f5f9;
-      padding: 10px;
-      border-radius: 10px;
+      padding: 6px;
+      border-radius: 8px;
       text-align: center;
     }
     .mini-stat-value {
-      font-size: 1.1rem;
+      font-size: 0.92rem;
       font-weight: 700;
       color: #0f172a;
     }
     .mini-stat-label {
-      font-size: 0.75rem;
+      font-size: 0.68rem;
       color: #64748b;
       font-weight: 500;
     }
 
-    /* CARD CÂU HỎI */
+    /* CARD CÂU HỎI HÀNG NGANG (TIẾT KIỆM DIỆN TÍCH) */
     .answer-row {
       background: #ffffff;
       border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
       transition: all 0.2s ease;
     }
     .answer-row:hover {
-      box-shadow: 0 6px 18px rgba(2, 132, 199, 0.06);
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.06);
+    }
+    .answer-row-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
     }
     .q-num-label {
       font-weight: 700;
       color: #1e293b;
-      font-size: 0.95rem;
-      margin-bottom: 12px;
+      font-size: 0.88rem;
+      white-space: nowrap;
     }
 
-    /* NÚT CHỌN ĐÁP ÁN (40px x 40px) */
+    /* NÚT CHỌN ĐÁP ÁN (34px x 34px) */
     .bubble-group {
       display: flex;
-      gap: 12px;
+      gap: 6px;
     }
     .bubble-group input[type="radio"] {
       display: none;
     }
     .bubble-label {
-      width: 40px;
-      height: 40px;
+      width: 34px;
+      height: 34px;
       border: 1.5px solid #cbd5e1;
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       color: #475569;
       background: #ffffff;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
       user-select: none;
     }
     .bubble-label:hover {
@@ -295,42 +303,38 @@
       background-color: #0284c7;
       color: #ffffff;
       border-color: #0284c7;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
-      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(2, 132, 199, 0.3);
     }
 
-    /* Ô NHẬP NẮNG/TỰ LUẬN */
+    /* Ô NHẬP TỰ LUẬN */
     .short-input-field {
-      width: 100%;
-      padding: 10px 14px;
+      width: 140px;
+      padding: 6px 10px;
       border: 1.5px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 0.95rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
       outline: none;
       transition: border-color 0.2s;
     }
     .short-input-field:focus {
       border-color: #0284c7;
-      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
     }
 
     /* MÃ MÀU BÁO KẾT QUẢ ĐÚNG/SAI */
     .answer-row.correct-row {
       border: 1.5px solid #10b981;
       background-color: #ecfdf5;
-      box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
     }
     .answer-row.incorrect-row {
       border: 1.5px solid #f43f5e;
       background-color: #fff1f2;
     }
     
-    /* Highlight cụ thể cho các nút đáp án khi xem lại bài */
     .bubble-label.is-student-correct {
       background-color: #10b981 !important;
       color: white !important;
       border-color: #10b981 !important;
-      box-shadow: 0 0 10px rgba(16, 185, 129, 0.4) !important;
     }
     .bubble-label.is-student-incorrect {
       background-color: #f43f5e !important;
@@ -345,12 +349,12 @@
     }
 
     .result-key-info {
-      font-size: 0.88rem;
-      margin-top: 12px;
-      padding-top: 10px;
+      font-size: 0.8rem;
+      margin-top: 8px;
+      padding-top: 6px;
       border-top: 1px dashed #cbd5e1;
       display: none;
-      line-height: 1.5;
+      line-height: 1.4;
     }
 
     /* 3. MOBILE RESPONSIVE TỐI ƯU */
@@ -368,9 +372,9 @@
     .tab-btn {
       flex: 1;
       text-align: center;
-      padding: 14px;
+      padding: 12px;
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       border: none;
       background: none;
       cursor: pointer;
@@ -383,10 +387,10 @@
       border-top: 3px solid #0284c7;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 900px) {
       .exam-wrapper {
         flex-direction: column;
-        height: calc(100vh - 120px);
+        height: calc(100vh - 105px);
       }
       .mobile-tabs {
         display: flex;
@@ -396,11 +400,11 @@
         height: 100% !important;
       }
       .answersheet-pane {
-        padding-bottom: 90px;
+        padding-bottom: 80px;
       }
       .exam-title-head {
-        font-size: 0.85rem;
-        max-width: 180px;
+        font-size: 0.8rem;
+        max-width: 160px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -413,11 +417,11 @@
 </head>
 <body>
 
-  <!-- HEADER DỒNG BỘ NGUYÊN BẢN -->
+  <!-- HEADER -->
   <header>
     <nav class="nav-container">
       <a href="quiz-list.html" class="back-btn">
-        <span>←</span> Trang danh sách
+        <span>←</span> Danh sách
       </a>
       <span class="exam-title-head" id="exam-title-header">Đang tải đề thi...</span>
     </nav>
@@ -435,13 +439,13 @@
     <!-- PHIẾU TRẢ LỜI TRẮC NGHIỆM -->
     <div class="answersheet-pane" id="pane-sheet-container">
       
-      <!-- STICKY HEADER ĐẾM NGƯỢC & NỘP BÀI -->
+      <!-- STICKY HEADER ĐẾM NGƯỢC & NỘP BÀI GỌN GÀNG -->
       <div class="timer-badge">
         <span class="timer-text" id="countdown">⏱️ --:--</span>
         <button onclick="submitExam()" id="submit-btn" class="btn-submit">NỘP BÀI</button>
       </div>
 
-      <!-- CARD TỔNG KẾT ĐIỂM DẠNG DONUT CHART VÀ MINI CARDS -->
+      <!-- CARD TỔNG KẾT ĐIỂM -->
       <div id="result-box">
         <div class="result-summary-container">
           <div class="donut-chart-wrapper">
@@ -458,11 +462,11 @@
           <div class="result-stats-grid">
             <div class="mini-stat-card">
               <div class="mini-stat-value" id="stat-correct" style="color: #10b981;">0/0</div>
-              <div class="mini-stat-label">Số câu đúng</div>
+              <div class="mini-stat-label">Đúng</div>
             </div>
             <div class="mini-stat-card">
               <div class="mini-stat-value" id="stat-time" style="color: #0284c7;">00:00</div>
-              <div class="mini-stat-label">Thời gian làm</div>
+              <div class="mini-stat-label">Thời gian</div>
             </div>
           </div>
         </div>
@@ -473,7 +477,7 @@
     </div>
   </div>
 
-  <!-- BOTTOM TABS DÀNH CHO MOBILE -->
+  <!-- BOTTOM TABS MOBILE -->
   <div class="mobile-tabs">
     <button class="tab-btn active" id="tab-pdf" onclick="switchTab('pdf')">📋 Đọc Đề Bài</button>
     <button class="tab-btn" id="tab-sheet" onclick="switchTab('sheet')">✍️ Phiếu Trả Lời</button>
@@ -551,7 +555,7 @@
         timeRemaining--;
         const mins = Math.floor(timeRemaining / 60);
         const secs = timeRemaining % 60;
-        document.getElementById('countdown').innerHTML = `⏱️ Còn lại: <strong>${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}</strong>`;
+        document.getElementById('countdown').innerHTML = `⏱️ Còn: <strong>${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}</strong>`;
       }, 1000);
     }
 
@@ -583,16 +587,18 @@
           `;
         } else {
           actionHtml = `
-            <input type="text" class="short-input-field" placeholder="Nhập đáp án của bạn..." oninput="saveAnswer(${item.q_number}, this.value)">
+            <input type="text" class="short-input-field" placeholder="Nhập đáp án..." oninput="saveAnswer(${item.q_number}, this.value)">
           `;
         }
 
         row.innerHTML = `
-          <div class="q-num-label">Câu ${item.q_number}:</div>
-          ${actionHtml}
+          <div class="answer-row-content">
+            <div class="q-num-label">Câu ${item.q_number}:</div>
+            ${actionHtml}
+          </div>
           <div class="result-key-info" id="key-info-${item.q_number}">
             <div style="color: #0284c7; font-weight: 700;">Đáp án chuẩn: ${item.correct_answer}</div>
-            ${item.explanation ? `<div style="color: #64748b; margin-top: 4px;">💡 Giải thích: ${item.explanation}</div>` : ''}
+            ${item.explanation ? `<div style="color: #64748b; margin-top: 2px;">💡 ${item.explanation}</div>` : ''}
           </div>
         `;
         list.appendChild(row);
@@ -654,7 +660,6 @@
         keyInfo.style.display = 'block';
       });
 
-      // Hiển thị Card tổng kết Donut Chart & Mini stats
       const timeSpent = totalDuration - timeRemaining;
       const spentMins = Math.floor(timeSpent / 60);
       const spentSecs = timeSpent % 60;
@@ -699,7 +704,7 @@
     }
 
     function checkResponsive() {
-      if (window.innerWidth <= 768) {
+      if (window.innerWidth <= 900) {
         switchTab('pdf');
       } else {
         document.getElementById('pane-pdf-container').classList.remove('hidden-mobile');
