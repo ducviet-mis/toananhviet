@@ -13,21 +13,24 @@
       box-sizing: border-box;
       font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
     }
-    body {
-      background-color: #f8fafc;
-      background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
-      background-size: 20px 20px;
+    html, body {
+      width: 100%;
       height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
       margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #f8fafc;
       color: #0f172a;
     }
+    body {
+      display: flex;
+      flex-direction: column;
+    }
 
-    /* 1. HEADER */
+    /* 1. HEADER FULL WIDTH */
     header {
       flex-shrink: 0;
+      width: 100%;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
@@ -35,10 +38,11 @@
       z-index: 50;
     }
     .nav-container {
-      padding: 10px 20px;
+      padding: 10px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      width: 100%;
       max-width: 100%;
       margin: 0 auto;
     }
@@ -50,7 +54,7 @@
       align-items: center;
       gap: 6px;
       font-size: 0.88rem;
-      padding: 5px 12px;
+      padding: 6px 14px;
       border-radius: 8px;
       background: #f0f9ff;
       border: 1px solid #bae6fd;
@@ -63,36 +67,37 @@
     .exam-title-head {
       font-weight: 700;
       color: #0f172a;
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       background: #ffffff;
-      padding: 5px 14px;
+      padding: 6px 16px;
       border-radius: 20px;
       border: 1px solid #e2e8f0;
       box-shadow: 0 2px 6px rgba(0,0,0,0.02);
     }
 
-    /* 2. BỐ CỤC PHÒNG THI (TỈ LỆ 70% - 30%) */
+    /* 2. BỐ CỤC PHÒNG THI FULL MÀN HÌNH */
     .exam-wrapper {
       display: flex;
       flex: 1;
+      width: 100%;
       height: calc(100vh - 53px);
       overflow: hidden;
       position: relative;
     }
 
-    /* Cột trái: Đề PDF rộng rãi (70%) */
+    /* Cột trái: Đề PDF tràn 72% chiều rộng màn hình */
     .pdf-pane {
-      width: 70%;
+      width: 72%;
       height: 100%;
       background: #1e293b;
       border-right: 1px solid #cbd5e1;
-      padding: 8px;
+      padding: 6px;
       box-sizing: border-box;
     }
     .pdf-pane-inner {
       width: 100%;
       height: 100%;
-      border-radius: 10px;
+      border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
@@ -102,18 +107,18 @@
       border: none;
     }
 
-    /* Cột phải: Bảng trả lời nhỏ gọn (30%) */
+    /* Cột phải: Bảng trả lời chiếm 28% */
     .answersheet-pane {
-      width: 30%;
+      width: 28%;
       height: 100%;
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(8px);
       overflow-y: auto;
-      padding: 14px 16px 80px 16px;
+      padding: 14px 18px 80px 18px;
       position: relative;
     }
 
-    /* Sticky Header Đếm ngược & Nộp bài THU NHỎ HOÀN TOÀN */
+    /* Sticky Header Đếm ngược & Nộp bài */
     .timer-badge {
       position: sticky;
       top: 0;
@@ -139,7 +144,6 @@
       white-space: nowrap;
     }
 
-    /* ÉP BẮT BUỘC NÚT NỘP BÀI GỌN GÀNG KHÔNG BỊ KÉO GIÃN */
     .btn-submit {
       background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
       color: white !important;
@@ -162,7 +166,7 @@
       box-shadow: 0 5px 14px rgba(249, 115, 22, 0.4) !important;
     }
 
-    /* CARD TỔNG KẾT ĐIỂM DẠNG DONUT CHART VÀ MINI CARDS */
+    /* CARD KẾT QUẢ */
     #result-box {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -249,7 +253,7 @@
       font-weight: 500;
     }
 
-    /* CARD CÂU HỎI HÀNG NGANG (TIẾT KIỆM DIỆN TÍCH) */
+    /* ITEM CÂU HỎI */
     .answer-row {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -275,7 +279,6 @@
       white-space: nowrap;
     }
 
-    /* NÚT CHỌN ĐÁP ÁN (34px x 34px) */
     .bubble-group {
       display: flex;
       gap: 6px;
@@ -311,7 +314,6 @@
       box-shadow: 0 3px 8px rgba(2, 132, 199, 0.3);
     }
 
-    /* Ô NHẬP TỰ LUẬN */
     .short-input-field {
       width: 140px;
       padding: 6px 10px;
@@ -326,7 +328,7 @@
       box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
     }
 
-    /* MÃ MÀU BÁO KẾT QUẢ ĐÚNG/SAI */
+    /* MÀU ĐÚNG/SAI */
     .answer-row.correct-row {
       border: 1.5px solid #10b981;
       background-color: #ecfdf5;
@@ -362,7 +364,7 @@
       line-height: 1.4;
     }
 
-    /* 3. MOBILE RESPONSIVE TỐI ƯU */
+    /* MOBILE TỐI ƯU */
     .mobile-tabs {
       display: none;
       background: #ffffff;
@@ -422,7 +424,6 @@
 </head>
 <body>
 
-  <!-- HEADER -->
   <header>
     <nav class="nav-container">
       <a href="quiz-list.html" class="back-btn">
@@ -432,25 +433,22 @@
     </nav>
   </header>
 
-  <!-- KHU VỰC THI THỬ -->
   <div class="exam-wrapper">
-    <!-- KHUNG XEM ĐỀ PDF/WORD -->
+    <!-- KHUNG PDF FULL HEIGHT/WIDTH -->
     <div class="pdf-pane" id="pane-pdf-container">
       <div class="pdf-pane-inner">
         <iframe src="" id="pdf-viewer"></iframe>
       </div>
     </div>
 
-    <!-- PHIẾU TRẢ LỜI TRẮC NGHIỆM -->
+    <!-- PHIẾU TRẢ LỜI -->
     <div class="answersheet-pane" id="pane-sheet-container">
       
-      <!-- STICKY HEADER ĐẾM NGƯỢC & NỘP BÀI GỌN GÀNG -->
       <div class="timer-badge">
         <span class="timer-text" id="countdown">⏱️ --:--</span>
         <button onclick="submitExam()" id="submit-btn" class="btn-submit">NỘP BÀI</button>
       </div>
 
-      <!-- CARD TỔNG KẾT ĐIỂM -->
       <div id="result-box">
         <div class="result-summary-container">
           <div class="donut-chart-wrapper">
@@ -477,12 +475,10 @@
         </div>
       </div>
 
-      <!-- DANH SÁCH TỪNG CÂU HỎI -->
       <div id="questions-list"></div>
     </div>
   </div>
 
-  <!-- BOTTOM TABS MOBILE -->
   <div class="mobile-tabs">
     <button class="tab-btn active" id="tab-pdf" onclick="switchTab('pdf')">📋 Đọc Đề Bài</button>
     <button class="tab-btn" id="tab-sheet" onclick="switchTab('sheet')">✍️ Phiếu Trả Lời</button>
