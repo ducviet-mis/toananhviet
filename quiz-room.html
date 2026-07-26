@@ -205,10 +205,12 @@
       align-items: center;
       gap: 12px;
     }
+    
+    /* VÒNG TRÒN KẾT QUẢ DONUT CHART (CẢI TIẾN MÀU SẮC) */
     .donut-chart-wrapper {
       position: relative;
-      width: 70px;
-      height: 70px;
+      width: 72px;
+      height: 72px;
       flex-shrink: 0;
     }
     .donut-chart-wrapper svg {
@@ -218,16 +220,16 @@
     }
     .donut-bg {
       fill: none;
-      stroke: #f1f5f9;
+      stroke: #fee2e2; /* Màu Đỏ nhạt cho phần trả lời SAI */
       stroke-width: 4;
     }
     .donut-ring {
       fill: none;
-      stroke: #f97316;
+      stroke: #0284c7; /* Màu Xanh dương mặc định cho phần ĐÚNG */
       stroke-width: 4;
       stroke-dasharray: 100;
       stroke-dashoffset: 100;
-      transition: stroke-dashoffset 1s ease-in-out;
+      transition: stroke-dashoffset 1s ease-in-out, stroke 0.3s ease;
       stroke-linecap: round;
     }
     .donut-center-text {
@@ -534,7 +536,7 @@
       background: #e2e8f0;
     }
 
-    /* MODAL BẢNG KẾT QUẢ CHI TIẾT (CERTIFICATE / SCOREBOARD CARD) */
+    /* MODAL BẢNG KẾT QUẢ CHI TIẾT (SCOREBOARD CARD) */
     .scoreboard-modal-card {
       background: #ffffff;
       width: 95%;
@@ -580,9 +582,7 @@
       color: #0f172a;
     }
 
-    /* =========================================================
-       HIỆU ỨNG ĐIỂM SỐ DỰA THEO THANG ĐIỂM (ĐÃ ĐƯỢC LÀM LẠI ĐẸP HƠN)
-       ========================================================= */
+    /* HIỆU ỨNG ĐIỂM SỐ DỰA THEO THANG ĐIỂM */
     .sb-score-container {
       display: flex;
       justify-content: center;
@@ -590,11 +590,11 @@
       margin: 24px 0;
     }
     
-    /* 1. Dưới 8.0: Khối phẳng, nhẹ nhàng, sạch sẽ */
+    /* 1. Dưới 8.0: Khối phẳng, sạch sẽ */
     .score-card-flat {
       padding: 16px 45px;
       background: #f8fafc;
-      border: 2px dashed #cbd5e1; /* Viền nét đứt tinh tế */
+      border: 2px dashed #cbd5e1;
       border-radius: 18px;
       font-size: 3.5rem;
       font-weight: 800;
@@ -618,7 +618,7 @@
       box-shadow: 0 10px 30px rgba(2, 132, 199, 0.18);
     }
 
-    /* 3. Từ 9.0 - 10.0: Thẻ Vàng (Gold Card) Lấp lánh sang trọng */
+    /* 3. Từ 9.0 - 10.0: Thẻ Vàng Lấp lánh sang trọng */
     .score-card-shimmer {
       padding: 18px 55px;
       background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fde68a 100%);
@@ -630,12 +630,11 @@
       text-align: center;
       line-height: 1;
       position: relative;
-      overflow: hidden; /* Giữ tia sáng không tràn ra ngoài */
+      overflow: hidden;
       box-shadow: 0 12px 35px rgba(245, 158, 11, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.8);
       text-shadow: 1px 2px 4px rgba(245, 158, 11, 0.2);
     }
 
-    /* Icon ngôi sao lấp lánh (trang trí cho điểm cao) */
     .score-card-shimmer::before {
       content: '✨';
       position: absolute;
@@ -646,7 +645,6 @@
       z-index: 2;
     }
 
-    /* Hiệu ứng tia sáng quét ngang (Shimmer Sweep) */
     .score-card-shimmer::after {
       content: '';
       position: absolute;
@@ -660,17 +658,15 @@
       z-index: 1;
     }
 
-    /* Keyframes cho hiệu ứng */
     @keyframes shimmerSweep {
       0% { left: -100%; }
-      60% { left: 200%; } /* Quét nhanh rồi đợi */
+      60% { left: 200%; }
       100% { left: 200%; }
     }
     @keyframes starPulse {
       0%, 100% { transform: scale(1); opacity: 0.7; }
       50% { transform: scale(1.3); opacity: 1; }
     }
-    /* ========================================================= */
 
     /* BẢNG THỐNG KÊ ĐÁP ÁN */
     .sb-table-wrapper {
@@ -698,7 +694,6 @@
       font-weight: 600;
     }
     
-    /* Mã màu hàng trong bảng */
     .sb-row-correct { background-color: #ecfdf5 !important; color: #047857 !important; }
     .sb-row-incorrect { background-color: #fff1f2 !important; color: #be123c !important; }
     .sb-row-skipped { background-color: #ffffff !important; color: #64748b !important; }
@@ -932,6 +927,7 @@
       <!-- KẾT QUẢ VÀ TƯƠNG TÁC GIA SƯ -->
       <div id="result-box">
         <div class="result-summary-container">
+          <!-- DONUT CHART CẢI TIẾN MÀU CẢNH BÁO / THƯƠNG HIỆU -->
           <div class="donut-chart-wrapper">
             <svg viewBox="0 0 36 36">
               <path class="donut-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
@@ -1200,8 +1196,8 @@
         timerContainer.style.display = 'none';
       }
 
-     document.querySelectorAll('.answersheet-pane input').forEach(el => el.disabled = true);
-     document.querySelectorAll('.flag-btn').forEach(el => el.disabled = true);
+      document.querySelectorAll('.answersheet-pane input').forEach(el => el.disabled = true);
+      document.querySelectorAll('.flag-btn').forEach(el => el.disabled = true);
 
       let totalScore = quizData.total_score || 10;
       let totalQuestions = quizData.answer_keys.length;
@@ -1253,7 +1249,8 @@
       const spentSecs = timeSpent % 60;
 
       const scoreFormatted = earnedScore.toFixed(1);
-      const percentage = Math.round((earnedScore / totalScore) * 100);
+      // Tính chính xác phần trăm số câu ĐÚNG
+      const percentage = Math.round((correctCount / totalQuestions) * 100);
 
       document.getElementById('result-score').innerText = scoreFormatted;
       document.getElementById('stat-correct').innerText = `${correctCount}/${totalQuestions}`;
@@ -1279,10 +1276,23 @@
       const resultBox = document.getElementById('result-box');
       resultBox.style.display = 'block';
 
+      // ==========================================
+      // XỬ LÝ ĐỔI MÀU & CHẠY TỶ LỆ CỦA DONUT CHART
+      // ==========================================
       setTimeout(() => {
         const donutRing = document.getElementById('donut-ring-path');
         if (donutRing) {
+          // 1. Chạy đúng tỷ lệ % câu đúng
           donutRing.style.strokeDasharray = `${percentage}, 100`;
+
+          // 2. Đổi màu đường tròn theo thang điểm
+          if (earnedScore >= 8.0) {
+            donutRing.style.stroke = '#0284c7'; // Xanh dương (Thương hiệu)
+          } else if (earnedScore >= 5.0) {
+            donutRing.style.stroke = '#f97316'; // Cam sáng
+          } else {
+            donutRing.style.stroke = '#ef4444'; // Đỏ
+          }
         }
       }, 100);
 
@@ -1291,18 +1301,15 @@
 
     /* MỞ BẢNG KẾT QUẢ CHI TIẾT MODAL */
     function openScoreboardModal() {
-      // 1. Điền thông tin cá nhân & Đề thi
       document.getElementById('sb-student-name').innerText = studentNameString;
       document.getElementById('sb-exam-title').innerText = quizData.title;
 
-      // 2. Ngày hoàn thành
       const today = new Date();
       const dd = String(today.getDate()).padStart(2, '0');
       const mm = String(today.getMonth() + 1).padStart(2, '0');
       const yyyy = today.getFullYear();
       document.getElementById('sb-completed-date').innerText = `${dd}/${mm}/${yyyy}`;
 
-      // 3. Hiệu ứng thị giác điểm số
       const scoreBox = document.getElementById('sb-score-box');
       const scoreVal = parseFloat(finalCalculatedScore.toFixed(1));
       scoreBox.innerText = scoreVal.toFixed(1);
@@ -1315,7 +1322,6 @@
         scoreBox.className = 'score-card-shimmer';
       }
 
-      // 4. Sinh dữ liệu Bảng Thống Kê Đáp Án
       const tbody = document.getElementById('sb-table-body');
       tbody.innerHTML = '';
 
@@ -1364,7 +1370,7 @@
       btn.disabled = true;
 
       html2canvas(card, {
-        scale: 2, // Tăng độ phân giải ảnh sắc nét
+        scale: 2,
         useCORS: true,
         backgroundColor: '#ffffff'
       }).then(canvas => {
