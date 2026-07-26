@@ -8,261 +8,39 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #f8fafc;
-      font-family: 'Inter', sans-serif;
-    }
-
-    /* HEADER FULL WIDTH */
-    .site-header {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-      position: sticky;
-      top: 0;
-      z-index: 9999;
-      width: 100%;
-    }
-    .nav-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      max-width: 100%;
-      padding: 12px 30px;
-    }
-    .nav-menu {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    .nav-menu li a {
-      font-size: 14px;
-      font-weight: 500;
-      color: #475569;
-      text-decoration: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .nav-menu li a:hover {
-      background: #f1f5f9;
-      color: #0284c7;
-    }
-    .nav-menu li a.active {
-      background: #e0f2fe !important;
-      color: #0369a1 !important;
-      font-weight: 600 !important;
-    }
-
-    /* DROPDOWN MENU */
-    .nav-dropdown {
-      position: relative;
-      display: inline-block;
-    }
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      background-color: #ffffff;
-      min-width: 160px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-      border-radius: 10px;
-      padding: 8px 0;
-      z-index: 1000;
-      border: 1px solid #e2e8f0;
-      animation: fadeIn 0.2s ease-in-out;
-    }
-    .dropdown-content a {
-      color: #334155 !important;
-      padding: 10px 16px !important;
-      text-decoration: none;
-      display: block;
-      font-size: 14px;
-      font-weight: 500;
-      border-radius: 0 !important;
-      transition: all 0.15s ease;
-    }
-    .dropdown-content a:hover {
-      background-color: #f1f5f9 !important;
-      color: #0284c7 !important;
-    }
-    .nav-dropdown:hover .dropdown-content {
-      display: block;
-    }
-    .dropbtn::after {
-      content: " ▾";
-      font-size: 12px;
-    }
+    body { margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Inter', sans-serif; }
 
     /* BỐ CỤC FULL MÀN HÌNH */
-    .quiz-layout-container {
-      width: 100%;
-      max-width: 100%;
-      margin: 20px 0;
-      padding: 0 30px;
-      display: flex;
-      gap: 32px;
-      align-items: flex-start;
-    }
-
-    .quiz-sidebar {
-      width: 280px;
-      flex-shrink: 0;
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 16px;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-      position: sticky;
-      top: 85px;
-    }
-
+    .quiz-layout-container { width: 100%; max-width: 100%; margin: 20px 0; padding: 0 30px; display: flex; gap: 32px; align-items: flex-start; }
+    .quiz-sidebar { width: 280px; flex-shrink: 0; background: #ffffff; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: sticky; top: 85px; }
     .filter-group { margin-bottom: 20px; }
     .filter-group:last-child { margin-bottom: 0; }
+    .filter-label { font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 12px; display: block; padding-bottom: 6px; border-bottom: 2px solid #f1f5f9; }
+    .vertical-filter-list { display: flex; flex-direction: column; gap: 6px; }
+    .v-filter-btn { width: 100%; text-align: left; padding: 10px 14px; font-size: 14px; font-weight: 500; color: #64748b; background: transparent; border: 1px solid transparent; border-radius: 10px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    .v-filter-btn:hover { background: #f8fafc; color: #0284c7; }
+    .v-filter-btn.active { background: #0284c7; color: #ffffff; font-weight: 600; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25); }
 
-    .filter-label {
-      font-size: 15px;
-      font-weight: 700;
-      color: #1e293b;
-      margin-bottom: 12px;
-      display: block;
-      padding-bottom: 6px;
-      border-bottom: 2px solid #f1f5f9;
-    }
-
-    .vertical-filter-list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .v-filter-btn {
-      width: 100%;
-      text-align: left;
-      padding: 10px 14px;
-      font-size: 14px;
-      font-weight: 500;
-      color: #64748b;
-      background: transparent;
-      border: 1px solid transparent;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .v-filter-btn:hover {
-      background: #f8fafc;
-      color: #0284c7;
-    }
-
-    .v-filter-btn.active {
-      background: #0284c7;
-      color: #ffffff;
-      font-weight: 600;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
-    }
-
-    .quiz-content-main {
-      flex-grow: 1;
-      min-width: 0;
-    }
-
-    .page-main-title {
-      font-size: 26px;
-      font-weight: 700;
-      color: #1e293b;
-      margin-top: 0;
-      margin-bottom: 24px;
-    }
-
-    .doc-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-    }
-
-    .quiz-card {
-      background: #ffffff;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-      border: 1px solid #e2e8f0;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-    .quiz-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.12);
-    }
-    .quiz-meta {
-      font-size: 0.85rem;
-      color: #64748b;
-      margin-top: 12px;
-      margin-bottom: 16px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-    }
-    .quiz-btn {
-      display: block;
-      text-align: center;
-      background-color: #0284c7;
-      color: white;
-      text-decoration: none;
-      padding: 10px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      transition: background 0.2s;
-    }
+    .quiz-content-main { flex-grow: 1; min-width: 0; }
+    .page-main-title { font-size: 26px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 24px; }
+    .doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .quiz-card { background: #ffffff; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.25s ease, box-shadow 0.25s ease; }
+    .quiz-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(2, 132, 199, 0.12); }
+    .quiz-meta { font-size: 0.85rem; color: #64748b; margin-top: 12px; margin-bottom: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .quiz-btn { display: block; text-align: center; background-color: #0284c7; color: white; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: 600; font-size: 0.95rem; transition: background 0.2s; }
     .quiz-btn:hover { background-color: #0369a1; }
     .hidden { display: none !important; }
 
     @media (max-width: 768px) {
-      .quiz-layout-container {
-        flex-direction: column;
-        padding: 0 15px;
-      }
+      .quiz-layout-container { flex-direction: column; padding: 0 15px; }
       .quiz-sidebar { width: 100%; position: static; }
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header class="site-header">
-    <nav class="nav-container">
-      <a href="index.html" class="logo" style="text-decoration:none; font-weight:800; color:#0284c7; font-size:18px; display:flex; align-items:center; gap:8px;">
-        <img src="assets/logo.png" alt="Logo" class="logo-img" style="height:35px;" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
-        TOÁN ANH VIỆT
-      </a>
-      <ul class="nav-menu" id="main-nav-menu">
-        <li><a href="index.html">Trang chủ</a></li>
-        <li class="nav-dropdown">
-          <a href="#" class="dropbtn">Tài liệu Toán</a>
-          <div class="dropdown-content">
-            <a href="category.html?grade=6">Toán 6</a>
-            <a href="category.html?grade=7">Toán 7</a>
-            <a href="category.html?grade=8">Toán 8</a>
-            <a href="category.html?grade=9">Toán 9</a>
-          </div>
-        </li>
-        <li><a href="quiz-list.html" class="active">Thi Online</a></li>
-        <li><a href="index.html#register">Lớp học Gia sư</a></li>
-        <li id="auth-menu-item"><a href="login.html">Đăng nhập</a></li>
-      </ul>
-    </nav>
-  </header>
+  <!-- HEADER DÙNG CHUNG -->
+  <header class="site-header"></header>
 
   <!-- BỐ CỤC CHÍNH -->
   <main class="quiz-layout-container">
@@ -403,81 +181,6 @@
 
     document.addEventListener('DOMContentLoaded', loadQuizzes);
   </script>
-
-  <script>
-    (async function initQuizListAuth() {
-      const _supabase = supabaseClient;
-      const cachedUser = localStorage.getItem('tav_user_session');
-      if (cachedUser) {
-        try {
-          const u = JSON.parse(cachedUser);
-          drawDropdownUI(u.name, u.email, u.avatar);
-        } catch(e) {}
-      }
-
-      const { data: { user } } = await _supabase.auth.getUser();
-      const authLI = document.getElementById('auth-menu-item');
-
-      if (user) {
-        const meta = user.user_metadata || {};
-        const dName = meta.full_name || 'Học viên';
-        const aSrc = meta.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
-        
-        localStorage.setItem('tav_user_session', JSON.stringify({ name: dName, email: user.email, avatar: aSrc }));
-        drawDropdownUI(dName, user.email, aSrc);
-      } else {
-        localStorage.removeItem('tav_user_session');
-        if (authLI) authLI.innerHTML = `<a href="login.html">Đăng nhập</a>`;
-      }
-
-      function drawDropdownUI(name, email, avatar) {
-        const authLI = document.getElementById('auth-menu-item');
-        if (!authLI) return;
-
-        if (!document.getElementById('instant-quiz-style')) {
-          const style = document.createElement('style');
-          style.id = 'instant-quiz-style';
-          style.innerHTML = `
-            .user-profile-dropdown { position: relative; display: inline-block; cursor: pointer; margin-left: 8px; }
-            .menu-avatar-img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0284c7; object-fit: cover; vertical-align: middle; transition: all 0.2s ease; }
-            .user-profile-dropdown:hover .menu-avatar-img { transform: scale(1.05); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15); }
-            .dropdown-menu-box { display: none; position: absolute; right: 0; top: 100%; background-color: white; min-width: 210px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 10px; padding: 8px 0; z-index: 9999; margin-top: 12px; border: 1px solid #e2e8f0; transform-origin: top right; animation: fadeInDropdown 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-            @keyframes fadeInDropdown { from { opacity: 0; transform: scale(0.95) translateY(-5px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-            .user-profile-dropdown:hover .dropdown-menu-box { display: block; }
-            .dropdown-info-header { padding: 10px 16px; border-bottom: 1px solid #f1f5f9; margin-bottom: 4px; }
-            .dropdown-info-name { font-weight: 600; color: #1e293b; font-size: 14px; }
-            .dropdown-info-email { color: #64748b; font-size: 12px; }
-            .dropdown-item-link { display: block; padding: 10px 16px; color: #334155 !important; font-size: 14px; text-decoration: none; transition: background 0.15s; text-align: left; }
-            .dropdown-item-link:hover { background-color: #f1f5f9; color: #0284c7 !important; }
-            .dropdown-item-logout { border-top: 1px solid #f1f5f9; margin-top: 4px; color: #ef4444 !important; }
-            .dropdown-item-logout:hover { background-color: #fef2f2; }
-          `;
-          document.head.appendChild(style);
-        }
-
-        authLI.innerHTML = `
-          <div class="user-profile-dropdown">
-            <img class="menu-avatar-img" src="${avatar}" alt="Avatar">
-            <div class="dropdown-menu-box">
-              <div class="dropdown-info-header">
-                <div class="dropdown-info-name">${name}</div>
-                <div class="dropdown-info-email">${email}</div>
-              </div>
-              <a href="profile.html" class="dropdown-item-link">Thông tin cá nhân</a>
-              <a href="category.html?grade=8" class="dropdown-item-link">Kho bài tập của tôi</a>
-              <a href="#" id="menu-btn-logout-action" class="dropdown-item-link dropdown-item-logout">Đăng xuất</a>
-            </div>
-          </div>
-        `;
-
-        document.getElementById('menu-btn-logout-action')?.addEventListener('click', async (e) => {
-          e.preventDefault();
-          localStorage.removeItem('tav_user_session');
-          await _supabase.auth.signOut();
-          window.location.reload();
-        });
-      }
-    })();
-  </script>
+  <script src="header.js"></script>
 </body>
 </html>
