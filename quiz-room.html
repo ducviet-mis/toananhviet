@@ -27,7 +27,7 @@
       flex-direction: column;
     }
 
-    /* HEADER FULL WIDTH */
+    /* HEADER FULL WIDTH VỚI CĂN GIỮA TÊN THÍ SINH */
     header {
       flex-shrink: 0;
       width: 100%;
@@ -38,14 +38,27 @@
       z-index: 50;
     }
     .nav-container {
-      padding: 10px 24px;
-      display: flex;
-      justify-content: space-between;
+      padding: 8px 24px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr; /* Chia 3 phần chuẩn center */
       align-items: center;
       width: 100%;
       max-width: 100%;
       margin: 0 auto;
     }
+    .nav-left {
+      display: flex;
+      justify-content: flex-start;
+    }
+    .nav-center {
+      display: flex;
+      justify-content: center;
+    }
+    .nav-right {
+      display: flex;
+      justify-content: flex-end;
+    }
+
     .back-btn {
       text-decoration: none;
       font-weight: 700;
@@ -64,15 +77,33 @@
       background: #e0f2fe;
       transform: translateX(-2px);
     }
+
+    /* BADGE THÍ SINH Ở GIỮA HEADER */
+    .student-badge-center {
+      font-weight: 700;
+      color: #0369a1;
+      font-size: 0.92rem;
+      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+      padding: 6px 18px;
+      border-radius: 20px;
+      border: 1px solid #7dd3fc;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
     .exam-title-head {
       font-weight: 700;
       color: #0f172a;
-      font-size: 0.95rem;
+      font-size: 0.88rem;
       background: #ffffff;
-      padding: 6px 16px;
+      padding: 6px 14px;
       border-radius: 20px;
       border: 1px solid #e2e8f0;
       box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      white-space: nowrap;
     }
 
     /* BỐ CỤC PHÒNG THI DESKTOP */
@@ -426,7 +457,7 @@
       background: #e2e8f0;
     }
 
-    /* MOBILE TỐI ƯU & FIX LỖI SỰ KIỆN CUỘN TRÊN ĐIỆN THOẠI */
+    /* MOBILE TỐI ƯU */
     .mobile-tabs {
       display: none;
       background: #ffffff;
@@ -458,8 +489,16 @@
 
     @media (max-width: 900px) {
       html, body {
-        overflow: auto !important; /* Mở khóa cuộn trang trên mobile */
+        overflow: auto !important;
         height: 100% !important;
+      }
+      .nav-container {
+        display: flex;
+        justify-content: space-between;
+      }
+      .student-badge-center {
+        font-size: 0.8rem;
+        padding: 4px 10px;
       }
       .exam-wrapper {
         flex-direction: column;
@@ -470,7 +509,7 @@
       .pdf-pane, .answersheet-pane {
         width: 100% !important;
         height: 100% !important;
-        overflow-y: auto !important; /* Bắt buộc cho phép vuốt cuộn */
+        overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
       }
       .pdf-pane-inner {
@@ -483,7 +522,7 @@
       }
       .exam-title-head {
         font-size: 0.8rem;
-        max-width: 160px;
+        max-width: 130px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -523,12 +562,24 @@
     </div>
   </div>
 
+  <!-- HEADER CÓ TÊN THÍ SINH CĂN GIỮA -->
   <header>
     <nav class="nav-container">
-      <a href="quiz-list.html" class="back-btn">
-        <span>←</span> Danh sách
-      </a>
-      <span class="exam-title-head" id="exam-title-header">Đang tải đề thi...</span>
+      <div class="nav-left">
+        <a href="quiz-list.html" class="back-btn">
+          <span>←</span> Danh sách
+        </a>
+      </div>
+
+      <div class="nav-center">
+        <span class="student-badge-center" id="header-student-name">
+          👤 Thí sinh: Đang tải...
+        </span>
+      </div>
+
+      <div class="nav-right">
+        <span class="exam-title-head" id="exam-title-header">Đang tải đề...</span>
+      </div>
     </nav>
   </header>
 
@@ -591,6 +642,28 @@
     let timerInterval = null;
     let userAnswers = {};
     let isExamSubmitted = false;
+
+    // TẢI VÀ HIỂN THỊ TÊN THÍ SINH
+    async function loadStudentInfo() {
+      const studentLabel = document.getElementById('header-student-name');
+      const cached = localStorage.getItem('tav_user_session');
+      if (cached) {
+        try {
+          const u = JSON.parse(cached);
+          if (u.name) {
+            studentLabel.innerHTML = `Thí sinh: <strong>${u.name}</strong>`;
+            return;
+          }
+        } catch(e){}
+      }
+
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (user && user.user_metadata && user.user_metadata.full_name) {
+        studentLabel.innerHTML = `Thí sinh: <strong>${user.user_metadata.full_name}</strong>`;
+      } else {
+        studentLabel.innerHTML = `Thí sinh: <strong>Khách</strong>`;
+      }
+    }
 
     function getDocViewerUrl(filePath) {
       if (!filePath) return '';
@@ -841,6 +914,7 @@
 
     window.addEventListener('resize', checkResponsive);
     document.addEventListener('DOMContentLoaded', () => {
+      loadStudentInfo();
       loadQuizRoom();
       checkResponsive();
     });
