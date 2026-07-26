@@ -9,111 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* CSS NAVBAR DROPDOWN ĐỒNG BỘ */
-    .site-header {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-      position: sticky;
-      top: 0;
-      z-index: 9999;
-    }
-    .nav-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 12px 20px;
-    }
-    .nav-menu {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    .nav-menu li a {
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      color: #475569;
-      text-decoration: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .nav-menu li a:hover {
-      background: #f1f5f9;
-      color: #0284c7;
-    }
-    .nav-menu li a.active {
-      background: #e0f2fe !important;
-      color: #0369a1 !important;
-      font-weight: 600 !important;
-    }
-
-    /* DROPDOWN MENU BÀI GIẢNG & ĐỀ THI */
-    .nav-dropdown {
-      position: relative;
-      display: inline-block;
-    }
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      background-color: #ffffff;
-      min-width: 160px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-      border-radius: 10px;
-      padding: 8px 0;
-      z-index: 1000;
-      border: 1px solid #e2e8f0;
-      animation: fadeIn 0.2s ease-in-out;
-    }
-    .dropdown-content a {
-      color: #334155 !important;
-      padding: 10px 16px !important;
-      text-decoration: none;
-      display: block;
-      font-size: 14px;
-      font-weight: 500;
-      border-radius: 0 !important;
-      transition: all 0.15s ease;
-    }
-    .dropdown-content a:hover {
-      background-color: #f1f5f9 !important;
-      color: #0284c7 !important;
-    }
-    .nav-dropdown:hover .dropdown-content {
-      display: block;
-    }
-    .dropbtn::after {
-      content: " ▾";
-      font-size: 12px;
-    }
-
-    /* AVATAR USER HOẠT ĐỘNG */
-    .user-profile-dropdown {
-      position: relative;
-      display: inline-block;
-      cursor: pointer;
-      margin-left: 8px;
-    }
-    .menu-avatar-img {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 2px solid #0284c7;
-      object-fit: cover;
-      vertical-align: middle;
-      transition: all 0.2s ease;
-    }
-
-    /* CẤU HÌNH KHUNG PROFILE */
     .profile-container {
       max-width: 600px;
       margin: 40px auto;
@@ -231,33 +126,8 @@
 </head>
 <body>
 
-  <!-- HEADER ĐỒNG BỘ CHO PROFILE -->
-  <header class="site-header">
-    <nav class="nav-container">
-      <a href="index.html" class="logo">
-        <img src="assets/logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
-        TOÁN ANH VIỆT
-      </a>
-      <ul class="nav-menu" id="main-nav-menu">
-        <li><a href="index.html">Trang chủ</a></li>
-        
-        <!-- DROPDOWN BÀI GIẢNG & ĐỀ THI -->
-        <li class="nav-dropdown">
-          <a href="#" class="dropbtn">Tài liệu Toán</a>
-          <div class="dropdown-content">
-            <a href="category.html?grade=6">Toán 6</a>
-            <a href="category.html?grade=7">Toán 7</a>
-            <a href="category.html?grade=8">Toán 8</a>
-            <a href="category.html?grade=9">Toán 9</a>
-          </div>
-        </li>
-
-        <li><a href="quiz-list.html">Thi Online</a></li>
-        <li><a href="index.html#register">Lớp học Gia sư</a></li>
-        <li id="auth-menu-item"><a href="profile.html" class="active">Hồ sơ</a></li>
-      </ul>
-    </nav>
-  </header>
+  <!-- HEADER DÙNG CHUNG -->
+  <header class="site-header"></header>
 
   <main>
     <div class="profile-container">
@@ -389,6 +259,7 @@
         msg.style.color = '#22c55e';
         msg.innerText = 'Cập nhật hồ sơ thành công!';
         document.getElementById('welcome-title').innerText = "Xin chào, " + name;
+        window.location.reload(); // Reload để đồng bộ lại avatar trên header.js ngay lập tức
       }
     }
 
@@ -400,5 +271,6 @@
 
     document.addEventListener('DOMContentLoaded', checkUserSession);
   </script>
+  <script src="header.js"></script>
 </body>
 </html>
