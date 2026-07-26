@@ -1171,7 +1171,8 @@
         timerContainer.style.display = 'none';
       }
 
-      document.querySelectorAll('input, button').forEach(el => el.disabled = true);
+     document.querySelectorAll('.answersheet-pane input').forEach(el => el.disabled = true);
+     document.querySelectorAll('.flag-btn').forEach(el => el.disabled = true);
 
       let totalScore = quizData.total_score || 10;
       let totalQuestions = quizData.answer_keys.length;
