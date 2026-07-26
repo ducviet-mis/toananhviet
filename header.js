@@ -7,12 +7,12 @@
     _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   }
 
-  // 1. Xác định trang hiện tại để Highlight Menu Active
   const currentPath = window.location.pathname;
-  const isHome = currentPath.endsWith('index.html') || currentPath === '/';
+  const isHome = currentPath.endsWith('index.html') || currentPath === '/' || currentPath.endsWith('/');
   const isQuiz = currentPath.includes('quiz-list.html') || currentPath.includes('quiz-room.html');
+  const isDoc = currentPath.includes('category.html') || currentPath.includes('detail.html');
 
-  // 2. Chèn cấu trúc Header chuẩn 100% vào thẻ <header class="site-header">
+  // 1. Cấu trúc HTML Header gọn gàng chuẩn
   const siteHeader = document.querySelector('.site-header');
   if (siteHeader) {
     siteHeader.innerHTML = `
@@ -25,7 +25,7 @@
           <li><a href="index.html" class="${isHome ? 'active' : ''}">Trang chủ</a></li>
           
           <li class="nav-dropdown">
-            <a href="#" class="dropbtn">Tài liệu Toán</a>
+            <a href="#" class="dropbtn ${isDoc ? 'active' : ''}">Tài liệu Toán ▾</a>
             <div class="dropdown-content">
               <a href="category.html?grade=6">Toán 6</a>
               <a href="category.html?grade=7">Toán 7</a>
@@ -42,30 +42,46 @@
     `;
   }
 
-  // 3. Tự động inject CSS đồng bộ cho Dropdown Avatar
+  // 2. CSS Ép Dropdown xổ xuống đúng chuẩn không bị xõa ra thanh Header
   if (!document.getElementById('universal-header-style')) {
     const style = document.createElement('style');
     style.id = 'universal-header-style';
     style.innerHTML = `
-      .user-profile-dropdown { position: relative; display: inline-block; cursor: pointer; margin-left: 8px; padding-bottom: 12px; }
-      .menu-avatar-img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0284c7; object-fit: cover; vertical-align: middle; transition: all 0.2s ease; }
-      .user-profile-dropdown:hover .menu-avatar-img { transform: scale(1.05); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15); }
-      .dropdown-menu-box { display: none; position: absolute; right: 0; top: 100%; background-color: white; min-width: 210px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 10px; padding: 8px 0; z-index: 9999; margin-top: 2px; border: 1px solid #e2e8f0; transform-origin: top right; animation: fadeInDropdown 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-      .dropdown-menu-box::before { content: ""; position: absolute; top: -15px; left: 0; width: 100%; height: 15px; background: transparent; }
+      .site-header { background: rgba(255, 255, 255, 0.95) !important; backdrop-filter: blur(12px) !important; -webkit-backdrop-filter: blur(12px) !important; border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important; position: sticky !important; top: 0 !important; z-index: 9999 !important; width: 100% !important; transition: all 0.3s ease !important; }
+      .nav-container { display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; max-width: 1200px !important; margin: 0 auto !important; padding: 12px 20px !important; }
+      .nav-menu { display: flex !important; align-items: center !important; gap: 8px !important; list-style: none !important; margin: 0 !important; padding: 0 !important; flex-direction: row !important; }
+      .nav-menu li { position: relative !important; display: inline-block !important; }
+      .nav-menu li a { font-size: 14px !important; font-weight: 500 !important; color: #475569 !important; text-decoration: none !important; padding: 8px 16px !important; border-radius: 8px !important; background: transparent !important; display: inline-block !important; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important; }
+      .nav-menu li a:hover { background: #f1f5f9 !important; color: #0284c7 !important; }
+      .nav-menu li a.active { background: #e0f2fe !important; color: #0369a1 !important; font-weight: 600 !important; }
+      
+      /* FIX HOÀN TOÀN DROPDOWN TÀI LIỆU TOÁN */
+      .nav-dropdown { position: relative !important; display: inline-block !important; }
+      .dropdown-content { display: none !important; position: absolute !important; top: 100% !important; left: 0 !important; background-color: #ffffff !important; min-width: 150px !important; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important; border-radius: 10px !important; padding: 6px 0 !important; z-index: 10000 !important; border: 1px solid #e2e8f0 !important; margin-top: 4px !important; }
+      .dropdown-content a { color: #334155 !important; padding: 10px 16px !important; text-decoration: none !important; display: block !important; font-size: 14px !important; font-weight: 500 !important; border-radius: 0 !important; transition: all 0.2s ease !important; width: 100% !important; box-sizing: border-box !important; text-align: left !important; }
+      .dropdown-content a:hover { background-color: #f1f5f9 !important; color: #0284c7 !important; }
+      .nav-dropdown:hover .dropdown-content { display: block !important; }
+
+      /* DROPDOWN USER AVATAR */
+      .user-profile-dropdown { position: relative !important; display: inline-block !important; cursor: pointer !important; margin-left: 8px !important; padding-bottom: 6px !important; }
+      .menu-avatar-img { width: 36px !important; height: 36px !important; border-radius: 50% !important; border: 2px solid #0284c7 !important; object-fit: cover !important; vertical-align: middle !important; transition: all 0.2s ease !important; }
+      .user-profile-dropdown:hover .menu-avatar-img { transform: scale(1.05) !important; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important; }
+      .dropdown-menu-box { display: none !important; position: absolute !important; right: 0 !important; top: 100% !important; background-color: white !important; min-width: 210px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important; border-radius: 10px !important; padding: 8px 0 !important; z-index: 10000 !important; margin-top: 2px !important; border: 1px solid #e2e8f0 !important; transform-origin: top right !important; animation: fadeInDropdown 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important; }
+      .dropdown-menu-box::before { content: "" !important; position: absolute !important; top: -15px !important; left: 0 !important; width: 100% !important; height: 15px !important; background: transparent !important; }
       @keyframes fadeInDropdown { from { opacity: 0; transform: scale(0.95) translateY(-5px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-      .user-profile-dropdown:hover .dropdown-menu-box { display: block; }
-      .dropdown-info-header { padding: 10px 16px; border-bottom: 1px solid #f1f5f9; margin-bottom: 4px; }
-      .dropdown-info-name { font-weight: 600; color: #1e293b; font-size: 14px; text-align: left; }
-      .dropdown-info-email { color: #64748b; font-size: 12px; text-align: left; }
-      .dropdown-item-link { display: block; padding: 10px 16px; color: #334155 !important; font-size: 14px; text-decoration: none; transition: background 0.15s; text-align: left; font-weight: 500 !important; }
-      .dropdown-item-link:hover { background-color: #f1f5f9; color: #0284c7 !important; }
-      .dropdown-item-logout { border-top: 1px solid #f1f5f9; margin-top: 4px; color: #ef4444 !important; }
-      .dropdown-item-logout:hover { background-color: #fef2f2; }
+      .user-profile-dropdown:hover .dropdown-menu-box { display: block !important; }
+      .dropdown-info-header { padding: 10px 16px !important; border-bottom: 1px solid #f1f5f9 !important; margin-bottom: 4px !important; }
+      .dropdown-info-name { font-weight: 600 !important; color: #1e293b !important; font-size: 14px !important; text-align: left !important; }
+      .dropdown-info-email { color: #64748b !important; font-size: 12px !important; text-align: left !important; }
+      .dropdown-item-link { display: block !important; padding: 10px 16px !important; color: #334155 !important; font-size: 14px !important; text-decoration: none !important; transition: background 0.15s !important; text-align: left !important; font-weight: 500 !important; }
+      .dropdown-item-link:hover { background-color: #f1f5f9 !important; color: #0284c7 !important; }
+      .dropdown-item-logout { border-top: 1px solid #f1f5f9 !important; margin-top: 4px !important; color: #ef4444 !important; }
+      .dropdown-item-logout:hover { background-color: #fef2f2 !important; }
     `;
     document.head.appendChild(style);
   }
 
-  // 4. Đọc Cache render ngay lập tức (Xử lý giật lag UX)
+  // 3. Cache Render Avatar
   const cachedUser = localStorage.getItem('tav_user_session');
   if (cachedUser) {
     try {
@@ -74,7 +90,7 @@
     } catch(e) {}
   }
 
-  // 5. Đồng bộ thông tin từ Supabase
+  // 4. Supabase Sync
   if (_supabase) {
     const { data: { user } } = await _supabase.auth.getUser();
     if (user) {
@@ -89,7 +105,6 @@
     }
   }
 
-  // Hàm vẽ UI Dropdown chuẩn Trang chủ (có 4 mục)
   function renderAvatarUI(name, email, avatar) {
     const authLI = document.getElementById('auth-menu-item');
     if (!authLI) return;
