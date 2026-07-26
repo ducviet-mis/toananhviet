@@ -106,6 +106,22 @@
     .btn-save:hover {
       background: #0369a1;
     }
+    .btn-change-pass {
+      width: 100%;
+      padding: 12px;
+      background: #22c55e;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+    .btn-change-pass:hover {
+      background: #16a34a;
+    }
     .btn-logout {
       width: 100%;
       padding: 10px;
@@ -121,6 +137,11 @@
     }
     .btn-logout:hover {
       background: #dc2626;
+    }
+    .password-section {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px dashed #cbd5e1;
     }
   </style>
 </head>
@@ -168,6 +189,15 @@
         <input type="hidden" id="p-avatar-url">
         <button type="submit" class="btn-save">Lưu thay đổi thông tin</button>
       </form>
+
+      <!-- KHỐI ĐỔI MẬT KHẨU -->
+      <div class="password-section">
+        <div class="form-group">
+          <label for="new-password">Mật khẩu mới:</label>
+          <input type="password" id="new-password" placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)">
+        </div>
+        <button type="button" onclick="handleChangePassword()" class="btn-change-pass">Đổi mật khẩu</button>
+      </div>
 
       <button onclick="handleLogout()" class="btn-logout">Đăng xuất tài khoản</button>
       <div id="status-msg" style="text-align:center; margin-top:10px; font-size:14px;"></div>
@@ -259,7 +289,40 @@
         msg.style.color = '#22c55e';
         msg.innerText = 'Cập nhật hồ sơ thành công!';
         document.getElementById('welcome-title').innerText = "Xin chào, " + name;
-        window.location.reload(); // Reload để đồng bộ lại avatar trên header.js ngay lập tức
+        window.location.reload();
+      }
+    }
+
+    async function handleChangePassword() {
+      const newPassword = document.getElementById('new-password').value.trim();
+      const msg = document.getElementById('status-msg');
+
+      if (!newPassword) {
+        msg.style.color = '#ef4444';
+        msg.innerText = 'Vui lòng nhập mật khẩu mới!';
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        msg.style.color = '#ef4444';
+        msg.innerText = 'Mật khẩu mới phải có ít nhất 6 ký tự!';
+        return;
+      }
+
+      msg.style.color = '#0284c7';
+      msg.innerText = 'Đang cập nhật mật khẩu mới...';
+
+      const { error } = await _supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) {
+        msg.style.color = '#ef4444';
+        msg.innerText = 'Đổi mật khẩu thất bại: ' + error.message;
+      } else {
+        msg.style.color = '#22c55e';
+        msg.innerText = 'Đổi mật khẩu thành công! Hãy nhớ mật khẩu mới cho lần đăng nhập sau.';
+        document.getElementById('new-password').value = '';
       }
     }
 
