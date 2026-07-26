@@ -271,6 +271,35 @@
       font-weight: 500;
     }
 
+    /* BỔ SUNG CẢNH BÁO / TƯƠNG TÁC GIA SƯ */
+    .tutor-summary-box {
+      margin-top: 12px;
+      padding: 10px;
+      background: #fff7ed;
+      border: 1px solid #ffedd5;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      color: #9a3412;
+    }
+    .btn-send-zalo {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: #0068ff;
+      color: white;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 8px 0;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-top: 8px;
+      transition: all 0.2s;
+    }
+    .btn-send-zalo:hover {
+      background: #0052cc;
+    }
+
+    /* ITEM CÂU HỎI & CỜ ĐÁNH DẤU */
     .answer-row {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -279,10 +308,47 @@
       margin-bottom: 8px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
       transition: all 0.2s ease;
+      position: relative;
     }
-    .answer-row:hover {
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.06);
+    .answer-row.flagged-row {
+      border: 1.5px solid #f59e0b !important;
+      background-color: #fffbeb !important;
     }
+    .flag-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 0 4px;
+      opacity: 0.4;
+      transition: all 0.2s;
+    }
+    .flag-btn:hover, .flag-btn.active {
+      opacity: 1;
+      transform: scale(1.15);
+    }
+
+    .flag-options-box {
+      display: none;
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px dashed #fcd34d;
+      gap: 12px;
+      font-size: 0.75rem;
+      color: #b45309;
+    }
+    .flag-options-box.show {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .flag-checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+
     .answer-row-content {
       display: flex;
       align-items: center;
@@ -294,6 +360,9 @@
       color: #1e293b;
       font-size: 0.88rem;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .bubble-group {
@@ -344,12 +413,12 @@
     }
 
     .answer-row.correct-row {
-      border: 1.5px solid #10b981;
-      background-color: #ecfdf5;
+      border: 1.5px solid #10b981 !important;
+      background-color: #ecfdf5 !important;
     }
     .answer-row.incorrect-row {
-      border: 1.5px solid #f43f5e;
-      background-color: #fff1f2;
+      border: 1.5px solid #f43f5e !important;
+      background-color: #fff1f2 !important;
     }
     
     .bubble-label.is-student-correct {
@@ -546,12 +615,12 @@
     </div>
   </div>
 
-  <!-- HEADER PHÒNG THI -->
+  <!-- HEADER PHÒNG THI (SỬA NÚT "← Trở về") -->
   <header>
     <nav class="nav-container">
       <div class="nav-left">
         <a href="quiz-list.html" class="back-btn">
-          <span>←</span> Danh sách
+          <span>←</span> Trở về
         </a>
       </div>
 
@@ -575,11 +644,13 @@
     </div>
 
     <div class="answersheet-pane" id="pane-sheet-container">
-      <div class="timer-badge">
+      <!-- THANH ĐỒNG HỒ NỘP BÀI -->
+      <div class="timer-badge" id="timer-badge-container">
         <span class="timer-text" id="countdown">⏱️ --:--</span>
         <button onclick="openSubmitModal()" id="submit-btn" class="btn-submit">NỘP BÀI</button>
       </div>
 
+      <!-- KẾT QUẢ VÀ TƯƠNG TÁC GIA SƯ -->
       <div id="result-box">
         <div class="result-summary-container">
           <div class="donut-chart-wrapper">
@@ -604,6 +675,11 @@
             </div>
           </div>
         </div>
+
+        <div class="tutor-summary-box" id="tutor-summary-box">
+          <b>💬 Danh sách cần hỗ trợ:</b> <span id="tutor-help-list">Chưa có câu nào.</span>
+          <a href="#" id="zalo-send-btn" target="_blank" class="btn-send-zalo">💬 Gửi danh sách câu cần chữa qua Zalo cho Gia sư</a>
+        </div>
       </div>
 
       <div id="questions-list"></div>
@@ -625,7 +701,10 @@
     let totalDuration = 0;
     let timerInterval = null;
     let userAnswers = {};
+    let flaggedQuestions = {};
+    let tutorHelpQuestions = {};
     let isExamSubmitted = false;
+    let studentNameString = "Học viên";
 
     async function loadStudentInfo() {
       const studentLabel = document.getElementById('header-student-name');
@@ -634,6 +713,7 @@
         try {
           const u = JSON.parse(cached);
           if (u.name) {
+            studentNameString = u.name;
             studentLabel.innerHTML = `Thí sinh: <strong>${u.name}</strong>`;
             return;
           }
@@ -642,6 +722,7 @@
 
       const { data: { user } } = await supabaseClient.auth.getUser();
       if (user && user.user_metadata && user.user_metadata.full_name) {
+        studentNameString = user.user_metadata.full_name;
         studentLabel.innerHTML = `Thí sinh: <strong>${user.user_metadata.full_name}</strong>`;
       } else {
         studentLabel.innerHTML = `Thí sinh: <strong>Khách</strong>`;
@@ -760,9 +841,24 @@
 
         row.innerHTML = `
           <div class="answer-row-content">
-            <div class="q-num-label">Câu ${item.q_number}:</div>
+            <div class="q-num-label">
+              <button class="flag-btn" id="flag-btn-${item.q_number}" onclick="toggleFlag(${item.q_number})" title="Đánh dấu câu hỏi">🚩</button>
+              Câu ${item.q_number}:
+            </div>
             ${actionHtml}
           </div>
+
+          <div class="flag-options-box" id="flag-box-${item.q_number}">
+            <label class="flag-checkbox-label">
+              <input type="checkbox" onchange="toggleFlagReason(${item.q_number}, 'review', this.checked)">
+              🚩 Xem lại sau
+            </label>
+            <label class="flag-checkbox-label">
+              <input type="checkbox" onchange="toggleFlagReason(${item.q_number}, 'tutor', this.checked)">
+              💬 Cần gia sư chữa kỹ câu này
+            </label>
+          </div>
+
           <div class="result-key-info" id="key-info-${item.q_number}">
             <div style="color: #0284c7; font-weight: 700;">Đáp án chuẩn: ${item.correct_answer}</div>
             ${item.explanation ? `<div style="color: #64748b; margin-top: 2px;">💡 ${item.explanation}</div>` : ''}
@@ -770,6 +866,31 @@
         `;
         list.appendChild(row);
       });
+    }
+
+    function toggleFlag(qNum) {
+      const row = document.getElementById(`q-row-${qNum}`);
+      const btn = document.getElementById(`flag-btn-${qNum}`);
+      const box = document.getElementById(`flag-box-${qNum}`);
+
+      if (flaggedQuestions[qNum]) {
+        delete flaggedQuestions[qNum];
+        row.classList.remove('flagged-row');
+        btn.classList.remove('active');
+        box.classList.remove('show');
+      } else {
+        flaggedQuestions[qNum] = true;
+        row.classList.add('flagged-row');
+        btn.classList.add('active');
+        box.classList.add('show');
+      }
+    }
+
+    function toggleFlagReason(qNum, reasonType, isChecked) {
+      if (reasonType === 'tutor') {
+        if (isChecked) tutorHelpQuestions[qNum] = true;
+        else delete tutorHelpQuestions[qNum];
+      }
     }
 
     function saveAnswer(qNum, value) {
@@ -789,8 +910,13 @@
       closeSubmitModal();
       clearInterval(timerInterval);
 
+      // XÓA ĐỒNG HỒ ĐẾM NGƯỢC THỜI GIAN THEO YÊU CẦU
+      const timerContainer = document.getElementById('timer-badge-container');
+      if (timerContainer) {
+        timerContainer.style.display = 'none';
+      }
+
       document.querySelectorAll('input, button').forEach(el => el.disabled = true);
-      document.getElementById('submit-btn').style.display = 'none';
 
       let totalScore = quizData.total_score || 10;
       let totalQuestions = quizData.answer_keys.length;
@@ -846,6 +972,23 @@
       document.getElementById('result-score').innerText = scoreFormatted;
       document.getElementById('stat-correct').innerText = `${correctCount}/${totalQuestions}`;
       document.getElementById('stat-time').innerText = `${spentMins < 10 ? '0' : ''}${spentMins}:${spentSecs < 10 ? '0' : ''}${spentSecs}`;
+
+      // TỔNG HỢP DANH SÁCH CÂU CẦN GIA SƯ CHỮA
+      const needHelpList = Object.keys(tutorHelpQuestions).map(q => `Câu ${q}`);
+      const helpTextLabel = document.getElementById('tutor-help-list');
+      const zaloBtn = document.getElementById('zalo-send-btn');
+
+      if (needHelpList.length > 0) {
+        helpTextLabel.innerText = needHelpList.join(', ');
+      } else {
+        helpTextLabel.innerText = "Không có câu nào được tích chọn.";
+      }
+
+      // TẠO LINK CHAT ZALO TRỰC TIẾP VỚI GIA SƯ (HOTLINE: 0965193026)
+      const zaloMessage = encodeURIComponent(
+        `Chào Thầy Việt, em là ${studentNameString}.\nEm vừa hoàn thành đề: "${quizData.title}" (${scoreFormatted} điểm).\nEm cần Thầy hỗ trợ chữa kỹ các câu: ${needHelpList.length > 0 ? needHelpList.join(', ') : 'Các câu làm sai'}. Cảm ơn Thầy!`
+      );
+      zaloBtn.href = `https://zalo.me/0965193026?text=${zaloMessage}`;
 
       const resultBox = document.getElementById('result-box');
       resultBox.style.display = 'block';
