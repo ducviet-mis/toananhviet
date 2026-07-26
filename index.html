@@ -9,100 +9,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Nhúng thư viện Netlify Identity Widget -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-  <style>
-    /* CSS Bổ sung cho Dropdown Môn Toán */
-    .nav-dropdown {
-      position: relative;
-      display: inline-block;
-    }
-
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      background-color: #ffffff;
-      min-width: 150px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      padding: 8px 0;
-      z-index: 1000;
-      border: 1px solid #e2e8f0;
-      animation: fadeIn 0.2s ease-in-out;
-    }
-
-    .dropdown-content a {
-      color: #334155;
-      padding: 10px 16px;
-      text-decoration: none;
-      display: block;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.2s ease;
-    }
-
-    .dropdown-content a:hover {
-      background-color: #f1f5f9;
-      color: #0284c7;
-    }
-
-    .nav-dropdown:hover .dropdown-content {
-      display: block;
-    }
-
-    .dropbtn::after {
-      content: " ▾";
-      font-size: 12px;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
 </head>
 <body>
 
-  <!-- 1. HEADER (THANH ĐIỀU HƯỚNG EDTECH CAO CẤP) -->
-  <header class="site-header">
-    <nav class="nav-container">
-      <a href="index.html" class="logo">
-        <img src="assets/logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
-        TOÁN ANH VIỆT
-      </a>
-      <ul class="nav-menu">
-        <li><a href="index.html" class="active">Trang chủ</a></li>
-        
-        <!-- DROPDOWN KHO TÀI LIỆU TOÁN -->
-        <li class="nav-dropdown">
-          <a href="#" class="dropbtn">Tài liệu Toán</a>
-          <div class="dropdown-content">
-            <a href="category.html?grade=6">Toán 6</a>
-            <a href="category.html?grade=7">Toán 7</a>
-            <a href="category.html?grade=8">Toán 8</a>
-            <a href="category.html?grade=9">Toán 9</a>
-          </div>
-        </li>
+  <!-- 1. HEADER DÙNG CHUNG -->
+  <header class="site-header"></header>
 
-        <li><a href="quiz-list.html">Thi Online</a></li>
-        <li><a href="#register" class="highlight">Lớp học Gia sư</a></li>
-        <li><a href="login.html">Đăng nhập</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <!-- 2. HERO SECTION (LƯỚI DESCARTES & HỆ THỐNG SEARCH ID ĐẲNG CẤP) -->
+  <!-- 2. HERO SECTION -->
   <section class="hero-descartes">
-    
-    <!-- ==========================================
-         4 CUỐN SÁCH BAY BỒNG BỀNH (CHỈ HIỂN THỊ TRÊN PC)
-         ========================================== -->
     <div class="floating-books-container">
-      <!-- BÊN TRÁI TIÊU ĐỀ -->
       <img src="assets/Sách đề thi 1.png" alt="Sách đề thi 1" class="floating-book book-left-top float-book-1" title="SÁCH CÔNG PHÁ ĐỀ LỚP 6">
       <img src="assets/Sách đề thi 2.png" alt="Sách đề thi 2" class="floating-book book-left-bottom float-book-2" title="SÁCH CÔNG PHÁ ĐỀ LỚP 7">
-      
-      <!-- BÊN PHẢI TIÊU ĐỀ -->
       <img src="assets/Sách đề thi 3.png" alt="Sách đề thi 3" class="floating-book book-right-top float-book-2-delay" title="SÁCH CÔNG PHÁ ĐỀ LỚP 8">
       <img src="assets/Sách đề thi 4.png" alt="Sách đề thi 4" class="floating-book book-right-bottom float-book-1-delay" title="SÁCH CÔNG PHÁ ĐỀ LỚP 9">
     </div>
@@ -113,17 +30,13 @@
       <p class="hero-subtitle">Nhập mã ID được in trực tiếp trên phiếu đề (VD: 8G01, 8C02) để mở ngay video chữa chi tiết và đáp án đính kèm.</p>
     </div>
 
-    <!-- KHU VỰC TÌM KIẾM NẰM NGANG PHÂN 3 PHÂN KHÚC -->
     <div class="search-layout-wrapper">
-      
-      <!-- Khối đặc quyền trái - HỌC THỬ 0Đ (BƠM MÀU CAM ẤM RỰC RỠ) -->
       <div class="privilege-card left orange-gradient float-slow">
         <div class="privilege-badge orange-badge">🎁 ĐỘC QUYỀN</div>
         <h4>Học thử 0đ</h4>
         <p>Đánh giá năng lực & trải nghiệm 1-1 miễn phí cùng giáo viên.</p>
       </div>
 
-      <!-- Khối chính giữa (Thanh tìm kiếm) -->
       <div class="search-main-box">
         <form onsubmit="handleIdSearch(event)" class="search-form-premium">
           <span class="search-icon">🔍</span>
@@ -138,17 +51,15 @@
         <p id="search-error" class="search-error-msg" style="display: none;"></p>
       </div>
 
-      <!-- Khối đặc quyền phải - HỖ TRỢ 24/7 (XANH DƯƠNG MÁT DỊU ĐỐI TRỌNG) -->
       <div class="privilege-card right blue-gradient float-delay">
         <div class="privilege-badge blue-badge">⚡ ONLINE</div>
         <h4>Hỗ trợ 24/7</h4>
         <p>Giải đáp thắc mắc bài tập qua Zalo nhanh chóng bất cứ lúc nào.</p>
       </div>
-
     </div>
   </section>
 
-  <!-- 3. PHẦN TÀI LIỆU MỚI ĐĂNG TẢI (RECENT DOCUMENTS) -->
+  <!-- 3. PHẦN TÀI LIỆU MỚI ĐĂNG TẢI -->
   <main class="recent-docs">
     <div class="section-header">
       <h2>Tài liệu mới đăng tải</h2>
@@ -159,12 +70,9 @@
     </div>
   </main>
 
-  <!-- =======================================================
-       PHẦN 1: GIỚI THIỆU GIÁO VIÊN (TEACHER PROFILE)
-       ======================================================= -->
+  <!-- PHẦN 1: GIỚI THIỆU GIÁO VIÊN -->
   <section class="tutor-section" id="teacher">
     <div class="teacher-profile">
-      
       <div class="teacher-image-wrapper">
         <div class="teacher-image-frame">
           <img src="assets/giao-vien.jpg" alt="Founder Đặng Đức Việt - Gia sư chuyên Toán THCS" onerror="this.src='https://via.placeholder.com/360x480?text=Thay+Duc+Viet'">
@@ -194,21 +102,16 @@
           </ul>
         </div>
       </div>
-
     </div>
   </section>
 
   <hr class="section-divider">
 
-  <!-- =======================================================
-       PHẦN 2: SƠ ĐỒ LỘ TRÌNH HỌC TẬP (TIMELINE)
-       ======================================================= -->
+  <!-- PHẦN 2: LỘ TRÌNH HỌC TẬP -->
   <section class="timeline-section" id="curriculum">
     <h2 class="section-title">LỘ TRÌNH HỌC TẬP TOÀN DIỆN</h2>
-    
     <div class="timeline-container">
       <div class="timeline-wrapper">
-        
         <div class="timeline-item">
           <div class="timeline-node"></div>
           <div class="timeline-card">
@@ -231,7 +134,7 @@
           <div class="timeline-node"></div>
           <div class="timeline-card">
             <div class="phase">Chặng 3</div>
-            <h4> Tăng tốc luyện  </h4>
+            <h4> Tăng tốc luyện </h4>
             <p style="font-size: 0.85rem; color: #64748b; margin-top: 5px;">Tăng tốc Luyện đề, tối ưu kỹ năng xử lý phòng thi thực tế.</p>
           </div>
         </div>
@@ -244,44 +147,30 @@
             <p style="font-size: 0.85rem; color: #64748b; margin-top: 5px;">Bứt phá điểm số tối đa, rèn dạng Toán nâng cao bứt phá 9, 10.</p>
           </div>
         </div>
-
       </div>
     </div>
   </section>
 
   <hr class="section-divider">
 
-  <!-- =======================================================
-       PHẦN 3: ĐĂNG KÝ TƯ VẤN & QUÀ TẶNG (SỬA THÀNH ONSUBMIT KHÓA 405)
-       ======================================================= -->
+  <!-- PHẦN 3: FORM ĐĂNG KÝ TƯ VẤN -->
   <section class="tutor-section" id="register">
     <div class="registration-container">
-      
       <div class="lead-magnet-column">
         <span class="lead-badge">Liên hệ tư vấn</span>
         <h2 class="lead-title">KHÓA HỌC GIA SƯ TOÁN THCS <br><span>TOÁN ANH VIỆT</span></h2>
         <p class="lead-desc">Chinh phục điểm 9, 10 - Đăng ký nhận lịch học thử ngay hôm nay để được nhận kèm bộ tài liệu thực chiến độc quyền miễn phí.</p>
         
         <div class="books-mockup">
-          <div class="book-item">
-            <img src="assets/Sách đề thi 1.png" alt="Sách đề thi 1" title="Đề khảo sát chất lượng giữa kì">
-          </div>
-          <div class="book-item">
-            <img src="assets/Sách đề thi 2.png" alt="Sách đề thi 2" title="Chuyên đề Toán tuyển tập">
-          </div>
-          <div class="book-item">
-            <img src="assets/Sách đề thi 3.png" alt="Sách đề thi 3" title="Số tay Casio bứt phá">
-          </div>
-          <div class="book-item">
-            <img src="assets/Sách đề thi 4.png" alt="Sách đề thi 4" title="Sơ đồ tư duy Hình Học">
-          </div>
+          <div class="book-item"><img src="assets/Sách đề thi 1.png" alt="Sách đề thi 1"></div>
+          <div class="book-item"><img src="assets/Sách đề thi 2.png" alt="Sách đề thi 2"></div>
+          <div class="book-item"><img src="assets/Sách đề thi 3.png" alt="Sách đề thi 3"></div>
+          <div class="book-item"><img src="assets/Sách đề thi 4.png" alt="Sách đề thi 4"></div>
         </div>
       </div>
 
       <div class="form-column">
         <h3>ĐĂNG KÝ HỌC THỬ & NHẬN QUÀ</h3>
-        
-        <!-- FIX LỖI 405 BẰNG CÁCH KHÓA ONSUBMIT CỦA THẺ FORM -->
         <form id="tuvangiasu-form" onsubmit="return false;">
           <div class="form-grid">
             <div class="form-group">
@@ -324,23 +213,12 @@
           <button type="submit" class="btn-submit">NHẬN TƯ VẤN MIỄN PHÍ &rarr;</button>
 
           <div class="form-footer">
-            <a href="tel:0965193026" class="contact-link">
-              <span>📞</span> Hotline/Zalo: 0965193026
-            </a>
-            <a href="https://www.facebook.com/261107ddv" target="_blank" class="contact-link">
-              <span>🌐</span> Giáo viên Đức Việt
-            </a>
+            <a href="tel:0965193026" class="contact-link"><span>📞</span> Hotline/Zalo: 0965193026</a>
+            <a href="https://www.facebook.com/261107ddv" target="_blank" class="contact-link"><span>🌐</span> Giáo viên Đức Việt</a>
           </div>
         </form>
       </div>
-
     </div>
-  </section>
-
-  <!-- Lớp học Gia sư thông tin phụ -->
-  <section id="about" style="max-width: 1000px; margin: 40px auto; padding: 0 20px; text-align: center;">
-    <h2 class="section-title">Lớp học Gia sư Toán chất lượng cao</h2>
-    <p style="font-size: 16px; color: #475569; margin-bottom: 20px;">Chúng tôi nhận dạy kèm cá nhân và nhóm nhỏ môn Toán cho các em học sinh mất gốc, ôn thi chuyển cấp vào 10 lớp thường và chuyên. Lộ trình học bài bản, giáo trình cá nhân hóa.</p>
   </section>
 
   <footer id="contact">
@@ -348,9 +226,8 @@
     <p>Hotline/Zalo hỗ trợ: <b>0965193026</b> - Địa chỉ: Bắc Từ Liêm - Hà Nội</p>
   </footer>
 
-  <!-- SCRIPT HOẠT ĐỘNG LIÊN KẾT HỆ THỐNG -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // 1. Tải tài liệu tự động từ API GitHub, render Card cao cấp
     async function fetchLatestDocuments() {
       const container = document.getElementById('latest-docs-container');
       try {
@@ -366,7 +243,6 @@
         }
 
         container.innerHTML = '';
-        
         for (const fileObj of jsonFiles) {
           const res = await fetch(fileObj.download_url);
           const doc = await res.json();
@@ -389,25 +265,12 @@
           container.innerHTML += cardHtml;
         }
       } catch (error) {
-        console.error(error);
         container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Đã xảy ra lỗi khi tải dữ liệu từ kho lưu trữ.</p>';
       }
     }
 
     document.addEventListener("DOMContentLoaded", fetchLatestDocuments);
 
-    // 2. Netlify Identity Widget
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on("init", user => {
-        if (!user) {
-          window.netlifyIdentity.on("login", () => {
-            document.location.href = "/admin/";
-          });
-        }
-      });
-    }
-
-    // 3. Xử lý Search mã ID học sinh
     async function handleIdSearch(event) {
       event.preventDefault();
       const inputVal = document.getElementById('search-id-input').value.trim().toUpperCase();
@@ -426,7 +289,6 @@
 
       try {
         const response = await fetch(`documents/lessons/${inputVal}.json`);
-        
         if (response.ok) {
           errorEl.style.display = "none";
           window.location.href = `view-detail.html?id=${inputVal}`;
@@ -445,107 +307,17 @@
         errorEl.style.color = "#ef4444";
       }
     }
-  </script>
 
-  <!-- ==========================================================================================
-       KHỐI ĐIỀU KHIỂN HỆ THỐNG GỘP CAO CẤP ĐỒNG BỘ SIÊU TỐC - THẦY VIỆT HOÀN THIỆN (KHÔNG ĐỘ TRỄ UX)
-       ========================================================================================== -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    (async function initToanAnhVietSystem() {
-      const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
-      const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
-      const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-      // BƯỚC ĐỌC CACHE THẦN TỐC: Vẽ Avatar ngay lập tức từ bộ nhớ máy tính không chờ đợi
-      const cachedUser = localStorage.getItem('tav_user_session');
-      if (cachedUser) {
-        try {
-          const u = JSON.parse(cachedUser);
-          drawDropdownUI(u.name, u.email, u.avatar);
-        } catch(e) { console.log(e); }
-      }
-
-      // Kiểm tra chính xác lại trạng thái phiên ngầm từ Supabase để đồng bộ thông tin mới nhất
-      const { data: { user } } = await _supabase.auth.getUser();
-      const loginLinks = document.querySelectorAll('a[href="login.html"]');
-      
-      if (user) {
-        const meta = user.user_metadata || {};
-        const dName = meta.full_name || 'Học viên';
-        const aSrc = meta.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
-        
-        localStorage.setItem('tav_user_session', JSON.stringify({ name: dName, email: user.email, avatar: aSrc }));
-        drawDropdownUI(dName, user.email, aSrc);
-      } else {
-        localStorage.removeItem('tav_user_session');
-        if (loginLinks.length > 0) {
-          loginLinks[0].parentElement.innerHTML = `<a href="login.html">Đăng nhập</a>`;
-        }
-      }
-
-      function drawDropdownUI(name, email, avatar) {
-        const targetLinks = document.querySelectorAll('a[href="login.html"]');
-        if (targetLinks.length === 0) return;
-        const targetLi = targetLinks[0].parentElement;
-
-        // Chèn các thuộc tính CSS bo góc mềm mại, làm mờ sương mượt mà giống trang category
-        if (!document.getElementById('instant-header-style')) {
-          const style = document.createElement('style');
-          style.id = 'instant-header-style';
-          style.innerHTML = `
-            .site-header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); transition: all 0.3s ease; }
-            .nav-menu li a { border-radius: 8px; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
-            .nav-menu li a:hover { background: #f1f5f9; color: #0284c7; }
-            .nav-menu li a.highlight { background: transparent !important; background-color: transparent !important; color: #475569 !important; font-weight: 500 !important; border-radius: 8px !important; }
-            .nav-menu li a.highlight:hover { background: #f1f5f9 !important; background-color: #f1f5f9 !important; color: #0284c7 !important; }
-            .user-profile-dropdown { position: relative; display: inline-block; cursor: pointer; margin-left: 8px; }
-            .menu-avatar-img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0284c7; object-fit: cover; vertical-align: middle; transition: all 0.2s ease; }
-            .user-profile-dropdown:hover .menu-avatar-img { transform: scale(1.05); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15); }
-            .dropdown-menu-box { display: none; position: absolute; right: 0; top: 100%; background-color: white; min-width: 210px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 10px; padding: 8px 0; z-index: 9999; margin-top: 12px; border: 1px solid #e2e8f0; transform-origin: top right; animation: fadeInDropdown 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-            @keyframes fadeInDropdown { from { opacity: 0; transform: scale(0.95) translateY(-5px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-            .user-profile-dropdown:hover .dropdown-menu-box { display: block; }
-            .dropdown-info-header { padding: 10px 16px; border-bottom: 1px solid #f1f5f9; margin-bottom: 4px; }
-            .dropdown-info-name { font-weight: 600; color: #1e293b; font-size: 14px; }
-            .dropdown-info-email { color: #64748b; font-size: 12px; }
-            .dropdown-item-link { display: block; padding: 10px 16px; color: #334155 !important; font-size: 14px; text-decoration: none; transition: background 0.15s; text-align: left; }
-            .dropdown-item-link:hover { background-color: #f1f5f9; color: #0284c7 !important; }
-            .dropdown-item-logout { border-top: 1px solid #f1f5f9; margin-top: 4px; color: #ef4444 !important; }
-            .dropdown-item-logout:hover { background-color: #fef2f2; }
-          `;
-          document.head.appendChild(style);
-        }
-
-        targetLi.innerHTML = `
-          <div class="user-profile-dropdown">
-            <img class="menu-avatar-img" src="${avatar}" alt="Avatar">
-            <div class="dropdown-menu-box">
-              <div class="dropdown-info-header">
-                <div class="dropdown-info-name">${name}</div>
-                <div class="dropdown-info-email">${email}</div>
-              </div>
-              <a href="profile.html" class="dropdown-item-link">Thông tin cá nhân</a>
-              <a href="my-books.html" class="dropdown-item-link">Sách của tôi</a>
-              <a href="my-books.html#activate" class="dropdown-item-link">Kích hoạt sách</a>
-              <a href="#" id="menu-btn-logout-action" class="dropdown-item-link dropdown-item-logout">Đăng xuất</a>
-            </div>
-          </div>
-        `;
-
-        document.getElementById('menu-btn-logout-action')?.addEventListener('click', async (e) => {
-          e.preventDefault();
-          localStorage.removeItem('tav_user_session');
-          await _supabase.auth.signOut();
-          window.location.reload();
-        });
-      }
-
-      // 3. Xử lý đẩy dữ liệu từ form "Đăng ký học thử" lên thẳng bảng registrations Supabase
+    // Xử lý Form Đăng ký học thử
+    document.addEventListener("DOMContentLoaded", () => {
       const registerForm = document.getElementById('tuvangiasu-form');
-      if (registerForm) {
+      if (registerForm && window.supabase) {
+        const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         registerForm.addEventListener('submit', async (e) => {
           e.preventDefault();
-
           const nameInput = document.getElementById('fullname')?.value;
           const phoneInput = document.getElementById('phone')?.value;
           const areaInput = document.getElementById('address')?.value;
@@ -558,18 +330,9 @@
             return;
           }
 
-          const { error } = await _supabase
-            .from('registrations')
-            .insert([
-              { 
-                name: nameInput, 
-                phone: phoneInput, 
-                area: areaInput, 
-                facebook: fbInput, 
-                grade: gradeInput, 
-                status: statusInput 
-              }
-            ]);
+          const { error } = await _supabase.from('registrations').insert([
+            { name: nameInput, phone: phoneInput, area: areaInput, facebook: fbInput, grade: gradeInput, status: statusInput }
+          ]);
 
           if (error) {
             alert("Gặp sự cố khi gửi đăng ký: " + error.message);
@@ -579,7 +342,8 @@
           }
         });
       }
-    })();
+    });
   </script>
+  <script src="header.js"></script>
 </body>
 </html>
