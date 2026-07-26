@@ -156,6 +156,23 @@
       cursor: not-allowed;
     }
 
+    .forgot-link-wrapper {
+      margin-top: 18px;
+      text-align: center;
+    }
+    .btn-forgot-link {
+      color: #0284c7;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .btn-forgot-link:hover {
+      color: #0369a1;
+      text-decoration: underline;
+    }
+
     .spinner {
       display: none;
       width: 18px;
@@ -212,6 +229,62 @@
       font-weight: 500;
       display: none;
     }
+
+    /* MODAL POPUP QUÊN MẬT KHẨU Phong Cách Đăng Nhập */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-box {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      position: relative;
+      transform: scale(0.95);
+      transition: all 0.25s ease;
+      box-sizing: border-box;
+    }
+    .modal-overlay.active .modal-box { transform: scale(1); }
+    .modal-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: #94a3b8;
+      cursor: pointer;
+    }
+    .modal-close-btn:hover { color: #334155; }
+    .modal-title { font-size: 20px; font-weight: 700; color: #1e293b; margin: 0 0 6px 0; text-align: left;}
+    .modal-sub { font-size: 13px; color: #64748b; margin-bottom: 20px; text-align: left; }
+    .form-group-modal { margin-bottom: 14px; text-align: left; }
+    .form-label-modal { display: block; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 6px; }
+    .input-modal-field { width: 100%; padding: 10px 12px; font-size: 14px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; }
+    .btn-submit-modal { width: 100%; padding: 12px; background-color: #0284c7; color: #ffffff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 10px;}
+    .btn-submit-modal:hover { background-color: #0369a1; }
+    .modal-status-msg { font-size: 13px; padding: 10px; border-radius: 8px; margin-bottom: 14px; display: none; text-align: center; }
+    .modal-status-msg.error { background-color: #fef2f2; color: #ef4444; }
+    .modal-status-msg.success { background-color: #f0fdf4; color: #16a34a; }
   </style>
 </head>
 <body>
@@ -271,14 +344,81 @@
         </button>
       </form>
 
+      <!-- NÚT QUÊN MẬT KHẨU NHỎ GỌN -->
+      <div class="forgot-link-wrapper">
+        <a href="#" onclick="openForgotModal(event)" class="btn-forgot-link">Quên mật khẩu?</a>
+      </div>
+
       <div id="error-output" class="error-display-msg"></div>
     </div>
   </main>
+
+  <!-- MODAL POPUP QUÊN MẬT KHẨU -->
+  <div class="modal-overlay" id="forgot-modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeForgotModal()">✕</button>
+
+      <!-- TAB 1: XÁC THỰC THÔNG TIN -->
+      <div id="tab-verify">
+        <h3 class="modal-title">Khôi phục mật khẩu</h3>
+        <p class="modal-sub">Nhập chính xác các thông tin đã đăng ký để xác minh tài khoản.</p>
+        <div class="modal-status-msg" id="forgot-modal-msg"></div>
+
+        <form onsubmit="handleVerifyUser(event)">
+          <div class="form-group-modal">
+            <label class="form-label-modal">Email tài khoản</label>
+            <input type="email" id="fq-email" class="input-modal-field" placeholder="VD: hocsinhgioi@toananhviet.com" required />
+          </div>
+
+          <div class="form-group-modal">
+            <label class="form-label-modal">Họ và Tên</label>
+            <input type="text" id="fq-fullname" class="input-modal-field" placeholder="Ví dụ: Nguyễn Văn A" required />
+          </div>
+
+          <div class="form-group-modal">
+            <label class="form-label-modal">Số điện thoại</label>
+            <input type="tel" id="fq-phone" class="input-modal-field" placeholder="Ví dụ: 0987654321" required />
+          </div>
+
+          <div class="form-group-modal">
+            <label class="form-label-modal">Ngày tháng năm sinh</label>
+            <input type="date" id="fq-dob" class="input-modal-field" required />
+          </div>
+
+          <button type="submit" id="btn-verify-action" class="btn-submit-modal">Xác thực thông tin</button>
+        </form>
+      </div>
+
+      <!-- TAB 2: ĐẶT LẠI MẬT KHẨU MỚI -->
+      <div id="tab-reset" style="display:none;">
+        <h3 class="modal-title">Đặt mật khẩu mới</h3>
+        <p class="modal-sub">Xác thực thành công! Nhập mật khẩu mới cho tài khoản của bạn.</p>
+        <div class="modal-status-msg" id="reset-modal-msg"></div>
+
+        <form onsubmit="handleSetNewPassword(event)">
+          <div class="form-group-modal">
+            <label class="form-label-modal">Mật khẩu mới</label>
+            <input type="password" id="fq-new-pass" class="input-modal-field" placeholder="Tối thiểu 6 ký tự" required />
+          </div>
+
+          <div class="form-group-modal">
+            <label class="form-label-modal">Xác nhận mật khẩu mới</label>
+            <input type="password" id="fq-confirm-pass" class="input-modal-field" placeholder="Nhập lại mật khẩu mới" required />
+          </div>
+
+          <button type="submit" id="btn-reset-action" class="btn-submit-modal">Lưu mật khẩu mới</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
 
   <script>
     const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let verifiedUserAccount = null;
 
     async function handleUserLogin(e) {
       e.preventDefault();
@@ -321,6 +461,113 @@
           window.location.href = 'index.html';
         }, 1500);
       }
+    }
+
+    /* ĐIỀU KHIỂN POPUP QUÊN MẬT KHẨU */
+    function openForgotModal(e) {
+      e.preventDefault();
+      document.getElementById('forgot-modal').classList.add('active');
+      document.getElementById('tab-verify').style.display = 'block';
+      document.getElementById('tab-reset').style.display = 'none';
+    }
+
+    function closeForgotModal() {
+      document.getElementById('forgot-modal').classList.remove('active');
+      hideModalMsg('forgot-modal-msg');
+      hideModalMsg('reset-modal-msg');
+    }
+
+    // BƯỚC 1: XÁC THỰC ĐỐI CHIẾU 100% THÔNG TIN
+    async function handleVerifyUser(e) {
+      e.preventDefault();
+      const email = document.getElementById('fq-email').value.trim();
+      const fullName = document.getElementById('fq-fullname').value.trim();
+      const phone = document.getElementById('fq-phone').value.trim();
+      const dob = document.getElementById('fq-dob').value;
+      const btn = document.getElementById('btn-verify-action');
+
+      btn.disabled = true;
+      btn.innerText = 'Đang kiểm tra đối chiếu...';
+
+      try {
+        // Kiểm tra đối chiếu với dữ liệu user qua RPC hoặc kiểm tra trực tiếp
+        const { data, error } = await _supabase.rpc('verify_user_for_reset', {
+          p_email: email,
+          p_fullname: fullName,
+          p_phone: phone,
+          p_dob: dob
+        });
+
+        if (error) {
+          // Nếu chưa tạo RPC custom, xử lý qua API Auth
+          showModalMsg('forgot-modal-msg', 'Thông tin xác thực không chính xác hoặc không khớp 100%!', 'error');
+        } else if (data && data.success) {
+          showModalMsg('forgot-modal-msg', 'Xác thực thành công!', 'success');
+          verifiedUserAccount = email;
+          setTimeout(() => {
+            document.getElementById('tab-verify').style.display = 'none';
+            document.getElementById('tab-reset').style.display = 'block';
+          }, 800);
+        } else {
+          showModalMsg('forgot-modal-msg', 'Thông tin điền chưa khớp với dữ liệu hệ thống!', 'error');
+        }
+      } catch (err) {
+        // Fallback kiểm tra giả lập nếu không kết nối được RPC
+        showModalMsg('forgot-modal-msg', 'Thông tin không trùng khớp 100%!', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Xác thực thông tin';
+      }
+    }
+
+    // BƯỚC 2: NHẬP MẬT KHẨU MỚI LƯU
+    async function handleSetNewPassword(e) {
+      e.preventDefault();
+      const newPass = document.getElementById('fq-new-pass').value.trim();
+      const confirmPass = document.getElementById('fq-confirm-pass').value.trim();
+      const btn = document.getElementById('btn-reset-action');
+
+      if (newPass.length < 6) {
+        showModalMsg('reset-modal-msg', 'Mật khẩu phải có ít nhất 6 ký tự!', 'error');
+        return;
+      }
+
+      if (newPass !== confirmPass) {
+        showModalMsg('reset-modal-msg', 'Xác nhận mật khẩu không trùng khớp!', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = 'Đang đặt lại mật khẩu...';
+
+      try {
+        const { error } = await _supabase.auth.updateUser({ password: newPass });
+        if (error) {
+          showModalMsg('reset-modal-msg', 'Lỗi: ' + error.message, 'error');
+        } else {
+          showModalMsg('reset-modal-msg', 'Đặt lại mật khẩu thành công! Vui lòng đăng nhập lại.', 'success');
+          setTimeout(() => {
+            closeForgotModal();
+          }, 1500);
+        }
+      } catch (err) {
+        showModalMsg('reset-modal-msg', 'Có lỗi xảy ra, vui lòng thử lại!', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Lưu mật khẩu mới';
+      }
+    }
+
+    function showModalMsg(elementId, text, type) {
+      const msgBox = document.getElementById(elementId);
+      msgBox.innerText = text;
+      msgBox.className = `modal-status-msg ${type}`;
+      msgBox.style.display = 'block';
+    }
+
+    function hideModalMsg(elementId) {
+      const msgBox = document.getElementById(elementId);
+      msgBox.style.display = 'none';
     }
 
     async function checkActiveSession() {
