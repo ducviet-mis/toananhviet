@@ -206,7 +206,7 @@
       gap: 12px;
     }
     
-    /* VÒNG TRÒN KẾT QUẢ DONUT CHART (CẢI TIẾN MÀU SẮC) */
+    /* VÒNG TRÒN DONUT CHART (XANH LÁ LÀM ĐÚNG / ĐỎ LÀM SAI) */
     .donut-chart-wrapper {
       position: relative;
       width: 72px;
@@ -220,16 +220,16 @@
     }
     .donut-bg {
       fill: none;
-      stroke: #fee2e2; /* Màu Đỏ nhạt cho phần trả lời SAI */
+      stroke: #fee2e2; /* Màu ĐỎ nhạt cho phần trả lời SAI */
       stroke-width: 4;
     }
     .donut-ring {
       fill: none;
-      stroke: #0284c7; /* Màu Xanh dương mặc định cho phần ĐÚNG */
+      stroke: #10b981; /* Màu XANH LÁ cho phần trả lời ĐÚNG */
       stroke-width: 4;
       stroke-dasharray: 100;
       stroke-dashoffset: 100;
-      transition: stroke-dashoffset 1s ease-in-out, stroke 0.3s ease;
+      transition: stroke-dashoffset 1s ease-in-out;
       stroke-linecap: round;
     }
     .donut-center-text {
@@ -323,7 +323,7 @@
       box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
     }
 
-    /* ITEM CÂU HỎI & CỜ ĐÁNH DẤU */
+    /* ITEM CÂU HỎI & CỜ ĐÁNH DẤU (ĐÃ SỬA CỜ ĐỎ ĐẬM) */
     .answer-row {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -335,42 +335,28 @@
       position: relative;
     }
     .answer-row.flagged-row {
-      border: 1.5px solid #f59e0b !important;
-      background-color: #fffbeb !important;
+      border: 1.5px solid #ef4444 !important;
+      background-color: #fef2f2 !important;
     }
     .flag-btn {
       background: none;
       border: none;
       cursor: pointer;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       padding: 0 4px;
-      opacity: 0.4;
+      opacity: 0.35;
+      filter: grayscale(100%);
       transition: all 0.2s;
     }
-    .flag-btn:hover, .flag-btn.active {
-      opacity: 1;
-      transform: scale(1.15);
+    .flag-btn:hover {
+      opacity: 0.8;
+      transform: scale(1.1);
     }
-
-    .flag-options-box {
-      display: none;
-      margin-top: 8px;
-      padding-top: 6px;
-      border-top: 1px dashed #fcd34d;
-      gap: 12px;
-      font-size: 0.75rem;
-      color: #b45309;
-    }
-    .flag-options-box.show {
-      display: flex;
-      flex-wrap: wrap;
-    }
-    .flag-checkbox-label {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-      user-select: none;
+    .flag-btn.active {
+      opacity: 1 !important;
+      filter: grayscale(0%) !important;
+      color: #dc2626 !important; /* ĐỎ ĐẬM */
+      transform: scale(1.2);
     }
 
     .answer-row-content {
@@ -590,7 +576,6 @@
       margin: 24px 0;
     }
     
-    /* 1. Dưới 8.0: Khối phẳng, sạch sẽ */
     .score-card-flat {
       padding: 16px 45px;
       background: #f8fafc;
@@ -604,7 +589,6 @@
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
     }
 
-    /* 2. Từ 8.0 - 8.9: Glow xanh dương đồng bộ thương hiệu */
     .score-card-glow {
       padding: 18px 50px;
       background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
@@ -618,7 +602,6 @@
       box-shadow: 0 10px 30px rgba(2, 132, 199, 0.18);
     }
 
-    /* 3. Từ 9.0 - 10.0: Thẻ Vàng Lấp lánh sang trọng */
     .score-card-shimmer {
       padding: 18px 55px;
       background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fde68a 100%);
@@ -927,7 +910,7 @@
       <!-- KẾT QUẢ VÀ TƯƠNG TÁC GIA SƯ -->
       <div id="result-box">
         <div class="result-summary-container">
-          <!-- DONUT CHART CẢI TIẾN MÀU CẢNH BÁO / THƯƠNG HIỆU -->
+          <!-- DONUT CHART (CÂU ĐÚNG: XANH LÁ | CÂU SAI: ĐỎ) -->
           <div class="donut-chart-wrapper">
             <svg viewBox="0 0 36 36">
               <path class="donut-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
@@ -978,7 +961,6 @@
     let timerInterval = null;
     let userAnswers = {};
     let flaggedQuestions = {};
-    let tutorHelpQuestions = {};
     let isExamSubmitted = false;
     let studentNameString = "Học viên";
     let finalCalculatedScore = 0;
@@ -1125,17 +1107,6 @@
             ${actionHtml}
           </div>
 
-          <div class="flag-options-box" id="flag-box-${item.q_number}">
-            <label class="flag-checkbox-label">
-              <input type="checkbox" id="chk-review-${item.q_number}" onchange="toggleFlagReason(${item.q_number}, 'review', this.checked)">
-              🚩 Xem lại sau
-            </label>
-            <label class="flag-checkbox-label">
-              <input type="checkbox" id="chk-tutor-${item.q_number}" onchange="toggleFlagReason(${item.q_number}, 'tutor', this.checked)">
-              💬 Cần gia sư chữa kỹ câu này
-            </label>
-          </div>
-
           <div class="result-key-info" id="key-info-${item.q_number}">
             <div style="color: #0284c7; font-weight: 700;">Đáp án chuẩn: ${item.correct_answer}</div>
             ${item.explanation ? `<div style="color: #64748b; margin-top: 2px;">💡 ${item.explanation}</div>` : ''}
@@ -1145,31 +1116,21 @@
       });
     }
 
+    /* CLICK 1 PHÁT LÀ BẬT/TẮT CỜ ĐỎ ĐẬM LUÔN */
     function toggleFlag(qNum) {
-      const box = document.getElementById(`flag-box-${qNum}`);
-      box.classList.toggle('show');
-    }
+      if (isExamSubmitted) return; // Nếu đã nộp bài thì không sửa cờ nữa
 
-    function toggleFlagReason(qNum, reasonType, isChecked) {
       const row = document.getElementById(`q-row-${qNum}`);
       const btn = document.getElementById(`flag-btn-${qNum}`);
       
-      if (reasonType === 'tutor') {
-        if (isChecked) tutorHelpQuestions[qNum] = true;
-        else delete tutorHelpQuestions[qNum];
-      }
-
-      const reviewChecked = document.getElementById(`chk-review-${qNum}`)?.checked;
-      const tutorChecked = document.getElementById(`chk-tutor-${qNum}`)?.checked;
-
-      if (reviewChecked || tutorChecked) {
-        flaggedQuestions[qNum] = true;
-        row.classList.add('flagged-row');
-        btn.classList.add('active');
-      } else {
+      if (flaggedQuestions[qNum]) {
         delete flaggedQuestions[qNum];
         row.classList.remove('flagged-row');
         btn.classList.remove('active');
+      } else {
+        flaggedQuestions[qNum] = true;
+        row.classList.add('flagged-row');
+        btn.classList.add('active'); // Đỏ đậm ngay lập tức
       }
     }
 
@@ -1249,27 +1210,27 @@
       const spentSecs = timeSpent % 60;
 
       const scoreFormatted = earnedScore.toFixed(1);
-      // Tính chính xác phần trăm số câu ĐÚNG
+      // Tỷ lệ % số câu ĐÚNG để vẽ Donut Chart
       const percentage = Math.round((correctCount / totalQuestions) * 100);
 
       document.getElementById('result-score').innerText = scoreFormatted;
       document.getElementById('stat-correct').innerText = `${correctCount}/${totalQuestions}`;
       document.getElementById('stat-time').innerText = `${spentMins < 10 ? '0' : ''}${spentMins}:${spentSecs < 10 ? '0' : ''}${spentSecs}`;
 
-      // Danh sách cần hỗ trợ
-      const needHelpList = Object.keys(tutorHelpQuestions).map(q => `Câu ${q}`);
+      // Tự động tổng hợp danh sách câu có đánh CỜ 🚩
+      const flaggedList = Object.keys(flaggedQuestions).map(q => `Câu ${q}`);
       const helpTextLabel = document.getElementById('tutor-help-list');
       const zaloBtn = document.getElementById('zalo-send-btn');
 
-      if (needHelpList.length > 0) {
-        helpTextLabel.innerText = needHelpList.join(', ');
+      if (flaggedList.length > 0) {
+        helpTextLabel.innerText = flaggedList.join(', ');
       } else {
         helpTextLabel.innerText = "Không có câu nào được tích chọn.";
       }
 
       // Link Chat Zalo
       const zaloMessage = encodeURIComponent(
-        `Chào Thầy Việt, em là ${studentNameString}.\nEm vừa hoàn thành đề: "${quizData.title}" (${scoreFormatted} điểm).\nEm cần Thầy hỗ trợ chữa kỹ các câu: ${needHelpList.length > 0 ? needHelpList.join(', ') : 'Các câu làm sai'}. Cảm ơn Thầy!`
+        `Chào Thầy Việt, em là ${studentNameString}.\nEm vừa hoàn thành đề: "${quizData.title}" (${scoreFormatted} điểm).\nEm cần Thầy hỗ trợ chữa kỹ các câu: ${flaggedList.length > 0 ? flaggedList.join(', ') : 'Các câu làm sai'}. Cảm ơn Thầy!`
       );
       zaloBtn.href = `https://zalo.me/0965193026?text=${zaloMessage}`;
 
@@ -1277,22 +1238,13 @@
       resultBox.style.display = 'block';
 
       // ==========================================
-      // XỬ LÝ ĐỔI MÀU & CHẠY TỶ LỆ CỦA DONUT CHART
+      // CHẠY DONUT CHART (XANH LÁ LÀM ĐÚNG / ĐỎ SAI)
       // ==========================================
       setTimeout(() => {
         const donutRing = document.getElementById('donut-ring-path');
         if (donutRing) {
-          // 1. Chạy đúng tỷ lệ % câu đúng
+          // Vòng chạy XANH LÁ biểu thị tỷ lệ % CÂU ĐÚNG
           donutRing.style.strokeDasharray = `${percentage}, 100`;
-
-          // 2. Đổi màu đường tròn theo thang điểm
-          if (earnedScore >= 8.0) {
-            donutRing.style.stroke = '#0284c7'; // Xanh dương (Thương hiệu)
-          } else if (earnedScore >= 5.0) {
-            donutRing.style.stroke = '#f97316'; // Cam sáng
-          } else {
-            donutRing.style.stroke = '#ef4444'; // Đỏ
-          }
         }
       }, 100);
 
