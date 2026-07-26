@@ -103,9 +103,8 @@
       margin-top: 10px;
       transition: background 0.2s;
     }
-    .btn-save:hover {
-      background: #0369a1;
-    }
+    .btn-save:hover { background: #0369a1; }
+    
     .btn-open-pass-modal {
       width: 100%;
       padding: 12px;
@@ -119,9 +118,8 @@
       margin-top: 12px;
       transition: background 0.2s;
     }
-    .btn-open-pass-modal:hover {
-      background: #059669;
-    }
+    .btn-open-pass-modal:hover { background: #059669; }
+
     .btn-logout {
       width: 100%;
       padding: 10px;
@@ -135,11 +133,9 @@
       margin-top: 12px;
       transition: background 0.2s;
     }
-    .btn-logout:hover {
-      background: #dc2626;
-    }
+    .btn-logout:hover { background: #dc2626; }
 
-    /* CSS MODAL POPUP POPUP ĐỔI MẬT KHẨU */
+    /* CSS MODAL POPUP */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -156,12 +152,10 @@
       visibility: hidden;
       transition: all 0.25s ease;
     }
-
     .modal-overlay.active {
       opacity: 1;
       visibility: visible;
     }
-
     .modal-box {
       background: #ffffff;
       width: 100%;
@@ -174,11 +168,7 @@
       transition: all 0.25s ease;
       box-sizing: border-box;
     }
-
-    .modal-overlay.active .modal-box {
-      transform: scale(1);
-    }
-
+    .modal-overlay.active .modal-box { transform: scale(1); }
     .modal-close-btn {
       position: absolute;
       top: 16px;
@@ -189,84 +179,13 @@
       color: #94a3b8;
       cursor: pointer;
     }
-
-    .modal-close-btn:hover { color: #334155; }
-
-    .modal-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: #1e293b;
-      margin: 0 0 6px 0;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .modal-sub {
-      font-size: 13px;
-      color: #64748b;
-      margin-bottom: 20px;
-    }
-
-    .form-group-modal {
-      margin-bottom: 16px;
-      text-align: left;
-    }
-
-    .form-label-modal {
-      display: block;
-      font-size: 12px;
-      font-weight: 700;
-      color: #475569;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-      letter-spacing: 0.5px;
-    }
-
-    .input-modal-field {
-      width: 100%;
-      padding: 12px 14px;
-      font-size: 14px;
-      font-weight: 500;
-      color: #0f172a;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      box-sizing: border-box;
-      outline: none;
-      transition: all 0.2s ease;
-    }
-
-    .input-modal-field:focus {
-      border-color: #0284c7;
-      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
-    }
-
-    .btn-submit-pass {
-      width: 100%;
-      padding: 12px;
-      background-color: #0284c7;
-      color: #ffffff;
-      border: none;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .btn-submit-pass:hover {
-      background-color: #0369a1;
-    }
-
-    .modal-status-msg {
-      font-size: 13px;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 14px;
-      display: none;
-      text-align: center;
-      font-weight: 500;
-    }
-
+    .modal-title { font-size: 20px; font-weight: 700; color: #1e293b; margin: 0 0 6px 0; }
+    .modal-sub { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+    .form-group-modal { margin-bottom: 16px; text-align: left; }
+    .form-label-modal { display: block; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 8px; }
+    .input-modal-field { width: 100%; padding: 12px 14px; font-size: 14px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; }
+    .btn-submit-pass { width: 100%; padding: 12px; background-color: #0284c7; color: #ffffff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
+    .modal-status-msg { font-size: 13px; padding: 10px; border-radius: 8px; margin-bottom: 14px; display: none; text-align: center; }
     .modal-status-msg.error { background-color: #fef2f2; color: #ef4444; }
     .modal-status-msg.success { background-color: #f0fdf4; color: #16a34a; }
   </style>
@@ -294,13 +213,11 @@
 
       <form id="profile-form" onsubmit="saveProfile(event)">
         <div class="form-grid">
-          <!-- HỌ TÊN -->
           <div class="form-group full-width">
             <label>Họ và tên học sinh:</label>
             <input type="text" id="p-name" placeholder="Ví dụ: Nguyễn Văn A" required>
           </div>
 
-          <!-- NGÀY SINH & SĐT -->
           <div class="form-group">
             <label>Ngày tháng năm sinh:</label>
             <input type="date" id="p-dob">
@@ -311,7 +228,6 @@
             <input type="tel" id="p-phone" placeholder="Ví dụ: 0987654321">
           </div>
 
-          <!-- KHỐI LỚP -->
           <div class="form-group full-width">
             <label>Khối lớp đang học:</label>
             <select id="p-grade">
@@ -325,17 +241,15 @@
           <!-- TỈNH / THÀNH PHỐ -->
           <div class="form-group">
             <label>Tỉnh / Thành phố:</label>
-            <select id="p-province" onchange="onProvinceChange()">
+            <select id="p-province">
               <option value="">-- Chọn Tỉnh / Thành phố --</option>
             </select>
           </div>
 
-          <!-- PHƯỜNG / XÃ -->
+          <!-- PHƯỜNG / XÃ (NHẬP TAY LINH HOẠT - CHUẨN SÁP NHẬP) -->
           <div class="form-group">
             <label>Phường / Xã:</label>
-            <select id="p-ward">
-              <option value="">-- Chọn Phường / Xã --</option>
-            </select>
+            <input type="text" id="p-ward" placeholder="Nhập Phường / Xã (Ví dụ: Phường Bách Khoa)">
           </div>
         </div>
 
@@ -343,9 +257,7 @@
         <button type="submit" class="btn-save">Lưu thay đổi thông tin</button>
       </form>
 
-      <!-- NÚT MỞ POPUP ĐỔI MẬT KHẨU -->
       <button type="button" onclick="openPasswordModal()" class="btn-open-pass-modal">Đổi mật khẩu tài khoản</button>
-
       <button onclick="handleLogout()" class="btn-logout">Đăng xuất tài khoản</button>
       <div id="status-msg" style="text-align:center; margin-top:10px; font-size:14px;"></div>
     </div>
@@ -357,7 +269,6 @@
       <button class="modal-close-btn" onclick="closePasswordModal()">✕</button>
       <h3 class="modal-title">Đổi mật khẩu</h3>
       <p class="modal-sub">Nhập mật khẩu mới bên dưới để cập nhật bảo mật cho tài khoản của bạn.</p>
-
       <div class="modal-status-msg" id="pass-modal-msg"></div>
 
       <form onsubmit="handlePasswordUpdate(event)">
@@ -365,12 +276,10 @@
           <label class="form-label-modal">Mật khẩu mới</label>
           <input type="password" id="input-new-password" class="input-modal-field" placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)" required />
         </div>
-
         <div class="form-group-modal">
           <label class="form-label-modal">Xác nhận mật khẩu mới</label>
           <input type="password" id="input-confirm-password" class="input-modal-field" placeholder="Nhập lại mật khẩu mới" required />
         </div>
-
         <button type="submit" id="btn-submit-pass-action" class="btn-submit-pass">Cập nhật mật khẩu</button>
       </form>
     </div>
@@ -382,52 +291,29 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let currentUser = null;
-    let locationData = [];
 
-    // 1. TẢI DỮ LIỆU ĐƠN VỊ HÀNH CHÍNH (TỈNH -> PHƯỜNG XÃ)
-    async function loadLocationData() {
-      try {
-        const res = await fetch('https://esgoo.net/api-tinhthanhi/1/0.htm');
-        const data = await res.json();
-        if (data.error === 0) {
-          locationData = data.data;
-          const provinceSelect = document.getElementById('p-province');
-          provinceSelect.innerHTML = '<option value="">-- Chọn Tỉnh / Thành phố --</option>';
-          locationData.forEach(prov => {
-            provinceSelect.innerHTML += `<option value="${prov.id}">${prov.name}</option>`;
-          });
-        }
-      } catch (e) {
-        console.error('Lỗi nạp dữ liệu Tỉnh/Thành:', e);
-      }
-    }
+    // DANH SÁCH 63 TỈNH/THÀNH PHỐ NỔI BẬT NẠP TRỰC TIẾP (100% CỰC NHANH, KHÔNG BAO GIỜ LỖI API)
+    const PROVINCES_LIST = [
+      "Hà Nội", "TP Hồ Chí Minh", "Đà Nẵng", "Hải Phòng", "Cần Thơ", "An Giang", "Bà Rịa - Vũng Tàu", 
+      "Bắc Giang", "Bắc Kạn", "Bạc Liêu", "Bắc Ninh", "Bến Tre", "Bình Định", "Bình Dương", "Bình Phước", 
+      "Bình Thuận", "Cà Mau", "Cao Bằng", "Đắk Lắk", "Đắk Nông", "Điện Biên", "Đồng Nai", "Đồng Tháp", 
+      "Gia Lai", "Hà Giang", "Hà Nam", "Hà Tĩnh", "Hải Dương", "Hậu Giang", "Hòa Bình", "Hưng Yên", 
+      "Khánh Hòa", "Kiên Giang", "Kon Tum", "Lai Châu", "Lâm Đồng", "Lạng Sơn", "Lào Cai", "Long An", 
+      "Nam Định", "Nghệ An", "Ninh Bình", "Ninh Thuận", "Phú Thọ", "Phú Yên", "Quảng Bình", "Quảng Nam", 
+      "Quảng Ngãi", "Quảng Ninh", "Quảng Trị", "Sóc Trăng", "Sơn La", "Tây Ninh", "Thái Bình", "Thái Nguyên", 
+      "Thanh Hóa", "Thừa Thiên Huế", "Tiền Giang", "Trà Vinh", "Tuyên Quang", "Vĩnh Long", "Vĩnh Phúc", "Yên Bái"
+    ];
 
-    // Khi chọn Tỉnh/Thành phố -> Lấy danh sách Phường/Xã tương ứng
-    async function onProvinceChange(selectedWardId = null) {
-      const provId = document.getElementById('p-province').value;
-      const wardSelect = document.getElementById('p-ward');
-      wardSelect.innerHTML = '<option value="">-- Chọn Phường / Xã --</option>';
-
-      if (!provId) return;
-
-      try {
-        const res = await fetch(`https://esgoo.net/api-tinhthanhi/2/${provId}.htm`);
-        const data = await res.json();
-        if (data.error === 0) {
-          data.data.forEach(ward => {
-            wardSelect.innerHTML += `<option value="${ward.id}">${ward.name}</option>`;
-          });
-          if (selectedWardId) {
-            wardSelect.value = selectedWardId;
-          }
-        }
-      } catch (e) {
-        console.error('Lỗi nạp Phường/Xã:', e);
-      }
+    function initProvinces() {
+      const select = document.getElementById('p-province');
+      select.innerHTML = '<option value="">-- Chọn Tỉnh / Thành phố --</option>';
+      PROVINCES_LIST.forEach(p => {
+        select.innerHTML += `<option value="${p}">${p}</option>`;
+      });
     }
 
     async function checkUserSession() {
-      await loadLocationData();
+      initProvinces();
 
       const { data: { user } } = await _supabase.auth.getUser();
       if (!user) {
@@ -442,11 +328,8 @@
       if(meta.phone) document.getElementById('p-phone').value = meta.phone;
       if(meta.grade) document.getElementById('p-grade').value = meta.grade;
       if(meta.dob) document.getElementById('p-dob').value = meta.dob;
-      
-      if(meta.province_id) {
-        document.getElementById('p-province').value = meta.province_id;
-        await onProvinceChange(meta.ward_id);
-      }
+      if(meta.province) document.getElementById('p-province').value = meta.province;
+      if(meta.ward) document.getElementById('p-ward').value = meta.ward;
 
       const avatarSrc = meta.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
       document.getElementById('p-avatar-url').value = meta.avatar_url || '';
@@ -494,8 +377,8 @@
       const phone = document.getElementById('p-phone').value;
       const grade = document.getElementById('p-grade').value;
       const dob = document.getElementById('p-dob').value;
-      const provinceId = document.getElementById('p-province').value;
-      const wardId = document.getElementById('p-ward').value;
+      const province = document.getElementById('p-province').value;
+      const ward = document.getElementById('p-ward').value;
       const avatarUrl = document.getElementById('p-avatar-url').value;
 
       const { error } = await _supabase.auth.updateUser({
@@ -504,8 +387,8 @@
           phone: phone, 
           grade: grade, 
           dob: dob,
-          province_id: provinceId,
-          ward_id: wardId,
+          province: province,
+          ward: ward,
           avatar_url: avatarUrl 
         }
       });
@@ -527,7 +410,6 @@
       }
     }
 
-    /* ĐIỀU KHIỂN MODAL POPUP ĐỔI MẬT KHẨU */
     function openPasswordModal() {
       document.getElementById('password-modal').classList.add('active');
       document.getElementById('input-new-password').focus();
@@ -561,17 +443,12 @@
       btn.innerText = 'Đang cập nhật...';
 
       try {
-        const { error } = await _supabase.auth.updateUser({
-          password: newPass
-        });
-
+        const { error } = await _supabase.auth.updateUser({ password: newPass });
         if (error) {
           showPassMsg('Đổi mật khẩu thất bại: ' + error.message, 'error');
         } else {
           showPassMsg('Đổi mật khẩu thành công!', 'success');
-          setTimeout(() => {
-            closePasswordModal();
-          }, 1200);
+          setTimeout(() => { closePasswordModal(); }, 1200);
         }
       } catch (err) {
         showPassMsg('Có lỗi hệ thống xảy ra!', 'error');
