@@ -358,8 +358,8 @@
       line-height: 1.4;
     }
 
-    /* BẢNG XÁC NHẬN BẮT ĐẦU LÀM BÀI (FULLSCREEN MODAL) */
-    .start-modal-overlay {
+    /* POPUP CHUNG (START & SUBMIT MODAL) */
+    .custom-modal-overlay {
       position: fixed;
       top: 0;
       left: 0;
@@ -372,30 +372,55 @@
       align-items: center;
       justify-content: center;
     }
-    .start-modal-card {
+    .custom-modal-card {
       background: #ffffff;
-      padding: 30px 40px;
+      padding: 30px 36px;
       border-radius: 20px;
       text-align: center;
-      max-width: 420px;
+      max-width: 400px;
+      width: 90%;
       box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      animation: modalScale 0.2s ease-out;
     }
-    .start-modal-btn {
+    @keyframes modalScale {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-btn-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .modal-btn-primary {
       background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
       color: white;
       border: none;
-      padding: 12px 28px;
+      padding: 10px 24px;
       border-radius: 10px;
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 0.95rem;
       cursor: pointer;
-      margin-top: 20px;
       box-shadow: 0 4px 15px rgba(2, 132, 199, 0.35);
       transition: all 0.2s;
     }
-    .start-modal-btn:hover {
+    .modal-btn-primary:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(2, 132, 199, 0.5);
+    }
+    .modal-btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .modal-btn-secondary:hover {
+      background: #e2e8f0;
     }
 
     /* MOBILE TỐI ƯU */
@@ -452,15 +477,32 @@
 </head>
 <body>
 
-  <!-- MODAL XÁC NHẬN KÍCH HOẠT FULLSCREEN -->
-  <div class="start-modal-overlay" id="start-exam-modal">
-    <div class="start-modal-card">
+  <!-- 1. POPUP BẮT ĐẦU LÀM BÀI -->
+  <div class="custom-modal-overlay" id="start-exam-modal">
+    <div class="custom-modal-card">
       <div style="font-size: 3rem; margin-bottom: 10px;">📝</div>
       <h2 style="margin: 0 0 10px 0; color: #0f172a;">Sẵn sàng làm bài?</h2>
       <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0;">
         Hệ thống sẽ chuyển sang <b>Chế độ Toàn màn hình</b>. Vui lòng tập trung làm bài và không thoát màn hình trong quá trình thi.
       </p>
-      <button class="start-modal-btn" onclick="confirmStartExam()">🚀 BẮT ĐẦU LÀM BÀI</button>
+      <div class="modal-btn-group">
+        <button class="modal-btn-primary" onclick="confirmStartExam()">BẮT ĐẦU LÀM BÀI</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. POPUP XÁC NHẬN NỘP BÀI (THAY THẾ CONFIRM MẶC ĐỊNH) -->
+  <div class="custom-modal-overlay" id="submit-confirm-modal" style="display: none;">
+    <div class="custom-modal-card">
+      <div style="font-size: 3rem; margin-bottom: 10px;">🎯</div>
+      <h2 style="margin: 0 0 10px 0; color: #0f172a;">Xác nhận nộp bài?</h2>
+      <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0;">
+        Bạn có chắc chắn muốn hoàn thành và nộp bài thi này không?
+      </p>
+      <div class="modal-btn-group">
+        <button class="modal-btn-secondary" onclick="closeSubmitModal()">Hủy, làm tiếp</button>
+        <button class="modal-btn-primary" onclick="executeSubmitExam()">Nộp bài ngay</button>
+      </div>
     </div>
   </div>
 
@@ -483,7 +525,7 @@
     <div class="answersheet-pane" id="pane-sheet-container">
       <div class="timer-badge">
         <span class="timer-text" id="countdown">⏱️ --:--</span>
-        <button onclick="submitExam()" id="submit-btn" class="btn-submit">NỘP BÀI</button>
+        <button onclick="openSubmitModal()" id="submit-btn" class="btn-submit">NỘP BÀI</button>
       </div>
 
       <div id="result-box">
@@ -517,8 +559,8 @@
   </div>
 
   <div class="mobile-tabs">
-    <button class="tab-btn active" id="tab-pdf" onclick="switchTab('pdf')">📋 Đọc Đề Bài</button>
-    <button class="tab-btn" id="tab-sheet" onclick="switchTab('sheet')">✍️ Phiếu Trả Lời</button>
+    <button class="tab-btn active" id="tab-pdf" onclick="switchTab('pdf')">Đọc Đề Bài</button>
+    <button class="tab-btn" id="tab-sheet" onclick="switchTab('sheet')">Phiếu Trả Lời</button>
   </div>
 
   <script>
@@ -531,6 +573,7 @@
     let totalDuration = 0;
     let timerInterval = null;
     let userAnswers = {};
+    let isExamSubmitted = false; // CỜ ĐÁNH DẤU ĐÃ NỘP BÀI THÀNH CÔNG
 
     function getDocViewerUrl(filePath) {
       if (!filePath) return '';
@@ -547,7 +590,6 @@
       }
     }
 
-    // NÚT BẮT ĐẦU: ÉP TRÌNH DUYỆT FULLSCREEN VÀ CHẠY ĐỒNG HỒ
     function confirmStartExam() {
       const elem = document.documentElement;
       if (elem.requestFullscreen) {
@@ -599,7 +641,7 @@
         if (timeRemaining <= 0) {
           clearInterval(timerInterval);
           alert("Hết giờ làm bài! Hệ thống tự động nộp bài.");
-          submitExam();
+          executeSubmitExam();
           return;
         }
         timeRemaining--;
@@ -659,8 +701,19 @@
       userAnswers[qNum] = value.trim();
     }
 
-    function submitExam() {
-      if (!confirm("Bạn có chắc chắn muốn nộp bài thi này?")) return;
+    /* MỞ & ĐÓNG MODAL XÁC NHẬN NỘP BÀI TÙY BIẾN */
+    function openSubmitModal() {
+      document.getElementById('submit-confirm-modal').style.display = 'flex';
+    }
+
+    function closeSubmitModal() {
+      document.getElementById('submit-confirm-modal').style.display = 'none';
+    }
+
+    /* CHẤM ĐIỂM & NỘP BÀI THỰC SỰ */
+    function executeSubmitExam() {
+      isExamSubmitted = true; // Đánh dấu đã nộp bài để khóa cảnh báo thoát Fullscreen
+      closeSubmitModal();
       clearInterval(timerInterval);
 
       document.querySelectorAll('input, button').forEach(el => el.disabled = true);
@@ -762,9 +815,10 @@
       }
     }
 
-    // CẢNH BÁO KHI THOÁT TOÀN MÀN HÌNH
+    // CHỈ BẮT CẢNH BÁO KHI ĐANG LÀM BÀI VÀ CHƯA NỘP BÀI
     document.addEventListener('fullscreenchange', () => {
-      if (!document.fullscreenElement && document.getElementById('start-exam-modal').style.display === 'none') {
+      const isStartModalHidden = document.getElementById('start-exam-modal').style.display === 'none';
+      if (!document.fullscreenElement && isStartModalHidden && !isExamSubmitted) {
         alert("⚠️ Cảnh báo: Bạn vừa thoát chế độ Toàn màn hình! Vui lòng tập trung làm bài.");
       }
     });
