@@ -8,6 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-shim/0.35.6/es6-shim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Nhúng Thư viện html2canvas để xuất file ảnh PNG -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -298,6 +300,29 @@
       background: #0052cc;
     }
 
+    /* NÚT BẢNG KẾT QUẢ */
+    .btn-open-scoreboard {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: white;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 9px 0;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+      transition: all 0.2s;
+    }
+    .btn-open-scoreboard:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+    }
+
+    /* ITEM CÂU HỎI & CỜ ĐÁNH DẤU */
     .answer-row {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -445,6 +470,7 @@
       line-height: 1.4;
     }
 
+    /* MODAL POPUP CHUNG */
     .custom-modal-overlay {
       position: fixed;
       top: 0;
@@ -508,6 +534,185 @@
     .modal-btn-secondary:hover {
       background: #e2e8f0;
     }
+
+    /* MODAL BẢNG KẾT QUẢ CHI TIẾT (CERTIFICATE / SCOREBOARD CARD) */
+    .scoreboard-modal-card {
+      background: #ffffff;
+      width: 95%;
+      max-width: 580px;
+      max-height: 90vh;
+      border-radius: 20px;
+      overflow-y: auto;
+      padding: 24px;
+      position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      box-sizing: border-box;
+    }
+    
+    #printable-scoreboard-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid #e2e8f0;
+      box-sizing: border-box;
+    }
+
+    .sb-header {
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+      text-align: left;
+    }
+    .sb-brand {
+      font-size: 13px;
+      font-weight: 800;
+      color: #0284c7;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .sb-info-row {
+      font-size: 14px;
+      color: #334155;
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+    .sb-info-row strong {
+      color: #0f172a;
+    }
+
+    /* HIỆU ỨNG ĐIỂM SỐ DỰA THEO THANG ĐIỂM */
+    .sb-score-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0;
+    }
+    
+    /* 1. Dưới 8.0: Flat UI */
+    .score-card-flat {
+      padding: 16px 36px;
+      background: #f8fafc;
+      border: 2px solid #94a3b8;
+      border-radius: 16px;
+      font-size: 3rem;
+      font-weight: 800;
+      color: #334155;
+      text-align: center;
+      line-height: 1;
+    }
+
+    /* 2. Từ 8.0 - 8.9: Glow nhẹ */
+    .score-card-glow {
+      padding: 16px 36px;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border: 2px solid #0284c7;
+      border-radius: 16px;
+      font-size: 3.2rem;
+      font-weight: 800;
+      color: #0284c7;
+      text-align: center;
+      line-height: 1;
+      box-shadow: 0 0 25px rgba(2, 132, 199, 0.4);
+    }
+
+    /* 3. Từ 9.0 - 10.0: Shimmer + Radial Glow lấp lánh */
+    .score-card-shimmer {
+      padding: 18px 40px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0369a1 100%);
+      border: 2px solid #f59e0b;
+      border-radius: 20px;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: #fbbf24;
+      text-align: center;
+      line-height: 1;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 35px rgba(245, 158, 11, 0.6), inset 0 0 15px rgba(251, 191, 36, 0.3);
+      text-shadow: 0 2px 10px rgba(245, 158, 11, 0.5);
+    }
+    .score-card-shimmer::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        60deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.25) 50%,
+        transparent 70%
+      );
+      transform: rotate(30deg);
+      animation: shimmerGlow 2.5s infinite;
+    }
+    @keyframes shimmerGlow {
+      0% { transform: translate(-100%, -100%) rotate(30deg); }
+      100% { transform: translate(100%, 100%) rotate(30deg); }
+    }
+
+    /* BẢNG THỐNG KÊ ĐÁP ÁN */
+    .sb-table-wrapper {
+      margin-top: 16px;
+      overflow-x: auto;
+    }
+    .sb-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: center;
+    }
+    .sb-table th {
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 700;
+      padding: 8px 10px;
+      border: 1px solid #e2e8f0;
+    }
+    .sb-table td {
+      padding: 8px 10px;
+      border: 1px solid #e2e8f0;
+      font-weight: 600;
+    }
+    
+    /* Mã màu hàng trong bảng */
+    .sb-row-correct { background-color: #ecfdf5 !important; color: #047857 !important; }
+    .sb-row-incorrect { background-color: #fff1f2 !important; color: #b91c1c !important; }
+    .sb-row-skipped { background-color: #f8fafc !important; color: #64748b !important; }
+
+    /* NÚT HÀNH ĐỘNG MODAL BẢNG KẾT QUẢ */
+    .sb-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .btn-download-img {
+      flex: 1;
+      background: #10b981;
+      color: white;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-download-img:hover { background: #059669; }
+    
+    .btn-close-sb {
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 10px 18px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      cursor: pointer;
+    }
+    .btn-close-sb:hover { background: #e2e8f0; }
 
     .mobile-tabs {
       display: none;
@@ -613,6 +818,53 @@
     </div>
   </div>
 
+  <!-- MODAL BẢNG KẾT QUẢ CHI TIẾT (XUẤT ẢNH PNG) -->
+  <div class="custom-modal-overlay" id="scoreboard-modal" style="display: none;">
+    <div class="scoreboard-modal-card">
+      
+      <!-- KHUNG THIẾT KẾ CARD ĐỂ XUẤT ẢNH -->
+      <div id="printable-scoreboard-card">
+        <div class="sb-header">
+          <div class="sb-brand">🎓 TOÁN ANH VIỆT - KẾT QUẢ BÀI THI</div>
+          <div class="sb-info-row">Họ và tên: <strong id="sb-student-name">--</strong></div>
+          <div class="sb-info-row">Bài thi: <strong id="sb-exam-title">--</strong></div>
+          <div class="sb-info-row">Ngày hoàn thành: <strong id="sb-completed-date">--</strong></div>
+        </div>
+
+        <!-- KHỐI ĐIỂM SỐ VỚI HIỆU ỨNG THỊ GIÁC THEO MỐC ĐIỂM -->
+        <div class="sb-score-container">
+          <div id="sb-score-box" class="score-card-flat">
+            0.0
+          </div>
+        </div>
+
+        <!-- BẢNG THỐNG KÊ ĐÁP ÁN -->
+        <div class="sb-table-wrapper">
+          <table class="sb-table">
+            <thead>
+              <tr>
+                <th>Câu</th>
+                <th>Đã chọn</th>
+                <th>Đáp án đúng</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody id="sb-table-body">
+              <!-- Dữ liệu bảng chèn tự động -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- NÚT BẤM THAO TÁC MODAL -->
+      <div class="sb-actions">
+        <button class="btn-download-img" onclick="downloadScoreboardImage()">📸 Tải ảnh kết quả</button>
+        <button class="btn-close-sb" onclick="closeScoreboardModal()">Đóng</button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- HEADER PHÒNG THI -->
   <header>
     <nav class="nav-container">
@@ -677,6 +929,7 @@
         <div class="tutor-summary-box" id="tutor-summary-box">
           <b>💬 Danh sách cần hỗ trợ:</b> <span id="tutor-help-list">Chưa có câu nào.</span>
           <a href="#" id="zalo-send-btn" target="_blank" class="btn-send-zalo">💬 Gửi danh sách câu cần chữa qua Zalo cho Gia sư</a>
+          <button onclick="openScoreboardModal()" class="btn-open-scoreboard">📊 Xem Bảng Kết Quả Chi Tiết</button>
         </div>
       </div>
 
@@ -703,6 +956,7 @@
     let tutorHelpQuestions = {};
     let isExamSubmitted = false;
     let studentNameString = "Học viên";
+    let finalCalculatedScore = 0;
 
     async function loadStudentInfo() {
       const studentLabel = document.getElementById('header-student-name');
@@ -866,13 +1120,11 @@
       });
     }
 
-    // Bật/tắt hiển thị menu chọn lý do
     function toggleFlag(qNum) {
       const box = document.getElementById(`flag-box-${qNum}`);
       box.classList.toggle('show');
     }
 
-    // Xử lý logic bật viền vàng và cờ sáng
     function toggleFlagReason(qNum, reasonType, isChecked) {
       const row = document.getElementById(`q-row-${qNum}`);
       const btn = document.getElementById(`flag-btn-${qNum}`);
@@ -913,7 +1165,7 @@
       closeSubmitModal();
       clearInterval(timerInterval);
 
-      // XÓA ĐỒNG HỒ ĐẾM NGƯỢC THỜI GIAN THEO YÊU CẦU
+      // Xóa đồng hồ thời gian
       const timerContainer = document.getElementById('timer-badge-container');
       if (timerContainer) {
         timerContainer.style.display = 'none';
@@ -965,6 +1217,7 @@
         keyInfo.style.display = 'block';
       });
 
+      finalCalculatedScore = earnedScore;
       const timeSpent = totalDuration - timeRemaining;
       const spentMins = Math.floor(timeSpent / 60);
       const spentSecs = timeSpent % 60;
@@ -976,7 +1229,7 @@
       document.getElementById('stat-correct').innerText = `${correctCount}/${totalQuestions}`;
       document.getElementById('stat-time').innerText = `${spentMins < 10 ? '0' : ''}${spentMins}:${spentSecs < 10 ? '0' : ''}${spentSecs}`;
 
-      // TỔNG HỢP DANH SÁCH CÂU CẦN GIA SƯ CHỮA
+      // Danh sách cần hỗ trợ
       const needHelpList = Object.keys(tutorHelpQuestions).map(q => `Câu ${q}`);
       const helpTextLabel = document.getElementById('tutor-help-list');
       const zaloBtn = document.getElementById('zalo-send-btn');
@@ -987,7 +1240,7 @@
         helpTextLabel.innerText = "Không có câu nào được tích chọn.";
       }
 
-      // TẠO LINK CHAT ZALO TRỰC TIẾP VỚI GIA SƯ
+      // Link Chat Zalo
       const zaloMessage = encodeURIComponent(
         `Chào Thầy Việt, em là ${studentNameString}.\nEm vừa hoàn thành đề: "${quizData.title}" (${scoreFormatted} điểm).\nEm cần Thầy hỗ trợ chữa kỹ các câu: ${needHelpList.length > 0 ? needHelpList.join(', ') : 'Các câu làm sai'}. Cảm ơn Thầy!`
       );
@@ -1004,6 +1257,101 @@
       }, 100);
 
       document.getElementById('pane-sheet-container').scrollTop = 0;
+    }
+
+    /* MỞ BẢNG KẾT QUẢ CHI TIẾT MODAL */
+    function openScoreboardModal() {
+      // 1. Điền thông tin cá nhân & Đề thi
+      document.getElementById('sb-student-name').innerText = studentNameString;
+      document.getElementById('sb-exam-title').innerText = quizData.title;
+
+      // 2. Ngày hoàn thành
+      const today = new Date();
+      const dd = String(today.getDate()).padStart(2, '0');
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const yyyy = today.getFullYear();
+      document.getElementById('sb-completed-date').innerText = `${dd}/${mm}/${yyyy}`;
+
+      // 3. Hiệu ứng thị giác điểm số
+      const scoreBox = document.getElementById('sb-score-box');
+      const scoreVal = parseFloat(finalCalculatedScore.toFixed(1));
+      scoreBox.innerText = scoreVal.toFixed(1);
+
+      if (scoreVal < 8.0) {
+        scoreBox.className = 'score-card-flat';
+      } else if (scoreVal >= 8.0 && scoreVal < 9.0) {
+        scoreBox.className = 'score-card-glow';
+      } else {
+        scoreBox.className = 'score-card-shimmer';
+      }
+
+      // 4. Sinh dữ liệu Bảng Thống Kê Đáp Án
+      const tbody = document.getElementById('sb-table-body');
+      tbody.innerHTML = '';
+
+      quizData.answer_keys.forEach(item => {
+        const studentAns = userAnswers[item.q_number] || '';
+        const sysKey = item.correct_answer;
+        const isFlagged = flaggedQuestions[item.q_number];
+        const flagIcon = isFlagged ? ' 🚩' : '';
+
+        let rowClass = 'sb-row-skipped';
+        let statusText = 'Bỏ qua';
+
+        if (studentAns) {
+          if (studentAns.toLowerCase() === sysKey.toLowerCase()) {
+            rowClass = 'sb-row-correct';
+            statusText = 'Chính xác';
+          } else {
+            rowClass = 'sb-row-incorrect';
+            statusText = 'Sai';
+          }
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = rowClass;
+        tr.innerHTML = `
+          <td><strong>Câu ${item.q_number}</strong>${flagIcon}</td>
+          <td>${studentAns ? studentAns.toUpperCase() : '---'}</td>
+          <td>${sysKey.toUpperCase()}</td>
+          <td>${statusText}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('scoreboard-modal').style.display = 'flex';
+    }
+
+    function closeScoreboardModal() {
+      document.getElementById('scoreboard-modal').style.display = 'none';
+    }
+
+    /* XUẤT VÀ TẢI ẢNH PNG BẰNG HTML2CANVAS */
+    function downloadScoreboardImage() {
+      const card = document.getElementById('printable-scoreboard-card');
+      const btn = document.querySelector('.btn-download-img');
+      btn.innerText = "⏳ Đang tạo file ảnh...";
+      btn.disabled = true;
+
+      html2canvas(card, {
+        scale: 2, // Tăng độ phân giải ảnh sắc nét
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      }).then(canvas => {
+        const image = canvas.toDataURL("image/png");
+        const link = document.createElement('a');
+        const cleanName = studentNameString.replace(/\s+/g, '_');
+        link.download = `Ket_Qua_${cleanName}_${Date.now()}.png`;
+        link.href = image;
+        link.click();
+
+        btn.innerText = "📸 Tải ảnh kết quả";
+        btn.disabled = false;
+      }).catch(err => {
+        alert("Lỗi khi tải ảnh: " + err.message);
+        btn.innerText = "📸 Tải ảnh kết quả";
+        btn.disabled = false;
+      });
     }
 
     function switchTab(tabName) {
