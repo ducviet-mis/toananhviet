@@ -206,7 +206,7 @@
       gap: 12px;
     }
     
-    /* VÒNG TRÒN DONUT CHART (XANH LÁ LÀM ĐÚNG / ĐỎ LÀM SAI) */
+    /* VÒNG TRÒN DONUT CHART */
     .donut-chart-wrapper {
       position: relative;
       width: 72px;
@@ -323,7 +323,7 @@
       box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
     }
 
-    /* ITEM CÂU HỎI & CỜ ĐÁNH DẤU (ĐÃ SỬA CỜ ĐỎ ĐẬM) */
+    /* ITEM CÂU HỎI & CỜ ĐÁNH DẤU */
     .answer-row {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -334,10 +334,15 @@
       transition: all 0.2s ease;
       position: relative;
     }
-    .answer-row.flagged-row {
+    .answer-row.flagged-row-review {
+      border: 1.5px solid #f59e0b !important;
+      background-color: #fffbeb !important;
+    }
+    .answer-row.flagged-row-tutor {
       border: 1.5px solid #ef4444 !important;
       background-color: #fef2f2 !important;
     }
+
     .flag-btn {
       background: none;
       border: none;
@@ -352,11 +357,39 @@
       opacity: 0.8;
       transform: scale(1.1);
     }
-    .flag-btn.active {
+    .flag-btn.active-review {
+      opacity: 1 !important;
+      filter: grayscale(0%) !important;
+      color: #f59e0b !important;
+      transform: scale(1.2);
+    }
+    .flag-btn.active-tutor {
       opacity: 1 !important;
       filter: grayscale(0%) !important;
       color: #dc2626 !important; /* ĐỎ ĐẬM */
       transform: scale(1.2);
+    }
+
+    /* MENU LỰA CHỌN LÝ DO ĐÁNH DẤU CỜ */
+    .flag-options-box {
+      display: none;
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px dashed #fcd34d;
+      gap: 12px;
+      font-size: 0.75rem;
+      color: #b45309;
+    }
+    .flag-options-box.show {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .flag-checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      user-select: none;
     }
 
     .answer-row-content {
@@ -522,7 +555,7 @@
       background: #e2e8f0;
     }
 
-    /* MODAL BẢNG KẾT QUẢ CHI TIẾT (SCOREBOARD CARD) */
+    /* MODAL BẢNG KẾT QUẢ CHI TIẾT */
     .scoreboard-modal-card {
       background: #ffffff;
       width: 95%;
@@ -960,7 +993,8 @@
     let totalDuration = 0;
     let timerInterval = null;
     let userAnswers = {};
-    let flaggedQuestions = {};
+    let flaggedQuestions = {}; // Lưu trạng thái cờ
+    let tutorHelpQuestions = {}; // Lưu riêng câu cần gia sư chữa
     let isExamSubmitted = false;
     let studentNameString = "Học viên";
     let finalCalculatedScore = 0;
@@ -1101,10 +1135,22 @@
         row.innerHTML = `
           <div class="answer-row-content">
             <div class="q-num-label">
-              <button class="flag-btn" id="flag-btn-${item.q_number}" onclick="toggleFlag(${item.q_number})" title="Đánh dấu câu hỏi">🚩</button>
+              <button class="flag-btn" id="flag-btn-${item.q_number}" onclick="toggleFlagBox(${item.q_number})" title="Đánh dấu câu hỏi">🚩</button>
               Câu ${item.q_number}:
             </div>
             ${actionHtml}
+          </div>
+
+          <!-- MENU LỰA CHỌN LÝ DO ĐÁNH DẤU CỜ KHI LÀM BÀI -->
+          <div class="flag-options-box" id="flag-box-${item.q_number}">
+            <label class="flag-checkbox-label">
+              <input type="checkbox" id="chk-review-${item.q_number}" onchange="toggleFlagReason(${item.q_number})">
+              🚩 Xem lại sau
+            </label>
+            <label class="flag-checkbox-label">
+              <input type="checkbox" id="chk-tutor-${item.q_number}" onchange="toggleFlagReason(${item.q_number})">
+              💬 Cần gia sư chữa kỹ câu này
+            </label>
           </div>
 
           <div class="result-key-info" id="key-info-${item.q_number}">
@@ -1116,21 +1162,45 @@
       });
     }
 
-    /* CLICK 1 PHÁT LÀ BẬT/TẮT CỜ ĐỎ ĐẬM LUÔN */
-    function toggleFlag(qNum) {
-      if (isExamSubmitted) return; // Nếu đã nộp bài thì không sửa cờ nữa
+    /* BẬT/TẮT KHUNG MENU CHỌN LÝ DO CỜ */
+    function toggleFlagBox(qNum) {
+      if (isExamSubmitted) return;
+      const box = document.getElementById(`flag-box-${qNum}`);
+      box.classList.toggle('show');
+    }
 
+    /* BẬT/TẮT VÀ ĐỔI MÀU CỜ DỰA TRÊN LÝ DO MÀ HỌC SINH TÍCH CHỌN */
+    function toggleFlagReason(qNum) {
       const row = document.getElementById(`q-row-${qNum}`);
       const btn = document.getElementById(`flag-btn-${qNum}`);
       
-      if (flaggedQuestions[qNum]) {
-        delete flaggedQuestions[qNum];
-        row.classList.remove('flagged-row');
-        btn.classList.remove('active');
+      const reviewChecked = document.getElementById(`chk-review-${qNum}`)?.checked;
+      const tutorChecked = document.getElementById(`chk-tutor-${qNum}`)?.checked;
+
+      // Cập nhật mảng câu cần gia sư chữa
+      if (tutorChecked) {
+        tutorHelpQuestions[qNum] = true;
       } else {
+        delete tutorHelpQuestions[qNum];
+      }
+
+      // Xóa tất cả style cờ cũ
+      row.classList.remove('flagged-row-review', 'flagged-row-tutor');
+      btn.classList.remove('active-review', 'active-tutor');
+
+      if (tutorChecked) {
+        // Tích ô Gia sư -> Cờ ĐỎ ĐẬM
         flaggedQuestions[qNum] = true;
-        row.classList.add('flagged-row');
-        btn.classList.add('active'); // Đỏ đậm ngay lập tức
+        row.classList.add('flagged-row-tutor');
+        btn.classList.add('active-tutor');
+      } else if (reviewChecked) {
+        // Chỉ tích Xem lại -> Cờ VÀNG/CAM
+        flaggedQuestions[qNum] = true;
+        row.classList.add('flagged-row-review');
+        btn.classList.add('active-review');
+      } else {
+        // Bỏ tích cả 2
+        delete flaggedQuestions[qNum];
       }
     }
 
@@ -1157,6 +1227,8 @@
         timerContainer.style.display = 'none';
       }
 
+      // Ẩn tất cả các khung chọn lý do cờ khi nộp bài
+      document.querySelectorAll('.flag-options-box').forEach(el => el.style.display = 'none');
       document.querySelectorAll('.answersheet-pane input').forEach(el => el.disabled = true);
       document.querySelectorAll('.flag-btn').forEach(el => el.disabled = true);
 
@@ -1201,6 +1273,12 @@
           row.classList.add('incorrect-row');
         }
 
+        // Đảm bảo những câu có cờ sẽ giữ nguyên trạng thái Đỏ Đậm khi nộp bài
+        const btn = document.getElementById(`flag-btn-${item.q_number}`);
+        if (flaggedQuestions[item.q_number]) {
+          btn.className = 'flag-btn active-tutor';
+        }
+
         keyInfo.style.display = 'block';
       });
 
@@ -1210,40 +1288,36 @@
       const spentSecs = timeSpent % 60;
 
       const scoreFormatted = earnedScore.toFixed(1);
-      // Tỷ lệ % số câu ĐÚNG để vẽ Donut Chart
       const percentage = Math.round((correctCount / totalQuestions) * 100);
 
       document.getElementById('result-score').innerText = scoreFormatted;
       document.getElementById('stat-correct').innerText = `${correctCount}/${totalQuestions}`;
       document.getElementById('stat-time').innerText = `${spentMins < 10 ? '0' : ''}${spentMins}:${spentSecs < 10 ? '0' : ''}${spentSecs}`;
 
-      // Tự động tổng hợp danh sách câu có đánh CỜ 🚩
-      const flaggedList = Object.keys(flaggedQuestions).map(q => `Câu ${q}`);
+      // Danh sách các câu được chọn "Cần gia sư chữa kỹ"
+      const needHelpList = Object.keys(tutorHelpQuestions).map(q => `Câu ${q}`);
       const helpTextLabel = document.getElementById('tutor-help-list');
       const zaloBtn = document.getElementById('zalo-send-btn');
 
-      if (flaggedList.length > 0) {
-        helpTextLabel.innerText = flaggedList.join(', ');
+      if (needHelpList.length > 0) {
+        helpTextLabel.innerText = needHelpList.join(', ');
       } else {
         helpTextLabel.innerText = "Không có câu nào được tích chọn.";
       }
 
       // Link Chat Zalo
       const zaloMessage = encodeURIComponent(
-        `Chào Thầy Việt, em là ${studentNameString}.\nEm vừa hoàn thành đề: "${quizData.title}" (${scoreFormatted} điểm).\nEm cần Thầy hỗ trợ chữa kỹ các câu: ${flaggedList.length > 0 ? flaggedList.join(', ') : 'Các câu làm sai'}. Cảm ơn Thầy!`
+        `Chào Thầy Việt, em là ${studentNameString}.\nEm vừa hoàn thành đề: "${quizData.title}" (${scoreFormatted} điểm).\nEm cần Thầy hỗ trợ chữa kỹ các câu: ${needHelpList.length > 0 ? needHelpList.join(', ') : 'Các câu làm sai'}. Cảm ơn Thầy!`
       );
       zaloBtn.href = `https://zalo.me/0965193026?text=${zaloMessage}`;
 
       const resultBox = document.getElementById('result-box');
       resultBox.style.display = 'block';
 
-      // ==========================================
-      // CHẠY DONUT CHART (XANH LÁ LÀM ĐÚNG / ĐỎ SAI)
-      // ==========================================
+      // DONUT CHART
       setTimeout(() => {
         const donutRing = document.getElementById('donut-ring-path');
         if (donutRing) {
-          // Vòng chạy XANH LÁ biểu thị tỷ lệ % CÂU ĐÚNG
           donutRing.style.strokeDasharray = `${percentage}, 100`;
         }
       }, 100);
