@@ -490,7 +490,6 @@
       btn.innerText = 'Đang kiểm tra đối chiếu...';
 
       try {
-        // Kiểm tra đối chiếu với dữ liệu user qua RPC hoặc kiểm tra trực tiếp
         const { data, error } = await _supabase.rpc('verify_user_for_reset', {
           p_email: email,
           p_fullname: fullName,
@@ -499,7 +498,6 @@
         });
 
         if (error) {
-          // Nếu chưa tạo RPC custom, xử lý qua API Auth
           showModalMsg('forgot-modal-msg', 'Thông tin xác thực không chính xác hoặc không khớp 100%!', 'error');
         } else if (data && data.success) {
           showModalMsg('forgot-modal-msg', 'Xác thực thành công!', 'success');
@@ -512,7 +510,6 @@
           showModalMsg('forgot-modal-msg', 'Thông tin điền chưa khớp với dữ liệu hệ thống!', 'error');
         }
       } catch (err) {
-        // Fallback kiểm tra giả lập nếu không kết nối được RPC
         showModalMsg('forgot-modal-msg', 'Thông tin không trùng khớp 100%!', 'error');
       } finally {
         btn.disabled = false;
@@ -520,7 +517,7 @@
       }
     }
 
-    // BƯỚC 2: NHẬP MẬT KHẨU MỚI LƯU
+    // BƯỚC 2: NHẬP MẬT KHẨU MỚI LƯU BẰNG RPC ADMIN RESET
     async function handleSetNewPassword(e) {
       e.preventDefault();
       const newPass = document.getElementById('fq-new-pass').value.trim();
@@ -541,9 +538,13 @@
       btn.innerText = 'Đang đặt lại mật khẩu...';
 
       try {
-        const { error } = await _supabase.auth.updateUser({ password: newPass });
-        if (error) {
-          showModalMsg('reset-modal-msg', 'Lỗi: ' + error.message, 'error');
+        const { data, error } = await _supabase.rpc('admin_reset_password', {
+          p_email: verifiedUserAccount,
+          p_new_password: newPass
+        });
+
+        if (error || !data || !data.success) {
+          showModalMsg('reset-modal-msg', 'Lỗi: ' + (error ? error.message : 'Đặt lại mật khẩu thất bại!'), 'error');
         } else {
           showModalMsg('reset-modal-msg', 'Đặt lại mật khẩu thành công! Vui lòng đăng nhập lại.', 'success');
           setTimeout(() => {
@@ -551,7 +552,7 @@
           }, 1500);
         }
       } catch (err) {
-        showModalMsg('reset-modal-msg', 'Có lỗi xảy ra, vui lòng thử lại!', 'error');
+        showModalMsg('reset-modal-msg', 'Có lỗi hệ thống xảy ra, vui lòng thử lại!', 'error');
       } finally {
         btn.disabled = false;
         btn.innerText = 'Lưu mật khẩu mới';
