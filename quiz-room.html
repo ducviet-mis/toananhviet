@@ -27,7 +27,6 @@
       flex-direction: column;
     }
 
-    /* HEADER FULL WIDTH VỚI CĂN GIỮA TÊN THÍ SINH */
     header {
       flex-shrink: 0;
       width: 100%;
@@ -40,24 +39,15 @@
     .nav-container {
       padding: 8px 24px;
       display: grid;
-      grid-template-columns: 1fr auto 1fr; /* Chia 3 phần chuẩn center */
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
       width: 100%;
       max-width: 100%;
       margin: 0 auto;
     }
-    .nav-left {
-      display: flex;
-      justify-content: flex-start;
-    }
-    .nav-center {
-      display: flex;
-      justify-content: center;
-    }
-    .nav-right {
-      display: flex;
-      justify-content: flex-end;
-    }
+    .nav-left { display: flex; justify-content: flex-start; }
+    .nav-center { display: flex; justify-content: center; }
+    .nav-right { display: flex; justify-content: flex-end; }
 
     .back-btn {
       text-decoration: none;
@@ -78,7 +68,6 @@
       transform: translateX(-2px);
     }
 
-    /* BADGE THÍ SINH Ở GIỮA HEADER */
     .student-badge-center {
       font-weight: 700;
       color: #0369a1;
@@ -106,7 +95,6 @@
       white-space: nowrap;
     }
 
-    /* BỐ CỤC PHÒNG THI DESKTOP */
     .exam-wrapper {
       display: flex;
       flex: 1;
@@ -197,7 +185,6 @@
       box-shadow: 0 5px 14px rgba(249, 115, 22, 0.4) !important;
     }
 
-    /* CARD KẾT QUẢ */
     #result-box {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -284,7 +271,6 @@
       font-weight: 500;
     }
 
-    /* ITEM CÂU HỎI */
     .answer-row {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -392,7 +378,6 @@
       line-height: 1.4;
     }
 
-    /* POPUP MODAL CHUNG */
     .custom-modal-overlay {
       position: fixed;
       top: 0;
@@ -457,7 +442,6 @@
       background: #e2e8f0;
     }
 
-    /* MOBILE TỐI ƯU */
     .mobile-tabs {
       display: none;
       background: #ffffff;
@@ -562,7 +546,7 @@
     </div>
   </div>
 
-  <!-- HEADER CÓ TÊN THÍ SINH CĂN GIỮA -->
+  <!-- HEADER PHÒNG THI -->
   <header>
     <nav class="nav-container">
       <div class="nav-left">
@@ -643,7 +627,6 @@
     let userAnswers = {};
     let isExamSubmitted = false;
 
-    // TẢI VÀ HIỂN THỊ TÊN THÍ SINH
     async function loadStudentInfo() {
       const studentLabel = document.getElementById('header-student-name');
       const cached = localStorage.getItem('tav_user_session');
