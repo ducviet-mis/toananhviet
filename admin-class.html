@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Lớp Học - Gia Sư Toán Anh Việt</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { background-color: #f8fafc; font-family: 'Inter', sans-serif; color: #0f172a; margin: 0; padding: 0; }
+    .admin-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; min-height: 80vh; }
+    
+    .admin-header-card {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: white; border-radius: 18px; padding: 24px 30px;
+      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.15); margin-bottom: 25px;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
+    }
+    .admin-title { font-size: 22px; font-weight: 800; margin: 0; }
+    .select-class-dropdown {
+      background: #ffffff; color: #0f172a; border: none; padding: 10px 16px;
+      border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; outline: none;
+    }
+
+    /* TABS */
+    .admin-tabs { display: flex; gap: 10px; border-bottom: 2px solid #e2e8f0; margin-bottom: 25px; }
+    .tab-btn {
+      padding: 12px 22px; font-weight: 700; font-size: 14px; color: #64748b;
+      background: none; border: none; border-bottom: 3px solid transparent;
+      cursor: pointer; transition: all 0.2s; margin-bottom: -2px;
+    }
+    .tab-btn.active { color: #0284c7; border-color: #0284c7; }
+
+    /* CARD VÀ BẢNG */
+    .panel-card {
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px;
+      padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 25px;
+    }
+    .card-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .card-title { font-size: 17px; font-weight: 800; color: #1e293b; margin: 0; }
+
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .admin-table th { background: #f8fafc; color: #475569; font-weight: 700; padding: 12px 14px; border-bottom: 2px solid #e2e8f0; text-align: left; }
+    .admin-table td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 500; }
+    
+    /* BADGES & BUTTONS */
+    .status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+    .badge-done { background: #dcfce7; color: #15803d; }
+    .badge-pending { background: #fef2f2; color: #b91c1c; }
+    
+    .btn-action {
+      background: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; padding: 6px 12px;
+      border-radius: 8px; font-weight: 700; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-action:hover { background: #0284c7; color: #ffffff; }
+
+    .btn-add-student {
+      background: #10b981; color: white; border: none; padding: 8px 16px;
+      border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;
+    }
+    .btn-add-student:hover { background: #059669; }
+
+    /* FORM THÊM HỌC SINH */
+    .add-student-form { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; background: #f8fafc; padding: 16px; border-radius: 12px; }
+    .add-student-form input { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; flex: 1; min-width: 150px; }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header"></header>
+
+  <main class="admin-container">
+    <!-- HEADER QUẢN LÝ -->
+    <div class="admin-header-card">
+      <div>
+        <h1 class="admin-title">👨‍🏫 Bảng Quản Lý Lớp Học - Giáo Viên</h1>
+        <div style="font-size: 13px; opacity: 0.9; margin-top: 4px;">Theo dõi danh sách học sinh và tiến độ làm bài thi theo lớp</div>
+      </div>
+      <div>
+        <select id="select-class" class="select-class-dropdown" onchange="onClassChange()">
+          <option value="">Đang tải lớp học...</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- TAB CHUYỂN ĐỔI -->
+    <div class="admin-tabs">
+      <button class="tab-btn active" id="tab-tracker-btn" onclick="switchTab('tracker')">📊 Theo Dõi Tiến Độ Bài Tập</button>
+      <button class="tab-btn" id="tab-students-btn" onclick="switchTab('students')">👥 Danh Sách Học Sinh</button>
+    </div>
+
+    <!-- TAB 1: THEO DÕI TIẾN ĐỘ LÀM BÀI -->
+    <div id="tab-tracker" class="panel-card">
+      <div class="card-title-row">
+        <h3 class="card-title">🎯 Tình Trạng Học Sinh Làm Bài</h3>
+        <div>
+          <label style="font-size: 13px; font-weight: 600; color: #475569; margin-right: 8px;">Chọn Đề Thi / Bài Tập:</label>
+          <select id="select-quiz" class="select-class-dropdown" style="border: 1px solid #cbd5e1;" onchange="loadSubmissionTracker()">
+            <option value="">-- Chọn bài thi --</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Họ và Tên</th>
+              <th>Email</th>
+              <th>Trạng Thái</th>
+              <th>Điểm Trắc Nghiệm</th>
+              <th>Thời Gian Làm</th>
+              <th>Bài Tự Luận</th>
+            </tr>
+          </thead>
+          <tbody id="tracker-table-body">
+            <tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Vui lòng chọn lớp và đề thi để xem tiến độ.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 2: QUẢN LÝ DANH SÁCH HỌC SINH -->
+    <div id="tab-students" class="panel-card hidden">
+      <div class="card-title-row">
+        <h3 class="card-title">👥 Danh Sách Học Sinh Trong Lớp</h3>
+        <button class="btn-add-student" onclick="toggleAddStudentForm()">+ Thêm Học Sinh Mới</button>
+      </div>
+
+      <!-- FORM THÊM HỌC SINH -->
+      <div id="form-add-student" class="add-student-form hidden">
+        <input type="text" id="new-student-name" placeholder="Họ và tên học sinh *">
+        <input type="email" id="new-student-email" placeholder="Email đăng nhập *">
+        <input type="text" id="new-student-phone" placeholder="Số điện thoại / Zalo">
+        <button class="btn-add-student" onclick="addNewStudent()">Lưu Học Sinh</button>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Họ và Tên</th>
+              <th>Email</th>
+              <th>Số Điện Thoại</th>
+              <th>Ngày Thêm</th>
+              <th>Thao Tác</th>
+            </tr>
+          </thead>
+          <tbody id="students-table-body">
+            <tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Đang tải danh sách học sinh...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let currentClassId = '';
+    let classStudentsList = [];
+    let classQuizzesList = [];
+
+    async function initAdmin() {
+      // 1. Tải danh sách lớp học vào dropdown
+      const { data: classes } = await _supabase.from('classes').select('*');
+      const classSelect = document.getElementById('select-class');
+
+      if (classes && classes.length > 0) {
+        classSelect.innerHTML = classes.map(c => `<option value="${c.class_id}">${c.title} (${c.class_id})</option>`).join('');
+        currentClassId = classes[0].class_id;
+        loadClassData();
+      } else {
+        classSelect.innerHTML = '<option value="">Chưa có lớp học nào</option>';
+      }
+    }
+
+    function onClassChange() {
+      currentClassId = document.getElementById('select-class').value;
+      loadClassData();
+    }
+
+    async function loadClassData() {
+      if (!currentClassId) return;
+      await loadClassStudents();
+      await loadClassQuizzes();
+    }
+
+    // --- QUẢN LÝ DANH SÁCH HỌC SINH ---
+    async function loadClassStudents() {
+      const tbody = document.getElementById('students-table-body');
+      const { data, error } = await _supabase
+        .from('class_students')
+        .select('*')
+        .eq('class_id', currentClassId)
+        .order('created_at', { ascending: false });
+
+      if (error || !data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">Chưa có học sinh nào trong lớp này.</td></tr>';
+        classStudentsList = [];
+        return;
+      }
+
+      classStudentsList = data;
+      tbody.innerHTML = data.map((st, idx) => `
+        <tr>
+          <td>${idx + 1}</td>
+          <td><strong>${st.student_name}</strong></td>
+          <td>${st.student_email}</td>
+          <td>${st.phone_number || '---'}</td>
+          <td>${new Date(st.created_at).toLocaleDateString('vi-VN')}</td>
+          <td>
+            <button class="btn-action" style="color: #ef4444; border-color: #fca5a5;" onclick="deleteStudent('${st.id}')">Xóa</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function toggleAddStudentForm() {
+      document.getElementById('form-add-student').classList.toggle('hidden');
+    }
+
+    async function addNewStudent() {
+      const name = document.getElementById('new-student-name').value.trim();
+      const email = document.getElementById('new-student-email').value.trim();
+      const phone = document.getElementById('new-student-phone').value.trim();
+
+      if (!name || !email) {
+        alert("Vui lòng nhập Họ tên và Email học sinh!");
+        return;
+      }
+
+      const { error } = await _supabase.from('class_students').insert([{
+        class_id: currentClassId,
+        student_name: name,
+        student_email: email,
+        phone_number: phone
+      }]);
+
+      if (error) {
+        alert("Lỗi thêm học sinh: " + error.message);
+      } else {
+        document.getElementById('new-student-name').value = '';
+        document.getElementById('new-student-email').value = '';
+        document.getElementById('new-student-phone').value = '';
+        toggleAddStudentForm();
+        loadClassStudents();
+      }
+    }
+
+    async function deleteStudent(id) {
+      if (confirm("Bạn có chắc chắn muốn xóa học sinh này khỏi lớp?")) {
+        await _supabase.from('class_students').delete().eq('id', id);
+        loadClassStudents();
+      }
+    }
+
+    // --- THEO DÕI TIẾN ĐỘ BÀI TẬP ---
+    async function loadClassQuizzes() {
+      const quizSelect = document.getElementById('select-quiz');
+      // Lấy danh sách bài tập từ class_contents có type = 'exercise'
+      const { data } = await _supabase
+        .from('class_contents')
+        .select('*')
+        .eq('class_id', currentClassId)
+        .eq('type', 'exercise');
+
+      if (data && data.length > 0) {
+        classQuizzesList = data;
+        quizSelect.innerHTML = data.map(q => {
+          // Lấy quiz_id từ content_url (ví dụ: quiz-room.html?id=8G01)
+          const quizId = q.content_url && q.content_url.includes('id=') ? q.content_url.split('id=')[1] : q.content_url;
+          return `<option value="${quizId}">${q.title}</option>`;
+        }).join('');
+        loadSubmissionTracker();
+      } else {
+        quizSelect.innerHTML = '<option value="">Chưa có bài thi nào trong lớp</option>';
+        document.getElementById('tracker-table-body').innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">Lớp chưa có bài thi nào được tạo.</td></tr>';
+      }
+    }
+
+    async function loadSubmissionTracker() {
+      const quizId = document.getElementById('select-quiz').value;
+      const tbody = document.getElementById('tracker-table-body');
+
+      if (!quizId) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">Vui lòng chọn bài thi.</td></tr>';
+        return;
+      }
+
+      // Lấy danh sách nộp bài từ quiz_submissions
+      const { data: submissions } = await _supabase
+        .from('quiz_submissions')
+        .select('*')
+        .eq('quiz_id', quizId);
+
+      if (classStudentsList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">Chưa có danh sách học sinh trong lớp để đối soát.</td></tr>';
+        return;
+      }
+
+      // So sánh danh sách học sinh lớp và bài làm đã nộp
+      tbody.innerHTML = classStudentsList.map(student => {
+        const sub = (submissions || []).find(s => s.user_email && s.user_email.toLowerCase() === student.student_email.toLowerCase());
+
+        if (sub) {
+          const mins = Math.floor((sub.time_spent || 0) / 60);
+          const secs = (sub.time_spent || 0) % 60;
+          
+          let essayHtml = 'Không có';
+          if (sub.essay_files && Array.isArray(sub.essay_files) && sub.essay_files.length > 0) {
+            essayHtml = sub.essay_files.map((url, i) => `<a href="${url}" target="_blank" class="btn-action">📎 Ảnh ${i+1}</a>`).join(' ');
+          }
+
+          return `
+            <tr>
+              <td><strong>${student.student_name}</strong></td>
+              <td>${student.student_email}</td>
+              <td><span class="status-badge badge-done">✅ Đã nộp</span></td>
+              <td><strong style="color: #0284c7; font-size: 15px;">${Number(sub.mcq_score || 0).toFixed(1)}đ</strong></td>
+              <td>${mins > 0 ? mins + 'p ' : ''}${secs}s</td>
+              <td>${essayHtml}</td>
+            </tr>
+          `;
+        } else {
+          return `
+            <tr>
+              <td><strong>${student.student_name}</strong></td>
+              <td>${student.student_email}</td>
+              <td><span class="status-badge badge-pending">❌ Chưa làm</span></td>
+              <td>---</td>
+              <td>---</td>
+              <td>---</td>
+            </tr>
+          `;
+        }
+      }).join('');
+    }
+
+    function switchTab(tabName) {
+      if (tabName === 'tracker') {
+        document.getElementById('tab-tracker').classList.remove('hidden');
+        document.getElementById('tab-students').classList.add('hidden');
+        document.getElementById('tab-tracker-btn').classList.add('active');
+        document.getElementById('tab-students-btn').classList.remove('active');
+      } else {
+        document.getElementById('tab-students').classList.remove('hidden');
+        document.getElementById('tab-tracker').classList.add('hidden');
+        document.getElementById('tab-students-btn').classList.add('active');
+        document.getElementById('tab-tracker-btn').classList.remove('active');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initAdmin);
+  </script>
+  <script src="header.js"></script>
+  <script src="footer.js"></script>
+</body>
+</html>
