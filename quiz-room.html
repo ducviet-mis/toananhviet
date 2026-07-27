@@ -1323,16 +1323,28 @@
       for (const rawFile of selectedEssayFiles) {
         try {
           const fileToUpload = await compressImageFile(rawFile);
+          
+          // Tạo tên file an toàn (loại bỏ ký tự đặc biệt)
           const fileExt = fileToUpload.name.split('.').pop();
-          const cleanFileName = `${quizId}_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+          const cleanFileName = `${quizId}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
 
           const { data, error } = await supabaseClient.storage
             .from('tuluan')
-            .upload(cleanFileName, fileToUpload);
+            .upload(cleanFileName, fileToUpload, {
+              cacheControl: '3600',
+              upsert: false
+            });
 
-          if (!error) {
-            const { data: { publicUrl } } = supabaseClient.storage.from('tuluan').getPublicUrl(cleanFileName);
-            uploadedUrls.push(publicUrl);
+          if (error) {
+            console.error("Lỗi Upload Supabase Storage:", error.message);
+            alert("Không thể tải lên file tự luận: " + error.message);
+            continue;
+          }
+
+          // Lấy URL công khai của file đã upload
+          const { data: publicUrlData } = supabaseClient.storage.from('tuluan').getPublicUrl(cleanFileName);
+          if (publicUrlData && publicUrlData.publicUrl) {
+            uploadedUrls.push(publicUrlData.publicUrl);
           }
         } catch (e) {
           console.error("Lỗi nén/upload file: ", e);
@@ -1475,7 +1487,7 @@
 
       // B. Lưu kết quả nộp bài vào bảng quiz_submissions trên Supabase
       try {
-        await supabaseClient.from('quiz_submissions').insert([{
+        const { error: dbError } = await supabaseClient.from('quiz_submissions').insert([{
           quiz_id: quizData.id,
           user_email: studentEmailString,
           user_name: studentNameString,
@@ -1484,6 +1496,13 @@
           mcq_score: earnedScore,
           status: 'pending'
         }]);
+
+        if (dbError) {
+          console.error("Lỗi lưu cơ sở dữ liệu:", dbError.message);
+          alert("⚠️ Không thể lưu bài làm vào Database: " + dbError.message);
+        } else {
+          alert("✅ Nộp bài thành công!");
+        }
       } catch (err) {
         console.error("Lỗi lưu kết quả bài thi:", err);
       }
