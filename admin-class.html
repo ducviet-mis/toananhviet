@@ -116,7 +116,7 @@
     <div class="admin-header-card">
       <div>
         <h1 class="admin-title">Dashboard Quản Lý Lớp Học - Giáo Viên</h1>
-        <div style="font-size: 13px; opacity: 0.9; margin-top: 4px;">Theo dõi danh sách học sinh, đăng tài liệu và quản lý bài thi</div>
+        <div style="font-size: 13px; opacity: 0.9; margin-top: 4px;">Theo dõi danh sách học sinh, tạo đề thi và quản lý tài liệu</div>
       </div>
       <div>
         <select id="select-class" class="select-class-dropdown" onchange="onClassChange()">
@@ -126,9 +126,10 @@
     </div>
 
     <div class="admin-tabs">
-      <button class="tab-btn active" id="tab-tracker-btn" onclick="switchTab('tracker')">📊 Theo Dõi Tiến Độ Bài Tập</button>
-      <button class="tab-btn" id="tab-manage-contents-btn" onclick="switchTab('manage-contents')">📂 Bài Học & Tài Liệu Đã Đăng</button>
-      <button class="tab-btn" id="tab-upload-btn" onclick="switchTab('upload')">📤 Đăng Tài Liệu / Bài Tập Mới</button>
+      <button class="tab-btn active" id="tab-tracker-btn" onclick="switchTab('tracker')">📊 Tiến Độ Bài Tập</button>
+      <button class="tab-btn" id="tab-manage-contents-btn" onclick="switchTab('manage-contents')">📂 Kho Tài Liệu</button>
+      <button class="tab-btn" id="tab-create-quiz-btn" onclick="switchTab('create-quiz')">📝 Tạo Đề Thi Online Mới</button>
+      <button class="tab-btn" id="tab-upload-btn" onclick="switchTab('upload')">📤 Đăng Video/Tài Liệu Mới</button>
       <button class="tab-btn" id="tab-students-btn" onclick="switchTab('students')">👥 Danh Sách Học Sinh</button>
     </div>
 
@@ -163,7 +164,7 @@
       </div>
     </div>
 
-    <!-- TAB 2: DANG DANH SÁCH BÀI HỌC VÀ TÀI LIỆU HIỆN CÓ (CÓ NÚT XÓA) -->
+    <!-- TAB 2: DANH SÁCH BÀI HỌC VÀ TÀI LIỆU HIỆN CÓ -->
     <div id="tab-manage-contents" class="panel-card hidden">
       <div class="card-title-row">
         <h3 class="card-title">📂 Danh Sách Bài Học & Tài Liệu Trong Lớp</h3>
@@ -180,9 +181,80 @@
       </div>
     </div>
 
-    <!-- TAB 3: ĐĂNG TÀI LIỆU / BÀI HỌC VÀO LỚP -->
+    <!-- TAB 3: TẠO ĐỀ THI ONLINE MỚI -->
+    <div id="tab-create-quiz" class="panel-card hidden">
+      <h3 class="card-title" style="margin-bottom: 20px;">📝 Tạo Đề Thi Trắc Nghiệm Online Mới</h3>
+      <form id="create-quiz-form" onsubmit="handleCreateQuiz(event)">
+        
+        <div class="form-group">
+          <label>📌 Tên Đề Thi / Bài Tập</label>
+          <input type="text" id="quiz-title-input" class="form-control" placeholder="Ví dụ: Đề Khảo Sát Giữa Kỳ 1 - Toán 8" required>
+        </div>
+
+        <div style="display: flex; gap: 15px;">
+          <div class="form-group" style="flex: 1;">
+            <label>Khối lớp</label>
+            <select id="quiz-grade-select" class="form-control">
+              <option value="Lớp 6">Lớp 6</option>
+              <option value="Lớp 7">Lớp 7</option>
+              <option value="Lớp 8" selected>Lớp 8</option>
+              <option value="Lớp 9">Lớp 9</option>
+              <option value="Thi thử vào 10">Thi thử vào 10</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="flex: 1;">
+            <label>Học kỳ / Phân loại</label>
+            <select id="quiz-semester-select" class="form-control">
+              <option value="Giữa kì 1">Giữa kì 1</option>
+              <option value="Cuối kì 1">Cuối kì 1</option>
+              <option value="Giữa kì 2">Giữa kì 2</option>
+              <option value="Cuối kì 2">Cuối kì 2</option>
+              <option value="Luyện thi">Luyện thi</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="flex: 1;">
+            <label>Thời gian (Phút)</label>
+            <input type="number" id="quiz-duration-input" class="form-control" value="45" min="1" required>
+          </div>
+        </div>
+
+        <!-- PHẦN CHỌN PHẠM VI HIỂN THỊ ĐỀ THI -->
+        <div class="form-group">
+          <label>🔒 Phạm Vi Hiển Thị Đề Thi</label>
+          <select id="quiz-visibility-select" class="form-control" onchange="toggleFolderVisibilityGroup()">
+            <option value="class_only">🔒 Chỉ hiển thị trong Lớp học này (Nội bộ)</option>
+            <option value="public_only">🌐 Chỉ đăng lên trang Thi Online công khai (Public)</option>
+            <option value="both">⭐ Cả hai (Vừa trong Lớp vừa hiển thị Thi Online Public)</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="quiz-folder-group">
+          <label>📁 Tên Thư Mục Đăng Vào Lớp Học (Folder)</label>
+          <input type="text" id="quiz-folder-input" class="form-control" list="existing-folders" placeholder="Ví dụ: Bài 1: Đa thức">
+        </div>
+
+        <div class="form-group">
+          <label>📄 Chọn File Đề Thi (PDF/Word)</label>
+          <input type="file" id="quiz-pdf-file" class="form-control" accept=".pdf,.doc,.docx" required>
+        </div>
+
+        <div class="form-group">
+          <label>🔑 Chuỗi Đáp Án Đúng Trắc Nghiệm</label>
+          <textarea id="quiz-answers-input" class="form-control" rows="3" placeholder="Nhập chuỗi đáp án. Ví dụ: 1A, 2B, 3C, 4D, 5A..." required></textarea>
+          <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
+            💡 Hệ thống sẽ tự tách số câu và đáp án chữ cái A/B/C/D tương ứng thành chuẩn dữ liệu Phòng thi.
+          </small>
+        </div>
+
+        <button type="submit" id="btn-submit-quiz" class="btn-submit" style="background: #10b981;">🚀 Tạo Đề Thi</button>
+      </form>
+    </div>
+
+    <!-- TAB 4: ĐĂNG TÀI LIỆU / VIDEO BÌNH THƯỜNG -->
     <div id="tab-upload" class="panel-card hidden">
-      <h3 class="card-title" style="margin-bottom: 20px;">Đăng Nội Dung Cho Lớp Học</h3>
+      <h3 class="card-title" style="margin-bottom: 20px;">Đăng Tài Liệu / Video Cho Lớp Học</h3>
       <form id="upload-content-form" onsubmit="handleUploadContent(event)">
         
         <div class="form-group">
@@ -206,7 +278,7 @@
             <label>Loại nội dung</label>
             <select id="content-type" class="form-control" onchange="toggleUploadInput()">
               <option value="doc">Tài liệu (File PDF/Word)</option>
-              <option value="exercise">Bài tập phòng thi (Mã đề)</option>
+              <option value="exercise">Bài tập phòng thi (Mã đề có sẵn)</option>
               <option value="video">Bài giảng Video (Link YouTube)</option>
             </select>
           </div>
@@ -226,7 +298,7 @@
       </form>
     </div>
 
-    <!-- TAB 4: QUẢN LÝ DANH SÁCH HỌC SINH -->
+    <!-- TAB 5: QUẢN LÝ DANH SÁCH HỌC SINH -->
     <div id="tab-students" class="panel-card hidden">
       <div class="card-title-row">
         <h3 class="card-title">Danh Sách Học Sinh Trong Lớp</h3>
@@ -311,8 +383,8 @@
       if (!currentClassId) return;
       await loadClassStudents();
       await loadClassQuizzes();
-      await loadClassContentsForAdmin(); // Tải danh sách bài học để hiển thị & xóa
-      await loadExistingFolders(); // Load danh sách Folder đã tạo trước đó
+      await loadClassContentsForAdmin();
+      await loadExistingFolders();
       subscribeToStudentChanges();
     }
 
@@ -346,7 +418,6 @@
         return;
       }
 
-      // Nhóm theo Folder (Chủ đề trong description)
       const groups = {};
       filtered.forEach(item => {
         const folderName = item.description || 'Tài liệu chung';
@@ -416,14 +487,13 @@
       card.classList.toggle('open');
     }
 
-    // XỬ LÝ XÓA BÀI HỌC / TÀI LIỆU
     async function deleteClassContent(id, title) {
       if (confirm(`Bạn có chắc chắn muốn xóa bài/tài liệu: "${title}"?`)) {
         try {
           const { error } = await _supabase.from('class_contents').delete().eq('id', id);
           if (error) throw error;
 
-          alert("Đã xóa tài liệu thành công!");
+          alert("🎉 Đã xóa tài liệu thành công!");
           await loadClassContentsForAdmin();
           await loadExistingFolders();
           await loadClassQuizzes();
@@ -433,7 +503,145 @@
       }
     }
 
-    // Lấy danh sách các Folder đã tạo trong lớp để gợi ý trong datalist
+    function toggleFolderVisibilityGroup() {
+      const vis = document.getElementById('quiz-visibility-select').value;
+      const folderGroup = document.getElementById('quiz-folder-group');
+      if (vis === 'public_only') {
+        folderGroup.classList.add('hidden');
+      } else {
+        folderGroup.classList.remove('hidden');
+      }
+    }
+
+    // --- TẠO ĐỀ THI VỚI PHÂN QUYỀN HIỂN THỊ ---
+    async function handleCreateQuiz(e) {
+      e.preventDefault();
+      const title = document.getElementById('quiz-title-input').value.trim();
+      const grade = document.getElementById('quiz-grade-select').value;
+      const semester = document.getElementById('quiz-semester-select').value;
+      const duration = parseInt(document.getElementById('quiz-duration-input').value) || 45;
+      const visibility = document.getElementById('quiz-visibility-select').value;
+      const folderName = document.getElementById('quiz-folder-input').value.trim();
+      const fileInput = document.getElementById('quiz-pdf-file');
+      const answersRaw = document.getElementById('quiz-answers-input').value.trim();
+      const btn = document.getElementById('btn-submit-quiz');
+
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert("Vui lòng chọn file PDF đề thi!");
+        return;
+      }
+
+      if ((visibility === 'class_only' || visibility === 'both') && !folderName) {
+        alert("Vui lòng nhập Tên Thư Mục (Folder) để đăng vào Lớp học!");
+        return;
+      }
+
+      // Xử lý is_private cho bảng quizzes
+      const isPrivate = (visibility === 'class_only');
+
+      // 1. Parse đáp án
+      const pairs = answersRaw.match(/(\d+)\s*[\.:\-]?\s*([A-Da-d])/g);
+      let answerKeysArray = [];
+
+      if (pairs && pairs.length > 0) {
+        answerKeysArray = pairs.map(p => {
+          const m = p.match(/(\d+)\s*[\.:\-]?\s*([A-Da-d])/);
+          return {
+            q_number: parseInt(m[1]),
+            q_type: 'multiple_choice',
+            correct_answer: m[2].toUpperCase(),
+            explanation: ''
+          };
+        });
+      } else {
+        const letters = answersRaw.replace(/[^A-Da-d]/g, '');
+        if (letters.length > 0) {
+          answerKeysArray = letters.split('').map((char, idx) => ({
+            q_number: idx + 1,
+            q_type: 'multiple_choice',
+            correct_answer: char.toUpperCase(),
+            explanation: ''
+          }));
+        } else {
+          alert("Chuỗi đáp án không hợp lệ! Vui lòng nhập theo định dạng: 1A, 2B, 3C...");
+          return;
+        }
+      }
+
+      btn.disabled = true;
+      btn.innerText = '⏳ Đang upload file PDF & tạo đề thi...';
+
+      try {
+        // 2. Upload file đề thi vào Bucket `exam_files`
+        const file = fileInput.files[0];
+        const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+
+        const { error: storageErr } = await _supabase
+          .storage
+          .from('exam_files')
+          .upload(fileName, file);
+
+        if (storageErr) throw storageErr;
+
+        const { data: urlData } = _supabase
+          .storage
+          .from('exam_files')
+          .getPublicUrl(fileName);
+
+        const examFileUrl = urlData.publicUrl;
+
+        // 3. Thêm row mới vào bảng `quizzes`
+        const { data: createdQuiz, error: quizDbErr } = await _supabase
+          .from('quizzes')
+          .insert([
+            {
+              title: title,
+              grade: grade,
+              semester: semester,
+              duration: duration,
+              total_score: 10,
+              exam_file: examFileUrl,
+              answer_keys: answerKeysArray,
+              is_private: isPrivate
+            }
+          ])
+          .select('id')
+          .single();
+
+        if (quizDbErr) throw quizDbErr;
+
+        const newQuizId = createdQuiz.id;
+
+        // 4. Nếu có chọn đưa vào lớp học thì mới insert vào `class_contents`
+        if (visibility === 'class_only' || visibility === 'both') {
+          const { error: classContentErr } = await _supabase
+            .from('class_contents')
+            .insert([
+              {
+                class_id: currentClassId,
+                title: title,
+                type: 'exercise',
+                content_url: newQuizId,
+                description: folderName
+              }
+            ]);
+
+          if (classContentErr) throw classContentErr;
+        }
+
+        alert(`🎉 Đã tạo xong đề thi thành công!`);
+        document.getElementById('create-quiz-form').reset();
+        await loadClassData();
+
+      } catch (err) {
+        console.error(err);
+        alert("Lỗi khi tạo đề thi: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = '🚀 Tạo Đề Thi';
+      }
+    }
+
     async function loadExistingFolders() {
       const datalist = document.getElementById('existing-folders');
       const { data } = await _supabase
@@ -615,7 +823,6 @@
       }).join('');
     }
 
-    // --- XỬ LÝ UPLOAD DỮ LIỆU TỰ ĐỘNG ---
     function toggleUploadInput() {
       const type = document.getElementById('content-type').value;
       const fileGroup = document.getElementById('file-input-group');
@@ -707,8 +914,8 @@
         alert(`Đã thêm bài học vào thư mục "${folderName}" thành công!`);
         document.getElementById('upload-content-form').reset();
         toggleUploadInput();
-        await loadClassContentsForAdmin(); // Cập nhật lại giao diện Xem & Xóa
-        await loadExistingFolders(); // Cập nhật lại danh sách gợi ý Folder
+        await loadClassContentsForAdmin();
+        await loadExistingFolders();
         await loadClassQuizzes();
 
       } catch (err) {
@@ -723,11 +930,13 @@
     function switchTab(tabName) {
       document.getElementById('tab-tracker').classList.add('hidden');
       document.getElementById('tab-manage-contents').classList.add('hidden');
+      document.getElementById('tab-create-quiz').classList.add('hidden');
       document.getElementById('tab-upload').classList.add('hidden');
       document.getElementById('tab-students').classList.add('hidden');
       
       document.getElementById('tab-tracker-btn').classList.remove('active');
       document.getElementById('tab-manage-contents-btn').classList.remove('active');
+      document.getElementById('tab-create-quiz-btn').classList.remove('active');
       document.getElementById('tab-upload-btn').classList.remove('active');
       document.getElementById('tab-students-btn').classList.remove('active');
 
@@ -737,6 +946,9 @@
       } else if (tabName === 'manage-contents') {
         document.getElementById('tab-manage-contents').classList.remove('hidden');
         document.getElementById('tab-manage-contents-btn').classList.add('active');
+      } else if (tabName === 'create-quiz') {
+        document.getElementById('tab-create-quiz').classList.remove('hidden');
+        document.getElementById('tab-create-quiz-btn').classList.add('active');
       } else if (tabName === 'upload') {
         document.getElementById('tab-upload').classList.remove('hidden');
         document.getElementById('tab-upload-btn').classList.add('active');
