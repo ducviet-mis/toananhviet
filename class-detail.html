@@ -9,172 +9,72 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    .class-detail-container {
-      max-width: 1000px;
-      margin: 30px auto;
-      padding: 0 20px;
-      min-height: 70vh;
-    }
-
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #64748b;
-      font-weight: 600;
-      font-size: 14px;
-      text-decoration: none;
-      margin-bottom: 20px;
-      transition: color 0.2s;
-    }
+    .class-detail-container { max-width: 1000px; margin: 30px auto; padding: 0 20px; min-height: 70vh; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; color: #64748b; font-weight: 600; font-size: 14px; text-decoration: none; margin-bottom: 20px; }
     .back-link:hover { color: #0284c7; }
 
-    /* BANNER THÔNG TIN LỚP HỌC */
+    /* BANNER LỚP HỌC */
     .class-info-banner {
       background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-      border-radius: 18px;
-      padding: 28px 32px;
-      color: #ffffff;
-      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.15);
-      margin-bottom: 30px;
+      border-radius: 18px; padding: 28px 32px; color: #ffffff;
+      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.15); margin-bottom: 30px;
     }
-    .class-banner-title {
-      font-size: 24px;
-      font-weight: 800;
-      margin: 0 0 10px 0;
-      font-family: 'Inter', sans-serif;
-    }
-    .class-banner-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      font-size: 14px;
-      opacity: 0.95;
-    }
+    .class-banner-title { font-size: 24px; font-weight: 800; margin: 0 0 10px 0; }
+    .class-banner-meta { display: flex; flex-wrap: wrap; gap: 20px; font-size: 14px; opacity: 0.95; }
 
-    /* TAB DỌC/NGANG CHUYỂN ĐỔI */
-    .content-tabs {
-      display: flex;
-      gap: 12px;
-      border-bottom: 2px solid #e2e8f0;
-      margin-bottom: 25px;
+    /* FOLDER ACCORDION STYLES */
+    .folder-card {
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px;
+      margin-bottom: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     }
-    .tab-item-btn {
-      background: none;
-      border: none;
-      padding: 12px 20px;
-      font-size: 15px;
-      font-weight: 600;
-      color: #64748b;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      margin-bottom: -2px;
-      transition: all 0.2s;
-      font-family: 'Inter', sans-serif;
+    .folder-header {
+      padding: 18px 24px; background: #ffffff; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      user-select: none; transition: background 0.2s; border-bottom: 1px solid transparent;
     }
-    .tab-item-btn:hover { color: #0284c7; }
-    .tab-item-btn.active {
-      color: #0284c7;
-      border-color: #0284c7;
-      font-weight: 700;
-    }
+    .folder-header:hover { background: #f8fafc; }
+    .folder-card.open .folder-header { border-bottom-color: #f1f5f9; background: #f0f9ff; }
+    
+    .folder-title { font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 10px; }
+    .folder-toggle-icon { font-size: 14px; color: #0284c7; transition: transform 0.3s ease; font-weight: bold; }
+    .folder-card.open .folder-toggle-icon { transform: rotate(180deg); }
 
-    /* KHUNG CARD BÀI TẬP / BÀI GIẢNG CHUẨN DESIGN */
-    .resource-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-    }
-    .resource-card:hover {
-      border-color: #0284c7;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(2, 132, 199, 0.08);
-    }
+    .folder-body { display: none; padding: 12px 20px 20px 20px; background: #ffffff; }
+    .folder-card.open .folder-body { display: block; }
 
-    .resource-info h4 {
-      font-size: 16px;
-      font-weight: 700;
-      color: #1e293b;
-      margin: 0 0 6px 0;
-      font-family: 'Inter', sans-serif;
+    /* ITEM BÊN TRONG FOLDER */
+    .sub-item-card {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; background: #f8fafc; border: 1px solid #e2e8f0;
+      border-radius: 12px; margin-top: 10px; transition: all 0.2s ease;
     }
-    .resource-info p {
-      font-size: 13px;
-      color: #64748b;
-      margin: 0;
-    }
+    .sub-item-card:hover { border-color: #cbd5e1; background: #ffffff; transform: translateX(4px); }
+    .sub-item-title { font-size: 14px; font-weight: 700; color: #334155; margin: 0; display: flex; align-items: center; gap: 8px; }
 
-    /* NÚT VÀO PHÒNG THI / XEM VIDEO NỔI BẬT */
+    /* NÚT BẤM */
     .resource-btn {
-      background-color: #f0f9ff;
-      color: #0284c7;
-      border: 1px solid #bae6fd;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 700;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+      background-color: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd;
+      padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 700;
+      text-decoration: none; transition: all 0.2s ease; white-space: nowrap;
     }
-    .resource-btn:hover {
-      background-color: #0284c7;
-      color: #ffffff;
-      border-color: #0284c7;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
-    }
-
-    /* PHÒNG THI HIGHLIGHT BUTTON */
-    .resource-btn.exam-btn {
-      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-      color: #ffffff;
-      border: none;
-      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
-    }
-    .resource-btn.exam-btn:hover {
-      background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(249, 115, 22, 0.35);
-    }
+    .resource-btn:hover { background-color: #0284c7; color: #ffffff; }
+    .resource-btn.exam-btn { background: #f97316; color: #ffffff; border: none; }
+    .resource-btn.exam-btn:hover { background: #ea580c; }
 
     .empty-content-msg {
-      text-align: center;
-      padding: 50px 20px;
-      color: #64748b;
-      background: #ffffff;
-      border-radius: 16px;
-      border: 2px dashed #cbd5e1;
-    }
-
-    @media (max-width: 600px) {
-      .resource-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 14px;
-      }
-      .resource-btn { width: 100%; text-align: center; justify-content: center; box-sizing: border-box; }
+      text-align: center; padding: 50px 20px; color: #64748b;
+      background: #ffffff; border-radius: 16px; border: 2px dashed #cbd5e1;
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER DÙNG CHUNG -->
   <header class="site-header"></header>
 
   <main class="class-detail-container">
     <a href="my-class.html" class="back-link">← Quay lại danh sách lớp</a>
 
-    <!-- BANNER NỔI BẬT LỚP HỌC -->
+    <!-- BANNER LỚP HỌC -->
     <div class="class-info-banner">
       <h1 class="class-banner-title" id="class-title-text">Đang tải lớp học...</h1>
       <div class="class-banner-meta">
@@ -183,18 +83,12 @@
       </div>
     </div>
 
-    <!-- TAB DỌC: VIDEO / ĐỀ THI PHÒNG THI / TÀI LIỆU -->
-    <div class="content-tabs">
-      <button class="tab-item-btn active" onclick="switchContentTab('video', this)">Bài giảng & Video bổ sung</button>
-      <button class="tab-item-btn" onclick="switchContentTab('exercise', this)">Bài tập</button>
-      <button class="tab-item-btn" onclick="switchContentTab('doc', this)">Tài liệu</button>
-    </div>
+    <h3 style="font-size: 18px; font-weight: 800; color: #1e293b; margin-bottom: 20px;">📚 Lộ Trình & Tài Liệu Học Tập</h3>
 
-    <!-- KHU VỰC HIỂN THỊ DANH SÁCH TẢI TỪ SUPABASE -->
+    <!-- VÙNG HIỂN THỊ FOLDER DẠNG XỔ XUỐNG -->
     <div id="content-list-container">
       <p style="text-align: center; color: #64748b; padding: 40px 0;">Đang tải bài học...</p>
     </div>
-
   </main>
 
   <script>
@@ -205,9 +99,6 @@
     const urlParams = new URLSearchParams(window.location.search);
     const currentClassId = urlParams.get('class_id');
 
-    let allClassContents = [];
-    let currentTabType = 'video';
-
     async function initClassDetail() {
       if (!currentClassId) {
         window.location.href = 'my-class.html';
@@ -216,23 +107,17 @@
 
       document.getElementById('class-code-text').innerText = currentClassId;
 
-      // 1. Tải thông tin lớp từ Supabase
-      const { data: classInfo } = await _supabase
-        .from('classes')
-        .select('*')
-        .eq('class_id', currentClassId)
-        .single();
-
+      // Tải thông tin lớp
+      const { data: classInfo } = await _supabase.from('classes').select('*').eq('class_id', currentClassId).single();
       if (classInfo) {
         document.getElementById('class-title-text').innerText = classInfo.title;
         document.getElementById('class-teacher-text').innerText = classInfo.teacher || 'Thầy Đặng Đức Việt';
       }
 
-      // 2. Tải bài học/đề thi thuộc lớp này
-      loadClassContentsFromSupabase();
+      loadClassContentsGrouped();
     }
 
-    async function loadClassContentsFromSupabase() {
+    async function loadClassContentsGrouped() {
       const container = document.getElementById('content-list-container');
 
       try {
@@ -240,66 +125,85 @@
           .from('class_contents')
           .select('*')
           .eq('class_id', currentClassId)
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: true });
 
         if (error) throw error;
 
-        allClassContents = list || [];
-        renderTabContents(currentTabType);
+        if (!list || list.length === 0) {
+          container.innerHTML = '<div class="empty-content-msg">Chưa có bài học hoặc tài liệu nào được tải lên cho lớp này.</div>';
+          return;
+        }
+
+        // Nhóm các tài liệu theo Folder (Chủ đề trong cột description)
+        const groups = {};
+        list.forEach(item => {
+          const folderName = item.description || 'Tài liệu chung của lớp';
+          if (!groups[folderName]) groups[folderName] = [];
+          groups[folderName].push(item);
+        });
+
+        // Render ra giao diện Folder xổ xuống
+        let html = '';
+        let index = 0;
+        for (const [folderName, items] of Object.entries(groups)) {
+          const isOpen = index === 0 ? 'open' : ''; // Mở sẵn Folder đầu tiên
+          index++;
+
+          html += `
+            <div class="folder-card ${isOpen}">
+              <div class="folder-header" onclick="toggleFolder(this)">
+                <h4 class="folder-title">📁 ${folderName} <span style="font-size: 13px; font-weight: 600; color: #64748b;">(${items.length} mục)</span></h4>
+                <span class="folder-toggle-icon">▼</span>
+              </div>
+              <div class="folder-body">
+          `;
+
+          items.forEach(item => {
+            let icon = '📄';
+            let btnText = 'Xem Tài Liệu';
+            let btnClass = 'resource-btn';
+            let targetUrl = item.content_url || '#';
+
+            if (item.type === 'video') {
+              icon = '🎬';
+              btnText = 'Xem Video';
+            } else if (item.type === 'exercise') {
+              icon = '📝';
+              btnText = 'Làm Bài Thi';
+              btnClass = 'resource-btn exam-btn';
+              targetUrl = item.content_url && item.content_url.includes('quiz-room.html') 
+                ? item.content_url 
+                : `quiz-room.html?id=${item.content_url || ''}`;
+            }
+
+            html += `
+              <div class="sub-item-card">
+                <div class="sub-item-title">
+                  <span>${icon}</span>
+                  <span>${item.title}</span>
+                </div>
+                <a href="${targetUrl}" target="_blank" class="${btnClass}">${btnText}</a>
+              </div>
+            `;
+          });
+
+          html += `
+              </div>
+            </div>
+          `;
+        }
+
+        container.innerHTML = html;
 
       } catch (err) {
         console.error(err);
-        container.innerHTML = '<div class="empty-content-msg">Chưa có dữ liệu bài học cho lớp này.</div>';
+        container.innerHTML = '<div class="empty-content-msg">Có lỗi xảy ra khi tải bài học.</div>';
       }
     }
 
-    function renderTabContents(type) {
-      const container = document.getElementById('content-list-container');
-      const filtered = allClassContents.filter(item => item.type === type);
-
-      if (filtered.length === 0) {
-        const typeNames = { video: 'video bài giảng', exercise: 'đề thi / bài tập', doc: 'tài liệu PDF' };
-        container.innerHTML = `
-          <div class="empty-content-msg">
-            Chưa có ${typeNames[type]} nào được tải lên cho lớp này.
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = filtered.map(item => {
-        let actionBtnHtml = '';
-
-        if (type === 'exercise') {
-          // Link dẫn sang PHÒNG THI TRẮC NGHIỆM & TỰ LUẬN (quiz-room.html)
-          const targetUrl = item.content_url && item.content_url.includes('quiz-room.html') 
-            ? item.content_url 
-            : `quiz-room.html?id=${item.content_url || '8G01'}`;
-
-          actionBtnHtml = `<a href="${targetUrl}" class="resource-btn exam-btn">Làm Bài </a>`;
-        } else if (type === 'video') {
-          actionBtnHtml = `<a href="${item.content_url || '#'}" target="_blank" class="resource-btn">Xem Video </a>`;
-        } else {
-          actionBtnHtml = `<a href="${item.content_url || '#'}" target="_blank" class="resource-btn">Mở Tài Liệu</a>`;
-        }
-
-        return `
-          <div class="resource-card">
-            <div class="resource-info">
-              <h4>${item.title}</h4>
-              <p>${item.description || 'Nội dung bám sát lộ trình lớp học của Thầy Việt'}</p>
-            </div>
-            ${actionBtnHtml}
-          </div>
-        `;
-      }).join('');
-    }
-
-    function switchContentTab(type, btnEl) {
-      currentTabType = type;
-      document.querySelectorAll('.tab-item-btn').forEach(b => b.classList.remove('active'));
-      btnEl.classList.add('active');
-      renderTabContents(type);
+    function toggleFolder(headerEl) {
+      const card = headerEl.parentElement;
+      card.classList.toggle('open');
     }
 
     document.addEventListener('DOMContentLoaded', initClassDetail);
