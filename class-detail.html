@@ -22,21 +22,30 @@
     .class-banner-title { font-size: 24px; font-weight: 800; margin: 0 0 10px 0; }
     .class-banner-meta { display: flex; flex-wrap: wrap; gap: 20px; font-size: 14px; opacity: 0.95; }
 
-    /* FOLDER ACCORDION STYLES */
+    /* 3 TAB CHÍNH BAN ĐẦU */
+    .content-tabs { display: flex; gap: 12px; border-bottom: 2px solid #e2e8f0; margin-bottom: 25px; }
+    .tab-item-btn {
+      background: none; border: none; padding: 12px 20px; font-size: 15px; font-weight: 600;
+      color: #64748b; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s;
+    }
+    .tab-item-btn:hover { color: #0284c7; }
+    .tab-item-btn.active { color: #0284c7; border-color: #0284c7; font-weight: 700; }
+
+    /* FOLDER ACCORDION BÊN TRONG TỪNG TAB */
     .folder-card {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px;
-      margin-bottom: 20px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      margin-bottom: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     }
     .folder-header {
-      padding: 18px 24px; background: #ffffff; cursor: pointer;
+      padding: 16px 22px; background: #ffffff; cursor: pointer;
       display: flex; justify-content: space-between; align-items: center;
-      user-select: none; transition: background 0.2s; border-bottom: 1px solid transparent;
+      user-select: none; transition: background 0.2s;
     }
     .folder-header:hover { background: #f8fafc; }
-    .folder-card.open .folder-header { border-bottom-color: #f1f5f9; background: #f0f9ff; }
+    .folder-card.open .folder-header { border-bottom: 1px solid #f1f5f9; background: #f0f9ff; }
     
-    .folder-title { font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 10px; }
-    .folder-toggle-icon { font-size: 14px; color: #0284c7; transition: transform 0.3s ease; font-weight: bold; }
+    .folder-title { font-size: 16px; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 10px; }
+    .folder-toggle-icon { font-size: 12px; color: #0284c7; transition: transform 0.3s ease; font-weight: bold; }
     .folder-card.open .folder-toggle-icon { transform: rotate(180deg); }
 
     .folder-body { display: none; padding: 12px 20px 20px 20px; background: #ffffff; }
@@ -51,7 +60,7 @@
     .sub-item-card:hover { border-color: #cbd5e1; background: #ffffff; transform: translateX(4px); }
     .sub-item-title { font-size: 14px; font-weight: 700; color: #334155; margin: 0; display: flex; align-items: center; gap: 8px; }
 
-    /* NÚT BẤM */
+    /* NÚT BẤM HIỂN THỊ */
     .resource-btn {
       background-color: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd;
       padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 700;
@@ -83,9 +92,14 @@
       </div>
     </div>
 
-    <h3 style="font-size: 18px; font-weight: 800; color: #1e293b; margin-bottom: 20px;">📚 Lộ Trình & Tài Liệu Học Tập</h3>
+    <!-- 3 TAB CHÍNH -->
+    <div class="content-tabs">
+      <button class="tab-item-btn active" onclick="switchContentTab('video', this)">Bài giảng & Video bổ sung</button>
+      <button class="tab-item-btn" onclick="switchContentTab('exercise', this)">Bài tập</button>
+      <button class="tab-item-btn" onclick="switchContentTab('doc', this)">Tài liệu</button>
+    </div>
 
-    <!-- VÙNG HIỂN THỊ FOLDER DẠNG XỔ XUỐNG -->
+    <!-- KHU VỰC HIỂN THỊ DANH SÁCH FOLDER THEO TAB -->
     <div id="content-list-container">
       <p style="text-align: center; color: #64748b; padding: 40px 0;">Đang tải bài học...</p>
     </div>
@@ -99,6 +113,9 @@
     const urlParams = new URLSearchParams(window.location.search);
     const currentClassId = urlParams.get('class_id');
 
+    let allClassContents = [];
+    let currentTabType = 'video';
+
     async function initClassDetail() {
       if (!currentClassId) {
         window.location.href = 'my-class.html';
@@ -107,19 +124,18 @@
 
       document.getElementById('class-code-text').innerText = currentClassId;
 
-      // Tải thông tin lớp
+      // 1. Tải thông tin lớp
       const { data: classInfo } = await _supabase.from('classes').select('*').eq('class_id', currentClassId).single();
       if (classInfo) {
         document.getElementById('class-title-text').innerText = classInfo.title;
         document.getElementById('class-teacher-text').innerText = classInfo.teacher || 'Thầy Đặng Đức Việt';
       }
 
-      loadClassContentsGrouped();
+      // 2. Tải toàn bộ nội dung của lớp từ Supabase
+      loadClassContentsFromSupabase();
     }
 
-    async function loadClassContentsGrouped() {
-      const container = document.getElementById('content-list-container');
-
+    async function loadClassContentsFromSupabase() {
       try {
         const { data: list, error } = await _supabase
           .from('class_contents')
@@ -129,76 +145,94 @@
 
         if (error) throw error;
 
-        if (!list || list.length === 0) {
-          container.innerHTML = '<div class="empty-content-msg">Chưa có bài học hoặc tài liệu nào được tải lên cho lớp này.</div>';
-          return;
-        }
-
-        // Nhóm các tài liệu theo Folder (Chủ đề trong cột description)
-        const groups = {};
-        list.forEach(item => {
-          const folderName = item.description || 'Tài liệu chung của lớp';
-          if (!groups[folderName]) groups[folderName] = [];
-          groups[folderName].push(item);
-        });
-
-        // Render ra giao diện Folder xổ xuống
-        let html = '';
-        let index = 0;
-        for (const [folderName, items] of Object.entries(groups)) {
-          const isOpen = index === 0 ? 'open' : ''; // Mở sẵn Folder đầu tiên
-          index++;
-
-          html += `
-            <div class="folder-card ${isOpen}">
-              <div class="folder-header" onclick="toggleFolder(this)">
-                <h4 class="folder-title">📁 ${folderName} <span style="font-size: 13px; font-weight: 600; color: #64748b;">(${items.length} mục)</span></h4>
-                <span class="folder-toggle-icon">▼</span>
-              </div>
-              <div class="folder-body">
-          `;
-
-          items.forEach(item => {
-            let icon = '📄';
-            let btnText = 'Xem Tài Liệu';
-            let btnClass = 'resource-btn';
-            let targetUrl = item.content_url || '#';
-
-            if (item.type === 'video') {
-              icon = '🎬';
-              btnText = 'Xem Video';
-            } else if (item.type === 'exercise') {
-              icon = '📝';
-              btnText = 'Làm Bài Thi';
-              btnClass = 'resource-btn exam-btn';
-              targetUrl = item.content_url && item.content_url.includes('quiz-room.html') 
-                ? item.content_url 
-                : `quiz-room.html?id=${item.content_url || ''}`;
-            }
-
-            html += `
-              <div class="sub-item-card">
-                <div class="sub-item-title">
-                  <span>${icon}</span>
-                  <span>${item.title}</span>
-                </div>
-                <a href="${targetUrl}" target="_blank" class="${btnClass}">${btnText}</a>
-              </div>
-            `;
-          });
-
-          html += `
-              </div>
-            </div>
-          `;
-        }
-
-        container.innerHTML = html;
+        allClassContents = list || [];
+        renderTabFolders(currentTabType);
 
       } catch (err) {
         console.error(err);
-        container.innerHTML = '<div class="empty-content-msg">Có lỗi xảy ra khi tải bài học.</div>';
+        document.getElementById('content-list-container').innerHTML = '<div class="empty-content-msg">Chưa có dữ liệu bài học cho lớp này.</div>';
       }
+    }
+
+    function renderTabFolders(type) {
+      const container = document.getElementById('content-list-container');
+      
+      // Lọc dữ liệu theo Tab đang chọn (video, exercise, hoặc doc)
+      const filtered = allClassContents.filter(item => item.type === type);
+
+      if (filtered.length === 0) {
+        const typeNames = { video: 'video bài giảng', exercise: 'đề thi / bài tập', doc: 'tài liệu PDF' };
+        container.innerHTML = `<div class="empty-content-msg">Chưa có ${typeNames[type]} nào được tải lên cho lớp này.</div>`;
+        return;
+      }
+
+      // Nhóm nội dung theo Folder (Tên Folder nằm ở cột description)
+      const groups = {};
+      filtered.forEach(item => {
+        const folderName = item.description || 'Tài liệu chung';
+        if (!groups[folderName]) groups[folderName] = [];
+        groups[folderName].push(item);
+      });
+
+      // Render Folder dạng Accordion xổ xuống
+      let html = '';
+      let index = 0;
+      for (const [folderName, items] of Object.entries(groups)) {
+        const isOpen = index === 0 ? 'open' : ''; // Tự mở Folder đầu tiên
+        index++;
+
+        html += `
+          <div class="folder-card ${isOpen}">
+            <div class="folder-header" onclick="toggleFolder(this)">
+              <h4 class="folder-title">📁 ${folderName} <span style="font-size: 13px; font-weight: 600; color: #64748b;">(${items.length} mục)</span></h4>
+              <span class="folder-toggle-icon">▼</span>
+            </div>
+            <div class="folder-body">
+        `;
+
+        items.forEach(item => {
+          let icon = '📄';
+          let btnText = 'Xem Tài Liệu';
+          let btnClass = 'resource-btn';
+          let targetUrl = item.content_url || '#';
+
+          if (type === 'video') {
+            icon = '🎬';
+            btnText = 'Xem Video';
+          } else if (type === 'exercise') {
+            icon = '📝';
+            btnText = 'Làm Bài Thi';
+            btnClass = 'resource-btn exam-btn';
+            targetUrl = item.content_url && item.content_url.includes('quiz-room.html') 
+              ? item.content_url 
+              : `quiz-room.html?id=${item.content_url || ''}`;
+          }
+
+          html += `
+            <div class="sub-item-card">
+              <div class="sub-item-title">
+                <span>${icon}</span>
+                <span>${item.title}</span>
+              </div>
+              <a href="${targetUrl}" target="_blank" class="${btnClass}">${btnText}</a>
+            </div>
+          `;
+        });
+
+        html += `
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function switchContentTab(type, btnEl) {
+      currentTabType = type;
+      document.querySelectorAll('.tab-item-btn').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+      renderTabFolders(type);
     }
 
     function toggleFolder(headerEl) {
