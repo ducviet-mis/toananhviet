@@ -161,6 +161,7 @@
     let currentClassId = '';
     let classStudentsList = [];
     let classQuizzesList = [];
+    let studentRealtimeChannel = null; // Biến lưu trữ kết nối Realtime
 
     // KIỂM TRA BẢO MẬT: CHỈ CHO PHÉP TÀI KHOẢN GIÁO VIÊN VÀO
     async function checkTeacherPermission() {
@@ -211,6 +212,33 @@
       if (!currentClassId) return;
       await loadClassStudents();
       await loadClassQuizzes();
+      subscribeToStudentChanges(); // Đăng ký Realtime mỗi khi chọn/đổi lớp
+    }
+
+    // LẮNG NGHE SỰ THAY ĐỔI THEO THỜI GIAN THỰC (REALTIME)
+    function subscribeToStudentChanges() {
+      // Nếu đã có channel trước đó thì unsubscribe để tránh trùng lặp
+      if (studentRealtimeChannel) {
+        _supabase.removeChannel(studentRealtimeChannel);
+      }
+
+      studentRealtimeChannel = _supabase
+        .channel(`realtime-class-students-${currentClassId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*', // Lắng nghe cả INSERT, UPDATE, DELETE
+            schema: 'public',
+            table: 'class_students',
+            filter: `class_id=eq.${currentClassId}`
+          },
+          (payload) => {
+            console.log('Phát hiện thay đổi danh sách học sinh:', payload);
+            // Tự động tải lại danh sách học sinh & bảng theo dõi bài tập
+            loadClassStudents();
+          }
+        )
+        .subscribe();
     }
 
     async function loadClassStudents() {
@@ -240,6 +268,11 @@
           </td>
         </tr>
       `).join('');
+
+      // Cập nhật lại bảng đối soát bài tập nếu giáo viên đang chọn bài thi
+      if (document.getElementById('select-quiz').value) {
+        loadSubmissionTracker();
+      }
     }
 
     function toggleAddStudentForm() {
@@ -270,14 +303,13 @@
         document.getElementById('new-student-email').value = '';
         document.getElementById('new-student-phone').value = '';
         toggleAddStudentForm();
-        loadClassStudents();
+        // Không cần gọi loadClassStudents() thủ công vì Realtime sẽ tự bắt sự kiện và render
       }
     }
 
     async function deleteStudent(id) {
       if (confirm("Bạn có chắc chắn muốn xóa học sinh này khỏi lớp?")) {
         await _supabase.from('class_students').delete().eq('id', id);
-        loadClassStudents();
       }
     }
 
@@ -374,7 +406,3 @@
 
     document.addEventListener('DOMContentLoaded', initAdmin);
   </script>
-  <script src="header.js"></script>
-  <script src="footer.js"></script>
-</body>
-</html>
