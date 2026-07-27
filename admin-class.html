@@ -24,7 +24,6 @@
       border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; outline: none;
     }
 
-    /* TABS */
     .admin-tabs { display: flex; gap: 10px; border-bottom: 2px solid #e2e8f0; margin-bottom: 25px; }
     .tab-btn {
       padding: 12px 22px; font-weight: 700; font-size: 14px; color: #64748b;
@@ -33,7 +32,6 @@
     }
     .tab-btn.active { color: #0284c7; border-color: #0284c7; }
 
-    /* CARD VÀ BẢNG */
     .panel-card {
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px;
       padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 25px;
@@ -45,7 +43,6 @@
     .admin-table th { background: #f8fafc; color: #475569; font-weight: 700; padding: 12px 14px; border-bottom: 2px solid #e2e8f0; text-align: left; }
     .admin-table td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 500; }
     
-    /* BADGES & BUTTONS */
     .status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
     .badge-done { background: #dcfce7; color: #15803d; }
     .badge-pending { background: #fef2f2; color: #b91c1c; }
@@ -62,7 +59,6 @@
     }
     .btn-add-student:hover { background: #059669; }
 
-    /* FORM THÊM HỌC SINH */
     .add-student-form { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; background: #f8fafc; padding: 16px; border-radius: 12px; }
     .add-student-form input { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; flex: 1; min-width: 150px; }
 
@@ -74,7 +70,6 @@
   <header class="site-header"></header>
 
   <main class="admin-container">
-    <!-- HEADER QUẢN LÝ -->
     <div class="admin-header-card">
       <div>
         <h1 class="admin-title">👨‍🏫 Bảng Quản Lý Lớp Học - Giáo Viên</h1>
@@ -87,7 +82,6 @@
       </div>
     </div>
 
-    <!-- TAB CHUYỂN ĐỔI -->
     <div class="admin-tabs">
       <button class="tab-btn active" id="tab-tracker-btn" onclick="switchTab('tracker')">📊 Theo Dõi Tiến Độ Bài Tập</button>
       <button class="tab-btn" id="tab-students-btn" onclick="switchTab('students')">👥 Danh Sách Học Sinh</button>
@@ -131,7 +125,6 @@
         <button class="btn-add-student" onclick="toggleAddStudentForm()">+ Thêm Học Sinh Mới</button>
       </div>
 
-      <!-- FORM THÊM HỌC SINH -->
       <div id="form-add-student" class="add-student-form hidden">
         <input type="text" id="new-student-name" placeholder="Họ và tên học sinh *">
         <input type="email" id="new-student-email" placeholder="Email đăng nhập *">
@@ -169,8 +162,34 @@
     let classStudentsList = [];
     let classQuizzesList = [];
 
+    // KIỂM TRA BẢO MẬT: CHỈ CHO PHÉP TÀI KHOẢN GIÁO VIÊN VÀO
+    async function checkTeacherPermission() {
+      const { data: { user } } = await _supabase.auth.getUser();
+      if (!user) {
+        alert("Vui lòng đăng nhập tài khoản Giáo viên!");
+        window.location.href = 'index.html';
+        return false;
+      }
+
+      const { data: profile } = await _supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      const role = profile?.role || user.user_metadata?.role;
+      if (role !== 'teacher') {
+        alert("Bạn không có quyền truy cập trang Quản Lý Lớp Học!");
+        window.location.href = 'index.html';
+        return false;
+      }
+      return true;
+    }
+
     async function initAdmin() {
-      // 1. Tải danh sách lớp học vào dropdown
+      const isTeacher = await checkTeacherPermission();
+      if (!isTeacher) return;
+
       const { data: classes } = await _supabase.from('classes').select('*');
       const classSelect = document.getElementById('select-class');
 
@@ -194,7 +213,6 @@
       await loadClassQuizzes();
     }
 
-    // --- QUẢN LÝ DANH SÁCH HỌC SINH ---
     async function loadClassStudents() {
       const tbody = document.getElementById('students-table-body');
       const { data, error } = await _supabase
@@ -263,10 +281,8 @@
       }
     }
 
-    // --- THEO DÕI TIẾN ĐỘ BÀI TẬP ---
     async function loadClassQuizzes() {
       const quizSelect = document.getElementById('select-quiz');
-      // Lấy danh sách bài tập từ class_contents có type = 'exercise'
       const { data } = await _supabase
         .from('class_contents')
         .select('*')
@@ -276,7 +292,6 @@
       if (data && data.length > 0) {
         classQuizzesList = data;
         quizSelect.innerHTML = data.map(q => {
-          // Lấy quiz_id từ content_url (ví dụ: quiz-room.html?id=8G01)
           const quizId = q.content_url && q.content_url.includes('id=') ? q.content_url.split('id=')[1] : q.content_url;
           return `<option value="${quizId}">${q.title}</option>`;
         }).join('');
@@ -296,7 +311,6 @@
         return;
       }
 
-      // Lấy danh sách nộp bài từ quiz_submissions
       const { data: submissions } = await _supabase
         .from('quiz_submissions')
         .select('*')
@@ -307,7 +321,6 @@
         return;
       }
 
-      // So sánh danh sách học sinh lớp và bài làm đã nộp
       tbody.innerHTML = classStudentsList.map(student => {
         const sub = (submissions || []).find(s => s.user_email && s.user_email.toLowerCase() === student.student_email.toLowerCase());
 
