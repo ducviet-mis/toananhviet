@@ -24,7 +24,7 @@
       border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; outline: none;
     }
 
-    .admin-tabs { display: flex; gap: 10px; border-bottom: 2px solid #e2e8f0; margin-bottom: 25px; }
+    .admin-tabs { display: flex; gap: 10px; border-bottom: 2px solid #e2e8f0; margin-bottom: 25px; flex-wrap: wrap; }
     .tab-btn {
       padding: 12px 22px; font-weight: 700; font-size: 14px; color: #64748b;
       background: none; border: none; border-bottom: 3px solid transparent;
@@ -53,6 +53,12 @@
     }
     .btn-action:hover { background: #0284c7; color: #ffffff; }
 
+    .btn-delete {
+      background: #fef2f2; color: #ef4444; border: 1px solid #fca5a5; padding: 6px 12px;
+      border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-delete:hover { background: #ef4444; color: #ffffff; }
+
     /* FORM STYLES */
     .form-group { margin-bottom: 16px; }
     .form-group label { display: block; font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 6px; }
@@ -67,6 +73,39 @@
     }
     .btn-submit:hover { background: #0369a1; }
     .hidden { display: none !important; }
+
+    /* VIEW CONTENT FOLDER STYLES */
+    .sub-content-tabs { display: flex; gap: 10px; border-bottom: 1.5px solid #e2e8f0; margin-bottom: 20px; }
+    .sub-tab-btn {
+      background: none; border: none; padding: 8px 16px; font-size: 13px; font-weight: 700;
+      color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1.5px;
+    }
+    .sub-tab-btn.active { color: #0284c7; border-color: #0284c7; }
+
+    .folder-card {
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px;
+      margin-bottom: 14px; overflow: hidden;
+    }
+    .folder-header {
+      padding: 14px 18px; background: #ffffff; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      user-select: none; transition: background 0.2s;
+    }
+    .folder-header:hover { background: #f8fafc; }
+    .folder-card.open .folder-header { border-bottom: 1px solid #f1f5f9; background: #f0f9ff; }
+    .folder-title { font-size: 15px; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 8px; }
+    .folder-toggle-icon { font-size: 12px; color: #0284c7; transition: transform 0.3s ease; }
+    .folder-card.open .folder-toggle-icon { transform: rotate(180deg); }
+
+    .folder-body { display: none; padding: 10px 16px 16px 16px; }
+    .folder-card.open .folder-body { display: block; }
+
+    .sub-item-card {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 14px; background: #f8fafc; border: 1px solid #e2e8f0;
+      border-radius: 10px; margin-top: 8px;
+    }
+    .sub-item-title { font-size: 13.5px; font-weight: 700; color: #334155; margin: 0; display: flex; align-items: center; gap: 8px; }
   </style>
 </head>
 <body>
@@ -87,9 +126,10 @@
     </div>
 
     <div class="admin-tabs">
-      <button class="tab-btn" id="tab-students-btn" onclick="switchTab('students')">👥 Danh Sách Học Sinh</button>
       <button class="tab-btn active" id="tab-tracker-btn" onclick="switchTab('tracker')">📊 Theo Dõi Tiến Độ Bài Tập</button>
-      <button class="tab-btn" id="tab-upload-btn" onclick="switchTab('upload')">📤 Đăng Tài Liệu / Bài Tập</button>
+      <button class="tab-btn" id="tab-manage-contents-btn" onclick="switchTab('manage-contents')">📂 Bài Học & Tài Liệu Đã Đăng</button>
+      <button class="tab-btn" id="tab-upload-btn" onclick="switchTab('upload')">📤 Đăng Tài Liệu / Bài Tập Mới</button>
+      <button class="tab-btn" id="tab-students-btn" onclick="switchTab('students')">👥 Danh Sách Học Sinh</button>
     </div>
 
     <!-- TAB 1: THEO DÕI TIẾN ĐỘ LÀM BÀI -->
@@ -123,7 +163,24 @@
       </div>
     </div>
 
-    <!-- TAB 2: ĐĂNG TÀI LIỆU / BÀI HỌC VÀO LỚP -->
+    <!-- TAB 2: DANG DANH SÁCH BÀI HỌC VÀ TÀI LIỆU HIỆN CÓ (CÓ NÚT XÓA) -->
+    <div id="tab-manage-contents" class="panel-card hidden">
+      <div class="card-title-row">
+        <h3 class="card-title">📂 Danh Sách Bài Học & Tài Liệu Trong Lớp</h3>
+      </div>
+
+      <div class="sub-content-tabs">
+        <button class="sub-tab-btn active" onclick="switchAdminSubTab('video', this)">🎬 Bài giảng & Video</button>
+        <button class="sub-tab-btn" onclick="switchAdminSubTab('exercise', this)">📝 Bài tập</button>
+        <button class="sub-tab-btn" onclick="switchAdminSubTab('doc', this)">📄 Tài liệu PDF</button>
+      </div>
+
+      <div id="admin-contents-view-container">
+        <p style="text-align: center; color: #64748b; padding: 30px;">Đang tải danh sách bài học...</p>
+      </div>
+    </div>
+
+    <!-- TAB 3: ĐĂNG TÀI LIỆU / BÀI HỌC VÀO LỚP -->
     <div id="tab-upload" class="panel-card hidden">
       <h3 class="card-title" style="margin-bottom: 20px;">Đăng Nội Dung Cho Lớp Học</h3>
       <form id="upload-content-form" onsubmit="handleUploadContent(event)">
@@ -169,7 +226,7 @@
       </form>
     </div>
 
-    <!-- TAB 3: QUẢN LÝ DANH SÁCH HỌC SINH -->
+    <!-- TAB 4: QUẢN LÝ DANH SÁCH HỌC SINH -->
     <div id="tab-students" class="panel-card hidden">
       <div class="card-title-row">
         <h3 class="card-title">Danh Sách Học Sinh Trong Lớp</h3>
@@ -203,6 +260,8 @@
     let currentClassId = '';
     let classStudentsList = [];
     let studentRealtimeChannel = null;
+    let allClassContents = [];
+    let currentAdminSubTab = 'video';
 
     async function checkTeacherPermission() {
       const { data: { user } } = await _supabase.auth.getUser();
@@ -252,8 +311,126 @@
       if (!currentClassId) return;
       await loadClassStudents();
       await loadClassQuizzes();
+      await loadClassContentsForAdmin(); // Tải danh sách bài học để hiển thị & xóa
       await loadExistingFolders(); // Load danh sách Folder đã tạo trước đó
       subscribeToStudentChanges();
+    }
+
+    // TẢI & RENDER BÀI HỌC DẠNG FOLDER CHO ADMIN CÓ NÚT XÓA
+    async function loadClassContentsForAdmin() {
+      try {
+        const { data: list, error } = await _supabase
+          .from('class_contents')
+          .select('*')
+          .eq('class_id', currentClassId)
+          .order('created_at', { ascending: true });
+
+        if (error) throw error;
+
+        allClassContents = list || [];
+        renderAdminContentsView(currentAdminSubTab);
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById('admin-contents-view-container').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Lỗi tải dữ liệu bài học.</div>';
+      }
+    }
+
+    function renderAdminContentsView(type) {
+      const container = document.getElementById('admin-contents-view-container');
+      const filtered = allClassContents.filter(item => item.type === type);
+
+      if (filtered.length === 0) {
+        const typeNames = { video: 'video bài giảng', exercise: 'bài tập / đề thi', doc: 'tài liệu PDF' };
+        container.innerHTML = `<div style="text-align: center; color: #64748b; padding: 30px;">Chưa có ${typeNames[type]} nào trong lớp này.</div>`;
+        return;
+      }
+
+      // Nhóm theo Folder (Chủ đề trong description)
+      const groups = {};
+      filtered.forEach(item => {
+        const folderName = item.description || 'Tài liệu chung';
+        if (!groups[folderName]) groups[folderName] = [];
+        groups[folderName].push(item);
+      });
+
+      let html = '';
+      let index = 0;
+      for (const [folderName, items] of Object.entries(groups)) {
+        const isOpen = index === 0 ? 'open' : '';
+        index++;
+
+        html += `
+          <div class="folder-card ${isOpen}">
+            <div class="folder-header" onclick="toggleFolder(this)">
+              <h4 class="folder-title">📁 ${folderName} <span style="font-size: 12px; font-weight: 600; color: #64748b;">(${items.length} mục)</span></h4>
+              <span class="folder-toggle-icon">▼</span>
+            </div>
+            <div class="folder-body">
+        `;
+
+        items.forEach(item => {
+          let icon = '📄';
+          let targetUrl = item.content_url || '#';
+
+          if (type === 'video') icon = '🎬';
+          else if (type === 'exercise') {
+            icon = '📝';
+            targetUrl = item.content_url && item.content_url.includes('quiz-room.html') 
+              ? item.content_url 
+              : `quiz-room.html?id=${item.content_url || ''}`;
+          }
+
+          html += `
+            <div class="sub-item-card">
+              <div class="sub-item-title">
+                <span>${icon}</span>
+                <span>${item.title}</span>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <a href="${targetUrl}" target="_blank" class="btn-action">🔍 Xem</a>
+                <button class="btn-delete" onclick="deleteClassContent('${item.id}', '${item.title}')">🗑️ Xóa</button>
+              </div>
+            </div>
+          `;
+        });
+
+        html += `
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function switchAdminSubTab(type, btnEl) {
+      currentAdminSubTab = type;
+      document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+      renderAdminContentsView(type);
+    }
+
+    function toggleFolder(headerEl) {
+      const card = headerEl.parentElement;
+      card.classList.toggle('open');
+    }
+
+    // XỬ LÝ XÓA BÀI HỌC / TÀI LIỆU
+    async function deleteClassContent(id, title) {
+      if (confirm(`Bạn có chắc chắn muốn xóa bài/tài liệu: "${title}"?`)) {
+        try {
+          const { error } = await _supabase.from('class_contents').delete().eq('id', id);
+          if (error) throw error;
+
+          alert("Đã xóa tài liệu thành công!");
+          await loadClassContentsForAdmin();
+          await loadExistingFolders();
+          await loadClassQuizzes();
+        } catch (err) {
+          alert("Lỗi khi xóa tài liệu: " + err.message);
+        }
+      }
     }
 
     // Lấy danh sách các Folder đã tạo trong lớp để gợi ý trong datalist
@@ -265,7 +442,6 @@
         .eq('class_id', currentClassId);
 
       if (data && data.length > 0) {
-        // Lọc trùng folder
         const uniqueFolders = [...new Set(data.map(d => d.description).filter(Boolean))];
         datalist.innerHTML = uniqueFolders.map(f => `<option value="${f}">`).join('');
       } else {
@@ -490,7 +666,6 @@
           const file = fileInput.files[0];
           const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
 
-          // Upload trực tiếp vào bucket public: tai_lieu_files
           const { data: storageData, error: storageErr } = await _supabase
             .storage
             .from('tai_lieu_files')
@@ -498,7 +673,6 @@
 
           if (storageErr) throw storageErr;
 
-          // Lấy public URL
           const { data: urlData } = _supabase
             .storage
             .from('tai_lieu_files')
@@ -516,7 +690,6 @@
           }
         }
 
-        // Chèn vào cơ sở dữ liệu `class_contents` (Tên folder lưu ở cột description)
         const { error: dbErr } = await _supabase
           .from('class_contents')
           .insert([
@@ -534,8 +707,9 @@
         alert(`Đã thêm bài học vào thư mục "${folderName}" thành công!`);
         document.getElementById('upload-content-form').reset();
         toggleUploadInput();
-        loadExistingFolders(); // Cập nhật lại danh sách gợi ý Folder
-        loadClassQuizzes(); // Cập nhật danh sách nếu là bài tập
+        await loadClassContentsForAdmin(); // Cập nhật lại giao diện Xem & Xóa
+        await loadExistingFolders(); // Cập nhật lại danh sách gợi ý Folder
+        await loadClassQuizzes();
 
       } catch (err) {
         console.error(err);
@@ -548,16 +722,21 @@
 
     function switchTab(tabName) {
       document.getElementById('tab-tracker').classList.add('hidden');
+      document.getElementById('tab-manage-contents').classList.add('hidden');
       document.getElementById('tab-upload').classList.add('hidden');
       document.getElementById('tab-students').classList.add('hidden');
       
       document.getElementById('tab-tracker-btn').classList.remove('active');
+      document.getElementById('tab-manage-contents-btn').classList.remove('active');
       document.getElementById('tab-upload-btn').classList.remove('active');
       document.getElementById('tab-students-btn').classList.remove('active');
 
       if (tabName === 'tracker') {
         document.getElementById('tab-tracker').classList.remove('hidden');
         document.getElementById('tab-tracker-btn').classList.add('active');
+      } else if (tabName === 'manage-contents') {
+        document.getElementById('tab-manage-contents').classList.remove('hidden');
+        document.getElementById('tab-manage-contents-btn').classList.add('active');
       } else if (tabName === 'upload') {
         document.getElementById('tab-upload').classList.remove('hidden');
         document.getElementById('tab-upload-btn').classList.add('active');
