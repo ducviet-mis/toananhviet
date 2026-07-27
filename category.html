@@ -166,28 +166,33 @@
       }
     }
 
-    function renderCardsList(list) {
-      const container = document.getElementById('category-docs-container');
-      if (!list || list.length === 0) {
-        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #64748b; padding: 40px 0;">Thầy Việt đang cập nhật bộ tài liệu cho chuyên mục này, học sinh quay lại sau nhé!</p>';
-        return;
-      }
+   function renderCardsList(list) {
+  const container = document.getElementById('category-docs-container');
+  if (!list || list.length === 0) {
+    container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #64748b; padding: 40px 0;">Thầy Việt đang cập nhật bộ tài liệu cho chuyên mục này, học sinh quay lại sau nhé!</p>';
+    return;
+  }
 
-      container.innerHTML = list.map(doc => `
-        <div class="doc-card-premium" onclick="window.location.href='detail.html?id=${doc.id || ''}'">
-          <div class="card-meta">
-            <span class="card-badge">Toán ${doc.lop || currentGrade}</span>
-            <span class="card-id">${doc.loai_de || 'Tài liệu'}</span>
-          </div>
-          <h3 class="card-title">${doc.tieu_de}</h3>
-          <p class="card-desc">${doc.mo_ta || 'Tài liệu chuẩn hóa bám sát cấu trúc đề thi mới, đi kèm lời giải chi tiết.'}</p>
-          <div class="card-footer">
-            <span>📅 Ngày đăng: Mới cập nhật</span>
-            <span class="card-action-btn">Xem chi tiết →</span>
-          </div>
+  container.innerHTML = list.map(doc => {
+    // Lấy ID chuẩn của Supabase (nếu id rỗng thì thử lấy qua stt hoặc id_de)
+    const itemId = doc.id || doc.stt || '';
+
+    return `
+      <div class="doc-card-premium" onclick="window.location.href='detail.html?id=${itemId}'">
+        <div class="card-meta">
+          <span class="card-badge">Toán ${doc.lop || currentGrade}</span>
+          <span class="card-id">${doc.loai_de || 'Tài liệu'}</span>
         </div>
-      `).join('');
-    }
+        <h3 class="card-title">${doc.tieu_de}</h3>
+        <p class="card-desc">${doc.mo_ta || 'Tài liệu chuẩn hóa bám sát cấu trúc đề thi mới, đi kèm lời giải chi tiết.'}</p>
+        <div class="card-footer">
+          <span>📅 Ngày đăng: Mới cập nhật</span>
+          <span class="card-action-btn">Xem chi tiết →</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
 
     function filterDocs(keyword, btnElement) {
       document.querySelectorAll('.vertical-filter-btn').forEach(b => b.classList.remove('active'));
