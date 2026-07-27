@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi Tiết Lớp Học - Gia sư Toán Anh Việt</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .class-detail-container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 0 20px;
+      min-height: 70vh;
+    }
+
+    /* NÚT QUAY LẠI BAN ĐẦU */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #64748b;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      margin-bottom: 20px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: #0284c7; }
+
+    /* HEADER BANNER LỚP HỌC */
+    .class-info-banner {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      border-radius: 18px;
+      padding: 30px;
+      color: #ffffff;
+      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.15);
+      margin-bottom: 30px;
+    }
+    .class-banner-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 0 0 10px 0;
+      font-family: 'Inter', sans-serif;
+    }
+    .class-banner-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
+    /* TAB NAVIGATION CHUYỂN BÀI GIẢNG / BÀI TẬP */
+    .content-tabs {
+      display: flex;
+      gap: 12px;
+      border-bottom: 2px solid #e2e8f0;
+      margin-bottom: 25px;
+    }
+    .tab-item-btn {
+      background: none;
+      border: none;
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .tab-item-btn:hover { color: #0284c7; }
+    .tab-item-btn.active {
+      color: #0284c7;
+      border-color: #0284c7;
+      font-weight: 700;
+    }
+
+    .tab-content-panel { display: none; }
+    .tab-content-panel.active { display: block; }
+
+    /* THẺ ITEM BÀI GIẢNG / BÀI TẬP */
+    .resource-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    }
+    .resource-card:hover {
+      border-color: #0284c7;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(2, 132, 199, 0.08);
+    }
+
+    .resource-info h4 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 6px 0;
+      font-family: 'Inter', sans-serif;
+    }
+    .resource-info p {
+      font-size: 13px;
+      color: #64748b;
+      margin: 0;
+    }
+
+    .resource-btn {
+      background-color: #e0f2fe;
+      color: #0369a1;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .resource-btn:hover {
+      background-color: #0284c7;
+      color: #ffffff;
+    }
+
+    /* KHI CHƯA CÓ BÀI HỌC NÀO */
+    .empty-content-msg {
+      text-align: center;
+      padding: 50px 20px;
+      color: #64748b;
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px dashed #cbd5e1;
+    }
+
+    @media (max-width: 600px) {
+      .resource-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+      }
+      .resource-btn { width: 100%; text-align: center; box-sizing: border-box; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER DÙNG CHUNG -->
+  <header class="site-header"></header>
+
+  <main class="class-detail-container">
+    <a href="my-class.html" class="back-link">← Quay lại danh sách lớp</a>
+
+    <!-- BANNER NỔI BẬT THÔNG TIN LỚP -->
+    <div class="class-info-banner">
+      <h1 class="class-banner-title" id="class-title-text">Đang tải tên lớp...</h1>
+      <div class="class-banner-meta">
+        <span>👨‍🏫 Giáo viên: <b id="class-teacher-text">Thầy Đặng Đức Việt</b></span>
+        <span>🔑 Mã ID: <b id="class-code-text">...</b></span>
+      </div>
+    </div>
+
+    <!-- TAB MENU BÀI GIẢNG / BÀI TẬP -->
+    <div class="content-tabs">
+      <button class="tab-item-btn active" onclick="switchContentTab('video', this)">📹 Bài giảng & Video bổ sung</button>
+      <button class="tab-item-btn" onclick="switchContentTab('exercise', this)">📝 Bài tập & Đề thi</button>
+      <button class="tab-item-btn" onclick="switchContentTab('doc', this)">📄 Tài liệu PDF</button>
+    </div>
+
+    <!-- DANH SÁCH BÀI HỌC TỰ ĐỘNG TẢI TỪ SUPABASE (BẢNG class_contents) -->
+    <div id="content-list-container">
+      <p style="text-align: center; color: #64748b; padding: 40px 0;">Đang tải nội dung học tập...</p>
+    </div>
+
+  </main>
+
+  <script>
+    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Lấy class_id trên đường dẫn URL (VD: class-detail.html?class_id=TOAN8-TD)
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentClassId = urlParams.get('class_id');
+
+    let allClassContents = [];
+    let currentTabType = 'video';
+
+    async function initClassDetail() {
+      if (!currentClassId) {
+        window.location.href = 'my-class.html';
+        return;
+      }
+
+      document.getElementById('class-code-text').innerText = currentClassId;
+
+      // 1. Tải thông tin lớp học từ bảng classes
+      const { data: classInfo } = await _supabase
+        .from('classes')
+        .select('*')
+        .eq('class_id', currentClassId)
+        .single();
+
+      if (classInfo) {
+        document.getElementById('class-title-text').innerText = classInfo.title;
+        document.getElementById('class-teacher-text').innerText = classInfo.teacher || 'Thầy Đặng Đức Việt';
+      } else {
+        document.getElementById('class-title-text').innerText = `Lớp Học ${currentClassId}`;
+      }
+
+      // 2. Tải danh sách bài giảng/bài tập từ bảng class_contents
+      loadClassContentsFromSupabase();
+    }
+
+    async function loadClassContentsFromSupabase() {
+      const container = document.getElementById('content-list-container');
+
+      try {
+        const { data: list, error } = await _supabase
+          .from('class_contents')
+          .select('*')
+          .eq('class_id', currentClassId)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        allClassContents = list || [];
+        renderTabContents(currentTabType);
+
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = '<div class="empty-content-msg">Có lỗi khi tải bài học. Vui lòng thử lại sau!</div>';
+      }
+    }
+
+    function renderTabContents(type) {
+      const container = document.getElementById('content-list-container');
+      const filtered = allClassContents.filter(item => item.type === type);
+
+      if (filtered.length === 0) {
+        const typeNames = { video: 'video bài giảng', exercise: 'bài tập/đề thi', doc: 'tài liệu PDF' };
+        container.innerHTML = `
+          <div class="empty-content-msg">
+            Chưa có ${typeNames[type]} nào được tải lên cho lớp này.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => `
+        <div class="resource-card">
+          <div class="resource-info">
+            <h4>${item.title}</h4>
+            <p>${item.description || 'Nội dung rèn luyện chuyên đề dành riêng cho lớp'}</p>
+          </div>
+          <a href="${item.content_url || '#'}" target="_blank" class="resource-btn">
+            ${type === 'video' ? 'Xem Video 🎥' : type === 'exercise' ? 'Làm Bài Tập ✏️' : 'Mở Tài Liệu 📄'}
+          </a>
+        </div>
+      `).join('');
+    }
+
+    function switchContentTab(type, btnEl) {
+      currentTabType = type;
+      document.querySelectorAll('.tab-item-btn').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+      renderTabContents(type);
+    }
+
+    document.addEventListener('DOMContentLoaded', initClassDetail);
+  </script>
+  <script src="header.js"></script>
+  <script src="footer.js"></script>
+</body>
+</html>
