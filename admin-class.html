@@ -711,7 +711,8 @@
                 tieu_de: title,
                 mo_ta: `Đề thi trắc nghiệm online (Thời gian: ${duration} phút)`,
                 lop: grade.replace(/\D/g, '') || grade,
-                loai_de: semester
+                loai_de: semester,
+                link_file: examFileUrl
               }
             ]);
         }
@@ -820,7 +821,8 @@
                 tieu_de: title,
                 mo_ta: folderName || `Tài liệu ôn tập môn Toán lớp ${cleanGrade}`,
                 lop: cleanGrade,
-                loai_de: semester
+                loai_de: semester,
+                link_file: finalUrl
               }
             ]);
 
