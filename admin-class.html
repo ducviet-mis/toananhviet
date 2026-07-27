@@ -194,7 +194,6 @@
       subscribeToStudentChanges();
     }
 
-    // LẮNG NGHE REALTIME TRÊN BẢNG CLASS_MEMBERS
     function subscribeToStudentChanges() {
       if (studentRealtimeChannel) {
         _supabase.removeChannel(studentRealtimeChannel);
@@ -204,16 +203,8 @@
         .channel(`realtime-class-members-${currentClassId}`)
         .on(
           'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'class_members',
-            filter: `class_id=eq.${currentClassId}`
-          },
-          () => {
-            console.log('Có học sinh thay đổi trong class_members, đang tải lại...');
-            loadClassStudents();
-          }
+          { event: '*', schema: 'public', table: 'class_members', filter: `class_id=eq.${currentClassId}` },
+          () => loadClassStudents()
         )
         .subscribe();
     }
@@ -221,48 +212,50 @@
     async function loadClassStudents() {
       const tbody = document.getElementById('students-table-body');
 
-      // 1. Truy vấn thành viên từ bảng class_members
-      const { data, error } = await _supabase
+      // 1. Lấy danh sách thành viên trong lớp
+      const { data: members, error } = await _supabase
         .from('class_members')
         .select('*')
         .eq('class_id', currentClassId)
         .order('joined_at', { ascending: false });
 
-      if (error || !data || data.length === 0) {
+      if (error || !members || members.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #64748b; padding: 25px;">Chưa có học sinh nào trong lớp này.</td></tr>';
         classStudentsList = [];
         return;
       }
 
-      // 2. Lấy thông tin từ bảng profiles
-      const emails = data.map(item => item.user_email);
-      const { data: profilesData } = await _supabase
+      // 2. Tải toàn bộ thông tin trong bảng profiles để ghép chính xác
+      const { data: allProfiles } = await _supabase
         .from('profiles')
-        .select('email, full_name, phone')
-        .in('email', emails);
+        .select('id, email, full_name');
 
-      const profileMap = {};
-      if (profilesData) {
-        profilesData.forEach(p => {
-          if (p.email) profileMap[p.email.toLowerCase()] = p;
+      const profileByEmail = {};
+      const profileById = {};
+
+      if (allProfiles) {
+        allProfiles.forEach(p => {
+          if (p.email) profileByEmail[p.email.toLowerCase().trim()] = p.full_name;
+          if (p.id) profileById[p.id] = p.full_name;
         });
       }
 
-      // 3. Chuẩn hóa tên hiển thị thông minh
-      classStudentsList = data.map(item => {
-        const emailKey = (item.user_email || '').toLowerCase();
-        const profile = profileMap[emailKey] || {};
-        
-        let displayName = profile.full_name ? profile.full_name.trim() : '';
+      // 3. Khai phá tên chuẩn xác từ Profile
+      classStudentsList = members.map(item => {
+        const userEmail = (item.user_email || '').toLowerCase().trim();
+        const userId = item.user_id;
 
-        // Nếu chưa có tên hoặc tên đang là "Học viên", lấy tên phía trước @ của email
-        if (!displayName || displayName === 'Học viên') {
-          displayName = item.user_email ? item.user_email.split('@')[0] : 'Học sinh';
+        // Ưu tiên 1: Tên theo ID trong Profiles -> Ưu tiên 2: Tên theo Email trong Profiles
+        let realName = profileById[userId] || profileByEmail[userEmail];
+
+        // Nếu trong DB đặt tên trùng là "Học viên" hoặc trống thì mới dự phòng lấy prefix email
+        if (!realName || realName.trim() === '' || realName.trim() === 'Học viên') {
+          realName = userEmail ? userEmail.split('@')[0] : 'Học sinh';
         }
 
         return {
           id: item.id,
-          student_name: displayName,
+          student_name: realName,
           student_email: item.user_email,
           joined_at: item.joined_at
         };
