@@ -76,7 +76,7 @@
   <main class="admin-container">
     <div class="admin-header-card">
       <div>
-        <h1 class="admin-title">👨‍🏫 Bảng Quản Lý Lớp Học - Giáo Viên</h1>
+        <h1 class="admin-title">Dashboard Quản Lý Lớp Học - Giáo Viên</h1>
         <div style="font-size: 13px; opacity: 0.9; margin-top: 4px;">Theo dõi danh sách học sinh, đăng tài liệu và quản lý bài thi</div>
       </div>
       <div>
@@ -87,15 +87,15 @@
     </div>
 
     <div class="admin-tabs">
+      <button class="tab-btn" id="tab-students-btn" onclick="switchTab('students')">👥 Danh Sách Học Sinh</button>
       <button class="tab-btn active" id="tab-tracker-btn" onclick="switchTab('tracker')">📊 Theo Dõi Tiến Độ Bài Tập</button>
       <button class="tab-btn" id="tab-upload-btn" onclick="switchTab('upload')">📤 Đăng Tài Liệu / Bài Tập</button>
-      <button class="tab-btn" id="tab-students-btn" onclick="switchTab('students')">👥 Danh Sách Học Sinh</button>
     </div>
 
     <!-- TAB 1: THEO DÕI TIẾN ĐỘ LÀM BÀI -->
     <div id="tab-tracker" class="panel-card">
       <div class="card-title-row">
-        <h3 class="card-title">🎯 Tình Trạng Học Sinh Làm Bài</h3>
+        <h3 class="card-title">Tình Trạng Học Sinh Làm Bài</h3>
         <div>
           <label style="font-size: 13px; font-weight: 600; color: #475569; margin-right: 8px;">Chọn Đề Thi / Bài Tập:</label>
           <select id="select-quiz" class="select-class-dropdown" style="border: 1px solid #cbd5e1;" onchange="loadSubmissionTracker()">
@@ -125,11 +125,23 @@
 
     <!-- TAB 2: ĐĂNG TÀI LIỆU / BÀI HỌC VÀO LỚP -->
     <div id="tab-upload" class="panel-card hidden">
-      <h3 class="card-title" style="margin-bottom: 20px;">📤 Đăng Nội Dung Cho Lớp Học</h3>
+      <h3 class="card-title" style="margin-bottom: 20px;">Đăng Nội Dung Cho Lớp Học</h3>
       <form id="upload-content-form" onsubmit="handleUploadContent(event)">
+        
         <div class="form-group">
-          <label>Tiêu đề bài học / tài liệu</label>
-          <input type="text" id="content-title" class="form-control" placeholder="Ví dụ: Bài tập Dạng 1: Hằng đẳng thức" required>
+          <label>📁 Tên Thư Mục / Chủ Đề (Folder)</label>
+          <input type="text" id="content-folder" class="form-control" list="existing-folders" placeholder="Nhập tên Folder (Ví dụ: Bài 1: Đa thức) hoặc chọn Folder có sẵn..." required>
+          <datalist id="existing-folders">
+            <!-- Danh sách các folder đã có sẽ render ở đây -->
+          </datalist>
+          <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
+            💡 Các file/video có cùng Tên Thư Mục sẽ được tự động gom vào chung 1 Folder xổ xuống trên trang học sinh.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label>📌 Tên Bài Học / Tiêu Đề Tài Liệu</label>
+          <input type="text" id="content-title" class="form-control" placeholder="Ví dụ: File PDF Lý thuyết + Bài tập củng cố" required>
         </div>
 
         <div style="display: flex; gap: 15px;">
@@ -153,19 +165,14 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label>Mô tả ngắn</label>
-          <textarea id="content-desc" class="form-control" rows="2" placeholder="Ghi chú thêm cho học sinh..."></textarea>
-        </div>
-
-        <button type="submit" id="btn-submit-upload" class="btn-submit">🚀 Đăng Lên Lớp Học</button>
+        <button type="submit" id="btn-submit-upload" class="btn-submit">Đăng Vào Thư Mục</button>
       </form>
     </div>
 
     <!-- TAB 3: QUẢN LÝ DANH SÁCH HỌC SINH -->
     <div id="tab-students" class="panel-card hidden">
       <div class="card-title-row">
-        <h3 class="card-title">👥 Danh Sách Học Sinh Trong Lớp</h3>
+        <h3 class="card-title">Danh Sách Học Sinh Trong Lớp</h3>
       </div>
 
       <div style="overflow-x: auto;">
@@ -245,7 +252,25 @@
       if (!currentClassId) return;
       await loadClassStudents();
       await loadClassQuizzes();
+      await loadExistingFolders(); // Load danh sách Folder đã tạo trước đó
       subscribeToStudentChanges();
+    }
+
+    // Lấy danh sách các Folder đã tạo trong lớp để gợi ý trong datalist
+    async function loadExistingFolders() {
+      const datalist = document.getElementById('existing-folders');
+      const { data } = await _supabase
+        .from('class_contents')
+        .select('description')
+        .eq('class_id', currentClassId);
+
+      if (data && data.length > 0) {
+        // Lọc trùng folder
+        const uniqueFolders = [...new Set(data.map(d => d.description).filter(Boolean))];
+        datalist.innerHTML = uniqueFolders.map(f => `<option value="${f}">`).join('');
+      } else {
+        datalist.innerHTML = '';
+      }
     }
 
     function subscribeToStudentChanges() {
@@ -393,7 +418,7 @@
             <tr>
               <td><strong>${student.student_name}</strong></td>
               <td>${student.student_email}</td>
-              <td><span class="status-badge badge-done">✅ Đã nộp</span></td>
+              <td><span class="status-badge badge-done">Đã nộp</span></td>
               <td><strong style="color: #0284c7; font-size: 15px;">${Number(sub.mcq_score || 0).toFixed(1)}đ</strong></td>
               <td>${mins > 0 ? mins + 'p ' : ''}${secs}s</td>
               <td>${essayHtml}</td>
@@ -404,7 +429,7 @@
             <tr>
               <td><strong>${student.student_name}</strong></td>
               <td>${student.student_email}</td>
-              <td><span class="status-badge badge-pending">❌ Chưa làm</span></td>
+              <td><span class="status-badge badge-pending">Chưa làm</span></td>
               <td>---</td>
               <td>---</td>
               <td>---</td>
@@ -442,15 +467,15 @@
         return;
       }
 
+      const folderName = document.getElementById('content-folder').value.trim();
       const title = document.getElementById('content-title').value.trim();
       const type = document.getElementById('content-type').value;
-      const desc = document.getElementById('content-desc').value.trim();
       const btn = document.getElementById('btn-submit-upload');
 
       let finalUrl = '';
 
       btn.disabled = true;
-      btn.innerText = '⏳ Đang xử lý tải lên...';
+      btn.innerText = 'Đang xử lý tải lên...';
 
       try {
         if (type === 'doc') {
@@ -458,7 +483,7 @@
           if (!fileInput.files || fileInput.files.length === 0) {
             alert("Vui lòng chọn file cần đăng!");
             btn.disabled = false;
-            btn.innerText = '🚀 Đăng Lên Lớp Học';
+            btn.innerText = 'Đăng Vào Thư Mục';
             return;
           }
 
@@ -486,12 +511,12 @@
           if (!finalUrl) {
             alert("Vui lòng nhập đường dẫn hoặc Mã đề!");
             btn.disabled = false;
-            btn.innerText = '🚀 Đăng Lên Lớp Học';
+            btn.innerText = 'Đăng Vào Thư Mục';
             return;
           }
         }
 
-        // Chèn vào cơ sở dữ liệu `class_contents`
+        // Chèn vào cơ sở dữ liệu `class_contents` (Tên folder lưu ở cột description)
         const { error: dbErr } = await _supabase
           .from('class_contents')
           .insert([
@@ -500,23 +525,24 @@
               title: title,
               type: type,
               content_url: finalUrl,
-              description: desc
+              description: folderName
             }
           ]);
 
         if (dbErr) throw dbErr;
 
-        alert("🎉 Đã thêm bài học/tài liệu thành công!");
+        alert(`Đã thêm bài học vào thư mục "${folderName}" thành công!`);
         document.getElementById('upload-content-form').reset();
         toggleUploadInput();
-        loadClassQuizzes(); // Cập nhật lại danh sách nếu là bài tập
+        loadExistingFolders(); // Cập nhật lại danh sách gợi ý Folder
+        loadClassQuizzes(); // Cập nhật danh sách nếu là bài tập
 
       } catch (err) {
         console.error(err);
         alert("Lỗi upload: " + err.message);
       } finally {
         btn.disabled = false;
-        btn.innerText = '🚀 Đăng Lên Lớp Học';
+        btn.innerText = 'Đăng Vào Thư Mục';
       }
     }
 
