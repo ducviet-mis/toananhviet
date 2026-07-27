@@ -16,7 +16,6 @@
       min-height: 70vh;
     }
 
-    /* NÚT QUAY LẠI BAN ĐẦU */
     .back-link {
       display: inline-flex;
       align-items: center;
@@ -30,11 +29,11 @@
     }
     .back-link:hover { color: #0284c7; }
 
-    /* HEADER BANNER LỚP HỌC */
+    /* BANNER THÔNG TIN LỚP HỌC */
     .class-info-banner {
       background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
       border-radius: 18px;
-      padding: 30px;
+      padding: 28px 32px;
       color: #ffffff;
       box-shadow: 0 10px 25px rgba(2, 132, 199, 0.15);
       margin-bottom: 30px;
@@ -53,7 +52,7 @@
       opacity: 0.95;
     }
 
-    /* TAB NAVIGATION CHUYỂN BÀI GIẢNG / BÀI TẬP */
+    /* TAB DỌC/NGANG CHUYỂN ĐỔI */
     .content-tabs {
       display: flex;
       gap: 12px;
@@ -80,10 +79,7 @@
       font-weight: 700;
     }
 
-    .tab-content-panel { display: none; }
-    .tab-content-panel.active { display: block; }
-
-    /* THẺ ITEM BÀI GIẢNG / BÀI TẬP */
+    /* KHUNG CARD BÀI TẬP / BÀI GIẢNG CHUẨN DESIGN */
     .resource-card {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -115,30 +111,49 @@
       margin: 0;
     }
 
+    /* NÚT VÀO PHÒNG THI / XEM VIDEO NỔI BẬT */
     .resource-btn {
-      background-color: #e0f2fe;
-      color: #0369a1;
-      padding: 10px 18px;
+      background-color: #f0f9ff;
+      color: #0284c7;
+      border: 1px solid #bae6fd;
+      padding: 10px 20px;
       border-radius: 10px;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
       text-decoration: none;
       transition: all 0.2s ease;
       white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
     .resource-btn:hover {
       background-color: #0284c7;
       color: #ffffff;
+      border-color: #0284c7;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
     }
 
-    /* KHI CHƯA CÓ BÀI HỌC NÀO */
+    /* PHÒNG THI HIGHLIGHT BUTTON */
+    .resource-btn.exam-btn {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+    }
+    .resource-btn.exam-btn:hover {
+      background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(249, 115, 22, 0.35);
+    }
+
     .empty-content-msg {
       text-align: center;
       padding: 50px 20px;
       color: #64748b;
       background: #ffffff;
-      border-radius: 14px;
-      border: 1px dashed #cbd5e1;
+      border-radius: 16px;
+      border: 2px dashed #cbd5e1;
     }
 
     @media (max-width: 600px) {
@@ -147,7 +162,7 @@
         align-items: flex-start;
         gap: 14px;
       }
-      .resource-btn { width: 100%; text-align: center; box-sizing: border-box; }
+      .resource-btn { width: 100%; text-align: center; justify-content: center; box-sizing: border-box; }
     }
   </style>
 </head>
@@ -159,25 +174,25 @@
   <main class="class-detail-container">
     <a href="my-class.html" class="back-link">← Quay lại danh sách lớp</a>
 
-    <!-- BANNER NỔI BẬT THÔNG TIN LỚP -->
+    <!-- BANNER NỔI BẬT LỚP HỌC -->
     <div class="class-info-banner">
-      <h1 class="class-banner-title" id="class-title-text">Đang tải tên lớp...</h1>
+      <h1 class="class-banner-title" id="class-title-text">Đang tải lớp học...</h1>
       <div class="class-banner-meta">
         <span>👨‍🏫 Giáo viên: <b id="class-teacher-text">Thầy Đặng Đức Việt</b></span>
-        <span>🔑 Mã ID: <b id="class-code-text">...</b></span>
+        <span>🔑 Mã ID Lớp: <b id="class-code-text">...</b></span>
       </div>
     </div>
 
-    <!-- TAB MENU BÀI GIẢNG / BÀI TẬP -->
+    <!-- TAB DỌC: VIDEO / ĐỀ THI PHÒNG THI / TÀI LIỆU -->
     <div class="content-tabs">
       <button class="tab-item-btn active" onclick="switchContentTab('video', this)">📹 Bài giảng & Video bổ sung</button>
       <button class="tab-item-btn" onclick="switchContentTab('exercise', this)">📝 Bài tập & Đề thi</button>
       <button class="tab-item-btn" onclick="switchContentTab('doc', this)">📄 Tài liệu PDF</button>
     </div>
 
-    <!-- DANH SÁCH BÀI HỌC TỰ ĐỘNG TẢI TỪ SUPABASE (BẢNG class_contents) -->
+    <!-- KHU VỰC HIỂN THỊ DANH SÁCH TẢI TỪ SUPABASE -->
     <div id="content-list-container">
-      <p style="text-align: center; color: #64748b; padding: 40px 0;">Đang tải nội dung học tập...</p>
+      <p style="text-align: center; color: #64748b; padding: 40px 0;">Đang tải bài học...</p>
     </div>
 
   </main>
@@ -187,7 +202,6 @@
     const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Lấy class_id trên đường dẫn URL (VD: class-detail.html?class_id=TOAN8-TD)
     const urlParams = new URLSearchParams(window.location.search);
     const currentClassId = urlParams.get('class_id');
 
@@ -202,7 +216,7 @@
 
       document.getElementById('class-code-text').innerText = currentClassId;
 
-      // 1. Tải thông tin lớp học từ bảng classes
+      // 1. Tải thông tin lớp từ Supabase
       const { data: classInfo } = await _supabase
         .from('classes')
         .select('*')
@@ -212,11 +226,9 @@
       if (classInfo) {
         document.getElementById('class-title-text').innerText = classInfo.title;
         document.getElementById('class-teacher-text').innerText = classInfo.teacher || 'Thầy Đặng Đức Việt';
-      } else {
-        document.getElementById('class-title-text').innerText = `Lớp Học ${currentClassId}`;
       }
 
-      // 2. Tải danh sách bài giảng/bài tập từ bảng class_contents
+      // 2. Tải bài học/đề thi thuộc lớp này
       loadClassContentsFromSupabase();
     }
 
@@ -237,7 +249,7 @@
 
       } catch (err) {
         console.error(err);
-        container.innerHTML = '<div class="empty-content-msg">Có lỗi khi tải bài học. Vui lòng thử lại sau!</div>';
+        container.innerHTML = '<div class="empty-content-msg">Chưa có dữ liệu bài học cho lớp này.</div>';
       }
     }
 
@@ -246,7 +258,7 @@
       const filtered = allClassContents.filter(item => item.type === type);
 
       if (filtered.length === 0) {
-        const typeNames = { video: 'video bài giảng', exercise: 'bài tập/đề thi', doc: 'tài liệu PDF' };
+        const typeNames = { video: 'video bài giảng', exercise: 'đề thi / bài tập', doc: 'tài liệu PDF' };
         container.innerHTML = `
           <div class="empty-content-msg">
             Chưa có ${typeNames[type]} nào được tải lên cho lớp này.
@@ -255,17 +267,32 @@
         return;
       }
 
-      container.innerHTML = filtered.map(item => `
-        <div class="resource-card">
-          <div class="resource-info">
-            <h4>${item.title}</h4>
-            <p>${item.description || 'Nội dung rèn luyện chuyên đề dành riêng cho lớp'}</p>
+      container.innerHTML = filtered.map(item => {
+        let actionBtnHtml = '';
+
+        if (type === 'exercise') {
+          // Link dẫn sang PHÒNG THI TRẮC NGHIỆM & TỰ LUẬN (quiz-room.html)
+          const targetUrl = item.content_url && item.content_url.includes('quiz-room.html') 
+            ? item.content_url 
+            : `quiz-room.html?id=${item.content_url || '8G01'}`;
+
+          actionBtnHtml = `<a href="${targetUrl}" class="resource-btn exam-btn">Vào Phòng Thi 🎯</a>`;
+        } else if (type === 'video') {
+          actionBtnHtml = `<a href="${item.content_url || '#'}" target="_blank" class="resource-btn">Xem Video 🎥</a>`;
+        } else {
+          actionBtnHtml = `<a href="${item.content_url || '#'}" target="_blank" class="resource-btn">Mở Tài Liệu 📄</a>`;
+        }
+
+        return `
+          <div class="resource-card">
+            <div class="resource-info">
+              <h4>${item.title}</h4>
+              <p>${item.description || 'Nội dung bám sát lộ trình lớp học của Thầy Việt'}</p>
+            </div>
+            ${actionBtnHtml}
           </div>
-          <a href="${item.content_url || '#'}" target="_blank" class="resource-btn">
-            ${type === 'video' ? 'Xem Video 🎥' : type === 'exercise' ? 'Làm Bài Tập ✏️' : 'Mở Tài Liệu 📄'}
-          </a>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function switchContentTab(type, btnEl) {
