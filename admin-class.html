@@ -52,16 +52,6 @@
       border-radius: 8px; font-weight: 700; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s;
     }
     .btn-action:hover { background: #0284c7; color: #ffffff; }
-
-    .btn-add-student {
-      background: #10b981; color: white; border: none; padding: 8px 16px;
-      border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;
-    }
-    .btn-add-student:hover { background: #059669; }
-
-    .add-student-form { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; background: #f8fafc; padding: 16px; border-radius: 12px; }
-    .add-student-form input { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; flex: 1; min-width: 150px; }
-
     .hidden { display: none !important; }
   </style>
 </head>
@@ -121,15 +111,7 @@
     <!-- TAB 2: QUẢN LÝ DANH SÁCH HỌC SINH -->
     <div id="tab-students" class="panel-card hidden">
       <div class="card-title-row">
-        <h3 class="card-title">👥 Danh Sách Học Sinh Trong Lớp</h3>
-        <button class="btn-add-student" onclick="toggleAddStudentForm()">+ Thêm Học Sinh Mới</button>
-      </div>
-
-      <div id="form-add-student" class="add-student-form hidden">
-        <input type="text" id="new-student-name" placeholder="Họ và tên học sinh *">
-        <input type="email" id="new-student-email" placeholder="Email đăng nhập *">
-        <input type="text" id="new-student-phone" placeholder="Số điện thoại / Zalo">
-        <button class="btn-add-student" onclick="addNewStudent()">Lưu Học Sinh</button>
+        <h3 class="card-title">👥 Danh Sách Học Sinh Trong Lớp (Lấy từ `class_members`)</h3>
       </div>
 
       <div style="overflow-x: auto;">
@@ -139,13 +121,12 @@
               <th>#</th>
               <th>Họ và Tên</th>
               <th>Email</th>
-              <th>Số Điện Thoại</th>
-              <th>Ngày Thêm</th>
+              <th>Ngày Tham Gia</th>
               <th>Thao Tác</th>
             </tr>
           </thead>
           <tbody id="students-table-body">
-            <tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Đang tải danh sách học sinh...</td></tr>
+            <tr><td colspan="5" style="text-align: center; color: #64748b; padding: 30px;">Đang tải danh sách học sinh...</td></tr>
           </tbody>
         </table>
       </div>
@@ -160,10 +141,8 @@
 
     let currentClassId = '';
     let classStudentsList = [];
-    let classQuizzesList = [];
     let studentRealtimeChannel = null;
 
-    // KIỂM TRA BẢO MẬT: CHỈ CHO PHÉP TÀI KHOẢN GIÁO VIÊN VÀO
     async function checkTeacherPermission() {
       const { data: { user } } = await _supabase.auth.getUser();
       if (!user) {
@@ -215,94 +194,78 @@
       subscribeToStudentChanges();
     }
 
-    // LẮNG NGHE SỰ THAY ĐỔI REALTIME TRÊN CẢ 2 BẢNG CLASS_STUDENTS VÀ CLASS_MEMBERS
+    // LẮNG NGHE REALTIME TRÊN BẢNG CLASS_MEMBERS
     function subscribeToStudentChanges() {
       if (studentRealtimeChannel) {
         _supabase.removeChannel(studentRealtimeChannel);
       }
 
       studentRealtimeChannel = _supabase
-        .channel(`realtime-class-students-${currentClassId}`)
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'class_students' }, () => loadClassStudents())
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'class_members' }, () => loadClassStudents())
+        .channel(`realtime-class-members-${currentClassId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'class_members',
+            filter: `class_id=eq.${currentClassId}`
+          },
+          () => {
+            console.log('Có học sinh thay đổi trong class_members, đang tải lại...');
+            loadClassStudents();
+          }
+        )
         .subscribe();
     }
 
     async function loadClassStudents() {
       const tbody = document.getElementById('students-table-body');
 
-      // 1. Lấy dữ liệu từ bảng class_students (thêm thủ công)
-      const { data: manualStudents } = await _supabase
-        .from('class_students')
-        .select('*')
-        .eq('class_id', currentClassId);
-
-      // 2. Lấy dữ liệu từ bảng class_members JOIN profiles (học sinh tự vào lớp)
-      const { data: memberStudents } = await _supabase
+      // Truy vấn trực tiếp từ bảng class_members (lấy theo user_email hoặc join với profiles)
+      const { data, error } = await _supabase
         .from('class_members')
-        .select(`
-          id,
-          created_at,
-          user_id,
-          profiles ( full_name, email, phone )
-        `)
-        .eq('class_id', currentClassId);
+        .select('*')
+        .eq('class_id', currentClassId)
+        .order('joined_at', { ascending: false });
 
-      // 3. Gộp cả 2 nguồn dữ liệu lại
-      let combinedList = [];
-
-      if (manualStudents && manualStudents.length > 0) {
-        manualStudents.forEach(st => {
-          combinedList.push({
-            id: st.id,
-            name: st.student_name,
-            email: st.student_email,
-            phone: st.phone_number || '---',
-            created_at: st.created_at,
-            source: 'manual'
-          });
-        });
-      }
-
-      if (memberStudents && memberStudents.length > 0) {
-        memberStudents.forEach(mb => {
-          const email = mb.profiles?.email || '';
-          if (email && !combinedList.some(item => item.email.toLowerCase() === email.toLowerCase())) {
-            combinedList.push({
-              id: mb.id,
-              name: mb.profiles?.full_name || 'Học sinh',
-              email: email,
-              phone: mb.profiles?.phone || '---',
-              created_at: mb.created_at,
-              source: 'member'
-            });
-          }
-        });
-      }
-
-      if (combinedList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">Chưa có học sinh nào trong lớp này.</td></tr>';
+      if (error || !data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #64748b; padding: 25px;">Chưa có học sinh nào trong lớp này.</td></tr>';
         classStudentsList = [];
         return;
       }
 
-      // Sắp xếp ngày tạo mới nhất lên đầu
-      combinedList.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      // Lấy thêm thông tin tên từ bảng profiles dựa vào email
+      const emails = data.map(item => item.user_email);
+      const { data: profilesData } = await _supabase
+        .from('profiles')
+        .select('email, full_name, phone')
+        .in('email', emails);
 
-      classStudentsList = combinedList.map(item => ({
-        student_name: item.name,
-        student_email: item.email
-      }));
+      const profileMap = {};
+      if (profilesData) {
+        profilesData.forEach(p => {
+          profileMap[p.email.toLowerCase()] = p;
+        });
+      }
 
-      tbody.innerHTML = combinedList.map((st, idx) => `
+      classStudentsList = data.map(item => {
+        const profile = profileMap[item.user_email.toLowerCase()] || {};
+        return {
+          id: item.id,
+          student_name: profile.full_name || 'Học viên',
+          student_email: item.user_email,
+          joined_at: item.joined_at
+        };
+      });
+
+      tbody.innerHTML = classStudentsList.map((st, idx) => `
         <tr>
           <td>${idx + 1}</td>
-          <td><strong>${st.name}</strong></td>
-          <td>${st.email}</td>
-          <td>${st.phone}</td>
-          <td>${st.created_at ? new Date(st.created_at).toLocaleDateString('vi-VN') : '---'}</td>
+          <td><strong>${st.student_name}</strong></td>
+          <td>${st.student_email}</td>
+          <td>${st.joined_at ? new Date(st.joined_at).toLocaleString('vi-VN') : '---'}</td>
           <td>
-            <button class="btn-action" style="color: #ef4444; border-color: #fca5a5;" onclick="deleteStudent('${st.id}', '${st.source}')">Xóa</button>
+            <button class="btn-action" style="color: #ef4444; border-color: #fca5a5;" onclick="removeStudentFromClass('${st.id}')">Xóa khỏi lớp</button>
           </td>
         </tr>
       `).join('');
@@ -312,42 +275,14 @@
       }
     }
 
-    function toggleAddStudentForm() {
-      document.getElementById('form-add-student').classList.toggle('hidden');
-    }
-
-    async function addNewStudent() {
-      const name = document.getElementById('new-student-name').value.trim();
-      const email = document.getElementById('new-student-email').value.trim();
-      const phone = document.getElementById('new-student-phone').value.trim();
-
-      if (!name || !email) {
-        alert("Vui lòng nhập Họ tên và Email học sinh!");
-        return;
-      }
-
-      const { error } = await _supabase.from('class_students').insert([{
-        class_id: currentClassId,
-        student_name: name,
-        student_email: email,
-        phone_number: phone
-      }]);
-
-      if (error) {
-        alert("Lỗi thêm học sinh: " + error.message);
-      } else {
-        document.getElementById('new-student-name').value = '';
-        document.getElementById('new-student-email').value = '';
-        document.getElementById('new-student-phone').value = '';
-        toggleAddStudentForm();
-      }
-    }
-
-    async function deleteStudent(id, source) {
+    async function removeStudentFromClass(id) {
       if (confirm("Bạn có chắc chắn muốn xóa học sinh này khỏi lớp?")) {
-        const tableName = source === 'member' ? 'class_members' : 'class_students';
-        await _supabase.from(tableName).delete().eq('id', id);
-        loadClassStudents();
+        const { error } = await _supabase.from('class_members').delete().eq('id', id);
+        if (error) {
+          alert("Lỗi khi xóa: " + error.message);
+        } else {
+          loadClassStudents();
+        }
       }
     }
 
@@ -360,7 +295,6 @@
         .eq('type', 'exercise');
 
       if (data && data.length > 0) {
-        classQuizzesList = data;
         quizSelect.innerHTML = data.map(q => {
           const quizId = q.content_url && q.content_url.includes('id=') ? q.content_url.split('id=')[1] : q.content_url;
           return `<option value="${quizId}">${q.title}</option>`;
