@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Phòng Thi Trắc Nghiệm - Toán Anh Việt</title>
+  <title>Phòng Thi Trắc Nghiệm & Tự Luận - Toán Anh Việt</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-shim/0.35.6/es6-shim.min.js"></script>
@@ -186,6 +186,74 @@
       box-shadow: 0 5px 14px rgba(249, 115, 22, 0.4) !important;
     }
 
+    /* ESSAY UPLOAD STYLES */
+    .essay-section {
+      margin-top: 18px;
+      padding: 14px;
+      border: 2px dashed #0284c7;
+      border-radius: 12px;
+      background: #f0f9ff;
+    }
+    .essay-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #0369a1;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .essay-sub {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+    .btn-choose-essay {
+      width: 100%;
+      padding: 9px;
+      background: #ffffff;
+      border: 1.5px solid #0284c7;
+      color: #0284c7;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-choose-essay:hover {
+      background: #e0f2fe;
+    }
+    .essay-file-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #bae6fd;
+      margin-top: 6px;
+      font-size: 0.78rem;
+    }
+    .essay-file-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 180px;
+      color: #334155;
+      font-weight: 500;
+    }
+    .essay-file-remove {
+      color: #ef4444;
+      cursor: pointer;
+      font-weight: 800;
+      padding: 0 4px;
+    }
+
     #result-box {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -206,7 +274,6 @@
       gap: 12px;
     }
     
-    /* VÒNG TRÒN DONUT CHART */
     .donut-chart-wrapper {
       position: relative;
       width: 72px;
@@ -220,12 +287,12 @@
     }
     .donut-bg {
       fill: none;
-      stroke: #fee2e2; /* Màu ĐỎ nhạt cho phần trả lời SAI */
+      stroke: #fee2e2;
       stroke-width: 4;
     }
     .donut-ring {
       fill: none;
-      stroke: #10b981; /* Màu XANH LÁ cho phần trả lời ĐÚNG */
+      stroke: #10b981;
       stroke-width: 4;
       stroke-dasharray: 100;
       stroke-dashoffset: 100;
@@ -301,7 +368,6 @@
       background: #0052cc;
     }
 
-    /* NÚT BẢNG KẾT QUẢ */
     .btn-open-scoreboard {
       display: block;
       width: 100%;
@@ -323,7 +389,6 @@
       box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
     }
 
-    /* ITEM CÂU HỎI & CỜ ĐÁNH DẤU */
     .answer-row {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -366,11 +431,10 @@
     .flag-btn.active-tutor {
       opacity: 1 !important;
       filter: grayscale(0%) !important;
-      color: #dc2626 !important; /* ĐỎ ĐẬM */
+      color: #dc2626 !important;
       transform: scale(1.2);
     }
 
-    /* MENU LỰA CHỌN LÝ DO ĐÁNH DẤU CỜ */
     .flag-options-box {
       display: none;
       margin-top: 8px;
@@ -490,7 +554,6 @@
       line-height: 1.4;
     }
 
-    /* MODAL POPUP CHUNG */
     .custom-modal-overlay {
       position: fixed;
       top: 0;
@@ -555,7 +618,6 @@
       background: #e2e8f0;
     }
 
-    /* MODAL BẢNG KẾT QUẢ CHI TIẾT */
     .scoreboard-modal-card {
       background: #ffffff;
       width: 95%;
@@ -601,7 +663,6 @@
       color: #0f172a;
     }
 
-    /* HIỆU ỨNG ĐIỂM SỐ DỰA THEO THANG ĐIỂM */
     .sb-score-container {
       display: flex;
       justify-content: center;
@@ -684,7 +745,6 @@
       50% { transform: scale(1.3); opacity: 1; }
     }
 
-    /* BẢNG THỐNG KÊ ĐÁP ÁN */
     .sb-table-wrapper {
       margin-top: 16px;
       overflow-x: auto;
@@ -714,7 +774,6 @@
     .sb-row-incorrect { background-color: #fff1f2 !important; color: #be123c !important; }
     .sb-row-skipped { background-color: #ffffff !important; color: #64748b !important; }
 
-    /* NÚT HÀNH ĐỘNG MODAL BẢNG KẾT QUẢ */
     .sb-actions {
       display: flex;
       gap: 10px;
@@ -858,11 +917,9 @@
     </div>
   </div>
 
-  <!-- MODAL BẢNG KẾT QUẢ CHI TIẾT (XUẤT ẢNH PNG) -->
+  <!-- MODAL BẢNG KẾT QUẢ CHI TIẾT -->
   <div class="custom-modal-overlay" id="scoreboard-modal" style="display: none;">
     <div class="scoreboard-modal-card">
-      
-      <!-- KHUNG THIẾT KẾ CARD ĐỂ XUẤT ẢNH -->
       <div id="printable-scoreboard-card">
         <div class="sb-header">
           <div class="sb-brand">🎓 TOÁN ANH VIỆT - KẾT QUẢ BÀI THI</div>
@@ -871,14 +928,12 @@
           <div class="sb-info-row">Ngày hoàn thành: <strong id="sb-completed-date">--</strong></div>
         </div>
 
-        <!-- KHỐI ĐIỂM SỐ VỚI HIỆU ỨNG THỊ GIÁC THEO MỐC ĐIỂM -->
         <div class="sb-score-container">
           <div id="sb-score-box" class="score-card-flat">
             0.0
           </div>
         </div>
 
-        <!-- BẢNG THỐNG KÊ ĐÁP ÁN -->
         <div class="sb-table-wrapper">
           <table class="sb-table">
             <thead>
@@ -889,19 +944,15 @@
                 <th>Trạng thái</th>
               </tr>
             </thead>
-            <tbody id="sb-table-body">
-              <!-- Dữ liệu bảng chèn tự động -->
-            </tbody>
+            <tbody id="sb-table-body"></tbody>
           </table>
         </div>
       </div>
 
-      <!-- NÚT BẤM THAO TÁC MODAL -->
       <div class="sb-actions">
         <button class="btn-download-img" onclick="downloadScoreboardImage()">📸 Tải ảnh kết quả</button>
         <button class="btn-close-sb" onclick="closeScoreboardModal()">Đóng</button>
       </div>
-
     </div>
   </div>
 
@@ -943,7 +994,6 @@
       <!-- KẾT QUẢ VÀ TƯƠNG TÁC GIA SƯ -->
       <div id="result-box">
         <div class="result-summary-container">
-          <!-- DONUT CHART (CÂU ĐÚNG: XANH LÁ | CÂU SAI: ĐỎ) -->
           <div class="donut-chart-wrapper">
             <svg viewBox="0 0 36 36">
               <path class="donut-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
@@ -951,7 +1001,7 @@
             </svg>
             <div class="donut-center-text">
               <div class="donut-score" id="result-score">0</div>
-              <div class="donut-label">Điểm</div>
+              <div class="donut-label">Điểm trắc nghiệm</div>
             </div>
           </div>
 
@@ -974,7 +1024,27 @@
         </div>
       </div>
 
+      <!-- DANH SÁCH CÂU HỎI TRẮC NGHIỆM -->
       <div id="questions-list"></div>
+
+      <!-- KHU VỰC NỘP BÀI TỰ LUẬN -->
+      <div class="essay-section" id="essay-upload-container">
+        <div class="essay-title">
+          <span>📝</span> Bài làm Tự luận (Ảnh/PDF)
+        </div>
+        <div class="essay-sub">
+          Chụp ảnh bài giải tự luận của bạn và tải lên (Tối đa 5 file). File ảnh sẽ tự động nén tối ưu dung lượng.
+        </div>
+        
+        <input type="file" id="essay-file-input" multiple accept="image/*,.pdf" style="display: none;" onchange="handleEssayFilesSelect(this)">
+        
+        <button type="button" class="btn-choose-essay" onclick="document.getElementById('essay-file-input').click()">
+          📸 Chọn ảnh / File bài làm
+        </button>
+
+        <div id="essay-file-list"></div>
+      </div>
+
     </div>
   </div>
 
@@ -993,11 +1063,13 @@
     let totalDuration = 0;
     let timerInterval = null;
     let userAnswers = {};
-    let flaggedQuestions = {}; // Lưu trạng thái cờ
-    let tutorHelpQuestions = {}; // Lưu riêng câu cần gia sư chữa
+    let flaggedQuestions = {}; 
+    let tutorHelpQuestions = {}; 
     let isExamSubmitted = false;
     let studentNameString = "Học viên";
+    let studentEmailString = "hocvien@toananhviet.com";
     let finalCalculatedScore = 0;
+    let selectedEssayFiles = [];
 
     async function loadStudentInfo() {
       const studentLabel = document.getElementById('header-student-name');
@@ -1007,6 +1079,7 @@
           const u = JSON.parse(cached);
           if (u.name) {
             studentNameString = u.name;
+            if (u.email) studentEmailString = u.email;
             studentLabel.innerHTML = `Thí sinh: <strong>${u.name}</strong>`;
             return;
           }
@@ -1016,6 +1089,7 @@
       const { data: { user } } = await supabaseClient.auth.getUser();
       if (user && user.user_metadata && user.user_metadata.full_name) {
         studentNameString = user.user_metadata.full_name;
+        studentEmailString = user.email || studentEmailString;
         studentLabel.innerHTML = `Thí sinh: <strong>${user.user_metadata.full_name}</strong>`;
       } else {
         studentLabel.innerHTML = `Thí sinh: <strong>Khách</strong>`;
@@ -1141,7 +1215,6 @@
             ${actionHtml}
           </div>
 
-          <!-- MENU LỰA CHỌN LÝ DO ĐÁNH DẤU CỜ KHI LÀM BÀI -->
           <div class="flag-options-box" id="flag-box-${item.q_number}">
             <label class="flag-checkbox-label">
               <input type="checkbox" id="chk-review-${item.q_number}" onchange="toggleFlagReason(${item.q_number})">
@@ -1162,14 +1235,118 @@
       });
     }
 
-    /* BẬT/TẮT KHUNG MENU CHỌN LÝ DO CỜ */
+    /* QUẢN LÝ TỰ LUẬN: CHỌN FILE, NÉN ẢNH VÀ XÓA FILE */
+    function handleEssayFilesSelect(input) {
+      const files = Array.from(input.files);
+      if (selectedEssayFiles.length + files.length > 5) {
+        alert("Bạn chỉ được nộp tối đa 5 file ảnh/PDF!");
+        return;
+      }
+      
+      selectedEssayFiles = [...selectedEssayFiles, ...files];
+      renderEssayFileList();
+    }
+
+    function renderEssayFileList() {
+      const container = document.getElementById('essay-file-list');
+      container.innerHTML = '';
+      
+      selectedEssayFiles.forEach((file, index) => {
+        const item = document.createElement('div');
+        item.className = 'essay-file-item';
+        item.innerHTML = `
+          <span class="essay-file-name">📄 ${file.name}</span>
+          <span class="essay-file-remove" onclick="removeEssayFile(${index})">✕</span>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function removeEssayFile(index) {
+      if (isExamSubmitted) return;
+      selectedEssayFiles.splice(index, 1);
+      renderEssayFileList();
+    }
+
+    // Hàm nén ảnh tự động để giảm kích thước trước khi tải lên Storage
+    function compressImageFile(file) {
+      return new Promise((resolve) => {
+        if (!file.type.startsWith('image/')) {
+          resolve(file); // Nếu là PDF thì giữ nguyên
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (e) => {
+          const img = new Image();
+          img.src = e.target.result;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+
+            // Giới hạn chiều rộng tối đa 1600px để giữ nguyên độ nét chữ viết
+            const MAX_WIDTH = 1600;
+            if (width > MAX_WIDTH) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Nén chất lượng JPEG xuống 0.75 (Giảm 80% dung lượng mà không vỡ nét chữ)
+            canvas.toBlob((blob) => {
+              if (blob) {
+                const compressedFile = new File([blob], file.name, {
+                  type: 'image/jpeg',
+                  lastModified: Date.now()
+                });
+                resolve(compressedFile);
+              } else {
+                resolve(file);
+              }
+            }, 'image/jpeg', 0.75);
+          };
+        };
+      });
+    }
+
+    // Upload tất cả file tự luận đã nén lên Supabase Storage
+    async function uploadEssayFilesToStorage(quizId) {
+      if (selectedEssayFiles.length === 0) return [];
+
+      const uploadedUrls = [];
+      for (const rawFile of selectedEssayFiles) {
+        try {
+          const fileToUpload = await compressImageFile(rawFile);
+          const fileExt = fileToUpload.name.split('.').pop();
+          const cleanFileName = `${quizId}_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+          const { data, error } = await supabaseClient.storage
+            .from('tuluan')
+            .upload(cleanFileName, fileToUpload);
+
+          if (!error) {
+            const { data: { publicUrl } } = supabaseClient.storage.from('tuluan').getPublicUrl(cleanFileName);
+            uploadedUrls.push(publicUrl);
+          }
+        } catch (e) {
+          console.error("Lỗi nén/upload file: ", e);
+        }
+      }
+      return uploadedUrls;
+    }
+
     function toggleFlagBox(qNum) {
       if (isExamSubmitted) return;
       const box = document.getElementById(`flag-box-${qNum}`);
       box.classList.toggle('show');
     }
 
-    /* BẬT/TẮT VÀ ĐỔI MÀU CỜ DỰA TRÊN LÝ DO MÀ HỌC SINH TÍCH CHỌN */
     function toggleFlagReason(qNum) {
       const row = document.getElementById(`q-row-${qNum}`);
       const btn = document.getElementById(`flag-btn-${qNum}`);
@@ -1177,29 +1354,24 @@
       const reviewChecked = document.getElementById(`chk-review-${qNum}`)?.checked;
       const tutorChecked = document.getElementById(`chk-tutor-${qNum}`)?.checked;
 
-      // Cập nhật mảng câu cần gia sư chữa
       if (tutorChecked) {
         tutorHelpQuestions[qNum] = true;
       } else {
         delete tutorHelpQuestions[qNum];
       }
 
-      // Xóa tất cả style cờ cũ
       row.classList.remove('flagged-row-review', 'flagged-row-tutor');
       btn.classList.remove('active-review', 'active-tutor');
 
       if (tutorChecked) {
-        // Tích ô Gia sư -> Cờ ĐỎ ĐẬM
         flaggedQuestions[qNum] = true;
         row.classList.add('flagged-row-tutor');
         btn.classList.add('active-tutor');
       } else if (reviewChecked) {
-        // Chỉ tích Xem lại -> Cờ VÀNG/CAM
         flaggedQuestions[qNum] = true;
         row.classList.add('flagged-row-review');
         btn.classList.add('active-review');
       } else {
-        // Bỏ tích cả 2
         delete flaggedQuestions[qNum];
       }
     }
@@ -1216,21 +1388,26 @@
       document.getElementById('submit-confirm-modal').style.display = 'none';
     }
 
-    function executeSubmitExam() {
+    async function executeSubmitExam() {
       isExamSubmitted = true;
       closeSubmitModal();
       clearInterval(timerInterval);
 
-      // Xóa đồng hồ thời gian
+      const submitBtn = document.getElementById('submit-btn');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = "⏳ ĐANG NỘP...";
+      }
+
       const timerContainer = document.getElementById('timer-badge-container');
       if (timerContainer) {
         timerContainer.style.display = 'none';
       }
 
-      // Ẩn tất cả các khung chọn lý do cờ khi nộp bài
       document.querySelectorAll('.flag-options-box').forEach(el => el.style.display = 'none');
       document.querySelectorAll('.answersheet-pane input').forEach(el => el.disabled = true);
       document.querySelectorAll('.flag-btn').forEach(el => el.disabled = true);
+      document.querySelectorAll('.essay-file-remove').forEach(el => el.style.display = 'none');
 
       let totalScore = quizData.total_score || 10;
       let totalQuestions = quizData.answer_keys.length;
@@ -1273,7 +1450,6 @@
           row.classList.add('incorrect-row');
         }
 
-        // Đảm bảo những câu có cờ sẽ giữ nguyên trạng thái Đỏ Đậm khi nộp bài
         const btn = document.getElementById(`flag-btn-${item.q_number}`);
         if (flaggedQuestions[item.q_number]) {
           btn.className = 'flag-btn active-tutor';
@@ -1294,7 +1470,25 @@
       document.getElementById('stat-correct').innerText = `${correctCount}/${totalQuestions}`;
       document.getElementById('stat-time').innerText = `${spentMins < 10 ? '0' : ''}${spentMins}:${spentSecs < 10 ? '0' : ''}${spentSecs}`;
 
-      // Danh sách các câu được chọn "Cần gia sư chữa kỹ"
+      // A. Upload các file tự luận đính kèm lên Supabase Storage
+      const uploadedEssayUrls = await uploadEssayFilesToStorage(quizData.id);
+
+      // B. Lưu kết quả nộp bài vào bảng quiz_submissions trên Supabase
+      try {
+        await supabaseClient.from('quiz_submissions').insert([{
+          quiz_id: quizData.id,
+          user_email: studentEmailString,
+          user_name: studentNameString,
+          mcq_answers: userAnswers,
+          essay_files: uploadedEssayUrls,
+          mcq_score: earnedScore,
+          status: 'pending'
+        }]);
+      } catch (err) {
+        console.error("Lỗi lưu kết quả bài thi:", err);
+      }
+
+      // Hỗ trợ Zalo
       const needHelpList = Object.keys(tutorHelpQuestions).map(q => `Câu ${q}`);
       const helpTextLabel = document.getElementById('tutor-help-list');
       const zaloBtn = document.getElementById('zalo-send-btn');
@@ -1305,16 +1499,14 @@
         helpTextLabel.innerText = "Không có câu nào được tích chọn.";
       }
 
-      // Link Chat Zalo
       const zaloMessage = encodeURIComponent(
-        `Chào Thầy Việt, em là ${studentNameString}.\nEm vừa hoàn thành đề: "${quizData.title}" (${scoreFormatted} điểm).\nEm cần Thầy hỗ trợ chữa kỹ các câu: ${needHelpList.length > 0 ? needHelpList.join(', ') : 'Các câu làm sai'}. Cảm ơn Thầy!`
+        `Chào Thầy Việt, em là ${studentNameString}.\nEm vừa hoàn thành đề: "${quizData.title}" (${scoreFormatted} điểm trắc nghiệm).\nEm cần Thầy hỗ trợ chữa kỹ các câu: ${needHelpList.length > 0 ? needHelpList.join(', ') : 'Các câu làm sai'}. Cảm ơn Thầy!`
       );
       zaloBtn.href = `https://zalo.me/0965193026?text=${zaloMessage}`;
 
       const resultBox = document.getElementById('result-box');
       resultBox.style.display = 'block';
 
-      // DONUT CHART
       setTimeout(() => {
         const donutRing = document.getElementById('donut-ring-path');
         if (donutRing) {
@@ -1325,7 +1517,6 @@
       document.getElementById('pane-sheet-container').scrollTop = 0;
     }
 
-    /* MỞ BẢNG KẾT QUẢ CHI TIẾT MODAL */
     function openScoreboardModal() {
       document.getElementById('sb-student-name').innerText = studentNameString;
       document.getElementById('sb-exam-title').innerText = quizData.title;
@@ -1388,7 +1579,6 @@
       document.getElementById('scoreboard-modal').style.display = 'none';
     }
 
-    /* XUẤT VÀ TẢI ẢNH PNG BẰNG HTML2CANVAS */
     function downloadScoreboardImage() {
       const card = document.getElementById('printable-scoreboard-card');
       const btn = document.querySelector('.btn-download-img');
