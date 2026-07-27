@@ -127,7 +127,7 @@
 
     <div class="admin-tabs">
       <button class="tab-btn active" id="tab-tracker-btn" onclick="switchTab('tracker')">📊 Tiến Độ Bài Tập</button>
-      <button class="tab-btn" id="tab-manage-contents-btn" onclick="switchTab('manage-contents')">📂 Kho Tài Liệu</button>
+      <button class="tab-btn" id="tab-manage-contents-btn" onclick="switchTab('manage-contents')">📂 Kho Tài Liệu Lớp</button>
       <button class="tab-btn" id="tab-create-quiz-btn" onclick="switchTab('create-quiz')">📝 Tạo Đề Thi Online Mới</button>
       <button class="tab-btn" id="tab-upload-btn" onclick="switchTab('upload')">📤 Đăng Video/Tài Liệu Mới</button>
       <button class="tab-btn" id="tab-students-btn" onclick="switchTab('students')">👥 Danh Sách Học Sinh</button>
@@ -220,19 +220,23 @@
           </div>
         </div>
 
-        <!-- PHẦN CHỌN PHẠM VI HIỂN THỊ ĐỀ THI -->
         <div class="form-group">
-          <label>🔒 Phạm Vi Hiển Thị Đề Thi</label>
+          <label>🌐 Phạm Vi Đăng Đề Thi</label>
           <select id="quiz-visibility-select" class="form-control" onchange="toggleFolderVisibilityGroup()">
             <option value="class_only">🔒 Chỉ hiển thị trong Lớp học này (Nội bộ)</option>
             <option value="public_only">🌐 Chỉ đăng lên trang Thi Online công khai (Public)</option>
-            <option value="both">⭐ Cả hai (Vừa trong Lớp vừa hiển thị Thi Online Public)</option>
+            <option value="both" selected>⭐ Cả hai (Vừa trong Lớp vừa đăng Public)</option>
           </select>
         </div>
 
         <div class="form-group" id="quiz-folder-group">
-          <label>📁 Tên Thư Mục Đăng Vào Lớp Học (Folder)</label>
-          <input type="text" id="quiz-folder-input" class="form-control" list="existing-folders" placeholder="Ví dụ: Bài 1: Đa thức">
+          <label>📁 Chọn Thư Mục (Folder) Trong Lớp</label>
+          <div style="display: flex; gap: 10px;">
+            <select id="quiz-folder-select" class="form-control" style="flex: 1;" onchange="onSelectQuizFolderChange()">
+              <option value="">-- Chọn Folder hiện có --</option>
+            </select>
+            <input type="text" id="quiz-folder-input" class="form-control" style="flex: 1;" placeholder="Hoặc nhập tên Folder MỚI tại đây...">
+          </div>
         </div>
 
         <div class="form-group">
@@ -243,34 +247,42 @@
         <div class="form-group">
           <label>🔑 Chuỗi Đáp Án Đúng Trắc Nghiệm</label>
           <textarea id="quiz-answers-input" class="form-control" rows="3" placeholder="Nhập chuỗi đáp án. Ví dụ: 1A, 2B, 3C, 4D, 5A..." required></textarea>
-          <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
-            💡 Hệ thống sẽ tự tách số câu và đáp án chữ cái A/B/C/D tương ứng thành chuẩn dữ liệu Phòng thi.
-          </small>
         </div>
 
         <button type="submit" id="btn-submit-quiz" class="btn-submit" style="background: #10b981;">🚀 Tạo Đề Thi</button>
       </form>
     </div>
 
-    <!-- TAB 4: ĐĂNG TÀI LIỆU / VIDEO BÌNH THƯỜNG -->
+    <!-- TAB 4: ĐĂNG TÀI LIỆU / VIDEO CHO LỚP HOẶC WEB CHUNG -->
     <div id="tab-upload" class="panel-card hidden">
-      <h3 class="card-title" style="margin-bottom: 20px;">Đăng Tài Liệu / Video Cho Lớp Học</h3>
+      <h3 class="card-title" style="margin-bottom: 20px;">Đăng Tài Liệu / Video</h3>
       <form id="upload-content-form" onsubmit="handleUploadContent(event)">
         
         <div class="form-group">
-          <label>📁 Tên Thư Mục / Chủ Đề (Folder)</label>
-          <input type="text" id="content-folder" class="form-control" list="existing-folders" placeholder="Nhập tên Folder (Ví dụ: Bài 1: Đa thức) hoặc chọn Folder có sẵn..." required>
-          <datalist id="existing-folders">
-            <!-- Danh sách các folder đã có sẽ render ở đây -->
-          </datalist>
+          <label>🌐 Phạm Vi Đăng Tài Liệu</label>
+          <select id="content-scope" class="form-control" onchange="toggleScopeFolderGroup()">
+            <option value="class_only">🔒 Chỉ đăng vào Lớp học này</option>
+            <option value="public_only">🌐 Đăng lên Web chung (Tủ Sách / Tài Liệu Công Khai)</option>
+            <option value="both" selected>⭐ Đăng cả Lớp học & Web chung</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="upload-folder-group">
+          <label>📁 Chọn Thư Mục / Chủ Đề (Folder)</label>
+          <div style="display: flex; gap: 10px;">
+            <select id="content-folder-select" class="form-control" style="flex: 1;" onchange="onSelectContentFolderChange()">
+              <option value="">-- Chọn Folder đã có trong lớp --</option>
+            </select>
+            <input type="text" id="content-folder-input" class="form-control" style="flex: 1;" placeholder="Hoặc gõ tên Folder MỚI...">
+          </div>
           <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">
-            💡 Các file/video có cùng Tên Thư Mục sẽ được tự động gom vào chung 1 Folder xổ xuống trên trang học sinh.
+            💡 Ấn vào Dropdown bên trái để chọn nhanh Folder có sẵn, hoặc gõ tên mới vào ô bên phải.
           </small>
         </div>
 
         <div class="form-group">
           <label>📌 Tên Bài Học / Tiêu Đề Tài Liệu</label>
-          <input type="text" id="content-title" class="form-control" placeholder="Ví dụ: File PDF Lý thuyết + Bài tập củng cố" required>
+          <input type="text" id="content-title" class="form-control" placeholder="Ví dụ: Chuyên đề Hằng Đẳng Thức - Bài Tập Củng Cố" required>
         </div>
 
         <div style="display: flex; gap: 15px;">
@@ -294,7 +306,7 @@
           </div>
         </div>
 
-        <button type="submit" id="btn-submit-upload" class="btn-submit">Đăng Vào Thư Mục</button>
+        <button type="submit" id="btn-submit-upload" class="btn-submit">🚀 Đăng Tài Liệu</button>
       </form>
     </div>
 
@@ -386,6 +398,61 @@
       await loadClassContentsForAdmin();
       await loadExistingFolders();
       subscribeToStudentChanges();
+    }
+
+    // LOAD DANH SÁCH FOLDER HIỆN CÓ ĐƯA VÀO DROPDOWN SELECT
+    async function loadExistingFolders() {
+      const selectQuizFolder = document.getElementById('quiz-folder-select');
+      const selectContentFolder = document.getElementById('content-folder-select');
+
+      const { data } = await _supabase
+        .from('class_contents')
+        .select('description')
+        .eq('class_id', currentClassId);
+
+      if (data && data.length > 0) {
+        const uniqueFolders = [...new Set(data.map(d => d.description).filter(Boolean))];
+        const optionsHtml = '<option value="">-- Chọn Folder đã có --</option>' + 
+          uniqueFolders.map(f => `<option value="${f}">📂 ${f}</option>`).join('');
+
+        selectQuizFolder.innerHTML = optionsHtml;
+        selectContentFolder.innerHTML = optionsHtml;
+      } else {
+        const emptyHtml = '<option value="">Chưa có Folder nào (Hãy nhập mới bên phải)</option>';
+        selectQuizFolder.innerHTML = emptyHtml;
+        selectContentFolder.innerHTML = emptyHtml;
+      }
+    }
+
+    function onSelectQuizFolderChange() {
+      const val = document.getElementById('quiz-folder-select').value;
+      if (val) document.getElementById('quiz-folder-input').value = val;
+    }
+
+    function onSelectContentFolderChange() {
+      const val = document.getElementById('content-folder-select').value;
+      if (val) document.getElementById('content-folder-input').value = val;
+    }
+
+    // KHI ĐỔI PHẠM VI ĐĂNG TÀI LIỆU
+    function toggleScopeFolderGroup() {
+      const scope = document.getElementById('content-scope').value;
+      const folderGroup = document.getElementById('upload-folder-group');
+      if (scope === 'public_only') {
+        folderGroup.style.opacity = '0.5';
+      } else {
+        folderGroup.style.opacity = '1';
+      }
+    }
+
+    function toggleFolderVisibilityGroup() {
+      const vis = document.getElementById('quiz-visibility-select').value;
+      const folderGroup = document.getElementById('quiz-folder-group');
+      if (vis === 'public_only') {
+        folderGroup.style.opacity = '0.5';
+      } else {
+        folderGroup.style.opacity = '1';
+      }
     }
 
     // TẢI & RENDER BÀI HỌC DẠNG FOLDER CHO ADMIN CÓ NÚT XÓA
@@ -503,17 +570,7 @@
       }
     }
 
-    function toggleFolderVisibilityGroup() {
-      const vis = document.getElementById('quiz-visibility-select').value;
-      const folderGroup = document.getElementById('quiz-folder-group');
-      if (vis === 'public_only') {
-        folderGroup.classList.add('hidden');
-      } else {
-        folderGroup.classList.remove('hidden');
-      }
-    }
-
-    // --- TẠO ĐỀ THI VỚI PHÂN QUYỀN HIỂN THỊ ---
+    // TẠO ĐỀ THI ONLINE VỚI PHÂN QUYỀN
     async function handleCreateQuiz(e) {
       e.preventDefault();
       const title = document.getElementById('quiz-title-input').value.trim();
@@ -521,7 +578,10 @@
       const semester = document.getElementById('quiz-semester-select').value;
       const duration = parseInt(document.getElementById('quiz-duration-input').value) || 45;
       const visibility = document.getElementById('quiz-visibility-select').value;
-      const folderName = document.getElementById('quiz-folder-input').value.trim();
+      
+      let folderName = document.getElementById('quiz-folder-input').value.trim();
+      if (!folderName) folderName = document.getElementById('quiz-folder-select').value;
+
       const fileInput = document.getElementById('quiz-pdf-file');
       const answersRaw = document.getElementById('quiz-answers-input').value.trim();
       const btn = document.getElementById('btn-submit-quiz');
@@ -532,14 +592,12 @@
       }
 
       if ((visibility === 'class_only' || visibility === 'both') && !folderName) {
-        alert("Vui lòng nhập Tên Thư Mục (Folder) để đăng vào Lớp học!");
+        alert("Vui lòng chọn hoặc nhập Tên Thư Mục (Folder) để đưa vào Lớp học!");
         return;
       }
 
-      // Xử lý is_private cho bảng quizzes
       const isPrivate = (visibility === 'class_only');
 
-      // 1. Parse đáp án
       const pairs = answersRaw.match(/(\d+)\s*[\.:\-]?\s*([A-Da-d])/g);
       let answerKeysArray = [];
 
@@ -572,7 +630,6 @@
       btn.innerText = '⏳ Đang upload file PDF & tạo đề thi...';
 
       try {
-        // 2. Upload file đề thi vào Bucket `exam_files`
         const file = fileInput.files[0];
         const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
 
@@ -590,7 +647,6 @@
 
         const examFileUrl = urlData.publicUrl;
 
-        // 3. Thêm row mới vào bảng `quizzes`
         const { data: createdQuiz, error: quizDbErr } = await _supabase
           .from('quizzes')
           .insert([
@@ -612,7 +668,6 @@
 
         const newQuizId = createdQuiz.id;
 
-        // 4. Nếu có chọn đưa vào lớp học thì mới insert vào `class_contents`
         if (visibility === 'class_only' || visibility === 'both') {
           const { error: classContentErr } = await _supabase
             .from('class_contents')
@@ -629,7 +684,7 @@
           if (classContentErr) throw classContentErr;
         }
 
-        alert(`🎉 Đã tạo xong đề thi thành công!`);
+        alert(`🎉 Đã tạo đề thi thành công!`);
         document.getElementById('create-quiz-form').reset();
         await loadClassData();
 
@@ -642,18 +697,113 @@
       }
     }
 
-    async function loadExistingFolders() {
-      const datalist = document.getElementById('existing-folders');
-      const { data } = await _supabase
-        .from('class_contents')
-        .select('description')
-        .eq('class_id', currentClassId);
+    // ĐĂNG TÀI LIỆU / VIDEO CHO LỚP VÀ WEB CHUNG
+    async function handleUploadContent(e) {
+      e.preventDefault();
+      
+      const scope = document.getElementById('content-scope').value;
+      let folderName = document.getElementById('content-folder-input').value.trim();
+      if (!folderName) folderName = document.getElementById('content-folder-select').value;
 
-      if (data && data.length > 0) {
-        const uniqueFolders = [...new Set(data.map(d => d.description).filter(Boolean))];
-        datalist.innerHTML = uniqueFolders.map(f => `<option value="${f}">`).join('');
-      } else {
-        datalist.innerHTML = '';
+      const title = document.getElementById('content-title').value.trim();
+      const type = document.getElementById('content-type').value;
+      const btn = document.getElementById('btn-submit-upload');
+
+      if ((scope === 'class_only' || scope === 'both') && !currentClassId) {
+        alert("Vui lòng chọn lớp học!");
+        return;
+      }
+
+      if ((scope === 'class_only' || scope === 'both') && !folderName) {
+        alert("Vui lòng chọn hoặc nhập Tên Thư Mục (Folder)!");
+        return;
+      }
+
+      let finalUrl = '';
+      btn.disabled = true;
+      btn.innerText = '⏳ Đang xử lý tải lên...';
+
+      try {
+        if (type === 'doc') {
+          const fileInput = document.getElementById('content-file');
+          if (!fileInput.files || fileInput.files.length === 0) {
+            alert("Vui lòng chọn file cần đăng!");
+            btn.disabled = false;
+            btn.innerText = '🚀 Đăng Tài Liệu';
+            return;
+          }
+
+          const file = fileInput.files[0];
+          const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+
+          const { error: storageErr } = await _supabase
+            .storage
+            .from('tai_lieu_files')
+            .upload(fileName, file);
+
+          if (storageErr) throw storageErr;
+
+          const { data: urlData } = _supabase
+            .storage
+            .from('tai_lieu_files')
+            .getPublicUrl(fileName);
+
+          finalUrl = urlData.publicUrl;
+
+        } else {
+          finalUrl = document.getElementById('content-url').value.trim();
+          if (!finalUrl) {
+            alert("Vui lòng nhập đường dẫn hoặc Mã đề!");
+            btn.disabled = false;
+            btn.innerText = '🚀 Đăng Tài Liệu';
+            return;
+          }
+        }
+
+        // 1. Nếu chọn đăng vào Lớp học
+        if (scope === 'class_only' || scope === 'both') {
+          const { error: dbErr } = await _supabase
+            .from('class_contents')
+            .insert([
+              {
+                class_id: currentClassId,
+                title: title,
+                type: type,
+                content_url: finalUrl,
+                description: folderName
+              }
+            ]);
+
+          if (dbErr) throw dbErr;
+        }
+
+        // 2. Nếu chọn đăng lên Web chung (Chèn vào bảng books / tài liệu public)
+        if (scope === 'public_only' || scope === 'both') {
+          const bookId = `DOC_${Date.now().toString().slice(-6)}`;
+          await _supabase
+            .from('books')
+            .insert([
+              {
+                book_id: bookId,
+                title: title,
+                cover_img: 'assets/favicon.png',
+                grade: 'Toán THCS'
+              }
+            ]);
+        }
+
+        alert(`🎉 Đã đăng bài học / tài liệu thành công!`);
+        document.getElementById('upload-content-form').reset();
+        toggleUploadInput();
+        await loadClassContentsForAdmin();
+        await loadExistingFolders();
+
+      } catch (err) {
+        console.error(err);
+        alert("Lỗi upload: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = '🚀 Đăng Tài Liệu';
       }
     }
 
@@ -840,90 +990,6 @@
         } else {
           urlLabel.innerText = 'Mã đề thi (ID trong bảng Quizzes, VD: 8G01)';
         }
-      }
-    }
-
-    async function handleUploadContent(e) {
-      e.preventDefault();
-      if (!currentClassId) {
-        alert("Vui lòng chọn lớp học!");
-        return;
-      }
-
-      const folderName = document.getElementById('content-folder').value.trim();
-      const title = document.getElementById('content-title').value.trim();
-      const type = document.getElementById('content-type').value;
-      const btn = document.getElementById('btn-submit-upload');
-
-      let finalUrl = '';
-
-      btn.disabled = true;
-      btn.innerText = 'Đang xử lý tải lên...';
-
-      try {
-        if (type === 'doc') {
-          const fileInput = document.getElementById('content-file');
-          if (!fileInput.files || fileInput.files.length === 0) {
-            alert("Vui lòng chọn file cần đăng!");
-            btn.disabled = false;
-            btn.innerText = 'Đăng Vào Thư Mục';
-            return;
-          }
-
-          const file = fileInput.files[0];
-          const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
-
-          const { data: storageData, error: storageErr } = await _supabase
-            .storage
-            .from('tai_lieu_files')
-            .upload(fileName, file);
-
-          if (storageErr) throw storageErr;
-
-          const { data: urlData } = _supabase
-            .storage
-            .from('tai_lieu_files')
-            .getPublicUrl(fileName);
-
-          finalUrl = urlData.publicUrl;
-
-        } else {
-          finalUrl = document.getElementById('content-url').value.trim();
-          if (!finalUrl) {
-            alert("Vui lòng nhập đường dẫn hoặc Mã đề!");
-            btn.disabled = false;
-            btn.innerText = 'Đăng Vào Thư Mục';
-            return;
-          }
-        }
-
-        const { error: dbErr } = await _supabase
-          .from('class_contents')
-          .insert([
-            {
-              class_id: currentClassId,
-              title: title,
-              type: type,
-              content_url: finalUrl,
-              description: folderName
-            }
-          ]);
-
-        if (dbErr) throw dbErr;
-
-        alert(`Đã thêm bài học vào thư mục "${folderName}" thành công!`);
-        document.getElementById('upload-content-form').reset();
-        toggleUploadInput();
-        await loadClassContentsForAdmin();
-        await loadExistingFolders();
-        await loadClassQuizzes();
-
-      } catch (err) {
-        console.error(err);
-        alert("Lỗi upload: " + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerText = 'Đăng Vào Thư Mục';
       }
     }
 
