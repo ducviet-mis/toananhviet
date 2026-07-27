@@ -274,29 +274,29 @@
       gap: 12px;
     }
     
+    /* BIỂU ĐỒ DONUT SỬA LỖI MÀU SẮC & CHIỀU QUAY */
     .donut-chart-wrapper {
       position: relative;
-      width: 72px;
-      height: 72px;
+      width: 76px;
+      height: 76px;
       flex-shrink: 0;
     }
     .donut-chart-wrapper svg {
       width: 100%;
       height: 100%;
-      transform: rotate(-90deg);
+      transform: rotate(-90deg); /* Bắt đầu vẽ từ đỉnh 12h */
     }
     .donut-bg {
       fill: none;
-      stroke: #fee2e2;
+      stroke: #fee2e2; /* Màu đỏ nhạt cho phần sai / chưa làm */
       stroke-width: 4;
     }
     .donut-ring {
       fill: none;
-      stroke: #10b981;
+      stroke: #10b981; /* Dải xanh lá cho phần đúng */
       stroke-width: 4;
-      stroke-dasharray: 100;
-      stroke-dashoffset: 100;
-      transition: stroke-dashoffset 1s ease-in-out;
+      stroke-dasharray: 0, 100;
+      transition: stroke-dasharray 1s ease-in-out;
       stroke-linecap: round;
     }
     .donut-center-text {
@@ -313,7 +313,7 @@
       line-height: 1;
     }
     .donut-label {
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       color: #64748b;
       font-weight: 600;
     }
@@ -926,6 +926,7 @@
           <div class="sb-info-row">Họ và tên: <strong id="sb-student-name">--</strong></div>
           <div class="sb-info-row">Bài thi: <strong id="sb-exam-title">--</strong></div>
           <div class="sb-info-row">Ngày hoàn thành: <strong id="sb-completed-date">--</strong></div>
+          <div class="sb-info-row">Thời gian làm bài: <strong id="sb-time-spent">--</strong></div>
         </div>
 
         <div class="sb-score-container">
@@ -997,7 +998,7 @@
           <div class="donut-chart-wrapper">
             <svg viewBox="0 0 36 36">
               <path class="donut-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-              <path class="donut-ring" id="donut-ring-path" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path class="donut-ring" id="donut-ring-path" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
             </svg>
             <div class="donut-center-text">
               <div class="donut-score" id="result-score">0</div>
@@ -1235,7 +1236,6 @@
       });
     }
 
-    /* QUẢN LÝ TỰ LUẬN: CHỌN FILE, NÉN ẢNH VÀ XÓA FILE */
     function handleEssayFilesSelect(input) {
       const files = Array.from(input.files);
       if (selectedEssayFiles.length + files.length > 5) {
@@ -1268,11 +1268,10 @@
       renderEssayFileList();
     }
 
-    // Hàm nén ảnh tự động để giảm kích thước trước khi tải lên Storage
     function compressImageFile(file) {
       return new Promise((resolve) => {
         if (!file.type.startsWith('image/')) {
-          resolve(file); // Nếu là PDF thì giữ nguyên
+          resolve(file);
           return;
         }
 
@@ -1286,7 +1285,6 @@
             let width = img.width;
             let height = img.height;
 
-            // Giới hạn chiều rộng tối đa 1600px để giữ nguyên độ nét chữ viết
             const MAX_WIDTH = 1600;
             if (width > MAX_WIDTH) {
               height = Math.round((height * MAX_WIDTH) / width);
@@ -1298,7 +1296,6 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
 
-            // Nén chất lượng JPEG xuống 0.75 (Giảm 80% dung lượng mà không vỡ nét chữ)
             canvas.toBlob((blob) => {
               if (blob) {
                 const compressedFile = new File([blob], file.name, {
@@ -1315,7 +1312,6 @@
       });
     }
 
-    // Upload tất cả file tự luận đã nén lên Supabase Storage
     async function uploadEssayFilesToStorage(quizId) {
       if (selectedEssayFiles.length === 0) return [];
 
@@ -1323,8 +1319,6 @@
       for (const rawFile of selectedEssayFiles) {
         try {
           const fileToUpload = await compressImageFile(rawFile);
-          
-          // Tạo tên file an toàn (loại bỏ ký tự đặc biệt)
           const fileExt = fileToUpload.name.split('.').pop();
           const cleanFileName = `${quizId}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
 
@@ -1341,7 +1335,6 @@
             continue;
           }
 
-          // Lấy URL công khai của file đã upload
           const { data: publicUrlData } = supabaseClient.storage.from('tuluan').getPublicUrl(cleanFileName);
           if (publicUrlData && publicUrlData.publicUrl) {
             uploadedUrls.push(publicUrlData.publicUrl);
@@ -1471,21 +1464,23 @@
       });
 
       finalCalculatedScore = earnedScore;
-      const timeSpent = totalDuration - timeRemaining;
+      const timeSpent = totalDuration - timeRemaining; // Thời gian đã dùng (giây)
       const spentMins = Math.floor(timeSpent / 60);
       const spentSecs = timeSpent % 60;
 
       const scoreFormatted = earnedScore.toFixed(1);
-      const percentage = Math.round((correctCount / totalQuestions) * 100);
+      
+      // Tính phần trăm điểm chính xác để vẽ dải xanh lá
+      const percentage = Math.round((earnedScore / totalScore) * 100);
 
       document.getElementById('result-score').innerText = scoreFormatted;
       document.getElementById('stat-correct').innerText = `${correctCount}/${totalQuestions}`;
       document.getElementById('stat-time').innerText = `${spentMins < 10 ? '0' : ''}${spentMins}:${spentSecs < 10 ? '0' : ''}${spentSecs}`;
 
-      // A. Upload các file tự luận đính kèm lên Supabase Storage
+      // Upload file tự luận
       const uploadedEssayUrls = await uploadEssayFilesToStorage(quizData.id);
 
-      // B. Lưu kết quả nộp bài vào bảng quiz_submissions trên Supabase
+      // Lưu kết quả bài làm + time_spent lên Supabase
       try {
         const { error: dbError } = await supabaseClient.from('quiz_submissions').insert([{
           quiz_id: quizData.id,
@@ -1494,13 +1489,13 @@
           mcq_answers: userAnswers,
           essay_files: uploadedEssayUrls,
           mcq_score: earnedScore,
+          time_spent: timeSpent, // Lưu thời gian hoàn thành (giây)
           status: 'pending'
         }]);
 
         if (dbError) {
           console.error("Lỗi lưu cơ sở dữ liệu:", dbError.message);
           alert("⚠️ Không thể lưu bài làm: " + dbError.message);
-        } else {
         }
       } catch (err) {
         console.error("Lỗi lưu kết quả bài thi:", err);
@@ -1525,6 +1520,7 @@
       const resultBox = document.getElementById('result-box');
       resultBox.style.display = 'block';
 
+      // Cập nhật dải xanh lá (ĐÚNG) hiển thị chính xác theo tỉ lệ %
       setTimeout(() => {
         const donutRing = document.getElementById('donut-ring-path');
         if (donutRing) {
@@ -1544,6 +1540,13 @@
       const mm = String(today.getMonth() + 1).padStart(2, '0');
       const yyyy = today.getFullYear();
       document.getElementById('sb-completed-date').innerText = `${dd}/${mm}/${yyyy}`;
+
+      // HIỂN THỊ THỜI GIAN LÀM BÀI TRONG MODAL SCOREBOARD
+      const timeSpent = totalDuration - timeRemaining;
+      const mins = Math.floor(timeSpent / 60);
+      const secs = timeSpent % 60;
+      const timeStr = `${mins > 0 ? mins + ' phút ' : ''}${secs < 10 ? '0' : ''}${secs} giây`;
+      document.getElementById('sb-time-spent').innerText = timeStr;
 
       const scoreBox = document.getElementById('sb-score-box');
       const scoreVal = parseFloat(finalCalculatedScore.toFixed(1));
