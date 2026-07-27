@@ -40,7 +40,6 @@
     }
     .quiz-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(2, 132, 199, 0.12); }
     
-    /* Nút lịch sử góc trên phải */
     .btn-history-icon {
       position: absolute;
       top: 14px;
@@ -59,13 +58,8 @@
       transition: all 0.2s ease;
       z-index: 5;
     }
-    .btn-history-icon:hover {
-      background: #0284c7;
-      color: #ffffff;
-      transform: scale(1.1);
-    }
+    .btn-history-icon:hover { background: #0284c7; color: #ffffff; transform: scale(1.1); }
 
-    /* Badge điểm hiển thị trên thẻ */
     .score-badge {
       display: inline-flex;
       align-items: center;
@@ -95,7 +89,7 @@
     }
     .history-modal-card {
       background: #ffffff;
-      width: 92%; max-width: 600px; max-height: 85vh;
+      width: 92%; max-width: 650px; max-height: 85vh;
       border-radius: 18px; padding: 24px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.2);
       display: flex; flex-direction: column;
@@ -111,11 +105,25 @@
     .history-list { overflow-y: auto; flex-grow: 1; padding-right: 4px; }
     .history-item {
       background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
-      padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+      padding: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px;
     }
     .history-date { font-size: 0.82rem; color: #64748b; margin-top: 4px; }
-    .history-score { font-size: 1.2rem; font-weight: 800; color: #0284c7; }
-    .essay-link-badge { font-size: 0.75rem; color: #059669; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 2px 6px; border-radius: 6px; text-decoration: none; display: inline-block; margin-top: 4px; }
+    .history-score { font-size: 1.25rem; font-weight: 800; color: #0284c7; text-align: right; }
+    .btn-detail-view {
+      display: inline-block; margin-top: 6px; padding: 4px 10px; background: #e0f2fe; color: #0284c7;
+      font-weight: 700; font-size: 0.78rem; border-radius: 6px; border: 1px solid #bae6fd; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-detail-view:hover { background: #0284c7; color: #ffffff; }
+
+    .essay-link-badge { font-size: 0.75rem; color: #059669; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 3px 8px; border-radius: 6px; text-decoration: none; display: inline-block; margin-top: 6px; margin-right: 4px; }
+
+    /* BẢNG KẾT QUẢ CHI TIẾT LẦN LÀM */
+    .sb-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; margin-top: 14px; }
+    .sb-table th { background: #f8fafc; color: #334155; font-weight: 700; padding: 10px; border: 1px solid #e2e8f0; }
+    .sb-table td { padding: 8px 10px; border: 1px solid #e2e8f0; font-weight: 600; }
+    .sb-row-correct { background-color: #ecfdf5 !important; color: #047857 !important; }
+    .sb-row-incorrect { background-color: #fff1f2 !important; color: #be123c !important; }
+    .sb-row-skipped { background-color: #ffffff !important; color: #64748b !important; }
 
     @media (max-width: 768px) {
       .quiz-layout-container { flex-direction: column; padding: 0 15px; }
@@ -188,7 +196,6 @@
     let selectedGrade = 'all';
     let selectedSemester = 'all';
 
-    // Lấy thông tin user đăng nhập
     async function getUserEmail() {
       const cached = localStorage.getItem('tav_user_session');
       if (cached) {
@@ -207,7 +214,6 @@
       await Promise.all([loadSubmissions(), loadQuizzes()]);
     }
 
-    // Tải tất cả lượt nộp bài của học sinh hiện tại
     async function loadSubmissions() {
       try {
         const { data, error } = await supabaseClient
@@ -263,21 +269,17 @@
         const card = document.createElement('div');
         card.className = 'quiz-card';
         const totalQuestions = Array.isArray(quiz.answer_keys) ? quiz.answer_keys.length : 0;
-
-        // Tìm các lượt làm đề này
         const submissionsForQuiz = userSubmissions.filter(s => s.quiz_id === quiz.id);
         
         let scoreBadgeHtml = '';
         let historyIconHtml = '';
 
         if (submissionsForQuiz.length > 0) {
-          // Lấy điểm cao nhất
           const maxScore = Math.max(...submissionsForQuiz.map(s => Number(s.mcq_score || 0)));
           scoreBadgeHtml = `<span class="score-badge">🏆 Cao nhất: ${maxScore.toFixed(1)}đ</span>`;
           
-          // Icon nút Lịch sử ở góc phải
           historyIconHtml = `
-            <button class="btn-history-icon" title="Xem lịch sử làm bài" onclick="openHistoryModal('${quiz.id}', '${quiz.title.replace(/'/g, "\\'")}')">
+            <button class="btn-history-icon" title="Xem lịch sử làm bài" onclick="openHistoryModal('${quiz.id}')">
               📜
             </button>
           `;
@@ -305,12 +307,15 @@
     }
 
     // Mở Modal xem Lịch sử làm bài
-    function openHistoryModal(quizId, quizTitle) {
+    function openHistoryModal(quizId) {
+      const quiz = allQuizzes.find(q => q.id === quizId);
+      if (!quiz) return;
+
       const modal = document.getElementById('history-modal');
       const titleEl = document.getElementById('history-modal-title');
       const contentEl = document.getElementById('history-modal-content');
 
-      titleEl.innerText = `📜 Lịch sử làm bài: ${quizTitle}`;
+      titleEl.innerText = `📜 Lịch sử làm bài: ${quiz.title}`;
       contentEl.innerHTML = '';
 
       const list = userSubmissions.filter(s => s.quiz_id === quizId);
@@ -323,26 +328,106 @@
           const timeStr = dateObj.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
           const dateStr = dateObj.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
+          // Hiển thị thời gian hoàn thành bài
+          let spentStr = "Không xác định";
+          if (sub.time_spent) {
+            const m = Math.floor(sub.time_spent / 60);
+            const s = sub.time_spent % 60;
+            spentStr = `${m > 0 ? m + ' phút ' : ''}${s} giây`;
+          }
+
           let essayHtml = '';
           if (sub.essay_files && Array.isArray(sub.essay_files) && sub.essay_files.length > 0) {
-            essayHtml = sub.essay_files.map((url, i) => `<a href="${url}" target="_blank" class="essay-link-badge">📎 Xem ảnh tự luận ${i + 1}</a>`).join(' ');
+            essayHtml = sub.essay_files.map((url, i) => `<a href="${url}" target="_blank" class="essay-link-badge">📎 Ảnh tự luận ${i + 1}</a>`).join(' ');
           }
 
           const item = document.createElement('div');
           item.className = 'history-item';
+          item.id = `sub-item-${sub.id}`;
           item.innerHTML = `
-            <div>
+            <div style="flex-grow: 1;">
               <div style="font-weight: 700; color: #1e293b; font-size: 0.95rem;">Lần làm thứ ${list.length - idx}</div>
-              <div class="history-date">⏰ ${timeStr} - ${dateStr}</div>
+              <div class="history-date">📅 Ngày làm: ${timeStr} - ${dateStr}</div>
+              <div class="history-date">⏱️ Thời gian hoàn thành: <strong>${spentStr}</strong></div>
               ${essayHtml ? `<div style="margin-top: 4px;">${essayHtml}</div>` : ''}
+              <div>
+                <button class="btn-detail-view" onclick="toggleSubmissionDetail('${sub.id}', '${quizId}')">🔍 Xem bảng đáp án chi tiết</button>
+              </div>
             </div>
-            <div class="history-score">${Number(sub.mcq_score || 0).toFixed(1)}đ</div>
+            <div>
+              <div class="history-score">${Number(sub.mcq_score || 0).toFixed(1)}đ</div>
+            </div>
+            <div id="detail-box-${sub.id}" class="hidden" style="grid-column: 1 / -1; width: 100%; margin-top: 10px; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
+              <!-- Bảng đáp án chi tiết render ở đây -->
+            </div>
           `;
           contentEl.appendChild(item);
         });
       }
 
       modal.classList.remove('hidden');
+    }
+
+    // Toggle hiển thị Bảng đáp án chi tiết giống Quiz Room
+    function toggleSubmissionDetail(subId, quizId) {
+      const detailBox = document.getElementById(`detail-box-${subId}`);
+      if (!detailBox) return;
+
+      if (!detailBox.classList.contains('hidden')) {
+        detailBox.classList.add('hidden');
+        return;
+      }
+
+      const sub = userSubmissions.find(s => s.id === subId);
+      const quiz = allQuizzes.find(q => q.id === quizId);
+
+      if (!sub || !quiz || !Array.isArray(quiz.answer_keys)) return;
+
+      const userAnswers = sub.mcq_answers || {};
+
+      let tableHtml = `
+        <table class="sb-table">
+          <thead>
+            <tr>
+              <th>Câu</th>
+              <th>Đã chọn</th>
+              <th>Đáp án đúng</th>
+              <th>Kết quả</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      quiz.answer_keys.forEach(item => {
+        const studentAns = userAnswers[item.q_number] || '';
+        const sysKey = item.correct_answer || '';
+
+        let rowClass = 'sb-row-skipped';
+        let statusText = 'Bỏ qua';
+
+        if (studentAns) {
+          if (studentAns.toLowerCase() === sysKey.toLowerCase()) {
+            rowClass = 'sb-row-correct';
+            statusText = 'Chính xác';
+          } else {
+            rowClass = 'sb-row-incorrect';
+            statusText = 'Sai';
+          }
+        }
+
+        tableHtml += `
+          <tr class="${rowClass}">
+            <td><strong>Câu ${item.q_number}</strong></td>
+            <td>${studentAns ? studentAns.toUpperCase() : '---'}</td>
+            <td>${sysKey.toUpperCase()}</td>
+            <td>${statusText}</td>
+          </tr>
+        `;
+      });
+
+      tableHtml += `</tbody></table>`;
+      detailBox.innerHTML = tableHtml;
+      detailBox.classList.remove('hidden');
     }
 
     function closeHistoryModal() {
