@@ -1499,9 +1499,8 @@
 
         if (dbError) {
           console.error("Lỗi lưu cơ sở dữ liệu:", dbError.message);
-          alert("⚠️ Không thể lưu bài làm vào Database: " + dbError.message);
+          alert("⚠️ Không thể lưu bài làm: " + dbError.message);
         } else {
-          alert("✅ Nộp bài thành công!");
         }
       } catch (err) {
         console.error("Lỗi lưu kết quả bài thi:", err);
