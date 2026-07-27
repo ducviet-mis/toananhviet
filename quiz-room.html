@@ -1655,7 +1655,6 @@
     document.addEventListener('fullscreenchange', () => {
       const isStartModalHidden = document.getElementById('start-exam-modal').style.display === 'none';
       if (!document.fullscreenElement && isStartModalHidden && !isExamSubmitted && window.innerWidth > 900) {
-        alert("⚠️ Cảnh báo: Bạn vừa thoát chế độ Toàn màn hình! Vui lòng tập trung làm bài.");
       }
     });
 
