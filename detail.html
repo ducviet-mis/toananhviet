@@ -148,24 +148,6 @@
       transform: translateY(-3px);
       box-shadow: 0 8px 16px rgba(0,0,0,0.06);
     }
-    .related-card img {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 6px;
-      margin-bottom: 8px;
-    }
-    .related-card h4 {
-      font-size: 13px;
-      margin: 0;
-      color: #1e293b;
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      font-family: 'Inter', sans-serif;
-    }
   </style>
 </head>
 <body>
@@ -176,17 +158,17 @@
   <main>
     <div class="detail-container">
       <aside class="detail-sidebar">
-        <img id="detail-thumbnail" src="https://via.placeholder.com/300x400?text=Dang+tai..." alt="Ảnh tài liệu" style="width: 100%; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+        <img id="detail-thumbnail" src="assets/favicon.png" alt="Ảnh tài liệu" style="width: 100%; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
         
         <div class="doc-badges" style="margin-bottom: 15px; display: flex; gap: 6px; flex-wrap: wrap;">
           <span class="badge badge-grade" id="detail-grade" style="background:#0284c7; color:white; padding: 4px 10px; border-radius:6px; font-size:12px; font-weight:600;">-</span>
           <span class="badge badge-cat" id="detail-cat" style="background:#e0f2fe; color:#0369a1; padding: 4px 10px; border-radius:6px; font-size:12px; font-weight:600;">-</span>
         </div>
         
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 6px;" id="detail-date">Ngày đăng: --/--/----</p>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 6px;" id="detail-date">Ngày đăng: Mới cập nhật</p>
         <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;" id="detail-views">Lượt xem: 1,240</p>
         
-        <a href="#" id="btn-download-direct" class="btn-action btn-download" download>Tải trực tiếp file gốc</a>
+        <a href="#" id="btn-download-direct" class="btn-action btn-download" target="_blank" download>Tải trực tiếp file gốc</a>
         
         <div class="share-buttons">
           <a href="#" id="btn-share-fb" target="_blank" class="share-btn share-fb">Facebook</a>
@@ -230,67 +212,71 @@
     </div>
   </main>
 
-
   <script>
-    function getAbsoluteUrl(path) {
-      if (!path) return '';
-      if (path.startsWith('http://') || path.startsWith('https://')) return path;
-      const base = new URL(window.location.href);
-      return new URL(path, base.origin + base.pathname).href;
-    }
+    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function loadDocumentDetail() {
       const urlParams = new URLSearchParams(window.location.search);
-      const fileUrl = urlParams.get('file');
+      const docId = urlParams.get('id');
 
-      if (!fileUrl) {
+      if (!docId) {
         document.getElementById('detail-title').innerText = "Không tìm thấy tài liệu!";
-        document.getElementById('viewer-container').innerHTML = `<p class="no-preview">Đường dẫn tài liệu không hợp lệ hoặc thiếu tham số <code>?file=</code>.</p>`;
+        document.getElementById('viewer-container').innerHTML = `<p class="no-preview">Mã ID tài liệu không hợp lệ hoặc thiếu tham số <code>?id=</code>.</p>`;
         document.getElementById('detail-description').style.display = 'none';
         return;
       }
 
       try {
-        const response = await fetch(fileUrl);
-        if (!response.ok) throw new Error("Lỗi HTTP: " + response.status);
-        const doc = await response.json();
+        // Truy vấn dữ liệu từ bảng toananhviet theo id
+        const { data: doc, error } = await _supabase
+          .from('toananhviet')
+          .select('*')
+          .eq('id', docId)
+          .single();
 
-        document.getElementById('detail-title').innerText = doc.title || "Tài liệu Toán THCS";
-        document.title = (doc.title || "Chi tiết tài liệu") + " - Gia sư Toán Anh Việt";
-        document.getElementById('detail-grade').innerText = doc.grade || 'Toán THCS';
-        document.getElementById('detail-cat').innerText = doc.category || 'Tài liệu chung';
-        document.getElementById('detail-date').innerText = `Ngày đăng: ${doc.date || 'Mới cập nhật'}`;
+        if (error || !doc) throw new Error("Không tìm thấy dữ liệu tài liệu trên hệ thống.");
+
+        document.getElementById('detail-title').innerText = doc.tieu_de || "Tài liệu Toán THCS";
+        document.title = (doc.tieu_de || "Chi tiết tài liệu") + " - Gia sư Toán Anh Việt";
+        document.getElementById('detail-grade').innerText = `Toán ${doc.lop || 'THCS'}`;
+        document.getElementById('detail-cat').innerText = doc.loai_de || 'Tài liệu chung';
         
         const descBox = document.getElementById('detail-description');
-        descBox.innerHTML = doc.description 
-          ? `<strong>📌 Tóm tắt:</strong> ${doc.description}` 
-          : `<strong>📌 Tóm tắt:</strong> Tài liệu chất lượng cao phục vụ giảng dạy và ôn tập môn Toán khối ${doc.grade || 'THCS'}. Bao gồm lý thuyết, các dạng bài tập và lời giải chi tiết.`;
+        descBox.innerHTML = `<strong>📌 Tóm tắt:</strong> ${doc.mo_ta || 'Tài liệu chất lượng cao phục vụ giảng dạy và ôn tập môn Toán.'}`;
 
-        const fullImgUrl = getAbsoluteUrl(doc.thumbnail);
-        const fullFileUrl = getAbsoluteUrl(doc.file);
-        
-        document.getElementById('detail-thumbnail').src = fullImgUrl || 'https://via.placeholder.com/300x400?text=Math+Document';
+        // Lấy link file nếu có (nếu chưa có cột file_url thì để mặc định)
+        const fileUrl = doc.file_url || doc.url || '';
         
         const downloadBtn = document.getElementById('btn-download-direct');
-        downloadBtn.href = fullFileUrl;
+        downloadBtn.href = fileUrl || '#';
         
         const openNewTabBtn = document.getElementById('btn-open-newtab');
-        openNewTabBtn.href = fullFileUrl;
+        openNewTabBtn.href = fileUrl || '#';
 
         const currentUrl = encodeURIComponent(window.location.href);
         document.getElementById('btn-share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`;
         document.getElementById('btn-share-zalo').href = `https://zalo.me/share?url=${currentUrl}`;
 
-        renderDocumentViewer(fullFileUrl);
-        loadRelatedDocuments(doc.grade, fileUrl);
+        if (fileUrl) {
+          renderDocumentViewer(fileUrl);
+        } else {
+          document.getElementById('viewer-container').innerHTML = `
+            <div class="no-preview">
+              <p style="font-size: 15px; color: #475569;">Tài liệu đang được cập nhật file trực tuyến.</p>
+            </div>
+          `;
+        }
+
+        loadRelatedDocuments(doc.lop);
 
       } catch (error) {
-        console.error("Lỗi nạp file:", error);
+        console.error("Lỗi nạp bài:", error);
         document.getElementById('detail-title').innerText = "Không thể tải tài liệu!";
         document.getElementById('viewer-container').innerHTML = `
           <div class="no-preview">
-            <p style="color: #ef4444; font-weight: bold;"> Không thể kết nối với dữ liệu file tài liệu.</p>
-            <p style="font-size: 13px;">Vui lòng kiểm tra lại đường dẫn .json hoặc máy chủ lưu trữ.</p>
+            <p style="color: #ef4444; font-weight: bold;"> Không tìm thấy tài liệu này trong cơ sở dữ liệu.</p>
           </div>
         `;
       }
@@ -308,39 +294,30 @@
         viewerContainer.innerHTML = `
           <iframe id="doc-iframe" class="doc-viewer" 
                   src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeUrl}" 
-                  frameborder="0"
-                  onerror="this.src='https://docs.google.com/gview?url=${encodeUrl}&embedded=true'">
+                  frameborder="0">
           </iframe>
         `;
       } else {
         viewerContainer.innerHTML = `
           <div class="no-preview">
-            <p style="font-size: 16px;">Tệp tin định dạng (<b>.${fileExtension}</b>) không hỗ trợ xem trực tuyến.</p>
-            <p style="font-size: 14px; margin-top: 5px;">Vui lòng nhấn nút <b>"Tải trực tiếp file gốc"</b> ở thanh bên trái để xem nội dung.</p>
+            <p style="font-size: 16px;">Vui lòng bấm nút <b>"Tải trực tiếp file gốc"</b> bên trái để xem nội dung.</p>
           </div>
         `;
       }
     }
 
-    async function loadRelatedDocuments(currentGrade, currentFile) {
+    async function loadRelatedDocuments(currentGrade) {
       const container = document.getElementById('related-docs-container');
-      try {
-        container.innerHTML = `
-          <a href="category.html?grade=${currentGrade || 8}" class="related-card">
-            <img src="https://via.placeholder.com/200x120?text=Toan+THCS" alt="Đề thi">
-            <h4>Khám phá thêm các đề kiểm tra môn Toán lớp ${currentGrade || 8}</h4>
-          </a>
-        `;
-      } catch (e) {
-        container.innerHTML = `<p style="font-size: 13px; color: #94a3b8;">Chưa có tài liệu liên quan nào khác.</p>`;
-      }
+      container.innerHTML = `
+        <a href="category.html?grade=${currentGrade || 8}" class="related-card">
+          <h4 style="font-size: 14px; margin: 0; color: #0284c7;">👉 Khám phá thêm các đề kiểm tra Toán lớp ${currentGrade || 8}</h4>
+        </a>
+      `;
     }
 
     function copyDocumentLink() {
       navigator.clipboard.writeText(window.location.href).then(() => {
-        alert("Đã sao chép!");
-      }).catch(() => {
-        alert("Không thể sao chép liên kết.");
+        alert("Đã sao chép liên kết!");
       });
     }
 
@@ -350,21 +327,11 @@
         alert("Không có trình xem tài liệu để phóng to!");
         return;
       }
-      if (iframe.requestFullscreen) {
-        iframe.requestFullscreen();
-      } else if (iframe.webkitRequestFullscreen) {
-        iframe.webkitRequestFullscreen();
-      } else if (iframe.msRequestFullscreen) {
-        iframe.msRequestFullscreen();
-      }
+      if (iframe.requestFullscreen) iframe.requestFullscreen();
     }
 
     function reportError() {
-      const title = document.getElementById('detail-title').innerText;
-      const confirmReport = confirm(`Bạn muốn báo lỗi liên kết hoặc file không đọc được cho bài viết:\n"${title}"?`);
-      if (confirmReport) {
-        alert("Cảm ơn bạn đã phản hồi! Quản trị viên Anh Việt sẽ kiểm tra và khắc phục sớm nhất.");
-      }
+      alert("Cảm ơn bạn đã phản hồi! Quản trị viên sẽ kiểm tra lại liên kết này.");
     }
 
     document.addEventListener("DOMContentLoaded", loadDocumentDetail);
