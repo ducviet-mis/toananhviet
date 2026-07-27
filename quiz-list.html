@@ -23,13 +23,99 @@
 
     .quiz-content-main { flex-grow: 1; min-width: 0; }
     .page-main-title { font-size: 26px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 24px; }
-    .doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-    .quiz-card { background: #ffffff; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.25s ease, box-shadow 0.25s ease; }
+    .doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 20px; }
+    
+    /* QUIZ CARD VỚI BADGE & ICON LỊCH SỬ */
+    .quiz-card { 
+      background: #ffffff; 
+      border-radius: 14px; 
+      padding: 20px; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
+      border: 1px solid #e2e8f0; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: space-between; 
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      position: relative; 
+    }
     .quiz-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(2, 132, 199, 0.12); }
+    
+    /* Nút lịch sử góc trên phải */
+    .btn-history-icon {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: #f1f5f9;
+      color: #0284c7;
+      border: 1px solid #bae6fd;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      z-index: 5;
+    }
+    .btn-history-icon:hover {
+      background: #0284c7;
+      color: #ffffff;
+      transform: scale(1.1);
+    }
+
+    /* Badge điểm hiển thị trên thẻ */
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
+    }
+
     .quiz-meta { font-size: 0.85rem; color: #64748b; margin-top: 12px; margin-bottom: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
     .quiz-btn { display: block; text-align: center; background-color: #0284c7; color: white; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: 600; font-size: 0.95rem; transition: background 0.2s; }
     .quiz-btn:hover { background-color: #0369a1; }
     .hidden { display: none !important; }
+
+    /* MODAL POPUP LỊCH SỬ LÀM BÀI */
+    .history-modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(6px);
+      z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .history-modal-card {
+      background: #ffffff;
+      width: 92%; max-width: 600px; max-height: 85vh;
+      border-radius: 18px; padding: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      display: flex; flex-direction: column;
+    }
+    .history-header {
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1.5px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 16px;
+    }
+    .history-title { font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0; }
+    .btn-close-modal { background: #f1f5f9; border: none; font-size: 18px; font-weight: bold; color: #64748b; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; }
+    .btn-close-modal:hover { background: #e2e8f0; color: #0f172a; }
+    
+    .history-list { overflow-y: auto; flex-grow: 1; padding-right: 4px; }
+    .history-item {
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+      padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .history-date { font-size: 0.82rem; color: #64748b; margin-top: 4px; }
+    .history-score { font-size: 1.2rem; font-weight: 800; color: #0284c7; }
+    .essay-link-badge { font-size: 0.75rem; color: #059669; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 2px 6px; border-radius: 6px; text-decoration: none; display: inline-block; margin-top: 4px; }
 
     @media (max-width: 768px) {
       .quiz-layout-container { flex-direction: column; padding: 0 15px; }
@@ -77,6 +163,18 @@
     </section>
   </main>
 
+  <!-- MODAL BẢNG LỊCH SỬ LÀM BÀI -->
+  <div class="history-modal-overlay hidden" id="history-modal">
+    <div class="history-modal-card">
+      <div class="history-header">
+        <h3 class="history-title" id="history-modal-title">📜 Lịch sử làm bài</h3>
+        <button class="btn-close-modal" onclick="closeHistoryModal()">✕</button>
+      </div>
+      <div class="history-list" id="history-modal-content">
+        <!-- Danh sách bài làm sẽ render vào đây -->
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -85,8 +183,46 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let allQuizzes = [];
+    let userSubmissions = [];
+    let studentEmail = "hocvien@toananhviet.com";
     let selectedGrade = 'all';
     let selectedSemester = 'all';
+
+    // Lấy thông tin user đăng nhập
+    async function getUserEmail() {
+      const cached = localStorage.getItem('tav_user_session');
+      if (cached) {
+        try {
+          const u = JSON.parse(cached);
+          if (u.email) return u.email;
+        } catch(e){}
+      }
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (user && user.email) return user.email;
+      return studentEmail;
+    }
+
+    async function loadData() {
+      studentEmail = await getUserEmail();
+      await Promise.all([loadSubmissions(), loadQuizzes()]);
+    }
+
+    // Tải tất cả lượt nộp bài của học sinh hiện tại
+    async function loadSubmissions() {
+      try {
+        const { data, error } = await supabaseClient
+          .from('quiz_submissions')
+          .select('*')
+          .eq('user_email', studentEmail)
+          .order('created_at', { ascending: false });
+
+        if (!error && data) {
+          userSubmissions = data;
+        }
+      } catch (e) {
+        console.error("Lỗi lấy lịch sử nộp bài:", e);
+      }
+    }
 
     async function loadQuizzes() {
       const grid = document.getElementById('quiz-grid');
@@ -128,23 +264,89 @@
         card.className = 'quiz-card';
         const totalQuestions = Array.isArray(quiz.answer_keys) ? quiz.answer_keys.length : 0;
 
+        // Tìm các lượt làm đề này
+        const submissionsForQuiz = userSubmissions.filter(s => s.quiz_id === quiz.id);
+        
+        let scoreBadgeHtml = '';
+        let historyIconHtml = '';
+
+        if (submissionsForQuiz.length > 0) {
+          // Lấy điểm cao nhất
+          const maxScore = Math.max(...submissionsForQuiz.map(s => Number(s.mcq_score || 0)));
+          scoreBadgeHtml = `<span class="score-badge">🏆 Cao nhất: ${maxScore.toFixed(1)}đ</span>`;
+          
+          // Icon nút Lịch sử ở góc phải
+          historyIconHtml = `
+            <button class="btn-history-icon" title="Xem lịch sử làm bài" onclick="openHistoryModal('${quiz.id}', '${quiz.title.replace(/'/g, "\\'")}')">
+              📜
+            </button>
+          `;
+        }
+
         card.innerHTML = `
+          ${historyIconHtml}
           <div>
-            <div class="doc-badges" style="margin-bottom: 10px; display: flex; gap: 6px;">
+            <div class="doc-badges" style="margin-bottom: 10px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
               <span class="badge badge-grade" style="background:#0284c7; color:white; padding:3px 8px; border-radius:4px; font-size:12px;">${quiz.grade}</span>
               <span class="badge badge-cat" style="background:#e0f2fe; color:#0369a1; padding:3px 8px; border-radius:4px; font-size:12px;">${quiz.semester || 'Luyện thi'}</span>
+              ${scoreBadgeHtml}
             </div>
-            <h3 style="font-size: 1.1rem; font-weight: bold; line-height: 1.4; color: #1e293b; margin: 0;">${quiz.title}</h3>
+            <h3 style="font-size: 1.1rem; font-weight: bold; line-height: 1.4; color: #1e293b; margin: 0; padding-right: 25px;">${quiz.title}</h3>
             <div class="quiz-meta">
               <span>⏱️ Thời gian: ${quiz.duration} phút</span>
               <span>📝 Số câu: ${totalQuestions} câu</span>
               <span>💯 Tổng điểm: ${quiz.total_score || 10}đ</span>
             </div>
           </div>
-          <a href="quiz-room.html?id=${quiz.id}" class="quiz-btn">Vào làm bài 📝</a>
+          <a href="quiz-room.html?id=${quiz.id}" class="quiz-btn">${submissionsForQuiz.length > 0 ? 'Làm lại bài 📝' : 'Vào làm bài 📝'}</a>
         `;
         grid.appendChild(card);
       });
+    }
+
+    // Mở Modal xem Lịch sử làm bài
+    function openHistoryModal(quizId, quizTitle) {
+      const modal = document.getElementById('history-modal');
+      const titleEl = document.getElementById('history-modal-title');
+      const contentEl = document.getElementById('history-modal-content');
+
+      titleEl.innerText = `📜 Lịch sử làm bài: ${quizTitle}`;
+      contentEl.innerHTML = '';
+
+      const list = userSubmissions.filter(s => s.quiz_id === quizId);
+
+      if (list.length === 0) {
+        contentEl.innerHTML = '<p style="text-align: center; color: #64748b;">Chưa có lịch sử làm bài nào.</p>';
+      } else {
+        list.forEach((sub, idx) => {
+          const dateObj = new Date(sub.created_at);
+          const timeStr = dateObj.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+          const dateStr = dateObj.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+          let essayHtml = '';
+          if (sub.essay_files && Array.isArray(sub.essay_files) && sub.essay_files.length > 0) {
+            essayHtml = sub.essay_files.map((url, i) => `<a href="${url}" target="_blank" class="essay-link-badge">📎 Xem ảnh tự luận ${i + 1}</a>`).join(' ');
+          }
+
+          const item = document.createElement('div');
+          item.className = 'history-item';
+          item.innerHTML = `
+            <div>
+              <div style="font-weight: 700; color: #1e293b; font-size: 0.95rem;">Lần làm thứ ${list.length - idx}</div>
+              <div class="history-date">⏰ ${timeStr} - ${dateStr}</div>
+              ${essayHtml ? `<div style="margin-top: 4px;">${essayHtml}</div>` : ''}
+            </div>
+            <div class="history-score">${Number(sub.mcq_score || 0).toFixed(1)}đ</div>
+          `;
+          contentEl.appendChild(item);
+        });
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeHistoryModal() {
+      document.getElementById('history-modal').classList.add('hidden');
     }
 
     document.getElementById('grade-filters').addEventListener('click', (e) => {
@@ -175,7 +377,7 @@
       }
     });
 
-    document.addEventListener('DOMContentLoaded', loadQuizzes);
+    document.addEventListener('DOMContentLoaded', loadData);
   </script>
   <script src="header.js"></script>
   <script src="footer.js"></script>
