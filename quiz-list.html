@@ -209,9 +209,11 @@
       return studentEmail;
     }
 
+    // ĐÃ SỬA THỨ TỰ TẢI DỮ LIỆU: Tải xong Submissions mới Render Quizzes
     async function loadData() {
       studentEmail = await getUserEmail();
-      await Promise.all([loadSubmissions(), loadQuizzes()]);
+      await loadSubmissions(); // Lấy xong lịch sử trước
+      await loadQuizzes();     // Bắt đầu vẽ danh sách bài thi
     }
 
     async function loadSubmissions() {
