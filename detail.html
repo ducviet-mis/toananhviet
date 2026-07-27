@@ -219,24 +219,25 @@
 
     async function loadDocumentDetail() {
       const urlParams = new URLSearchParams(window.location.search);
-      const docId = urlParams.get('id');
+      const docTitleParam = urlParams.get('title') || urlParams.get('id');
 
-      if (!docId) {
+      if (!docTitleParam) {
         document.getElementById('detail-title').innerText = "Không tìm thấy tài liệu!";
-        document.getElementById('viewer-container').innerHTML = `<p class="no-preview">Mã ID tài liệu không hợp lệ hoặc thiếu tham số <code>?id=</code>.</p>`;
+        document.getElementById('viewer-container').innerHTML = `<p class="no-preview">Thiếu thông tin tên bài hoặc đường dẫn không hợp lệ.</p>`;
         document.getElementById('detail-description').style.display = 'none';
         return;
       }
 
       try {
-        // Truy vấn dữ liệu từ bảng toananhviet theo id
+        const titleDecoded = decodeURIComponent(docTitleParam);
+
         const { data: doc, error } = await _supabase
           .from('toananhviet')
           .select('*')
-          .eq('id', docId)
-          .single();
+          .eq('tieu_de', titleDecoded)
+          .maybeSingle();
 
-        if (error || !doc) throw new Error("Không tìm thấy dữ liệu tài liệu trên hệ thống.");
+        if (error || !doc) throw new Error("Không tìm thấy dữ liệu trên Supabase.");
 
         document.getElementById('detail-title').innerText = doc.tieu_de || "Tài liệu Toán THCS";
         document.title = (doc.tieu_de || "Chi tiết tài liệu") + " - Gia sư Toán Anh Việt";
@@ -246,14 +247,10 @@
         const descBox = document.getElementById('detail-description');
         descBox.innerHTML = `<strong>📌 Tóm tắt:</strong> ${doc.mo_ta || 'Tài liệu chất lượng cao phục vụ giảng dạy và ôn tập môn Toán.'}`;
 
-        // Lấy link file nếu có (nếu chưa có cột file_url thì để mặc định)
         const fileUrl = doc.file_url || doc.url || '';
         
-        const downloadBtn = document.getElementById('btn-download-direct');
-        downloadBtn.href = fileUrl || '#';
-        
-        const openNewTabBtn = document.getElementById('btn-open-newtab');
-        openNewTabBtn.href = fileUrl || '#';
+        document.getElementById('btn-download-direct').href = fileUrl || '#';
+        document.getElementById('btn-open-newtab').href = fileUrl || '#';
 
         const currentUrl = encodeURIComponent(window.location.href);
         document.getElementById('btn-share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`;
@@ -273,10 +270,10 @@
 
       } catch (error) {
         console.error("Lỗi nạp bài:", error);
-        document.getElementById('detail-title').innerText = "Không thể tải tài liệu!";
+        document.getElementById('detail-title').innerText = "Không tìm thấy tài liệu!";
         document.getElementById('viewer-container').innerHTML = `
           <div class="no-preview">
-            <p style="color: #ef4444; font-weight: bold;"> Không tìm thấy tài liệu này trong cơ sở dữ liệu.</p>
+            <p style="color: #ef4444; font-weight: bold;"> Không tìm thấy bài viết này trong cơ sở dữ liệu.</p>
           </div>
         `;
       }
