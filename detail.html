@@ -244,10 +244,15 @@
         document.getElementById('detail-grade').innerText = `Toán ${doc.lop || 'THCS'}`;
         document.getElementById('detail-cat').innerText = doc.loai_de || 'Tài liệu chung';
         
+        if (doc.anh_bia) {
+          document.getElementById('detail-thumbnail').src = doc.anh_bia;
+        }
+
         const descBox = document.getElementById('detail-description');
         descBox.innerHTML = `<strong>📌 Tóm tắt:</strong> ${doc.mo_ta || 'Tài liệu chất lượng cao phục vụ giảng dạy và ôn tập môn Toán.'}`;
 
-        const fileUrl = doc.file_url || doc.url || '';
+        // Đọc đường dẫn từ cột link_file trong bảng toananhviet
+        const fileUrl = doc.link_file || doc.file_url || doc.url || '';
         
         document.getElementById('btn-download-direct').href = fileUrl || '#';
         document.getElementById('btn-open-newtab').href = fileUrl || '#';
@@ -261,7 +266,7 @@
         } else {
           document.getElementById('viewer-container').innerHTML = `
             <div class="no-preview">
-              <p style="font-size: 15px; color: #475569;">Tài liệu đang được cập nhật file trực tuyến.</p>
+              <p style="font-size: 15px; color: #475569;">Tài liệu này chưa được gắn link file trực tuyến trên hệ thống.</p>
             </div>
           `;
         }
