@@ -125,7 +125,7 @@
 
     const teacherBadge = isTeacher ? `<span class="badge-teacher-tag">Giáo viên</span>` : '';
     const teacherAdminLink = isTeacher 
-      ? `<a href="admin-class.html" class="dropdown-item-link admin-menu-item ${isAdminClass ? 'active-item' : ''}">👨‍🏫 Quản lý lớp học</a>` 
+      ? `<a href="admin-class.html" class="dropdown-item-link admin-menu-item ${isAdminClass ? 'active-item' : ''}"> Quản lý lớp học</a>` 
       : '';
 
     authLI.innerHTML = `
