@@ -238,6 +238,7 @@
         const { data, error } = await supabaseClient
           .from('quizzes')
           .select('*')
+          .eq('is_private', false)
           .order('created_at', { ascending: false });
 
         if (error || !data || data.length === 0) {
