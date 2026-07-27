@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* BỐ CỤC 2 CỘT CHO TRANG CATEGORY (SIDEBAR TRÁI + MAIN RIGHT) */
     .category-container {
       max-width: 1200px;
       margin: 30px auto;
@@ -114,26 +113,30 @@
       <h3 class="sidebar-heading">Danh mục đề</h3>
       <div class="vertical-filter-menu">
         <button class="vertical-filter-btn active" onclick="filterDocs('all', this)">Tất cả</button>
-        <button class="vertical-filter-btn" onclick="filterDocs('Giữa kì 1', this)">Đề giữa kì 1</button>
-        <button class="vertical-filter-btn" onclick="filterDocs('Cuối kì 1', this)">Đề cuối kì 1</button>
-        <button class="vertical-filter-btn" onclick="filterDocs('Giữa kì 2', this)">Đề giữa kì 2</button>
-        <button class="vertical-filter-btn" onclick="filterDocs('Cuối kì 2', this)">Đề cuối kì 2</button>
+        <button class="vertical-filter-btn" onclick="filterDocs('giữa kì 1', this)">Đề giữa kì 1</button>
+        <button class="vertical-filter-btn" onclick="filterDocs('cuối kì 1', this)">Đề cuối kì 1</button>
+        <button class="vertical-filter-btn" onclick="filterDocs('giữa kì 2', this)">Đề giữa kì 2</button>
+        <button class="vertical-filter-btn" onclick="filterDocs('cuối kì 2', this)">Đề cuối kì 2</button>
         <button class="vertical-filter-btn" onclick="filterDocs('Chuyên đề', this)">Chuyên đề Toán</button>
       </div>
     </aside>
 
     <section class="category-content">
-      <h1 class="category-page-title" id="category-page-heading">Tài liệu môn Toán lớp 6</h1>
+      <h1 class="category-page-title" id="category-page-heading">Tài liệu môn Toán lớp 8</h1>
 
       <div class="doc-grid" id="category-docs-container">
-        <p style="text-align: center; grid-column: 1/-1; color: #64748b;">Đang tải danh mục tài liệu chuyên sâu...</p>
+        <p style="text-align: center; grid-column: 1/-1; color: #64748b;">Đang tải danh mục tài liệu...</p>
       </div>
     </section>
   </main>
 
   <script>
+    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     const urlParams = new URLSearchParams(window.location.search);
-    const currentGrade = urlParams.get('grade') || '6';
+    const currentGrade = urlParams.get('grade') || '8';
     let allDocumentsData = [];
 
     function updatePageHeading() {
@@ -145,43 +148,41 @@
 
       const container = document.getElementById('category-docs-container');
       try {
-        const response = await fetch('https://api.github.com/repos/ducviet-mis/toananhviet/contents/documents');
-        if (!response.ok) throw new Error();
-        
-        const files = await response.json();
-        const jsonFiles = files.filter(f => f.name.endsWith('.json'));
-        
-        allDocumentsData = [];
-        for (const f of jsonFiles) {
-          const res = await fetch(f.download_url);
-          const doc = await res.json();
-          if (String(doc.grade).includes(currentGrade)) {
-            doc.rawLink = `detail.html?file=${encodeURIComponent(f.download_url)}`;
-            allDocumentsData.push(doc);
-          }
-        }
+        const cleanGrade = String(currentGrade).replace(/\D/g, '');
+
+        const { data, error } = await _supabase
+          .from('toananhviet')
+          .select('*')
+          .eq('lop', cleanGrade);
+
+        if (error) throw error;
+
+        allDocumentsData = data || [];
         renderCardsList(allDocumentsData);
+
       } catch (err) {
-        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #ef4444;">Không thể tải danh sách tài liệu từ kho lưu trữ GitHub.</p>';
+        console.error("Lỗi khi tải từ Supabase:", err);
+        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #ef4444;">Không thể tải danh sách tài liệu.</p>';
       }
     }
 
     function renderCardsList(list) {
       const container = document.getElementById('category-docs-container');
-      if (list.length === 0) {
+      if (!list || list.length === 0) {
         container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #64748b; padding: 40px 0;">Thầy Việt đang cập nhật bộ tài liệu cho chuyên mục này, học sinh quay lại sau nhé!</p>';
         return;
       }
+
       container.innerHTML = list.map(doc => `
-        <div class="doc-card-premium" onclick="window.location.href='${doc.rawLink}'">
+        <div class="doc-card-premium" onclick="window.location.href='detail.html?id=${doc.id || ''}'">
           <div class="card-meta">
-            <span class="card-badge">Toán ${currentGrade}</span>
-            <span class="card-id">${doc.category}</span>
+            <span class="card-badge">Toán ${doc.lop || currentGrade}</span>
+            <span class="card-id">${doc.loai_de || 'Tài liệu'}</span>
           </div>
-          <h3 class="card-title">${doc.title}</h3>
-          <p class="card-desc">Tài liệu chuẩn hóa bám sát cấu trúc đề thi mới, đi kèm lời giải chi tiết và video sửa bài trực quan.</p>
+          <h3 class="card-title">${doc.tieu_de}</h3>
+          <p class="card-desc">${doc.mo_ta || 'Tài liệu chuẩn hóa bám sát cấu trúc đề thi mới, đi kèm lời giải chi tiết.'}</p>
           <div class="card-footer">
-            <span>📅 Ngày đăng: ${doc.date || 'Gần đây'}</span>
+            <span>📅 Ngày đăng: Mới cập nhật</span>
             <span class="card-action-btn">Xem chi tiết →</span>
           </div>
         </div>
@@ -195,7 +196,10 @@
       if (keyword === 'all') {
         renderCardsList(allDocumentsData);
       } else {
-        const filtered = allDocumentsData.filter(d => String(d.category).toLowerCase().includes(keyword.toLowerCase()) || String(d.title).toLowerCase().includes(keyword.toLowerCase()));
+        const filtered = allDocumentsData.filter(d => 
+          String(d.loai_de || '').toLowerCase().includes(keyword.toLowerCase()) || 
+          String(d.tieu_de || '').toLowerCase().includes(keyword.toLowerCase())
+        );
         renderCardsList(filtered);
       }
     }
