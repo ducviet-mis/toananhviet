@@ -178,16 +178,16 @@
     <div class="class-info-banner">
       <h1 class="class-banner-title" id="class-title-text">Đang tải lớp học...</h1>
       <div class="class-banner-meta">
-        <span>👨‍🏫 Giáo viên: <b id="class-teacher-text">Thầy Đặng Đức Việt</b></span>
-        <span>🔑 Mã ID Lớp: <b id="class-code-text">...</b></span>
+        <span>Giáo viên: <b id="class-teacher-text">Thầy Đặng Đức Việt</b></span>
+        <span>Mã ID Lớp: <b id="class-code-text">...</b></span>
       </div>
     </div>
 
     <!-- TAB DỌC: VIDEO / ĐỀ THI PHÒNG THI / TÀI LIỆU -->
     <div class="content-tabs">
-      <button class="tab-item-btn active" onclick="switchContentTab('video', this)">📹 Bài giảng & Video bổ sung</button>
-      <button class="tab-item-btn" onclick="switchContentTab('exercise', this)">📝 Bài tập & Đề thi</button>
-      <button class="tab-item-btn" onclick="switchContentTab('doc', this)">📄 Tài liệu PDF</button>
+      <button class="tab-item-btn active" onclick="switchContentTab('video', this)">Bài giảng & Video bổ sung</button>
+      <button class="tab-item-btn" onclick="switchContentTab('exercise', this)">Bài tập</button>
+      <button class="tab-item-btn" onclick="switchContentTab('doc', this)">Tài liệu</button>
     </div>
 
     <!-- KHU VỰC HIỂN THỊ DANH SÁCH TẢI TỪ SUPABASE -->
@@ -276,11 +276,11 @@
             ? item.content_url 
             : `quiz-room.html?id=${item.content_url || '8G01'}`;
 
-          actionBtnHtml = `<a href="${targetUrl}" class="resource-btn exam-btn">Vào Phòng Thi 🎯</a>`;
+          actionBtnHtml = `<a href="${targetUrl}" class="resource-btn exam-btn">Làm Bài </a>`;
         } else if (type === 'video') {
-          actionBtnHtml = `<a href="${item.content_url || '#'}" target="_blank" class="resource-btn">Xem Video 🎥</a>`;
+          actionBtnHtml = `<a href="${item.content_url || '#'}" target="_blank" class="resource-btn">Xem Video </a>`;
         } else {
-          actionBtnHtml = `<a href="${item.content_url || '#'}" target="_blank" class="resource-btn">Mở Tài Liệu 📄</a>`;
+          actionBtnHtml = `<a href="${item.content_url || '#'}" target="_blank" class="resource-btn">Mở Tài Liệu</a>`;
         }
 
         return `
