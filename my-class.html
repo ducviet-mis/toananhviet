@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lớp Của Bạn - Toán Anh Việt</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .class-container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+      min-height: 60vh;
+    }
+    
+    /* Box Nhập Code ID Đồng nhất style */
+    .join-class-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 35px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+      max-width: 550px;
+      margin: 20px auto 40px auto;
+    }
+    .join-class-card h2 {
+      font-size: 1.5rem;
+      color: #0f172a;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+    .join-class-card p {
+      color: #64748b;
+      font-size: 0.95rem;
+      margin-bottom: 25px;
+    }
+    
+    .code-input-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    .code-input-group input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .code-input-group input:focus {
+      border-color: #0284c7;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+    .btn-join {
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-join:hover {
+      background: #0369a1;
+      transform: translateY(-1px);
+    }
+
+    /* Tabs Bài giảng / Bài tập */
+    .class-content-box {
+      display: none; /* Hiện khi đã vào lớp */
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    }
+
+    .class-header-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+    .class-header-title h3 {
+      font-size: 1.3rem;
+      color: #0f172a;
+      font-weight: 800;
+    }
+    .badge-class {
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .tab-navigation {
+      display: flex;
+      gap: 10px;
+      border-bottom: 2px solid #f1f5f9;
+      margin-bottom: 25px;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 10px 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      color: #0284c7;
+      border-color: #0284c7;
+      font-weight: 700;
+    }
+
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Card danh sách Video & Bài tập */
+    .content-item-card {
+      border: 1px solid #f1f5f9;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+      background: #fafafa;
+    }
+    .content-item-card:hover {
+      border-color: #cbd5e1;
+      background: #ffffff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .item-info h4 {
+      font-size: 1rem;
+      color: #1e293b;
+      margin-bottom: 4px;
+    }
+    .item-info p {
+      font-size: 0.82rem;
+      color: #64748b;
+    }
+    .btn-action-sm {
+      background: #f0f9ff;
+      color: #0284c7;
+      border: 1px solid rgba(2, 132, 199, 0.2);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-action-sm:hover {
+      background: #0284c7;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER DÙNG CHUNG -->
+  <header class="site-header"></header>
+
+  <main class="class-container">
+    
+    <!-- KHU VỰC 1: NHẬP MÃ CODE CLASS ID -->
+    <div class="join-class-card" id="join-card-section">
+      <h2>🔑 Nhập Mã Lớp Học</h2>
+      <p>Nhập mã Class ID do Giáo viên cung cấp để truy cập Bài giảng Video và Bài tập riêng biệt của lớp bạn.</p>
+      
+      <form onsubmit="handleJoinClass(event)">
+        <div class="code-input-group">
+          <input type="text" id="class-code-input" placeholder="VD: TOAN10A" autocomplete="off" required>
+          <button type="submit" class="btn-join">Vào Lớp</button>
+        </div>
+      </form>
+      <p id="class-error-msg" style="color:#ef4444; font-size:0.85rem; margin-top:12px; display:none;"></p>
+    </div>
+
+    <!-- KHU VỰC 2: NỘI DUNG LỚP HỌC (HIỂN THỊ SAU KHI NHẬP MÃ THÀNH CÔNG) -->
+    <div class="class-content-box" id="class-content-section">
+      <div class="class-header-title">
+        <div>
+          <h3 id="display-class-name">Lớp Toán 10 - Nâng Cao</h3>
+          <span style="font-size:0.85rem; color:#64748b;">Giáo viên: Đặng Đức Việt</span>
+        </div>
+        <span class="badge-class" id="display-class-id">Mã: TOAN10A</span>
+      </div>
+
+      <!-- TAB MENU -->
+      <div class="tab-navigation">
+        <button class="tab-btn active" onclick="switchTab('videos-tab', this)">📹 Bài giảng & Video bổ sung</button>
+        <button class="tab-btn" onclick="switchTab('exercises-tab', this)">📝 Bài tập về nhà</button>
+      </div>
+
+      <!-- TAB 1: BÀI GIẢNG / VIDEO -->
+      <div id="videos-tab" class="tab-pane active">
+        <div class="content-item-card">
+          <div class="item-info">
+            <h4>Chữa chi tiết Đề luyện tập số 01 - Căn thức bậc hai</h4>
+            <p>📅 Thời lượng: 45 phút • Đăng ngày: 25/05/2026</p>
+          </div>
+          <a href="#" class="btn-action-sm">Xem Video 🎥</a>
+        </div>
+        <div class="content-item-card">
+          <div class="item-info">
+            <h4>Lý thuyết bổ sung: Phương pháp giải bài toán Bất đẳng thức</h4>
+            <p>📅 Thời lượng: 30 phút • Đăng ngày: 20/05/2026</p>
+          </div>
+          <a href="#" class="btn-action-sm">Xem Video 🎥</a>
+        </div>
+      </div>
+
+      <!-- TAB 2: BÀI TẬP VỀ NHÀ -->
+      <div id="exercises-tab" class="tab-pane">
+        <div class="content-item-card">
+          <div class="item-info">
+            <h4>Bài tập Chuyên đề: Hệ thức lượng trong tam giác vuông</h4>
+            <p>⏰ Hạn nộp: 23:59 - Chủ Nhật tuần này</p>
+          </div>
+          <a href="#" class="btn-action-sm">Làm Bài Tập ✏️</a>
+        </div>
+        <div class="content-item-card">
+          <div class="item-info">
+            <h4>Phiếu bài tập số 02: Ôn tập Giữa học kỳ</h4>
+            <p>⏰ Hạn nộp: Đã hoàn thành</p>
+          </div>
+          <a href="#" class="btn-action-sm" style="opacity:0.7;">Xem Lại Đề</a>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- SCRIPT XỬ LÝ CHUYỂN TAB VÀ CODE LỚP -->
+  <script src="header.js"></script>
+  <script src="footer.js"></script>
+  <script>
+    function handleJoinClass(event) {
+      event.preventDefault();
+      const code = document.getElementById('class-code-input').value.trim().toUpperCase();
+      const errorMsg = document.getElementById('class-error-msg');
+
+      if (!code) return;
+
+      // Demo mã thử nghiệm (Bạn có thể kết nối Supabase sau)
+      if (code === 'TOAN10A' || code === 'DEMO') {
+        errorMsg.style.display = 'none';
+        document.getElementById('join-card-section').style.display = 'none';
+        document.getElementById('class-content-section').style.display = 'block';
+        document.getElementById('display-class-id').innerText = `Mã: ${code}`;
+      } else {
+        errorMsg.innerText = '❌ Mã lớp học không chính xác hoặc đã hết hạn!';
+        errorMsg.style.display = 'block';
+      }
+    }
+
+    function switchTab(tabId, btnEl) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      btnEl.classList.add('active');
+    }
+  </script>
+</body>
+</html>
