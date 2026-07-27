@@ -161,7 +161,7 @@
     let currentClassId = '';
     let classStudentsList = [];
     let classQuizzesList = [];
-    let studentRealtimeChannel = null; // Biến lưu trữ kết nối Realtime
+    let studentRealtimeChannel = null;
 
     // KIỂM TRA BẢO MẬT: CHỈ CHO PHÉP TÀI KHOẢN GIÁO VIÊN VÀO
     async function checkTeacherPermission() {
@@ -212,64 +212,101 @@
       if (!currentClassId) return;
       await loadClassStudents();
       await loadClassQuizzes();
-      subscribeToStudentChanges(); // Đăng ký Realtime mỗi khi chọn/đổi lớp
+      subscribeToStudentChanges();
     }
 
-    // LẮNG NGHE SỰ THAY ĐỔI THEO THỜI GIAN THỰC (REALTIME)
+    // LẮNG NGHE SỰ THAY ĐỔI REALTIME TRÊN CẢ 2 BẢNG CLASS_STUDENTS VÀ CLASS_MEMBERS
     function subscribeToStudentChanges() {
-      // Nếu đã có channel trước đó thì unsubscribe để tránh trùng lặp
       if (studentRealtimeChannel) {
         _supabase.removeChannel(studentRealtimeChannel);
       }
 
       studentRealtimeChannel = _supabase
         .channel(`realtime-class-students-${currentClassId}`)
-        .on(
-          'postgres_changes',
-          {
-            event: '*', // Lắng nghe cả INSERT, UPDATE, DELETE
-            schema: 'public',
-            table: 'class_students',
-            filter: `class_id=eq.${currentClassId}`
-          },
-          (payload) => {
-            console.log('Phát hiện thay đổi danh sách học sinh:', payload);
-            // Tự động tải lại danh sách học sinh & bảng theo dõi bài tập
-            loadClassStudents();
-          }
-        )
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'class_students' }, () => loadClassStudents())
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'class_members' }, () => loadClassStudents())
         .subscribe();
     }
 
     async function loadClassStudents() {
       const tbody = document.getElementById('students-table-body');
-      const { data, error } = await _supabase
+
+      // 1. Lấy dữ liệu từ bảng class_students (thêm thủ công)
+      const { data: manualStudents } = await _supabase
         .from('class_students')
         .select('*')
-        .eq('class_id', currentClassId)
-        .order('created_at', { ascending: false });
+        .eq('class_id', currentClassId);
 
-      if (error || !data || data.length === 0) {
+      // 2. Lấy dữ liệu từ bảng class_members JOIN profiles (học sinh tự vào lớp)
+      const { data: memberStudents } = await _supabase
+        .from('class_members')
+        .select(`
+          id,
+          created_at,
+          user_id,
+          profiles ( full_name, email, phone )
+        `)
+        .eq('class_id', currentClassId);
+
+      // 3. Gộp cả 2 nguồn dữ liệu lại
+      let combinedList = [];
+
+      if (manualStudents && manualStudents.length > 0) {
+        manualStudents.forEach(st => {
+          combinedList.push({
+            id: st.id,
+            name: st.student_name,
+            email: st.student_email,
+            phone: st.phone_number || '---',
+            created_at: st.created_at,
+            source: 'manual'
+          });
+        });
+      }
+
+      if (memberStudents && memberStudents.length > 0) {
+        memberStudents.forEach(mb => {
+          const email = mb.profiles?.email || '';
+          if (email && !combinedList.some(item => item.email.toLowerCase() === email.toLowerCase())) {
+            combinedList.push({
+              id: mb.id,
+              name: mb.profiles?.full_name || 'Học sinh',
+              email: email,
+              phone: mb.profiles?.phone || '---',
+              created_at: mb.created_at,
+              source: 'member'
+            });
+          }
+        });
+      }
+
+      if (combinedList.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">Chưa có học sinh nào trong lớp này.</td></tr>';
         classStudentsList = [];
         return;
       }
 
-      classStudentsList = data;
-      tbody.innerHTML = data.map((st, idx) => `
+      // Sắp xếp ngày tạo mới nhất lên đầu
+      combinedList.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+      classStudentsList = combinedList.map(item => ({
+        student_name: item.name,
+        student_email: item.email
+      }));
+
+      tbody.innerHTML = combinedList.map((st, idx) => `
         <tr>
           <td>${idx + 1}</td>
-          <td><strong>${st.student_name}</strong></td>
-          <td>${st.student_email}</td>
-          <td>${st.phone_number || '---'}</td>
-          <td>${new Date(st.created_at).toLocaleDateString('vi-VN')}</td>
+          <td><strong>${st.name}</strong></td>
+          <td>${st.email}</td>
+          <td>${st.phone}</td>
+          <td>${st.created_at ? new Date(st.created_at).toLocaleDateString('vi-VN') : '---'}</td>
           <td>
-            <button class="btn-action" style="color: #ef4444; border-color: #fca5a5;" onclick="deleteStudent('${st.id}')">Xóa</button>
+            <button class="btn-action" style="color: #ef4444; border-color: #fca5a5;" onclick="deleteStudent('${st.id}', '${st.source}')">Xóa</button>
           </td>
         </tr>
       `).join('');
 
-      // Cập nhật lại bảng đối soát bài tập nếu giáo viên đang chọn bài thi
       if (document.getElementById('select-quiz').value) {
         loadSubmissionTracker();
       }
@@ -303,13 +340,14 @@
         document.getElementById('new-student-email').value = '';
         document.getElementById('new-student-phone').value = '';
         toggleAddStudentForm();
-        // Không cần gọi loadClassStudents() thủ công vì Realtime sẽ tự bắt sự kiện và render
       }
     }
 
-    async function deleteStudent(id) {
+    async function deleteStudent(id, source) {
       if (confirm("Bạn có chắc chắn muốn xóa học sinh này khỏi lớp?")) {
-        await _supabase.from('class_students').delete().eq('id', id);
+        const tableName = source === 'member' ? 'class_members' : 'class_students';
+        await _supabase.from(tableName).delete().eq('id', id);
+        loadClassStudents();
       }
     }
 
@@ -406,3 +444,7 @@
 
     document.addEventListener('DOMContentLoaded', initAdmin);
   </script>
+  <script src="header.js"></script>
+  <script src="footer.js"></script>
+</body>
+</html>
