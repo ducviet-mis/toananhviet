@@ -195,22 +195,22 @@
           <div class="form-group" style="flex: 1;">
             <label>Khối lớp</label>
             <select id="quiz-grade-select" class="form-control">
-              <option value="Lớp 6">Lớp 6</option>
-              <option value="Lớp 7">Lớp 7</option>
-              <option value="Lớp 8" selected>Lớp 8</option>
-              <option value="Lớp 9">Lớp 9</option>
-              <option value="Thi thử vào 10">Thi thử vào 10</option>
+              <option value="6">Lớp 6</option>
+              <option value="7">Lớp 7</option>
+              <option value="8" selected>Lớp 8</option>
+              <option value="9">Lớp 9</option>
+              <option value="10">Thi thử vào 10</option>
             </select>
           </div>
 
           <div class="form-group" style="flex: 1;">
             <label>Học kỳ / Phân loại</label>
             <select id="quiz-semester-select" class="form-control">
-              <option value="Giữa kì 1">Giữa kì 1</option>
-              <option value="Cuối kì 1">Cuối kì 1</option>
-              <option value="Giữa kì 2">Giữa kì 2</option>
-              <option value="Cuối kì 2">Cuối kì 2</option>
-              <option value="Luyện thi">Luyện thi</option>
+              <option value="Đề giữa kì 1">Đề giữa kì 1</option>
+              <option value="Đề cuối kì 1">Đề cuối kì 1</option>
+              <option value="Đề giữa kì 2">Đề giữa kì 2</option>
+              <option value="Đề cuối kì 2">Đề cuối kì 2</option>
+              <option value="Chuyên đề">Chuyên đề Toán</option>
             </select>
           </div>
 
@@ -267,8 +267,31 @@
           </select>
         </div>
 
+        <div style="display: flex; gap: 15px;">
+          <div class="form-group" style="flex: 1;">
+            <label>Khối lớp (Cho Web chung)</label>
+            <select id="content-grade-select" class="form-control">
+              <option value="6">Lớp 6</option>
+              <option value="7">Lớp 7</option>
+              <option value="8" selected>Lớp 8</option>
+              <option value="9">Lớp 9</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="flex: 1;">
+            <label>Học kỳ / Phân loại (Cho Web chung)</label>
+            <select id="content-semester-select" class="form-control">
+              <option value="Đề giữa kì 1">Đề giữa kì 1</option>
+              <option value="Đề cuối kì 1">Đề cuối kì 1</option>
+              <option value="Đề giữa kì 2">Đề giữa kì 2</option>
+              <option value="Đề cuối kì 2">Đề cuối kì 2</option>
+              <option value="Chuyên đề">Chuyên đề Toán</option>
+            </select>
+          </div>
+        </div>
+
         <div class="form-group" id="upload-folder-group">
-          <label>📁 Chọn Thư Mục / Chủ Đề (Folder)</label>
+          <label>📁 Chọn Thư Mục / Chủ Đề (Folder Trong Lớp)</label>
           <div style="display: flex; gap: 10px;">
             <select id="content-folder-select" class="form-control" style="flex: 1;" onchange="onSelectContentFolderChange()">
               <option value="">-- Chọn Folder đã có trong lớp --</option>
@@ -400,7 +423,6 @@
       subscribeToStudentChanges();
     }
 
-    // LOAD DANH SÁCH FOLDER HIỆN CÓ ĐƯA VÀO DROPDOWN SELECT
     async function loadExistingFolders() {
       const selectQuizFolder = document.getElementById('quiz-folder-select');
       const selectContentFolder = document.getElementById('content-folder-select');
@@ -434,7 +456,6 @@
       if (val) document.getElementById('content-folder-input').value = val;
     }
 
-    // KHI ĐỔI PHẠM VI ĐĂNG TÀI LIỆU
     function toggleScopeFolderGroup() {
       const scope = document.getElementById('content-scope').value;
       const folderGroup = document.getElementById('upload-folder-group');
@@ -455,7 +476,6 @@
       }
     }
 
-    // TẢI & RENDER BÀI HỌC DẠNG FOLDER CHO ADMIN CÓ NÚT XÓA
     async function loadClassContentsForAdmin() {
       try {
         const { data: list, error } = await _supabase
@@ -570,7 +590,6 @@
       }
     }
 
-    // TẠO ĐỀ THI ONLINE VỚI PHÂN QUYỀN
     async function handleCreateQuiz(e) {
       e.preventDefault();
       const title = document.getElementById('quiz-title-input').value.trim();
@@ -684,6 +703,19 @@
           if (classContentErr) throw classContentErr;
         }
 
+        if (visibility === 'public_only' || visibility === 'both') {
+          await _supabase
+            .from('toananhviet')
+            .insert([
+              {
+                tieu_de: title,
+                mo_ta: `Đề thi trắc nghiệm online (Thời gian: ${duration} phút)`,
+                lop: grade.replace(/\D/g, '') || grade,
+                loai_de: semester
+              }
+            ]);
+        }
+
         alert(`🎉 Đã tạo đề thi thành công!`);
         document.getElementById('create-quiz-form').reset();
         await loadClassData();
@@ -697,11 +729,13 @@
       }
     }
 
-    // ĐĂNG TÀI LIỆU / VIDEO CHO LỚP VÀ WEB CHUNG
     async function handleUploadContent(e) {
       e.preventDefault();
       
       const scope = document.getElementById('content-scope').value;
+      const grade = document.getElementById('content-grade-select').value;
+      const semester = document.getElementById('content-semester-select').value;
+
       let folderName = document.getElementById('content-folder-input').value.trim();
       if (!folderName) folderName = document.getElementById('content-folder-select').value;
 
@@ -760,7 +794,6 @@
           }
         }
 
-        // 1. Nếu chọn đăng vào Lớp học
         if (scope === 'class_only' || scope === 'both') {
           const { error: dbErr } = await _supabase
             .from('class_contents')
@@ -777,19 +810,21 @@
           if (dbErr) throw dbErr;
         }
 
-        // 2. Nếu chọn đăng lên Web chung (Chèn vào bảng books / tài liệu public)
         if (scope === 'public_only' || scope === 'both') {
-          const bookId = `DOC_${Date.now().toString().slice(-6)}`;
-          await _supabase
-            .from('books')
+          const cleanGrade = grade.replace(/\D/g, '') || grade;
+
+          const { error: publicErr } = await _supabase
+            .from('toananhviet')
             .insert([
               {
-                book_id: bookId,
-                title: title,
-                cover_img: 'assets/favicon.png',
-                grade: 'Toán THCS'
+                tieu_de: title,
+                mo_ta: folderName || `Tài liệu ôn tập môn Toán lớp ${cleanGrade}`,
+                lop: cleanGrade,
+                loai_de: semester
               }
             ]);
+
+          if (publicErr) throw publicErr;
         }
 
         alert(`🎉 Đã đăng bài học / tài liệu thành công!`);
