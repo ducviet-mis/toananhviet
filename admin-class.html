@@ -52,6 +52,20 @@
       border-radius: 8px; font-weight: 700; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s;
     }
     .btn-action:hover { background: #0284c7; color: #ffffff; }
+
+    /* FORM STYLES */
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 6px; }
+    .form-control {
+      width: 100%; padding: 10px 14px; font-size: 14px; border: 1px solid #cbd5e1;
+      border-radius: 8px; box-sizing: border-box; font-family: inherit; outline: none;
+    }
+    .form-control:focus { border-color: #0284c7; box-shadow: 0 0 0 3px rgba(2,132,199,0.1); }
+    .btn-submit {
+      background: #0284c7; color: white; border: none; padding: 12px 20px;
+      border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px; transition: background 0.2s;
+    }
+    .btn-submit:hover { background: #0369a1; }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -63,7 +77,7 @@
     <div class="admin-header-card">
       <div>
         <h1 class="admin-title">👨‍🏫 Bảng Quản Lý Lớp Học - Giáo Viên</h1>
-        <div style="font-size: 13px; opacity: 0.9; margin-top: 4px;">Theo dõi danh sách học sinh và tiến độ làm bài thi theo lớp</div>
+        <div style="font-size: 13px; opacity: 0.9; margin-top: 4px;">Theo dõi danh sách học sinh, đăng tài liệu và quản lý bài thi</div>
       </div>
       <div>
         <select id="select-class" class="select-class-dropdown" onchange="onClassChange()">
@@ -74,6 +88,7 @@
 
     <div class="admin-tabs">
       <button class="tab-btn active" id="tab-tracker-btn" onclick="switchTab('tracker')">📊 Theo Dõi Tiến Độ Bài Tập</button>
+      <button class="tab-btn" id="tab-upload-btn" onclick="switchTab('upload')">📤 Đăng Tài Liệu / Bài Tập</button>
       <button class="tab-btn" id="tab-students-btn" onclick="switchTab('students')">👥 Danh Sách Học Sinh</button>
     </div>
 
@@ -108,7 +123,46 @@
       </div>
     </div>
 
-    <!-- TAB 2: QUẢN LÝ DANH SÁCH HỌC SINH -->
+    <!-- TAB 2: ĐĂNG TÀI LIỆU / BÀI HỌC VÀO LỚP -->
+    <div id="tab-upload" class="panel-card hidden">
+      <h3 class="card-title" style="margin-bottom: 20px;">📤 Đăng Nội Dung Cho Lớp Học</h3>
+      <form id="upload-content-form" onsubmit="handleUploadContent(event)">
+        <div class="form-group">
+          <label>Tiêu đề bài học / tài liệu</label>
+          <input type="text" id="content-title" class="form-control" placeholder="Ví dụ: Bài tập Dạng 1: Hằng đẳng thức" required>
+        </div>
+
+        <div style="display: flex; gap: 15px;">
+          <div class="form-group" style="flex: 1;">
+            <label>Loại nội dung</label>
+            <select id="content-type" class="form-control" onchange="toggleUploadInput()">
+              <option value="doc">Tài liệu (File PDF/Word)</option>
+              <option value="exercise">Bài tập phòng thi (Mã đề)</option>
+              <option value="video">Bài giảng Video (Link YouTube)</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="flex: 2;" id="file-input-group">
+            <label>Chọn File tài liệu (PDF/Word)</label>
+            <input type="file" id="content-file" class="form-control" accept=".pdf,.doc,.docx">
+          </div>
+
+          <div class="form-group hidden" style="flex: 2;" id="url-input-group">
+            <label id="url-label">Đường dẫn / Link YouTube / Mã Đề</label>
+            <input type="text" id="content-url" class="form-control" placeholder="Dán URL video hoặc Mã đề thi">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Mô tả ngắn</label>
+          <textarea id="content-desc" class="form-control" rows="2" placeholder="Ghi chú thêm cho học sinh..."></textarea>
+        </div>
+
+        <button type="submit" id="btn-submit-upload" class="btn-submit">🚀 Đăng Lên Lớp Học</button>
+      </form>
+    </div>
+
+    <!-- TAB 3: QUẢN LÝ DANH SÁCH HỌC SINH -->
     <div id="tab-students" class="panel-card hidden">
       <div class="card-title-row">
         <h3 class="card-title">👥 Danh Sách Học Sinh Trong Lớp</h3>
@@ -212,7 +266,6 @@
     async function loadClassStudents() {
       const tbody = document.getElementById('students-table-body');
 
-      // 1. Lấy danh sách thành viên trong lớp
       const { data: members, error } = await _supabase
         .from('class_members')
         .select('*')
@@ -225,7 +278,6 @@
         return;
       }
 
-      // 2. Tải toàn bộ thông tin trong bảng profiles để ghép chính xác
       const { data: allProfiles } = await _supabase
         .from('profiles')
         .select('id, email, full_name');
@@ -240,15 +292,12 @@
         });
       }
 
-      // 3. Khai phá tên chuẩn xác từ Profile
       classStudentsList = members.map(item => {
         const userEmail = (item.user_email || '').toLowerCase().trim();
         const userId = item.user_id;
 
-        // Ưu tiên 1: Tên theo ID trong Profiles -> Ưu tiên 2: Tên theo Email trong Profiles
         let realName = profileById[userId] || profileByEmail[userEmail];
 
-        // Nếu trong DB đặt tên trùng là "Học viên" hoặc trống thì mới dự phòng lấy prefix email
         if (!realName || realName.trim() === '' || realName.trim() === 'Học viên') {
           realName = userEmail ? userEmail.split('@')[0] : 'Học sinh';
         }
@@ -365,17 +414,130 @@
       }).join('');
     }
 
+    // --- XỬ LÝ UPLOAD DỮ LIỆU TỰ ĐỘNG ---
+    function toggleUploadInput() {
+      const type = document.getElementById('content-type').value;
+      const fileGroup = document.getElementById('file-input-group');
+      const urlGroup = document.getElementById('url-input-group');
+      const urlLabel = document.getElementById('url-label');
+
+      if (type === 'doc') {
+        fileGroup.classList.remove('hidden');
+        urlGroup.classList.add('hidden');
+      } else {
+        fileGroup.classList.add('hidden');
+        urlGroup.classList.remove('hidden');
+        if (type === 'video') {
+          urlLabel.innerText = 'Đường dẫn Video (YouTube URL)';
+        } else {
+          urlLabel.innerText = 'Mã đề thi (ID trong bảng Quizzes, VD: 8G01)';
+        }
+      }
+    }
+
+    async function handleUploadContent(e) {
+      e.preventDefault();
+      if (!currentClassId) {
+        alert("Vui lòng chọn lớp học!");
+        return;
+      }
+
+      const title = document.getElementById('content-title').value.trim();
+      const type = document.getElementById('content-type').value;
+      const desc = document.getElementById('content-desc').value.trim();
+      const btn = document.getElementById('btn-submit-upload');
+
+      let finalUrl = '';
+
+      btn.disabled = true;
+      btn.innerText = '⏳ Đang xử lý tải lên...';
+
+      try {
+        if (type === 'doc') {
+          const fileInput = document.getElementById('content-file');
+          if (!fileInput.files || fileInput.files.length === 0) {
+            alert("Vui lòng chọn file cần đăng!");
+            btn.disabled = false;
+            btn.innerText = '🚀 Đăng Lên Lớp Học';
+            return;
+          }
+
+          const file = fileInput.files[0];
+          const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+
+          // Upload trực tiếp vào bucket public: tai_lieu_files
+          const { data: storageData, error: storageErr } = await _supabase
+            .storage
+            .from('tai_lieu_files')
+            .upload(fileName, file);
+
+          if (storageErr) throw storageErr;
+
+          // Lấy public URL
+          const { data: urlData } = _supabase
+            .storage
+            .from('tai_lieu_files')
+            .getPublicUrl(fileName);
+
+          finalUrl = urlData.publicUrl;
+
+        } else {
+          finalUrl = document.getElementById('content-url').value.trim();
+          if (!finalUrl) {
+            alert("Vui lòng nhập đường dẫn hoặc Mã đề!");
+            btn.disabled = false;
+            btn.innerText = '🚀 Đăng Lên Lớp Học';
+            return;
+          }
+        }
+
+        // Chèn vào cơ sở dữ liệu `class_contents`
+        const { error: dbErr } = await _supabase
+          .from('class_contents')
+          .insert([
+            {
+              class_id: currentClassId,
+              title: title,
+              type: type,
+              content_url: finalUrl,
+              description: desc
+            }
+          ]);
+
+        if (dbErr) throw dbErr;
+
+        alert("🎉 Đã thêm bài học/tài liệu thành công!");
+        document.getElementById('upload-content-form').reset();
+        toggleUploadInput();
+        loadClassQuizzes(); // Cập nhật lại danh sách nếu là bài tập
+
+      } catch (err) {
+        console.error(err);
+        alert("Lỗi upload: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = '🚀 Đăng Lên Lớp Học';
+      }
+    }
+
     function switchTab(tabName) {
+      document.getElementById('tab-tracker').classList.add('hidden');
+      document.getElementById('tab-upload').classList.add('hidden');
+      document.getElementById('tab-students').classList.add('hidden');
+      
+      document.getElementById('tab-tracker-btn').classList.remove('active');
+      document.getElementById('tab-upload-btn').classList.remove('active');
+      document.getElementById('tab-students-btn').classList.remove('active');
+
       if (tabName === 'tracker') {
         document.getElementById('tab-tracker').classList.remove('hidden');
-        document.getElementById('tab-students').classList.add('hidden');
         document.getElementById('tab-tracker-btn').classList.add('active');
-        document.getElementById('tab-students-btn').classList.remove('active');
+      } else if (tabName === 'upload') {
+        document.getElementById('tab-upload').classList.remove('hidden');
+        document.getElementById('tab-upload-btn').classList.add('active');
       } else {
         document.getElementById('tab-students').classList.remove('hidden');
-        document.getElementById('tab-tracker').classList.add('hidden');
         document.getElementById('tab-students-btn').classList.add('active');
-        document.getElementById('tab-tracker-btn').classList.remove('active');
       }
     }
 
