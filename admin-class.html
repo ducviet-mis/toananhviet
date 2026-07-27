@@ -111,7 +111,7 @@
     <!-- TAB 2: QUẢN LÝ DANH SÁCH HỌC SINH -->
     <div id="tab-students" class="panel-card hidden">
       <div class="card-title-row">
-        <h3 class="card-title">👥 Danh Sách Học Sinh Trong Lớp (Lấy từ `class_members`)</h3>
+        <h3 class="card-title">👥 Danh Sách Học Sinh Trong Lớp</h3>
       </div>
 
       <div style="overflow-x: auto;">
@@ -221,7 +221,7 @@
     async function loadClassStudents() {
       const tbody = document.getElementById('students-table-body');
 
-      // Truy vấn trực tiếp từ bảng class_members (lấy theo user_email hoặc join với profiles)
+      // 1. Truy vấn thành viên từ bảng class_members
       const { data, error } = await _supabase
         .from('class_members')
         .select('*')
@@ -234,7 +234,7 @@
         return;
       }
 
-      // Lấy thêm thông tin tên từ bảng profiles dựa vào email
+      // 2. Lấy thông tin từ bảng profiles
       const emails = data.map(item => item.user_email);
       const { data: profilesData } = await _supabase
         .from('profiles')
@@ -244,15 +244,25 @@
       const profileMap = {};
       if (profilesData) {
         profilesData.forEach(p => {
-          profileMap[p.email.toLowerCase()] = p;
+          if (p.email) profileMap[p.email.toLowerCase()] = p;
         });
       }
 
+      // 3. Chuẩn hóa tên hiển thị thông minh
       classStudentsList = data.map(item => {
-        const profile = profileMap[item.user_email.toLowerCase()] || {};
+        const emailKey = (item.user_email || '').toLowerCase();
+        const profile = profileMap[emailKey] || {};
+        
+        let displayName = profile.full_name ? profile.full_name.trim() : '';
+
+        // Nếu chưa có tên hoặc tên đang là "Học viên", lấy tên phía trước @ của email
+        if (!displayName || displayName === 'Học viên') {
+          displayName = item.user_email ? item.user_email.split('@')[0] : 'Học sinh';
+        }
+
         return {
           id: item.id,
-          student_name: profile.full_name || 'Học viên',
+          student_name: displayName,
           student_email: item.user_email,
           joined_at: item.joined_at
         };
