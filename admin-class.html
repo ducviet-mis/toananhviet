@@ -332,7 +332,7 @@
       <button class="tab-btn" id="tab-create-quiz-btn" onclick="switchTab('create-quiz')">Tạo Đề Thi</button>
       <button class="tab-btn" id="tab-upload-btn" onclick="switchTab('upload')">Đăng Video/Tài Liệu Mới</button>
       <button class="tab-btn" id="tab-students-btn" onclick="switchTab('students')">Danh Sách Học Sinh</button>
-      <button class="tab-btn" id="tab-public-contents-btn" onclick="switchTab('public-contents')">🌐 Nội Dung Công Khai</button>
+      <button class="tab-btn" id="tab-public-contents-btn" onclick="switchTab('public-contents')">Nội Dung Công Khai</button>
     </div>
 
     <!-- TAB 1: THEO DÕI TIẾN ĐỘ LÀM BÀI -->
@@ -603,12 +603,12 @@
     <!-- TAB 6: QUẢN LÝ NỘI DUNG CÔNG KHAI CỦA WEB -->
     <div id="tab-public-contents" class="panel-card hidden">
       <div class="card-title-row">
-        <h3 class="card-title">Quản Lý Nội Dung Công Khai Trên Web</h3>
+        <h3 class="card-title">Quản Lý Nội Dung Công Khai</h3>
       </div>
 
       <div class="sub-content-tabs">
-        <button class="sub-tab-btn active" onclick="switchPublicSubTab('docs', this)">📚 Tài Liệu Toán (category.html)</button>
-        <button class="sub-tab-btn" onclick="switchPublicSubTab('quizzes', this)">📝 Thi Online (quiz-list.html)</button>
+        <button class="sub-tab-btn active" onclick="switchPublicSubTab('docs', this)">Tài Liệu Toán</button>
+        <button class="sub-tab-btn" onclick="switchPublicSubTab('quizzes', this)">Thi Online</button>
       </div>
 
       <!-- CẤU TRÚC LAYOUT VỚI SIDEBAR LỌC CỘT TRÁI -->
@@ -1024,8 +1024,8 @@
                 <span>${item.title}</span>
               </div>
               <div style="display: flex; gap: 8px; align-items: center;">
-                <a href="${targetUrl}" target="_blank" class="btn-action">🔍 Xem</a>
-                <button class="btn-delete" onclick="deleteClassContent('${item.id}', '${item.title}')">🗑️ Xóa</button>
+                <a href="${targetUrl}" target="_blank" class="btn-action">Xem</a>
+                <button class="btn-delete" onclick="deleteClassContent('${item.id}', '${item.title}')">Xóa</button>
               </div>
             </div>
           `;
@@ -1772,8 +1772,8 @@
             </td>
             <td>
               <div style="display:flex; gap:6px;">
-                <a href="quiz-room.html?id=${item.id}" target="_blank" class="btn-action">🔍 Thi thử</a>
-                <button class="btn-delete" onclick="deletePublicQuiz('${item.id}', '${(item.title || '').replace(/'/g, "\\'")}')">🗑️ Xóa</button>
+                <a href="quiz-room.html?id=${item.id}" target="_blank" class="btn-action">Thi thử</a>
+                <button class="btn-delete" onclick="deletePublicQuiz('${item.id}', '${(item.title || '').replace(/'/g, "\\'")}')">Xóa</button>
               </div>
             </td>
           </tr>
