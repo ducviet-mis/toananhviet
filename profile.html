@@ -238,18 +238,10 @@
             </select>
           </div>
 
-          <!-- TỈNH / THÀNH PHỐ (34 ĐƠN VỊ SAU SÁP NHẬP) -->
-          <div class="form-group">
-            <label>Tỉnh / Thành phố:</label>
-            <select id="p-province">
-              <option value="">-- Chọn Tỉnh / Thành phố --</option>
-            </select>
-          </div>
-
-          <!-- PHƯỜNG / XÃ -->
-          <div class="form-group">
-            <label>Phường / Xã:</label>
-            <input type="text" id="p-ward" placeholder="Nhập Phường / Xã (VD: Phường Bách Khoa)">
+          <!-- THAY THẾ TỈNH/PHƯỜNG THÀNH TRƯỜNG HỌC -->
+          <div class="form-group full-width">
+            <label>Trường đang học:</label>
+            <input type="text" id="p-school" placeholder="Ví dụ: THCS Bách Khoa">
           </div>
         </div>
 
@@ -292,26 +284,7 @@
 
     let currentUser = null;
 
-    // DANH SÁCH 34 TỈNH/THÀNH PHỐ SAU SÁP NHẬP
-    const PROVINCES_34 = [
-      "TP. Hà Nội", "TP. Hồ Chí Minh", "TP. Hải Phòng", "TP. Đà Nẵng", "TP. Cần Thơ", "TP. Huế",
-      "An Giang", "Bắc Ninh", "Cà Mau", "Cao Bằng", "Đắk Lắk", "Điện Biên", "Đồng Nai", "Đồng Tháp",
-      "Gia Lai", "Hà Tĩnh", "Hưng Yên", "Khánh Hòa", "Lai Châu", "Lâm Đồng", "Lạng Sơn", "Lào Cai",
-      "Nghệ An", "Ninh Bình", "Phú Thọ", "Quảng Ngãi", "Quảng Ninh", "Quảng Trị", "Sơn La", "Tây Ninh",
-      "Thái Nguyên", "Thanh Hóa", "Tuyên Quang", "Vĩnh Long"
-    ];
-
-    function initProvinces() {
-      const select = document.getElementById('p-province');
-      select.innerHTML = '<option value="">-- Chọn Tỉnh / Thành phố --</option>';
-      PROVINCES_34.forEach(p => {
-        select.innerHTML += `<option value="${p}">${p}</option>`;
-      });
-    }
-
     async function checkUserSession() {
-      initProvinces();
-
       const { data: { user } } = await _supabase.auth.getUser();
       if (!user) {
         window.location.href = 'login.html';
@@ -325,8 +298,7 @@
       if(meta.phone) document.getElementById('p-phone').value = meta.phone;
       if(meta.grade) document.getElementById('p-grade').value = meta.grade;
       if(meta.dob) document.getElementById('p-dob').value = meta.dob;
-      if(meta.province) document.getElementById('p-province').value = meta.province;
-      if(meta.ward) document.getElementById('p-ward').value = meta.ward;
+      if(meta.school) document.getElementById('p-school').value = meta.school;
 
       const avatarSrc = meta.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
       document.getElementById('p-avatar-url').value = meta.avatar_url || '';
@@ -364,64 +336,45 @@
       msg.innerText = 'Tải ảnh lên thành công! Bấm nút Lưu phía dưới để hoàn tất.';
     }
 
-   async function saveProfile(e) {
-  e.preventDefault();
-  const msg = document.getElementById('status-msg');
-  msg.style.color = '#0284c7';
-  msg.innerText = 'Đang lưu thông tin dữ liệu...';
+    async function saveProfile(e) {
+      e.preventDefault();
+      const msg = document.getElementById('status-msg');
+      msg.style.color = '#0284c7';
+      msg.innerText = 'Đang lưu thông tin dữ liệu...';
 
-  const name = document.getElementById('p-name').value;
-  const phone = document.getElementById('p-phone').value;
-  const grade = document.getElementById('p-grade').value;
-  const dob = document.getElementById('p-dob').value;
-  const province = document.getElementById('p-province').value;
-  const ward = document.getElementById('p-ward').value;
-  const avatarUrl = document.getElementById('p-avatar-url').value;
+      const name = document.getElementById('p-name').value;
+      const phone = document.getElementById('p-phone').value;
+      const grade = document.getElementById('p-grade').value;
+      const dob = document.getElementById('p-dob').value;
+      const school = document.getElementById('p-school').value;
+      const avatarUrl = document.getElementById('p-avatar-url').value;
 
-  // 1. Cập nhật Auth User Metadata
-  const { error: authError } = await _supabase.auth.updateUser({
-    data: { 
-      full_name: name, 
-      phone: phone, 
-      grade: grade, 
-      dob: dob,
-      province: province,
-      ward: ward,
-      avatar_url: avatarUrl 
-    }
-  });
+      // 1. Cập nhật Auth User Metadata
+      const { error: authError } = await _supabase.auth.updateUser({
+        data: { 
+          full_name: name, 
+          phone: phone, 
+          grade: grade, 
+          dob: dob,
+          school: school,
+          avatar_url: avatarUrl 
+        }
+      });
 
-  // 2. CẬP NHẬT ĐỒNG BỘ SANG BẢNG `profiles` TRONG DATABASE
-  const { error: dbError } = await _supabase
-    .from('profiles')
-    .upsert({
-      id: currentUser.id,
-      email: currentUser.email,
-      full_name: name,
-      phone: phone,
-      updated_at: new Date().toISOString()
-    });
+      // 2. CẬP NHẬT ĐỒNG BỘ SANG BẢNG `profiles` TRONG DATABASE
+      const { error: dbError } = await _supabase
+        .from('profiles')
+        .upsert({
+          id: currentUser.id,
+          email: currentUser.email,
+          full_name: name,
+          phone: phone,
+          updated_at: new Date().toISOString()
+        });
 
-  if (authError || dbError) {
-    msg.style.color = '#ef4444';
-    msg.innerText = 'Gặp lỗi khi lưu: ' + (authError?.message || dbError?.message);
-  } else {
-    localStorage.setItem('tav_user_session', JSON.stringify({
-      name: name,
-      email: currentUser.email,
-      avatar: avatarUrl || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(currentUser.email)}`
-    }));
-
-    msg.style.color = '#22c55e';
-    msg.innerText = 'Cập nhật hồ sơ thành công!';
-    document.getElementById('welcome-title').innerText = "Xin chào, " + name;
-    window.location.reload();
-  }
-}
-
-      if (error) {
+      if (authError || dbError) {
         msg.style.color = '#ef4444';
-        msg.innerText = 'Gặp lỗi khi lưu: ' + error.message;
+        msg.innerText = 'Gặp lỗi khi lưu: ' + (authError?.message || dbError?.message);
       } else {
         localStorage.setItem('tav_user_session', JSON.stringify({
           name: name,
@@ -432,7 +385,7 @@
         msg.style.color = '#22c55e';
         msg.innerText = 'Cập nhật hồ sơ thành công!';
         document.getElementById('welcome-title').innerText = "Xin chào, " + name;
-        window.location.reload();
+        setTimeout(() => window.location.reload(), 1000);
       }
     }
 
