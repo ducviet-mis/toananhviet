@@ -49,7 +49,7 @@
     
     .btn-action {
       background: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; padding: 6px 12px;
-      border-radius: 8px; font-weight: 700; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s;
+      border-radius: 8px; font-weight: 700; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px;
     }
     .btn-action:hover { background: #0284c7; color: #ffffff; }
 
@@ -157,12 +157,55 @@
     .btn-modal { padding: 10px 18px; border-radius: 8px; font-weight: 700; font-size: 13px; border: none; cursor: pointer; }
     .btn-modal-cancel { background: #f1f5f9; color: #475569; }
     .btn-modal-confirm { background: #ef4444; color: white; }
+
+    /* SCOREBOARD MODAL STYLES (GIỐNG QUIZROOM) */
+    .scoreboard-modal-card {
+      background: #ffffff;
+      width: 95%;
+      max-width: 600px;
+      max-height: 85vh;
+      border-radius: 20px;
+      overflow-y: auto;
+      padding: 24px;
+      position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      box-sizing: border-box;
+      text-align: left;
+    }
+    #printable-scoreboard-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid #e2e8f0;
+      box-sizing: border-box;
+    }
+    .sb-header { border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 18px; }
+    .sb-brand { font-size: 13px; font-weight: 800; color: #0284c7; letter-spacing: 0.5px; margin-bottom: 6px; text-transform: uppercase; }
+    .sb-info-row { font-size: 13.5px; color: #334155; margin-bottom: 4px; }
+    .sb-info-row strong { color: #0f172a; }
+    .sb-score-container { display: flex; justify-content: center; align-items: center; margin: 20px 0; }
+    .score-card-flat { padding: 14px 40px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 18px; font-size: 3rem; font-weight: 800; color: #64748b; text-align: center; }
+    .sb-table-wrapper { margin-top: 16px; overflow-x: auto; border-radius: 8px; }
+    .sb-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; }
+    .sb-table th { background: #f8fafc; color: #334155; font-weight: 700; padding: 10px; border: 1px solid #e2e8f0; }
+    .sb-table td { padding: 8px; border: 1px solid #e2e8f0; font-weight: 600; }
+    .sb-row-correct { background-color: #ecfdf5 !important; color: #047857 !important; }
+    .sb-row-incorrect { background-color: #fff1f2 !important; color: #be123c !important; }
+    .sb-row-skipped { background-color: #ffffff !important; color: #64748b !important; }
+
+    /* HISTORY ATTEMPTS LIST STYLES */
+    .attempt-item-card {
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+      padding: 14px 16px; margin-bottom: 10px; display: flex;
+      justify-content: space-between; align-items: center; gap: 10px;
+    }
   </style>
 </head>
 <body>
 
   <div id="toast-container"></div>
 
+  <!-- MODAL XÁC NHẬN CHUNG -->
   <div id="custom-modal" class="custom-modal-overlay">
     <div class="custom-modal-box">
       <div class="custom-modal-title" id="modal-title">Xác nhận thao tác</div>
@@ -204,6 +247,64 @@
     </div>
   </div>
 
+  <!-- MODAL XEM LỊCH SỬ CÁC LẦN NỘP BÀI CỦA HỌC SINH -->
+  <div id="history-modal" class="custom-modal-overlay">
+    <div class="custom-modal-box" style="text-align: left; max-width: 650px; width: 95%;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 10px;">
+        <div>
+          <div class="custom-modal-title" id="history-student-name" style="margin: 0; font-size: 18px; color: #0284c7;">Lịch sử làm bài</div>
+          <div style="font-size: 12.5px; color: #64748b; margin-top: 2px;" id="history-quiz-title">Bài thi: --</div>
+        </div>
+        <button onclick="closeHistoryModal()" style="background: none; border: none; font-size: 20px; color: #64748b; cursor: pointer; font-weight: 800;">✕</button>
+      </div>
+
+      <div id="history-attempts-container" style="max-height: 60vh; overflow-y: auto; padding-right: 4px;">
+        <p style="text-align: center; color: #64748b; padding: 20px;">Đang tải danh sách lần làm...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL XEM BẢNG KẾT QUẢ CHI TIẾT LẦN NỘP (GIỐNG QUIZROOM) -->
+  <div id="submission-detail-modal" class="custom-modal-overlay">
+    <div class="scoreboard-modal-card">
+      <div style="display: flex; justify-content: flex-end; margin-bottom: -10px;">
+        <button onclick="closeSubmissionDetailModal()" style="background: none; border: none; font-size: 20px; color: #64748b; cursor: pointer; font-weight: 800;">✕</button>
+      </div>
+
+      <div id="printable-scoreboard-card">
+        <div class="sb-header">
+          <div class="sb-brand">🎓 TOÁN ANH VIỆT - PHIẾU KẾT QUẢ BÀI THI</div>
+          <div class="sb-info-row">Họ và tên: <strong id="detail-student-name">--</strong></div>
+          <div class="sb-info-row">Bài thi: <strong id="detail-quiz-title">--</strong></div>
+          <div class="sb-info-row">Thời gian nộp: <strong id="detail-sub-date">--</strong></div>
+          <div class="sb-info-row">Thời gian làm: <strong id="detail-time-spent">--</strong></div>
+        </div>
+
+        <div class="sb-score-container">
+          <div id="detail-score-box" class="score-card-flat">0.0đ</div>
+        </div>
+
+        <div class="sb-table-wrapper">
+          <table class="sb-table">
+            <thead>
+              <tr>
+                <th>Câu</th>
+                <th>Đã chọn</th>
+                <th>Đáp án đúng</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody id="detail-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="margin-top: 18px; text-align: right;">
+        <button class="btn-modal btn-modal-cancel" onclick="closeSubmissionDetailModal()">Đóng</button>
+      </div>
+    </div>
+  </div>
+
   <header class="site-header"></header>
 
   <main class="admin-container">
@@ -233,7 +334,7 @@
     <!-- TAB 1: THEO DÕI TIẾN ĐỘ LÀM BÀI -->
     <div id="tab-tracker" class="panel-card">
       <div class="card-title-row">
-        <h3 class="card-title">Tình Trạng Học Sinh Làm Bài</h3>
+        <h3 class="card-title">Tình Trạng Học Sinh Làm Bài (Điểm Cao Nhất)</h3>
         <div>
           <label style="font-size: 13px; font-weight: 600; color: #475569; margin-right: 8px;">Chọn Đề Thi / Bài Tập:</label>
           <select id="select-quiz" class="select-class-dropdown" style="border: 1px solid #cbd5e1;" onchange="loadSubmissionTracker()">
@@ -249,13 +350,14 @@
               <th>Họ và Tên</th>
               <th>Email</th>
               <th>Trạng Thái</th>
-              <th>Điểm Trắc Nghiệm</th>
+              <th>Điểm Cao Nhất</th>
               <th>Thời Gian Làm</th>
               <th>Bài Tự Luận</th>
+              <th>Thao Tác</th>
             </tr>
           </thead>
           <tbody id="tracker-table-body">
-            <tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Vui lòng chọn lớp và đề thi để xem tiến độ.</td></tr>
+            <tr><td colspan="7" style="text-align: center; color: #64748b; padding: 30px;">Vui lòng chọn lớp và đề thi để xem tiến độ.</td></tr>
           </tbody>
         </table>
       </div>
@@ -507,6 +609,10 @@
     let studentRealtimeChannel = null;
     let allClassContents = [];
     let currentAdminSubTab = 'video';
+    
+    // CACHE DỮ LIỆU ĐỀ THI & LẦN NỘP
+    let currentQuizSubmissionsMap = {}; 
+    let currentQuizData = null;
 
     // TOAST & MODAL HELPERS
     function showToast(message, type = 'success') {
@@ -1274,49 +1380,74 @@
         loadSubmissionTracker();
       } else {
         quizSelect.innerHTML = '<option value="">Chưa có bài thi nào trong lớp</option>';
-        document.getElementById('tracker-table-body').innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">Lớp chưa có bài thi nào được tạo.</td></tr>';
+        document.getElementById('tracker-table-body').innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 25px;">Lớp chưa có bài thi nào được tạo.</td></tr>';
       }
     }
 
+    // LOGIC MỚI: TẢI VÀ HIỂN THỊ TIẾN ĐỘ VỚI ĐIỂM CAO NHẤT + LỊCH SỬ BÀI NỘP
     async function loadSubmissionTracker() {
       const quizId = document.getElementById('select-quiz').value;
       const tbody = document.getElementById('tracker-table-body');
 
       if (!quizId) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">Vui lòng chọn bài thi.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 25px;">Vui lòng chọn bài thi.</td></tr>';
         return;
       }
+
+      // Tải chi tiết câu hỏi của quiz để làm đối soát khi xem chi tiết
+      const { data: qData } = await _supabase.from('quizzes').select('*').eq('id', quizId).single();
+      currentQuizData = qData;
 
       const { data: submissions } = await _supabase
         .from('quiz_submissions')
         .select('*')
-        .eq('quiz_id', quizId);
+        .eq('quiz_id', quizId)
+        .order('created_at', { ascending: false });
+
+      // Gom nhóm submissions theo email học sinh
+      currentQuizSubmissionsMap = {};
+      if (submissions && submissions.length > 0) {
+        submissions.forEach(sub => {
+          const emailKey = (sub.user_email || '').toLowerCase().trim();
+          if (!currentQuizSubmissionsMap[emailKey]) {
+            currentQuizSubmissionsMap[emailKey] = [];
+          }
+          currentQuizSubmissionsMap[emailKey].push(sub);
+        });
+      }
 
       if (classStudentsList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 25px;">Chưa có danh sách học sinh trong lớp để đối soát.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 25px;">Chưa có danh sách học sinh trong lớp để đối soát.</td></tr>';
         return;
       }
 
       tbody.innerHTML = classStudentsList.map(student => {
-        const sub = (submissions || []).find(s => s.user_email && s.user_email.toLowerCase() === student.student_email.toLowerCase());
+        const studentEmailKey = student.student_email.toLowerCase().trim();
+        const userSubsList = currentQuizSubmissionsMap[studentEmailKey] || [];
 
-        if (sub) {
-          const mins = Math.floor((sub.time_spent || 0) / 60);
-          const secs = (sub.time_spent || 0) % 60;
+        if (userSubsList.length > 0) {
+          // Lấy lần làm bài có ĐIỂM CAO NHẤT
+          const bestSub = [...userSubsList].sort((a, b) => Number(b.mcq_score || 0) - Number(a.mcq_score || 0))[0];
+
+          const mins = Math.floor((bestSub.time_spent || 0) / 60);
+          const secs = (bestSub.time_spent || 0) % 60;
           
           let essayHtml = 'Không có';
-          if (sub.essay_files && Array.isArray(sub.essay_files) && sub.essay_files.length > 0) {
-            essayHtml = sub.essay_files.map((url, i) => `<a href="${url}" target="_blank" class="btn-action">📎 Ảnh ${i+1}</a>`).join(' ');
+          if (bestSub.essay_files && Array.isArray(bestSub.essay_files) && bestSub.essay_files.length > 0) {
+            essayHtml = bestSub.essay_files.map((url, i) => `<a href="${url}" target="_blank" class="btn-action">📎 Ảnh ${i+1}</a>`).join(' ');
           }
 
           return `
             <tr>
               <td><strong>${student.student_name}</strong></td>
               <td>${student.student_email}</td>
-              <td><span class="status-badge badge-done">Đã nộp</span></td>
-              <td><strong style="color: #0284c7; font-size: 15px;">${Number(sub.mcq_score || 0).toFixed(1)}đ</strong></td>
+              <td><span class="status-badge badge-done">Đã nộp (${userSubsList.length} lần)</span></td>
+              <td><strong style="color: #0284c7; font-size: 15px;">${Number(bestSub.mcq_score || 0).toFixed(1)}đ</strong></td>
               <td>${mins > 0 ? mins + 'p ' : ''}${secs}s</td>
               <td>${essayHtml}</td>
+              <td>
+                <button class="btn-action" onclick="openHistoryModal('${studentEmailKey}', '${student.student_name}')">📜 Lịch sử nộp bài</button>
+              </td>
             </tr>
           `;
         } else {
@@ -1328,10 +1459,136 @@
               <td>---</td>
               <td>---</td>
               <td>---</td>
+              <td><span style="color: #94a3b8; font-size: 12px;">Chưa có dữ liệu</span></td>
             </tr>
           `;
         }
       }).join('');
+    }
+
+    // HIỂN THỊ MODAL LỊCH SỬ CÁC LẦN NỘP
+    function openHistoryModal(emailKey, studentName) {
+      const modal = document.getElementById('history-modal');
+      const container = document.getElementById('history-attempts-container');
+      
+      document.getElementById('history-student-name').innerText = `Lịch sử làm bài: ${studentName}`;
+      document.getElementById('history-quiz-title').innerText = `Bài thi: ${currentQuizData?.title || ''}`;
+
+      const userSubs = currentQuizSubmissionsMap[emailKey] || [];
+
+      if (userSubs.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #64748b; padding: 20px;">Học sinh này chưa nộp bài lần nào.</p>';
+      } else {
+        const total = userSubs.length;
+        container.innerHTML = userSubs.map((sub, idx) => {
+          const attemptNum = total - idx; // Tính lần nộp từ lần 1, lần 2...
+          const dateStr = sub.created_at ? new Date(sub.created_at).toLocaleString('vi-VN') : '---';
+          const mins = Math.floor((sub.time_spent || 0) / 60);
+          const secs = (sub.time_spent || 0) % 60;
+
+          let essayHtml = 'Không có';
+          if (sub.essay_files && Array.isArray(sub.essay_files) && sub.essay_files.length > 0) {
+            essayHtml = sub.essay_files.map((url, i) => `<a href="${url}" target="_blank" class="btn-action" style="padding: 3px 8px;">📎 File ${i+1}</a>`).join(' ');
+          }
+
+          return `
+            <div class="attempt-item-card">
+              <div>
+                <div style="font-size: 14px; font-weight: 800; color: #1e293b;">
+                  Lần ${attemptNum} - <span style="color: #0284c7;">${Number(sub.mcq_score || 0).toFixed(1)} điểm</span>
+                </div>
+                <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
+                  ⏰ Nộp lúc: <b>${dateStr}</b> (${mins > 0 ? mins + ' phút ' : ''}${secs} giây)
+                </div>
+                <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
+                  📄 Tự luận: ${essayHtml}
+                </div>
+              </div>
+              <div>
+                <button class="btn-action" onclick="openSubmissionDetailModal('${sub.id}', ${attemptNum})">👁️ Xem phiếu làm bài</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeHistoryModal() {
+      document.getElementById('history-modal').classList.remove('active');
+    }
+
+    // HIỂN THỊ CHI TIẾT ĐÁP ÁN CỦA 1 LẦN NỘP (BẢNG ĐỐI SOÁT GIỐNG QUIZROOM)
+    function openSubmissionDetailModal(submissionId, attemptNum) {
+      // Tìm submission trong cache
+      let foundSub = null;
+      for (const subsList of Object.values(currentQuizSubmissionsMap)) {
+        const matched = subsList.find(s => s.id === submissionId);
+        if (matched) {
+          foundSub = matched;
+          break;
+        }
+      }
+
+      if (!foundSub || !currentQuizData) {
+        showToast("Không tìm thấy thông tin bài nộp!", "error");
+        return;
+      }
+
+      document.getElementById('detail-student-name').innerText = foundSub.user_name || foundSub.user_email;
+      document.getElementById('detail-quiz-title').innerText = `${currentQuizData.title} (Lần ${attemptNum})`;
+      document.getElementById('detail-sub-date').innerText = foundSub.created_at ? new Date(foundSub.created_at).toLocaleString('vi-VN') : '---';
+
+      const mins = Math.floor((foundSub.time_spent || 0) / 60);
+      const secs = (foundSub.time_spent || 0) % 60;
+      document.getElementById('detail-time-spent').innerText = `${mins > 0 ? mins + ' phút ' : ''}${secs} giây`;
+
+      document.getElementById('detail-score-box').innerText = `${Number(foundSub.mcq_score || 0).toFixed(1)}đ`;
+
+      const tbody = document.getElementById('detail-table-body');
+      tbody.innerHTML = '';
+
+      const userAnsMap = foundSub.mcq_answers || {};
+      const answerKeys = currentQuizData.answer_keys || [];
+
+      if (answerKeys.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="padding: 15px; color: #64748b;">Chưa có đáp án chuẩn cho đề thi này.</td></tr>';
+      } else {
+        answerKeys.forEach(item => {
+          const studentAns = userAnsMap[item.q_number] || userAnsMap[String(item.q_number)] || '';
+          const sysKey = item.correct_answer || '';
+
+          let rowClass = 'sb-row-skipped';
+          let statusText = 'Bỏ qua';
+
+          if (studentAns) {
+            if (studentAns.toString().trim().toLowerCase() === sysKey.toString().trim().toLowerCase()) {
+              rowClass = 'sb-row-correct';
+              statusText = 'Chính xác';
+            } else {
+              rowClass = 'sb-row-incorrect';
+              statusText = 'Sai';
+            }
+          }
+
+          const tr = document.createElement('tr');
+          tr.className = rowClass;
+          tr.innerHTML = `
+            <td><strong>Câu ${item.q_number}</strong></td>
+            <td>${studentAns ? studentAns.toString().toUpperCase() : '---'}</td>
+            <td>${sysKey.toString().toUpperCase()}</td>
+            <td>${statusText}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      document.getElementById('submission-detail-modal').classList.add('active');
+    }
+
+    function closeSubmissionDetailModal() {
+      document.getElementById('submission-detail-modal').classList.remove('active');
     }
 
     function toggleUploadInput() {
@@ -1344,7 +1601,7 @@
         urlGroup.classList.add('hidden');
       } else {
         fileGroup.classList.add('hidden');
-        urlGroup.classList.remove('hidden');
+        urlGroup.remove('hidden');
       }
     }
 
