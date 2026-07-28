@@ -1510,7 +1510,7 @@
               <td>${mins > 0 ? mins + 'p ' : ''}${secs}s</td>
               <td><span style="font-size: 13px; color: #334155; font-weight: 600;">${submitTimeStr}</span></td>
               <td>
-                <button class="btn-action" onclick="openHistoryModal('${studentEmailKey}', '${student.student_name}')">📜 Lịch sử nộp bài</button>
+                <button class="btn-action" onclick="openHistoryModal('${studentEmailKey}', '${student.student_name}')">Lịch sử</button>
               </td>
             </tr>
           `;
@@ -1572,8 +1572,8 @@
                 </div>
               </div>
               <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
-                <button class="btn-action" onclick="openSubmissionDetailModal('${sub.id}', ${attemptNum})">👁️ Xem phiếu làm bài</button>
-                <button class="btn-delete" onclick="deleteSingleSubmission('${sub.id}', ${attemptNum})">🗑️ Xóa bài</button>
+                <button class="btn-action" onclick="openSubmissionDetailModal('${sub.id}', ${attemptNum})">Chi tiết</button>
+                <button class="btn-delete" onclick="deleteSingleSubmission('${sub.id}', ${attemptNum})">Xóa bài</button>
               </div>
             </div>
           `;
