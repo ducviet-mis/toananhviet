@@ -28,24 +28,28 @@
       flex-direction: column;
     }
 
-    /* HEADER CỰC TINH GỌN TRÊN DI ĐỘNG - CHỈ 1 DÒNG */
+    /* HEADER MÁY TÍNH & TABLET */
     header {
       flex-shrink: 0;
       width: 100%;
-      background: rgba(255, 255, 255, 0.98);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid #e2e8f0;
       z-index: 50;
     }
     .nav-container {
-      padding: 6px 12px;
-      display: flex;
-      justify-content: space-between;
+      padding: 8px 24px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
       width: 100%;
-      gap: 6px;
+      max-width: 100%;
+      margin: 0 auto;
     }
+    .nav-left { display: flex; justify-content: flex-start; }
+    .nav-center { display: flex; justify-content: center; }
+    .nav-right { display: flex; justify-content: flex-end; }
 
     .back-btn {
       text-decoration: none;
@@ -53,14 +57,13 @@
       color: #0284c7;
       display: flex;
       align-items: center;
-      gap: 4px;
-      font-size: 0.8rem;
-      padding: 4px 8px;
+      gap: 6px;
+      font-size: 0.88rem;
+      padding: 6px 14px;
       border-radius: 8px;
       background: #f0f9ff;
       border: 1px solid #bae6fd;
       transition: all 0.2s;
-      white-space: nowrap;
     }
     .back-btn:hover {
       background: #e0f2fe;
@@ -70,52 +73,51 @@
     .student-badge-center {
       font-weight: 700;
       color: #0369a1;
-      font-size: 0.8rem;
+      font-size: 0.92rem;
       background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
-      padding: 4px 10px;
-      border-radius: 16px;
+      padding: 6px 18px;
+      border-radius: 20px;
       border: 1px solid #7dd3fc;
       box-shadow: 0 2px 8px rgba(2, 132, 199, 0.1);
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 140px;
     }
 
     .exam-title-head {
       font-weight: 700;
       color: #0f172a;
-      font-size: 0.78rem;
+      font-size: 0.88rem;
       background: #ffffff;
-      padding: 4px 8px;
-      border-radius: 16px;
+      padding: 6px 14px;
+      border-radius: 20px;
       border: 1px solid #e2e8f0;
       box-shadow: 0 2px 6px rgba(0,0,0,0.02);
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 110px;
     }
 
     .open-pdf-ext-btn {
       background: #0284c7;
       color: white;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 0.75rem;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
       font-weight: 700;
       text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
       white-space: nowrap;
+      border: none;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.2);
     }
 
     .exam-wrapper {
       display: flex;
       flex: 1;
       width: 100%;
-      height: calc(100vh - 44px);
+      height: calc(100vh - 53px);
       overflow: hidden;
       position: relative;
     }
@@ -123,23 +125,23 @@
     .pdf-pane {
       width: 72%;
       height: 100%;
-      background: #0f172a;
+      background: #1e293b;
       border-right: 1px solid #cbd5e1;
-      padding: 0;
+      padding: 6px;
       box-sizing: border-box;
       overflow: hidden;
-      position: relative;
     }
     .pdf-pane-inner {
       width: 100%;
       height: 100%;
+      border-radius: 8px;
       overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
     .pdf-pane iframe {
       width: 100%;
       height: 100%;
       border: none;
-      background: #ffffff;
     }
 
     .answersheet-pane {
@@ -826,7 +828,6 @@
       color: #1e293b;
     }
 
-    /* THANH TAB ĐỔI MÀN HÌNH DI ĐỘNG */
     .mobile-tabs {
       display: none;
       background: #ffffff;
@@ -835,14 +836,14 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 48px;
+      height: 46px;
       z-index: 100;
       box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
     }
     .tab-btn {
       flex: 1;
       text-align: center;
-      line-height: 48px;
+      line-height: 46px;
       font-weight: 700;
       font-size: 0.88rem;
       border: none;
@@ -850,7 +851,6 @@
       cursor: pointer;
       color: #64748b;
       padding: 0;
-      transition: all 0.2s;
     }
     .tab-btn.active {
       color: #0284c7;
@@ -858,10 +858,58 @@
       border-top: 3px solid #0284c7;
     }
 
+    /* ĐẶC BIỆT: CSS ÉP GIAO DIỆN HEADER MOBILE THÀNH 1 DÒNG DUY NHẤT */
     @media (max-width: 900px) {
+      html, body {
+        overflow: auto !important;
+        height: 100% !important;
+      }
+      .nav-container {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 5px 8px !important;
+        gap: 4px !important;
+      }
+      .nav-left, .nav-center, .nav-right {
+        display: contents !important; /* Xóa bỏ khung phân chia để 4 phần tử xếp chung 1 hàng */
+      }
+      .back-btn {
+        font-size: 0.72rem !important;
+        padding: 4px 6px !important;
+        gap: 2px !important;
+        flex-shrink: 0 !important;
+      }
+      .student-badge-center {
+        font-size: 0.72rem !important;
+        padding: 4px 8px !important;
+        max-width: 120px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        flex-shrink: 1 !important;
+      }
+      .exam-title-head {
+        font-size: 0.72rem !important;
+        padding: 4px 6px !important;
+        max-width: 80px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        flex-shrink: 1 !important;
+      }
+      .open-pdf-ext-btn {
+        font-size: 0.72rem !important;
+        padding: 4px 8px !important;
+        flex-shrink: 0 !important;
+      }
+
       .exam-wrapper {
         flex-direction: column;
-        height: calc(100vh - 44px - 48px) !important;
+        height: calc(100vh - 42px - 46px) !important;
+        overflow: hidden;
       }
       .mobile-tabs { display: flex; }
       
@@ -873,12 +921,13 @@
       .pdf-pane-inner {
         width: 100% !important;
         height: 100% !important;
+        border-radius: 0 !important;
       }
 
       .answersheet-pane { 
         width: 100% !important;
         height: 100% !important;
-        padding-bottom: 70px !important;
+        padding: 10px 12px 60px 12px !important;
       }
       
       .hidden-mobile { display: none !important; }
@@ -956,13 +1005,23 @@
     </div>
   </div>
 
-  <!-- HEADER TINH GỌN (1 DÒNG DUY NHẤT) -->
+  <!-- HEADER GỌN GÀNG 1 DÒNG TRÊN MOBILE -->
   <header>
     <nav class="nav-container">
-      <a href="quiz-list.html" class="back-btn">← Trở về</a>
-      <span class="student-badge-center" id="header-student-name">Thí sinh: Đang tải...</span>
-      <span class="exam-title-head" id="exam-title-header">Đang tải đề...</span>
-      <a href="#" id="btn-open-pdf-ext" target="_blank" class="open-pdf-ext-btn">↗️ Mở đề</a>
+      <div class="nav-left">
+        <a href="quiz-list.html" class="back-btn">← Trở về</a>
+      </div>
+
+      <div class="nav-center">
+        <span class="student-badge-center" id="header-student-name">
+          👤 Thí sinh: Đang tải...
+        </span>
+      </div>
+
+      <div class="nav-right">
+        <span class="exam-title-head" id="exam-title-header">Đang tải đề...</span>
+        <a href="#" id="btn-open-pdf-ext" target="_blank" class="open-pdf-ext-btn">↗️ Mở đề</a>
+      </div>
     </nav>
   </header>
 
@@ -1069,7 +1128,7 @@
           if (u.name) {
             studentNameString = u.name;
             if (u.email) studentEmailString = u.email;
-            studentLabel.innerText = u.name;
+            studentLabel.innerHTML = `Thí sinh: <strong>${u.name}</strong>`;
             return;
           }
         } catch(e){}
@@ -1079,9 +1138,9 @@
       if (user && user.user_metadata && user.user_metadata.full_name) {
         studentNameString = user.user_metadata.full_name;
         studentEmailString = user.email || studentEmailString;
-        studentLabel.innerText = user.user_metadata.full_name;
+        studentLabel.innerHTML = `Thí sinh: <strong>${user.user_metadata.full_name}</strong>`;
       } else {
-        studentLabel.innerText = "Khách";
+        studentLabel.innerHTML = `Thí sinh: <strong>Khách</strong>`;
       }
     }
 
@@ -1092,7 +1151,9 @@
         absoluteUrl = window.location.origin + (filePath.startsWith('/') ? '' : '/') + filePath;
       }
 
-      document.getElementById('btn-open-pdf-ext').href = absoluteUrl;
+      const btnExt = document.getElementById('btn-open-pdf-ext');
+      if (btnExt) btnExt.href = absoluteUrl;
+
       return `https://docs.google.com/gview?url=${encodeURIComponent(absoluteUrl)}&embedded=true`;
     }
 
