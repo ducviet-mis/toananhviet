@@ -112,13 +112,14 @@
       border-right: 1px solid #cbd5e1;
       padding: 6px;
       box-sizing: border-box;
-      overflow: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .pdf-pane-inner {
       width: 100%;
       height: 100%;
       border-radius: 8px;
-      overflow: hidden;
+      overflow-y: auto;
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
       -webkit-overflow-scrolling: touch;
     }
@@ -274,7 +275,6 @@
       gap: 12px;
     }
     
-    /* BIỂU ĐỒ DONUT SỬA LỖI MÀU SẮC & CHIỀU QUAY */
     .donut-chart-wrapper {
       position: relative;
       width: 76px;
@@ -284,16 +284,16 @@
     .donut-chart-wrapper svg {
       width: 100%;
       height: 100%;
-      transform: rotate(-90deg); /* Bắt đầu vẽ từ đỉnh 12h */
+      transform: rotate(-90deg);
     }
     .donut-bg {
       fill: none;
-      stroke: #fee2e2; /* Màu đỏ nhạt cho phần sai / chưa làm */
+      stroke: #fee2e2;
       stroke-width: 4;
     }
     .donut-ring {
       fill: none;
-      stroke: #10b981; /* Dải xanh lá cho phần đúng */
+      stroke: #10b981;
       stroke-width: 4;
       stroke-dasharray: 0, 100;
       transition: stroke-dasharray 1s ease-in-out;
@@ -842,6 +842,7 @@
       border-top: 3px solid #0284c7;
     }
 
+    /* CSS FIX CHO DI ĐỘNG KHI ĐỌC ĐỀ THI PDF */
     @media (max-width: 900px) {
       html, body {
         overflow: auto !important;
@@ -861,20 +862,36 @@
         overflow: hidden;
       }
       .mobile-tabs { display: flex; }
-      .pdf-pane, .answersheet-pane {
+      
+      .pdf-pane {
         width: 100% !important;
         height: 100% !important;
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
+        padding: 4px !important;
       }
       .pdf-pane-inner {
+        width: 100% !important;
         height: 100% !important;
+        min-height: 100% !important;
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
       }
+      .pdf-pane iframe {
+        width: 100% !important;
+        min-height: 100% !important;
+        height: 100% !important;
+        border: none !important;
+      }
+
       .answersheet-pane { 
+        width: 100% !important;
+        height: 100% !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
         padding-bottom: 90px !important; 
       }
+      
       .exam-title-head {
         font-size: 0.8rem;
         max-width: 130px;
@@ -1106,7 +1123,8 @@
 
       const fileExtension = absoluteUrl.split('.').pop().toLowerCase();
       if (fileExtension === 'pdf') {
-        return absoluteUrl;
+        // Trình xem PDF chuyên biệt tối ưu hỗ trợ vuốt cuộn trên mobile
+        return `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(absoluteUrl)}`;
       } else {
         return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(absoluteUrl)}`;
       }
@@ -1464,23 +1482,19 @@
       });
 
       finalCalculatedScore = earnedScore;
-      const timeSpent = totalDuration - timeRemaining; // Thời gian đã dùng (giây)
+      const timeSpent = totalDuration - timeRemaining;
       const spentMins = Math.floor(timeSpent / 60);
       const spentSecs = timeSpent % 60;
 
       const scoreFormatted = earnedScore.toFixed(1);
-      
-      // Tính phần trăm điểm chính xác để vẽ dải xanh lá
       const percentage = Math.round((earnedScore / totalScore) * 100);
 
       document.getElementById('result-score').innerText = scoreFormatted;
       document.getElementById('stat-correct').innerText = `${correctCount}/${totalQuestions}`;
       document.getElementById('stat-time').innerText = `${spentMins < 10 ? '0' : ''}${spentMins}:${spentSecs < 10 ? '0' : ''}${spentSecs}`;
 
-      // Upload file tự luận
       const uploadedEssayUrls = await uploadEssayFilesToStorage(quizData.id);
 
-      // Lưu kết quả bài làm + time_spent lên Supabase
       try {
         const { error: dbError } = await supabaseClient.from('quiz_submissions').insert([{
           quiz_id: quizData.id,
@@ -1489,7 +1503,7 @@
           mcq_answers: userAnswers,
           essay_files: uploadedEssayUrls,
           mcq_score: earnedScore,
-          time_spent: timeSpent, // Lưu thời gian hoàn thành (giây)
+          time_spent: timeSpent,
           status: 'pending'
         }]);
 
@@ -1501,7 +1515,6 @@
         console.error("Lỗi lưu kết quả bài thi:", err);
       }
 
-      // Hỗ trợ Zalo
       const needHelpList = Object.keys(tutorHelpQuestions).map(q => `Câu ${q}`);
       const helpTextLabel = document.getElementById('tutor-help-list');
       const zaloBtn = document.getElementById('zalo-send-btn');
@@ -1520,7 +1533,6 @@
       const resultBox = document.getElementById('result-box');
       resultBox.style.display = 'block';
 
-      // Cập nhật dải xanh lá (ĐÚNG) hiển thị chính xác theo tỉ lệ %
       setTimeout(() => {
         const donutRing = document.getElementById('donut-ring-path');
         if (donutRing) {
@@ -1541,7 +1553,6 @@
       const yyyy = today.getFullYear();
       document.getElementById('sb-completed-date').innerText = `${dd}/${mm}/${yyyy}`;
 
-      // HIỂN THỊ THỜI GIAN LÀM BÀI TRONG MODAL SCOREBOARD
       const timeSpent = totalDuration - timeRemaining;
       const mins = Math.floor(timeSpent / 60);
       const secs = timeSpent % 60;
