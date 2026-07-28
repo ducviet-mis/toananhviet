@@ -318,16 +318,16 @@
       <button class="tab-btn active" id="tab-tracker-btn" onclick="switchTab('tracker')">Tiến Độ Bài Tập</button>
       <button class="tab-btn" id="tab-manage-contents-btn" onclick="switchTab('manage-contents')">Tài Liệu Lớp</button>
       <button class="tab-btn" id="tab-create-quiz-btn" onclick="switchTab('create-quiz')">Tạo Đề Thi</button>
-      <button class="tab-btn" id="tab-upload-btn" onclick="switchTab('upload')">Đăng Video/Tài Liệu Mới</button>
+      <button class="tab-btn" id="tab-upload-btn" onclick="switchTab('upload')">Tạo Video/Tài Liệu</button>
       <button class="tab-btn" id="tab-students-btn" onclick="switchTab('students')">Danh Sách Học Sinh</button>
     </div>
 
     <!-- TAB 1: THEO DÕI TIẾN ĐỘ LÀM BÀI -->
     <div id="tab-tracker" class="panel-card">
       <div class="card-title-row">
-        <h3 class="card-title">Tình Trạng Học Sinh Làm Bài (Điểm Cao Nhất)</h3>
+        <h3 class="card-title">Kết Quả Làm Bài</h3>
         <div>
-          <label style="font-size: 13px; font-weight: 600; color: #475569; margin-right: 8px;">Chọn Đề Thi / Bài Tập:</label>
+          <label style="font-size: 13px; font-weight: 600; color: #475569; margin-right: 8px;">Chọn đề:</label>
           <select id="select-quiz" class="select-class-dropdown" style="border: 1px solid #cbd5e1;" onchange="loadSubmissionTracker()">
             <option value="">-- Chọn bài thi --</option>
           </select>
@@ -1433,7 +1433,7 @@
               <td>${mins > 0 ? mins + 'p ' : ''}${secs}s</td>
               <td><span style="font-size: 13px; color: #334155; font-weight: 600;">${submitTimeStr}</span></td>
               <td>
-                <button class="btn-action" onclick="openHistoryModal('${studentEmailKey}', '${student.student_name}')">📜 Lịch sử nộp bài</button>
+                <button class="btn-action" onclick="openHistoryModal('${studentEmailKey}', '${student.student_name}')">Lịch sử</button>
               </td>
             </tr>
           `;
@@ -1488,15 +1488,15 @@
                   Lần ${attemptNum} - <span style="color: #0284c7;">${Number(sub.mcq_score || 0).toFixed(1)} điểm</span>
                 </div>
                 <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
-                  ⏰ Thời điểm nộp bài: <b>${dateStr}</b> (${mins > 0 ? mins + ' phút ' : ''}${secs} giây)
+                  Thời điểm nộp bài: <b>${dateStr}</b> (${mins > 0 ? mins + ' phút ' : ''}${secs} giây)
                 </div>
                 <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
-                  📄 Bài tự luận: ${essayHtml}
+                  Bài tự luận: ${essayHtml}
                 </div>
               </div>
               <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
-                <button class="btn-action" onclick="openSubmissionDetailModal('${sub.id}', ${attemptNum})">👁️ Xem phiếu làm bài</button>
-                <button class="btn-delete" onclick="deleteSingleSubmission('${sub.id}', ${attemptNum})">🗑️ Xóa bài</button>
+                <button class="btn-action" onclick="openSubmissionDetailModal('${sub.id}', ${attemptNum})">Chi tiết</button>
+                <button class="btn-delete" onclick="deleteSingleSubmission('${sub.id}', ${attemptNum})">Xóa bài</button>
               </div>
             </div>
           `;
