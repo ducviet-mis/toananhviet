@@ -190,11 +190,11 @@
     </div>
 
     <div class="admin-tabs">
-      <button class="tab-btn active" id="tab-tracker-btn" onclick="switchTab('tracker')">📊 Tiến Độ Bài Tập</button>
-      <button class="tab-btn" id="tab-manage-contents-btn" onclick="switchTab('manage-contents')">📂 Kho Tài Liệu Lớp</button>
-      <button class="tab-btn" id="tab-create-quiz-btn" onclick="switchTab('create-quiz')">📝 Tạo Đề Thi Online Mới</button>
-      <button class="tab-btn" id="tab-upload-btn" onclick="switchTab('upload')">📤 Đăng Video/Tài Liệu Mới</button>
-      <button class="tab-btn" id="tab-students-btn" onclick="switchTab('students')">👥 Danh Sách Học Sinh</button>
+      <button class="tab-btn active" id="tab-tracker-btn" onclick="switchTab('tracker')">Tiến Độ Bài Tập</button>
+      <button class="tab-btn" id="tab-manage-contents-btn" onclick="switchTab('manage-contents')">Tài Liệu Lớp</button>
+      <button class="tab-btn" id="tab-create-quiz-btn" onclick="switchTab('create-quiz')">Tạo Đề Thi</button>
+      <button class="tab-btn" id="tab-upload-btn" onclick="switchTab('upload')">Đăng Video/Tài Liệu Mới</button>
+      <button class="tab-btn" id="tab-students-btn" onclick="switchTab('students')">Danh Sách Học Sinh</button>
     </div>
 
     <!-- TAB 1: THEO DÕI TIẾN ĐỘ LÀM BÀI -->
@@ -231,13 +231,13 @@
     <!-- TAB 2: DANH SÁCH BÀI HỌC VÀ TÀI LIỆU HIỆN CÓ -->
     <div id="tab-manage-contents" class="panel-card hidden">
       <div class="card-title-row">
-        <h3 class="card-title">📂 Danh Sách Bài Học & Tài Liệu Trong Lớp</h3>
+        <h3 class="card-title">Tài liệu lớp </h3>
       </div>
 
       <div class="sub-content-tabs">
-        <button class="sub-tab-btn active" onclick="switchAdminSubTab('video', this)">🎬 Bài giảng & Video</button>
-        <button class="sub-tab-btn" onclick="switchAdminSubTab('exercise', this)">📝 Bài tập</button>
-        <button class="sub-tab-btn" onclick="switchAdminSubTab('doc', this)">📄 Tài liệu PDF</button>
+        <button class="sub-tab-btn active" onclick="switchAdminSubTab('video', this)">Bài giảng & Video</button>
+        <button class="sub-tab-btn" onclick="switchAdminSubTab('exercise', this)">Bài tập</button>
+        <button class="sub-tab-btn" onclick="switchAdminSubTab('doc', this)">Tài liệu </button>
       </div>
 
       <div id="admin-contents-view-container">
@@ -247,16 +247,16 @@
 
     <!-- TAB 3: TẠO ĐỀ THI ONLINE MỚI -->
     <div id="tab-create-quiz" class="panel-card hidden">
-      <h3 class="card-title" style="margin-bottom: 20px;">📝 Tạo Đề Thi Trắc Nghiệm Online Mới</h3>
+      <h3 class="card-title" style="margin-bottom: 20px;">Tạo Đề Thi</h3>
       <form id="create-quiz-form" onsubmit="handleCreateQuiz(event)">
         
         <div class="form-group">
-          <label>🌐 Phạm Vi Đăng Đề Thi</label>
+          <label>Phạm Vi Đăng</label>
           <div class="scope-selector-box">
             <label class="scope-option-btn active" id="quiz-scope-class-lbl">
               <input type="checkbox" id="quiz-scope-class" checked onchange="toggleScopeUI('quiz')">
               <div>
-                <div class="scope-title">🔒 Đăng cho Lớp học (Nội bộ)</div>
+                <div class="scope-title">Lớp học (Nội bộ)</div>
                 <div class="scope-desc">Giao bài thi vào thư mục lớp cho học sinh</div>
               </div>
             </label>
@@ -264,7 +264,7 @@
             <label class="scope-option-btn" id="quiz-scope-public-lbl">
               <input type="checkbox" id="quiz-scope-public" onchange="toggleScopeUI('quiz')">
               <div>
-                <div class="scope-title">🌐 Đăng Công khai (Web chung)</div>
+                <div class="scope-title">Công khai</div>
                 <div class="scope-desc">Hiển thị ở trang Thi Online cho mọi người</div>
               </div>
             </label>
@@ -273,7 +273,7 @@
 
         <div class="form-group" id="quiz-class-selection-group">
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <label style="margin: 0;">👥 Chọn Lớp Học Muốn Giao Đề Thi</label>
+            <label style="margin: 0;">Chọn Lớp Học</label>
             <button type="button" onclick="toggleSelectAllClasses('quiz')" style="background: none; border: none; color: #0284c7; font-size: 12px; font-weight: 700; cursor: pointer;">Select All / Clear All</button>
           </div>
           <div class="class-checkbox-grid" id="quiz-classes-checkbox-container">
@@ -282,17 +282,17 @@
         </div>
 
         <div class="form-group" id="quiz-folder-group">
-          <label>📁 Chọn Thư Mục (Folder Bài Tập Trong Lớp)</label>
+          <label>Chọn Thư Mục</label>
           <div style="display: flex; gap: 10px;">
             <select id="quiz-folder-select" class="form-control" style="flex: 1;" onchange="onSelectQuizFolderChange()">
-              <option value="">-- Chọn Folder bài tập hiện có --</option>
+              <option value="">-- Chọn thư mục --</option>
             </select>
-            <input type="text" id="quiz-folder-input" class="form-control" style="flex: 1;" placeholder="Hoặc nhập tên Folder MỚI tại đây...">
+            <input type="text" id="quiz-folder-input" class="form-control" style="flex: 1;" placeholder="Tạo thư mục mới...">
           </div>
         </div>
 
         <div class="form-group">
-          <label>📌 Tên Đề Thi / Bài Tập</label>
+          <label>Tên Đề Thi</label>
           <input type="text" id="quiz-title-input" class="form-control" placeholder="Ví dụ: Đề Khảo Sát Giữa Kỳ 1 - Toán 8" required>
         </div>
 
@@ -309,7 +309,7 @@
           </div>
 
           <div class="form-group" style="flex: 1;">
-            <label>Học kỳ / Phân loại</label>
+            <label>Học kỳ</label>
             <select id="quiz-semester-select" class="form-control">
               <option value="Đề giữa kì 1">Đề giữa kì 1</option>
               <option value="Đề cuối kì 1">Đề cuối kì 1</option>
@@ -331,11 +331,11 @@
         </div>
 
         <div class="form-group">
-          <label>🔑 Chuỗi Đáp Án Đúng Trắc Nghiệm</label>
+          <label>Đáp Án</label>
           <textarea id="quiz-answers-input" class="form-control" rows="3" placeholder="Nhập chuỗi đáp án. Ví dụ: 1A, 2B, 3C, 4D, 5A..." required></textarea>
         </div>
 
-        <button type="submit" id="btn-submit-quiz" class="btn-submit" style="background: #10b981;">🚀 Tạo Đề Thi</button>
+        <button type="submit" id="btn-submit-quiz" class="btn-submit" style="background: #10b981;">Tạo Đề Thi</button>
       </form>
     </div>
 
@@ -350,7 +350,7 @@
             <label class="scope-option-btn active" id="content-scope-class-lbl">
               <input type="checkbox" id="content-scope-class" checked onchange="toggleScopeUI('content')">
               <div>
-                <div class="scope-title">🔒 Đăng vào Lớp học (Nội bộ)</div>
+                <div class="scope-title">Lớp học (Nội bộ)</div>
                 <div class="scope-desc">Đẩy tài liệu vào kho bài giảng học sinh</div>
               </div>
             </label>
@@ -358,8 +358,8 @@
             <label class="scope-option-btn" id="content-scope-public-lbl">
               <input type="checkbox" id="content-scope-public" onchange="toggleScopeUI('content')">
               <div>
-                <div class="scope-title">🌐 Đăng Công khai (Web chung)</div>
-                <div class="scope-desc">Đăng lên Tủ sách / Tài liệu công khai</div>
+                <div class="scope-title">Công khai </div>
+                <div class="scope-desc">Đăng lên Tài liệu công khai</div>
               </div>
             </label>
           </div>
@@ -367,7 +367,7 @@
 
         <div class="form-group" id="content-class-selection-group">
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <label style="margin: 0;">👥 Chọn Lớp Học Nhận Tài Liệu</label>
+            <label style="margin: 0;">Chọn Lớp Học</label>
             <button type="button" onclick="toggleSelectAllClasses('content')" style="background: none; border: none; color: #0284c7; font-size: 12px; font-weight: 700; cursor: pointer;">Select All / Clear All</button>
           </div>
           <div class="class-checkbox-grid" id="content-classes-checkbox-container">
@@ -396,23 +396,23 @@
         </div>
 
         <div class="form-group" id="content-folder-group">
-          <label>📁 Chọn Thư Mục / Chủ Đề (Folder Trong Lớp)</label>
+          <label>Chọn Thư Mục</label>
           <div style="display: flex; gap: 10px;">
             <select id="content-folder-select" class="form-control" style="flex: 1;" onchange="onSelectContentFolderChange()">
-              <option value="">-- Chọn Folder đã có --</option>
+              <option value="">-- Chọn thư mục --</option>
             </select>
-            <input type="text" id="content-folder-input" class="form-control" style="flex: 1;" placeholder="Hoặc gõ tên Folder MỚI...">
+            <input type="text" id="content-folder-input" class="form-control" style="flex: 1;" placeholder="Tạo thư mục mới...">
           </div>
         </div>
 
         <div class="form-group">
-          <label>📌 Tên Bài Học / Tiêu Đề Tài Liệu</label>
+          <label>Tiêu Đề Tài Liệu</label>
           <input type="text" id="content-title" class="form-control" placeholder="Ví dụ: Chuyên đề Hằng Đẳng Thức - Bài Tập Củng Cố" required>
         </div>
 
         <div style="display: flex; gap: 15px;">
           <div class="form-group" style="flex: 1;">
-            <label>Khối lớp (Cho Web chung)</label>
+            <label>Khối lớp</label>
             <select id="content-grade-select" class="form-control">
               <option value="6">Lớp 6</option>
               <option value="7">Lớp 7</option>
@@ -422,7 +422,7 @@
           </div>
 
           <div class="form-group" style="flex: 1;">
-            <label>Học kỳ / Phân loại (Cho Web chung)</label>
+            <label>Học kỳ</label>
             <select id="content-semester-select" class="form-control">
               <option value="Đề giữa kì 1">Đề giữa kì 1</option>
               <option value="Đề cuối kì 1">Đề cuối kì 1</option>
