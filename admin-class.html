@@ -380,7 +380,6 @@
             <label>Loại nội dung</label>
             <select id="content-type" class="form-control" onchange="onContentTypeChange()">
               <option value="doc">Tài liệu (File PDF/Word)</option>
-              <option value="exercise">Bài tập phòng thi (Mã đề có sẵn)</option>
               <option value="video">Bài giảng Video (Link YouTube)</option>
             </select>
           </div>
@@ -391,8 +390,8 @@
           </div>
 
           <div class="form-group hidden" style="flex: 2;" id="url-input-group">
-            <label id="url-label">Đường dẫn / Link YouTube / Mã Đề</label>
-            <input type="text" id="content-url" class="form-control" placeholder="Dán URL video hoặc Mã đề thi">
+            <label id="url-label">Đường dẫn Video (YouTube URL)</label>
+            <input type="text" id="content-url" class="form-control" placeholder="Dán URL video YouTube tại đây...">
           </div>
         </div>
 
@@ -622,7 +621,6 @@
       subscribeToStudentChanges();
     }
 
-    // NÂNG CẤP: LOAD FOLDER THEO ĐÚNG NỘI DUNG (type)
     async function loadExistingFoldersForType(contentType, selectElementId) {
       const selectEl = document.getElementById(selectElementId);
       if (!selectEl) return;
@@ -997,7 +995,7 @@
         } else {
           finalUrl = document.getElementById('content-url').value.trim();
           if (!finalUrl) {
-            showToast("Vui lòng nhập đường dẫn hoặc Mã đề!", "error");
+            showToast("Vui lòng nhập đường dẫn Video YouTube!", "error");
             btn.disabled = false;
             btn.innerText = '🚀 Đăng Tài Liệu';
             return;
@@ -1223,7 +1221,6 @@
       const type = document.getElementById('content-type').value;
       const fileGroup = document.getElementById('file-input-group');
       const urlGroup = document.getElementById('url-input-group');
-      const urlLabel = document.getElementById('url-label');
 
       if (type === 'doc') {
         fileGroup.classList.remove('hidden');
@@ -1231,11 +1228,6 @@
       } else {
         fileGroup.classList.add('hidden');
         urlGroup.classList.remove('hidden');
-        if (type === 'video') {
-          urlLabel.innerText = 'Đường dẫn Video (YouTube URL)';
-        } else {
-          urlLabel.innerText = 'Mã đề thi (ID trong bảng Quizzes, VD: 8G01)';
-        }
       }
     }
 
