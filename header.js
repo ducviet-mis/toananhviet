@@ -139,7 +139,7 @@
           <a href="profile.html" class="dropdown-item-link">Thông tin cá nhân</a>
           ${teacherAdminLink}
           <a href="my-books.html" class="dropdown-item-link">Sách của tôi</a>
-          <a href="my-class.html" class="dropdown-item-link ${isClass ? 'active-item' : ''}">Lớp của bạn</a>
+          <a href="my-class.html" class="dropdown-item-link ${isClass ? 'active-item' : ''}">Lớp học</a>
           <a href="my-books.html#activate" class="dropdown-item-link">Kích hoạt sách</a>
           <a href="#" id="menu-btn-logout-action" class="dropdown-item-link dropdown-item-logout">Đăng xuất</a>
         </div>
