@@ -106,9 +106,109 @@
       border-radius: 10px; margin-top: 8px;
     }
     .sub-item-title { font-size: 13.5px; font-weight: 700; color: #334155; margin: 0; display: flex; align-items: center; gap: 8px; }
+
+    /* ================= TOAST NOTIFICATION STYLES ================= */
+    #toast-container {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast-notification {
+      pointer-events: auto;
+      background: #ffffff;
+      color: #0f172a;
+      padding: 12px 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      border-left: 5px solid #10b981;
+      animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+      min-width: 280px;
+    }
+
+    .toast-notification.error {
+      border-left-color: #ef4444;
+    }
+
+    .toast-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .toast-notification.success .toast-icon { background: #10b981; }
+    .toast-notification.error .toast-icon { background: #ef4444; }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-20px); }
+    }
+
+    /* ================= CUSTOM CONFIRM MODAL ================= */
+    .custom-modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px);
+      z-index: 99998; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: all 0.2s ease;
+    }
+
+    .custom-modal-overlay.active {
+      opacity: 1; pointer-events: auto;
+    }
+
+    .custom-modal-box {
+      background: white; border-radius: 16px; padding: 24px;
+      max-width: 400px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      text-align: center; transform: scale(0.9); transition: transform 0.2s ease;
+    }
+
+    .custom-modal-overlay.active .custom-modal-box { transform: scale(1); }
+    .custom-modal-title { font-size: 17px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
+    .custom-modal-desc { font-size: 14px; color: #64748b; margin-bottom: 20px; line-height: 1.5; }
+    .custom-modal-actions { display: flex; gap: 10px; justify-content: center; }
+    .btn-modal { padding: 10px 18px; border-radius: 8px; font-weight: 700; font-size: 13px; border: none; cursor: pointer; }
+    .btn-modal-cancel { background: #f1f5f9; color: #475569; }
+    .btn-modal-confirm { background: #ef4444; color: white; }
   </style>
 </head>
 <body>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- Custom Confirm Modal -->
+  <div id="custom-modal" class="custom-modal-overlay">
+    <div class="custom-modal-box">
+      <div class="custom-modal-title" id="modal-title">Xác nhận thao tác</div>
+      <div class="custom-modal-desc" id="modal-desc">Bạn có chắc chắn muốn thực hiện hành động này?</div>
+      <div class="custom-modal-actions">
+        <button class="btn-modal btn-modal-cancel" id="modal-btn-cancel">Hủy bỏ</button>
+        <button class="btn-modal btn-modal-confirm" id="modal-btn-confirm">Xác nhận</button>
+      </div>
+    </div>
+  </div>
 
   <header class="site-header"></header>
 
@@ -370,11 +470,56 @@
     let allClassContents = [];
     let currentAdminSubTab = 'video';
 
+    // ================= TOAST & MODAL HELPERS =================
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast-notification ${type}`;
+
+      const icon = type === 'success' ? '✓' : '✕';
+      toast.innerHTML = `
+        <div class="toast-icon">${icon}</div>
+        <div>${message}</div>
+      `;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+
+    function showConfirmModal(title, desc, onConfirm) {
+      const modal = document.getElementById('custom-modal');
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-desc').innerText = desc;
+
+      modal.classList.add('active');
+
+      const btnConfirm = document.getElementById('modal-btn-confirm');
+      const btnCancel = document.getElementById('modal-btn-cancel');
+
+      const closeHandler = () => {
+        modal.classList.remove('active');
+        btnConfirm.removeEventListener('click', confirmHandler);
+        btnCancel.removeEventListener('click', closeHandler);
+      };
+
+      const confirmHandler = () => {
+        closeHandler();
+        onConfirm();
+      };
+
+      btnConfirm.addEventListener('click', confirmHandler);
+      btnCancel.addEventListener('click', closeHandler);
+    }
+
+    // ================= LOGIC QUẢN TRỊ =================
     async function checkTeacherPermission() {
       const { data: { user } } = await _supabase.auth.getUser();
       if (!user) {
-        alert("Vui lòng đăng nhập tài khoản Giáo viên!");
-        window.location.href = 'index.html';
+        showToast("Vui lòng đăng nhập tài khoản Giáo viên!", "error");
+        setTimeout(() => window.location.href = 'index.html', 1500);
         return false;
       }
 
@@ -386,8 +531,8 @@
 
       const role = profile?.role || user.user_metadata?.role;
       if (role !== 'teacher') {
-        alert("Bạn không có quyền truy cập trang Quản Lý Lớp Học!");
-        window.location.href = 'index.html';
+        showToast("Bạn không có quyền truy cập trang Quản Lý Lớp Học!", "error");
+        setTimeout(() => window.location.href = 'index.html', 1500);
         return false;
       }
       return true;
@@ -574,20 +719,20 @@
       card.classList.toggle('open');
     }
 
-    async function deleteClassContent(id, title) {
-      if (confirm(`Bạn có chắc chắn muốn xóa bài/tài liệu: "${title}"?`)) {
+    function deleteClassContent(id, title) {
+      showConfirmModal('Xóa tài liệu', `Bạn có chắc chắn muốn xóa bài/tài liệu: "${title}"?`, async () => {
         try {
           const { error } = await _supabase.from('class_contents').delete().eq('id', id);
           if (error) throw error;
 
-          alert("🎉 Đã xóa tài liệu thành công!");
+          showToast("Đã xóa tài liệu thành công!", "success");
           await loadClassContentsForAdmin();
           await loadExistingFolders();
           await loadClassQuizzes();
         } catch (err) {
-          alert("Lỗi khi xóa tài liệu: " + err.message);
+          showToast("Lỗi khi xóa tài liệu: " + err.message, "error");
         }
-      }
+      });
     }
 
     async function handleCreateQuiz(e) {
@@ -606,12 +751,12 @@
       const btn = document.getElementById('btn-submit-quiz');
 
       if (!fileInput.files || fileInput.files.length === 0) {
-        alert("Vui lòng chọn file PDF đề thi!");
+        showToast("Vui lòng chọn file PDF đề thi!", "error");
         return;
       }
 
       if ((visibility === 'class_only' || visibility === 'both') && !folderName) {
-        alert("Vui lòng chọn hoặc nhập Tên Thư Mục (Folder) để đưa vào Lớp học!");
+        showToast("Vui lòng chọn hoặc nhập Tên Thư Mục!", "error");
         return;
       }
 
@@ -640,7 +785,7 @@
             explanation: ''
           }));
         } else {
-          alert("Chuỗi đáp án không hợp lệ! Vui lòng nhập theo định dạng: 1A, 2B, 3C...");
+          showToast("Chuỗi đáp án không hợp lệ! Ví dụ: 1A, 2B, 3C...", "error");
           return;
         }
       }
@@ -717,13 +862,13 @@
             ]);
         }
 
-        alert(`🎉 Đã tạo đề thi thành công!`);
+        showToast("Đã tạo đề thi thành công!", "success");
         document.getElementById('create-quiz-form').reset();
         await loadClassData();
 
       } catch (err) {
         console.error(err);
-        alert("Lỗi khi tạo đề thi: " + err.message);
+        showToast("Lỗi khi tạo đề thi: " + err.message, "error");
       } finally {
         btn.disabled = false;
         btn.innerText = '🚀 Tạo Đề Thi';
@@ -745,12 +890,12 @@
       const btn = document.getElementById('btn-submit-upload');
 
       if ((scope === 'class_only' || scope === 'both') && !currentClassId) {
-        alert("Vui lòng chọn lớp học!");
+        showToast("Vui lòng chọn lớp học!", "error");
         return;
       }
 
       if ((scope === 'class_only' || scope === 'both') && !folderName) {
-        alert("Vui lòng chọn hoặc nhập Tên Thư Mục (Folder)!");
+        showToast("Vui lòng chọn hoặc nhập Tên Thư Mục!", "error");
         return;
       }
 
@@ -762,7 +907,7 @@
         if (type === 'doc') {
           const fileInput = document.getElementById('content-file');
           if (!fileInput.files || fileInput.files.length === 0) {
-            alert("Vui lòng chọn file cần đăng!");
+            showToast("Vui lòng chọn file cần đăng!", "error");
             btn.disabled = false;
             btn.innerText = '🚀 Đăng Tài Liệu';
             return;
@@ -788,7 +933,7 @@
         } else {
           finalUrl = document.getElementById('content-url').value.trim();
           if (!finalUrl) {
-            alert("Vui lòng nhập đường dẫn hoặc Mã đề!");
+            showToast("Vui lòng nhập đường dẫn hoặc Mã đề!", "error");
             btn.disabled = false;
             btn.innerText = '🚀 Đăng Tài Liệu';
             return;
@@ -829,7 +974,7 @@
           if (publicErr) throw publicErr;
         }
 
-        alert(`🎉 Đã đăng bài học / tài liệu thành công!`);
+        showToast("Đã đăng bài học / tài liệu thành công!", "success");
         document.getElementById('upload-content-form').reset();
         toggleUploadInput();
         await loadClassContentsForAdmin();
@@ -837,7 +982,7 @@
 
       } catch (err) {
         console.error(err);
-        alert("Lỗi upload: " + err.message);
+        showToast("Lỗi upload: " + err.message, "error");
       } finally {
         btn.disabled = false;
         btn.innerText = '🚀 Đăng Tài Liệu';
@@ -923,15 +1068,16 @@
       }
     }
 
-    async function removeStudentFromClass(id) {
-      if (confirm("Bạn có chắc chắn muốn xóa học sinh này khỏi lớp?")) {
+    function removeStudentFromClass(id) {
+      showConfirmModal('Xóa học sinh', "Bạn có chắc chắn muốn xóa học sinh này khỏi lớp?", async () => {
         const { error } = await _supabase.from('class_members').delete().eq('id', id);
         if (error) {
-          alert("Lỗi khi xóa: " + error.message);
+          showToast("Lỗi khi xóa: " + error.message, "error");
         } else {
+          showToast("Đã xóa học sinh khỏi lớp", "success");
           loadClassStudents();
         }
-      }
+      });
     }
 
     async function loadClassQuizzes() {
