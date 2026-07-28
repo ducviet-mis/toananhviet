@@ -55,7 +55,7 @@
 
     .btn-delete {
       background: #fef2f2; color: #ef4444; border: 1px solid #fca5a5; padding: 6px 12px;
-      border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.2s;
+      border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px;
     }
     .btn-delete:hover { background: #ef4444; color: #ffffff; }
 
@@ -197,7 +197,7 @@
     .attempt-item-card {
       background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
       padding: 14px 16px; margin-bottom: 10px; display: flex;
-      justify-content: space-between; align-items: center; gap: 10px;
+      justify-content: space-between; align-items: center; gap: 12px;
     }
   </style>
 </head>
@@ -352,7 +352,7 @@
               <th>Trạng Thái</th>
               <th>Điểm Cao Nhất</th>
               <th>Thời Gian Làm</th>
-              <th>Bài Tự Luận</th>
+              <th>Thời Gian Nộp Bài</th>
               <th>Thao Tác</th>
             </tr>
           </thead>
@@ -613,6 +613,8 @@
     // CACHE DỮ LIỆU ĐỀ THI & LẦN NỘP
     let currentQuizSubmissionsMap = {}; 
     let currentQuizData = null;
+    let currentHistoryEmailKey = '';
+    let currentHistoryStudentName = '';
 
     // TOAST & MODAL HELPERS
     function showToast(message, type = 'success') {
@@ -1380,21 +1382,20 @@
         loadSubmissionTracker();
       } else {
         quizSelect.innerHTML = '<option value="">Chưa có bài thi nào trong lớp</option>';
-        document.getElementById('tracker-table-body').innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 25px;">Lớp chưa có bài thi nào được tạo.</td></tr>';
+        document.getElementById('tracker-table-body').innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 30px;">Lớp chưa có bài thi nào được tạo.</td></tr>';
       }
     }
 
-    // LOGIC MỚI: TẢI VÀ HIỂN THỊ TIẾN ĐỘ VỚI ĐIỂM CAO NHẤT + LỊCH SỬ BÀI NỘP
+    // LOGIC CẬP NHẬT: THỜI GIAN NỘP BÀI Ở NGOÀI BẢNG, NÚT XÓA BÀI NẰM DƯỚI NÚT XEM PHIẾU BÀI LÀM
     async function loadSubmissionTracker() {
       const quizId = document.getElementById('select-quiz').value;
       const tbody = document.getElementById('tracker-table-body');
 
       if (!quizId) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 25px;">Vui lòng chọn bài thi.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 30px;">Vui lòng chọn bài thi.</td></tr>';
         return;
       }
 
-      // Tải chi tiết câu hỏi của quiz để làm đối soát khi xem chi tiết
       const { data: qData } = await _supabase.from('quizzes').select('*').eq('id', quizId).single();
       currentQuizData = qData;
 
@@ -1404,7 +1405,6 @@
         .eq('quiz_id', quizId)
         .order('created_at', { ascending: false });
 
-      // Gom nhóm submissions theo email học sinh
       currentQuizSubmissionsMap = {};
       if (submissions && submissions.length > 0) {
         submissions.forEach(sub => {
@@ -1417,7 +1417,7 @@
       }
 
       if (classStudentsList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 25px;">Chưa có danh sách học sinh trong lớp để đối soát.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 30px;">Chưa có danh sách học sinh trong lớp để đối soát.</td></tr>';
         return;
       }
 
@@ -1431,11 +1431,7 @@
 
           const mins = Math.floor((bestSub.time_spent || 0) / 60);
           const secs = (bestSub.time_spent || 0) % 60;
-          
-          let essayHtml = 'Không có';
-          if (bestSub.essay_files && Array.isArray(bestSub.essay_files) && bestSub.essay_files.length > 0) {
-            essayHtml = bestSub.essay_files.map((url, i) => `<a href="${url}" target="_blank" class="btn-action">📎 Ảnh ${i+1}</a>`).join(' ');
-          }
+          const submitTimeStr = bestSub.created_at ? new Date(bestSub.created_at).toLocaleString('vi-VN') : '---';
 
           return `
             <tr>
@@ -1444,7 +1440,7 @@
               <td><span class="status-badge badge-done">Đã nộp (${userSubsList.length} lần)</span></td>
               <td><strong style="color: #0284c7; font-size: 15px;">${Number(bestSub.mcq_score || 0).toFixed(1)}đ</strong></td>
               <td>${mins > 0 ? mins + 'p ' : ''}${secs}s</td>
-              <td>${essayHtml}</td>
+              <td><span style="font-size: 13px; color: #334155; font-weight: 600;">${submitTimeStr}</span></td>
               <td>
                 <button class="btn-action" onclick="openHistoryModal('${studentEmailKey}', '${student.student_name}')">📜 Lịch sử nộp bài</button>
               </td>
@@ -1466,8 +1462,11 @@
       }).join('');
     }
 
-    // HIỂN THỊ MODAL LỊCH SỬ CÁC LẦN NỘP
+    // HIỂN THỊ MODAL LỊCH SỬ CÁC LẦN NỘP BÀI (KÈM FILE TỰ LUẬN + NÚT XÓA BÀI NGAY DƯỚI XEM PHIẾU BÀI LÀM)
     function openHistoryModal(emailKey, studentName) {
+      currentHistoryEmailKey = emailKey;
+      currentHistoryStudentName = studentName;
+
       const modal = document.getElementById('history-modal');
       const container = document.getElementById('history-attempts-container');
       
@@ -1481,7 +1480,7 @@
       } else {
         const total = userSubs.length;
         container.innerHTML = userSubs.map((sub, idx) => {
-          const attemptNum = total - idx; // Tính lần nộp từ lần 1, lần 2...
+          const attemptNum = total - idx;
           const dateStr = sub.created_at ? new Date(sub.created_at).toLocaleString('vi-VN') : '---';
           const mins = Math.floor((sub.time_spent || 0) / 60);
           const secs = (sub.time_spent || 0) % 60;
@@ -1498,14 +1497,15 @@
                   Lần ${attemptNum} - <span style="color: #0284c7;">${Number(sub.mcq_score || 0).toFixed(1)} điểm</span>
                 </div>
                 <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
-                  ⏰ Nộp lúc: <b>${dateStr}</b> (${mins > 0 ? mins + ' phút ' : ''}${secs} giây)
+                  ⏰ Thời điểm nộp bài: <b>${dateStr}</b> (${mins > 0 ? mins + ' phút ' : ''}${secs} giây)
                 </div>
                 <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
-                  📄 Tự luận: ${essayHtml}
+                  📄 Bài tự luận: ${essayHtml}
                 </div>
               </div>
-              <div>
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
                 <button class="btn-action" onclick="openSubmissionDetailModal('${sub.id}', ${attemptNum})">👁️ Xem phiếu làm bài</button>
+                <button class="btn-delete" onclick="deleteSingleSubmission('${sub.id}', ${attemptNum})">🗑️ Xóa bài</button>
               </div>
             </div>
           `;
@@ -1519,9 +1519,30 @@
       document.getElementById('history-modal').classList.remove('active');
     }
 
+    // HÀM XÓA 1 LẦN BÀI NỘP
+    function deleteSingleSubmission(submissionId, attemptNum) {
+      showConfirmModal('Xóa bài làm', `Bạn có chắc chắn muốn xóa bài nộp Lần ${attemptNum} này không? Hành động không thể hoàn tác.`, async () => {
+        try {
+          const { error } = await _supabase.from('quiz_submissions').delete().eq('id', submissionId);
+          if (error) throw error;
+
+          showToast("Đã xóa bài nộp thành công!", "success");
+          
+          // Tải lại dữ liệu bài nộp mới nhất
+          await loadSubmissionTracker();
+          
+          // Mở lại modal lịch sử cập nhật
+          if (currentHistoryEmailKey) {
+            openHistoryModal(currentHistoryEmailKey, currentHistoryStudentName);
+          }
+        } catch (err) {
+          showToast("Lỗi khi xóa bài nộp: " + err.message, "error");
+        }
+      });
+    }
+
     // HIỂN THỊ CHI TIẾT ĐÁP ÁN CỦA 1 LẦN NỘP (BẢNG ĐỐI SOÁT GIỐNG QUIZROOM)
     function openSubmissionDetailModal(submissionId, attemptNum) {
-      // Tìm submission trong cache
       let foundSub = null;
       for (const subsList of Object.values(currentQuizSubmissionsMap)) {
         const matched = subsList.find(s => s.id === submissionId);
@@ -1601,7 +1622,7 @@
         urlGroup.classList.add('hidden');
       } else {
         fileGroup.classList.add('hidden');
-        urlGroup.remove('hidden');
+        urlGroup.classList.remove('hidden');
       }
     }
 
