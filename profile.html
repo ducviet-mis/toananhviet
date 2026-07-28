@@ -269,7 +269,6 @@
 
       const meta = user.user_metadata || {};
       
-      // LOGIC MỚI: Bỏ qua chữ "Học viên" mặc định để lấy tên thật đã lưu
       let realName = meta.full_name;
       if (!realName || realName === 'Học viên') {
         realName = profile?.full_name;
@@ -339,7 +338,7 @@
       const school = document.getElementById('p-school').value.trim();
       const avatarUrl = document.getElementById('p-avatar-url').value;
 
-      // 1. Cập nhật Auth User Metadata
+      // 1. Cập nhật Auth User Metadata (Lưu đầy đủ mọi thuộc tính)
       const { error: authError } = await _supabase.auth.updateUser({
         data: { 
           full_name: name, 
@@ -351,14 +350,13 @@
         }
       });
 
-      // 2. Cập nhật đồng bộ vào bảng `profiles`
+      // 2. Cập nhật chỉ các cột CHUẨN CÓ SẴN vào bảng `profiles` (id, email, full_name)
       const { error: dbError } = await _supabase
         .from('profiles')
         .upsert({
           id: currentUser.id,
           email: currentUser.email,
-          full_name: name,
-          updated_at: new Date().toISOString()
+          full_name: name
         });
 
       if (authError || dbError) {
