@@ -1753,10 +1753,10 @@
             <td>Lớp ${item.lop || '---'}</td>
             <td><span class="status-badge" style="background:#e0f2fe; color:#0369a1;">${item.loai_de || '---'}</span></td>
             <td>
-              <a href="${item.link_file || item.file_url || '#'}" target="_blank" class="btn-action">📎 Mở File</a>
+              <a href="${item.link_file || item.file_url || '#'}" target="_blank" class="btn-action">Mở File</a>
             </td>
             <td>
-              <button class="btn-delete" onclick="deletePublicDoc('${item.tieu_de.replace(/'/g, "\\'")}')">🗑️ Xóa</button>
+              <button class="btn-delete" onclick="deletePublicDoc('${item.tieu_de.replace(/'/g, "\\'")}')">Xóa</button>
             </td>
           </tr>
         `).join('');
