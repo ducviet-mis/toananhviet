@@ -238,7 +238,6 @@
             </select>
           </div>
 
-          <!-- THAY THẾ TỈNH/PHƯỜNG THÀNH TRƯỜNG HỌC -->
           <div class="form-group full-width">
             <label>Trường đang học:</label>
             <input type="text" id="p-school" placeholder="Ví dụ: THCS Bách Khoa">
@@ -293,18 +292,33 @@
       currentUser = user;
       document.getElementById('user-email-display').innerText = user.email;
 
-      const meta = user.user_metadata || {};
-      if(meta.full_name) document.getElementById('p-name').value = meta.full_name;
-      if(meta.phone) document.getElementById('p-phone').value = meta.phone;
-      if(meta.grade) document.getElementById('p-grade').value = meta.grade;
-      if(meta.dob) document.getElementById('p-dob').value = meta.dob;
-      if(meta.school) document.getElementById('p-school').value = meta.school;
+      // Ưu tiên load từ bảng `profiles`
+      const { data: profile } = await _supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
 
-      const avatarSrc = meta.avatar_url || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
-      document.getElementById('p-avatar-url').value = meta.avatar_url || '';
+      const meta = user.user_metadata || {};
+      
+      const fullName = profile?.full_name || meta.full_name || '';
+      const phone = profile?.phone || meta.phone || '';
+      const grade = profile?.grade || meta.grade || '8';
+      const dob = profile?.dob || meta.dob || '';
+      const school = profile?.school || meta.school || '';
+      const avatarUrl = profile?.avatar_url || meta.avatar_url || '';
+
+      if (fullName) document.getElementById('p-name').value = fullName;
+      if (phone) document.getElementById('p-phone').value = phone;
+      if (grade) document.getElementById('p-grade').value = grade;
+      if (dob) document.getElementById('p-dob').value = dob;
+      if (school) document.getElementById('p-school').value = school;
+
+      const avatarSrc = avatarUrl || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
+      document.getElementById('p-avatar-url').value = avatarUrl;
       document.getElementById('user-avatar').src = avatarSrc;
       
-      if(meta.full_name) document.getElementById('welcome-title').innerText = "Xin chào, " + meta.full_name;
+      if (fullName) document.getElementById('welcome-title').innerText = "Xin chào, " + fullName;
     }
 
     async function uploadAvatarFile(inputElement) {
@@ -342,11 +356,11 @@
       msg.style.color = '#0284c7';
       msg.innerText = 'Đang lưu thông tin dữ liệu...';
 
-      const name = document.getElementById('p-name').value;
-      const phone = document.getElementById('p-phone').value;
+      const name = document.getElementById('p-name').value.trim();
+      const phone = document.getElementById('p-phone').value.trim();
       const grade = document.getElementById('p-grade').value;
       const dob = document.getElementById('p-dob').value;
-      const school = document.getElementById('p-school').value;
+      const school = document.getElementById('p-school').value.trim();
       const avatarUrl = document.getElementById('p-avatar-url').value;
 
       // 1. Cập nhật Auth User Metadata
@@ -361,20 +375,27 @@
         }
       });
 
-      // 2. CẬP NHẬT ĐỒNG BỘ SANG BẢNG `profiles` TRONG DATABASE
+      // 2. Cập nhật đồng bộ sang bảng `profiles`
+      const profilePayload = {
+        id: currentUser.id,
+        email: currentUser.email,
+        full_name: name,
+        updated_at: new Date().toISOString()
+      };
+
+      // Chỉ gửi thêm thông tin nếu bạn đã tạo cột tương ứng trên Supabase
+      if (phone) profilePayload.phone = phone;
+      if (school) profilePayload.school = school;
+      if (grade) profilePayload.grade = grade;
+      if (dob) profilePayload.dob = dob;
+
       const { error: dbError } = await _supabase
         .from('profiles')
-        .upsert({
-          id: currentUser.id,
-          email: currentUser.email,
-          full_name: name,
-          phone: phone,
-          updated_at: new Date().toISOString()
-        });
+        .upsert(profilePayload);
 
-      if (authError || dbError) {
+      if (authError) {
         msg.style.color = '#ef4444';
-        msg.innerText = 'Gặp lỗi khi lưu: ' + (authError?.message || dbError?.message);
+        msg.innerText = 'Gặp lỗi khi lưu: ' + authError.message;
       } else {
         localStorage.setItem('tav_user_session', JSON.stringify({
           name: name,
