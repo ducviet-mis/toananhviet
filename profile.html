@@ -137,48 +137,19 @@
 
     /* CSS MODAL POPUP */
     .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(4px);
-      z-index: 99999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.25s ease;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+      z-index: 99999; display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; transition: all 0.25s ease;
     }
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
     .modal-box {
-      background: #ffffff;
-      width: 100%;
-      max-width: 420px;
-      border-radius: 18px;
-      padding: 28px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-      position: relative;
-      transform: scale(0.95);
-      transition: all 0.25s ease;
-      box-sizing: border-box;
+      background: #ffffff; width: 100%; max-width: 420px; border-radius: 18px;
+      padding: 28px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      position: relative; transform: scale(0.95); transition: all 0.25s ease; box-sizing: border-box;
     }
     .modal-overlay.active .modal-box { transform: scale(1); }
-    .modal-close-btn {
-      position: absolute;
-      top: 16px;
-      right: 18px;
-      background: transparent;
-      border: none;
-      font-size: 20px;
-      color: #94a3b8;
-      cursor: pointer;
-    }
+    .modal-close-btn { position: absolute; top: 16px; right: 18px; background: transparent; border: none; font-size: 20px; color: #94a3b8; cursor: pointer; }
     .modal-title { font-size: 20px; font-weight: 700; color: #1e293b; margin: 0 0 6px 0; }
     .modal-sub { font-size: 13px; color: #64748b; margin-bottom: 20px; }
     .form-group-modal { margin-bottom: 16px; text-align: left; }
@@ -192,7 +163,6 @@
 </head>
 <body>
 
-  <!-- HEADER DÙNG CHUNG -->
   <header class="site-header"></header>
 
   <main>
@@ -206,7 +176,7 @@
           </div>
         </div>
         <div>
-          <h2 id="welcome-title" style="margin:0; font-size:20px; color:#1e293b;">Học viên Toán Anh Việt</h2>
+          <h2 id="welcome-title" style="margin:0; font-size:20px; color:#1e293b;">Xin chào, Học viên</h2>
           <p id="user-email-display" style="margin:4px 0 0 0; color:#64748b; font-size:14px;"></p>
         </div>
       </div>
@@ -215,7 +185,7 @@
         <div class="form-grid">
           <div class="form-group full-width">
             <label>Họ và tên học sinh:</label>
-            <input type="text" id="p-name" placeholder="Ví dụ: Nguyễn Văn A" required>
+            <input type="text" id="p-name" placeholder="Ví dụ: Hải Đăng" required>
           </div>
 
           <div class="form-group">
@@ -254,7 +224,6 @@
     </div>
   </main>
 
-  <!-- MODAL POPUP ĐỔI MẬT KHẨU -->
   <div class="modal-overlay" id="password-modal">
     <div class="modal-box">
       <button class="modal-close-btn" onclick="closePasswordModal()">✕</button>
@@ -292,7 +261,6 @@
       currentUser = user;
       document.getElementById('user-email-display').innerText = user.email;
 
-      // Ưu tiên load từ bảng `profiles`
       const { data: profile } = await _supabase
         .from('profiles')
         .select('*')
@@ -301,24 +269,32 @@
 
       const meta = user.user_metadata || {};
       
-      const fullName = profile?.full_name || meta.full_name || '';
-      const phone = profile?.phone || meta.phone || '';
-      const grade = profile?.grade || meta.grade || '8';
-      const dob = profile?.dob || meta.dob || '';
-      const school = profile?.school || meta.school || '';
-      const avatarUrl = profile?.avatar_url || meta.avatar_url || '';
+      // LOGIC MỚI: Bỏ qua chữ "Học viên" mặc định để lấy tên thật đã lưu
+      let realName = meta.full_name;
+      if (!realName || realName === 'Học viên') {
+        realName = profile?.full_name;
+      }
+      if (!realName || realName === 'Học viên') {
+        realName = '';
+      }
 
-      if (fullName) document.getElementById('p-name').value = fullName;
-      if (phone) document.getElementById('p-phone').value = phone;
-      if (grade) document.getElementById('p-grade').value = grade;
-      if (dob) document.getElementById('p-dob').value = dob;
-      if (school) document.getElementById('p-school').value = school;
+      const phone = meta.phone || profile?.phone || '';
+      const grade = meta.grade || profile?.grade || '8';
+      const dob = meta.dob || profile?.dob || '';
+      const school = meta.school || profile?.school || '';
+      const avatarUrl = meta.avatar_url || profile?.avatar_url || '';
+
+      document.getElementById('p-name').value = realName;
+      document.getElementById('p-phone').value = phone;
+      document.getElementById('p-grade').value = grade;
+      document.getElementById('p-dob').value = dob;
+      document.getElementById('p-school').value = school;
 
       const avatarSrc = avatarUrl || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
       document.getElementById('p-avatar-url').value = avatarUrl;
       document.getElementById('user-avatar').src = avatarSrc;
       
-      if (fullName) document.getElementById('welcome-title').innerText = "Xin chào, " + fullName;
+      document.getElementById('welcome-title').innerText = "Xin chào, " + (realName || "Học viên");
     }
 
     async function uploadAvatarFile(inputElement) {
@@ -375,27 +351,19 @@
         }
       });
 
-      // 2. Cập nhật đồng bộ sang bảng `profiles`
-      const profilePayload = {
-        id: currentUser.id,
-        email: currentUser.email,
-        full_name: name,
-        updated_at: new Date().toISOString()
-      };
-
-      // Chỉ gửi thêm thông tin nếu bạn đã tạo cột tương ứng trên Supabase
-      if (phone) profilePayload.phone = phone;
-      if (school) profilePayload.school = school;
-      if (grade) profilePayload.grade = grade;
-      if (dob) profilePayload.dob = dob;
-
+      // 2. Cập nhật đồng bộ vào bảng `profiles`
       const { error: dbError } = await _supabase
         .from('profiles')
-        .upsert(profilePayload);
+        .upsert({
+          id: currentUser.id,
+          email: currentUser.email,
+          full_name: name,
+          updated_at: new Date().toISOString()
+        });
 
-      if (authError) {
+      if (authError || dbError) {
         msg.style.color = '#ef4444';
-        msg.innerText = 'Gặp lỗi khi lưu: ' + authError.message;
+        msg.innerText = 'Gặp lỗi khi lưu: ' + (authError?.message || dbError?.message);
       } else {
         localStorage.setItem('tav_user_session', JSON.stringify({
           name: name,
