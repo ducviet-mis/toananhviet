@@ -107,7 +107,7 @@
     }
     .sub-item-title { font-size: 13.5px; font-weight: 700; color: #334155; margin: 0; display: flex; align-items: center; gap: 8px; }
 
-    /* SCOPE SELECTION UI (GIAO DIỆN CHỌN PHẠM VI DẠNG NUT & CHECKBOX) */
+    /* SCOPE SELECTION UI */
     .scope-selector-box {
       display: flex; gap: 12px; margin-bottom: 15px; flex-wrap: wrap;
     }
@@ -271,7 +271,6 @@
           </div>
         </div>
 
-        <!-- MỤC CHỌN LỚP HỌC (HIỆN KHI TICK CHỌN LỚP HỌC) -->
         <div class="form-group" id="quiz-class-selection-group">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <label style="margin: 0;">👥 Chọn Lớp Học Muốn Giao Đề Thi</label>
@@ -283,10 +282,10 @@
         </div>
 
         <div class="form-group" id="quiz-folder-group">
-          <label>📁 Chọn Thư Mục (Folder) Trong Lớp</label>
+          <label>📁 Chọn Thư Mục (Folder Bài Tập Trong Lớp)</label>
           <div style="display: flex; gap: 10px;">
             <select id="quiz-folder-select" class="form-control" style="flex: 1;" onchange="onSelectQuizFolderChange()">
-              <option value="">-- Chọn Folder hiện có --</option>
+              <option value="">-- Chọn Folder bài tập hiện có --</option>
             </select>
             <input type="text" id="quiz-folder-input" class="form-control" style="flex: 1;" placeholder="Hoặc nhập tên Folder MỚI tại đây...">
           </div>
@@ -366,7 +365,6 @@
           </div>
         </div>
 
-        <!-- MỤC CHỌN LỚP HỌC (HIỆN KHI TICK CHỌN LỚP HỌC) -->
         <div class="form-group" id="content-class-selection-group">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <label style="margin: 0;">👥 Chọn Lớp Học Nhận Tài Liệu</label>
@@ -377,11 +375,32 @@
           </div>
         </div>
 
-        <div class="form-group" id="upload-folder-group">
+        <div style="display: flex; gap: 15px;">
+          <div class="form-group" style="flex: 1;">
+            <label>Loại nội dung</label>
+            <select id="content-type" class="form-control" onchange="onContentTypeChange()">
+              <option value="doc">Tài liệu (File PDF/Word)</option>
+              <option value="exercise">Bài tập phòng thi (Mã đề có sẵn)</option>
+              <option value="video">Bài giảng Video (Link YouTube)</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="flex: 2;" id="file-input-group">
+            <label>Chọn File tài liệu (PDF/Word)</label>
+            <input type="file" id="content-file" class="form-control" accept=".pdf,.doc,.docx">
+          </div>
+
+          <div class="form-group hidden" style="flex: 2;" id="url-input-group">
+            <label id="url-label">Đường dẫn / Link YouTube / Mã Đề</label>
+            <input type="text" id="content-url" class="form-control" placeholder="Dán URL video hoặc Mã đề thi">
+          </div>
+        </div>
+
+        <div class="form-group" id="content-folder-group">
           <label>📁 Chọn Thư Mục / Chủ Đề (Folder Trong Lớp)</label>
           <div style="display: flex; gap: 10px;">
             <select id="content-folder-select" class="form-control" style="flex: 1;" onchange="onSelectContentFolderChange()">
-              <option value="">-- Chọn Folder đã có trong lớp --</option>
+              <option value="">-- Chọn Folder đã có --</option>
             </select>
             <input type="text" id="content-folder-input" class="form-control" style="flex: 1;" placeholder="Hoặc gõ tên Folder MỚI...">
           </div>
@@ -412,27 +431,6 @@
               <option value="Đề cuối kì 2">Đề cuối kì 2</option>
               <option value="Chuyên đề">Chuyên đề Toán</option>
             </select>
-          </div>
-        </div>
-
-        <div style="display: flex; gap: 15px;">
-          <div class="form-group" style="flex: 1;">
-            <label>Loại nội dung</label>
-            <select id="content-type" class="form-control" onchange="toggleUploadInput()">
-              <option value="doc">Tài liệu (File PDF/Word)</option>
-              <option value="exercise">Bài tập phòng thi (Mã đề có sẵn)</option>
-              <option value="video">Bài giảng Video (Link YouTube)</option>
-            </select>
-          </div>
-
-          <div class="form-group" style="flex: 2;" id="file-input-group">
-            <label>Chọn File tài liệu (PDF/Word)</label>
-            <input type="file" id="content-file" class="form-control" accept=".pdf,.doc,.docx">
-          </div>
-
-          <div class="form-group hidden" style="flex: 2;" id="url-input-group">
-            <label id="url-label">Đường dẫn / Link YouTube / Mã Đề</label>
-            <input type="text" id="content-url" class="form-control" placeholder="Dán URL video hoặc Mã đề thi">
           </div>
         </div>
 
@@ -619,31 +617,39 @@
       await loadClassStudents();
       await loadClassQuizzes();
       await loadClassContentsForAdmin();
-      await loadExistingFolders();
+      await loadExistingFoldersForType('exercise', 'quiz-folder-select');
+      await onContentTypeChange();
       subscribeToStudentChanges();
     }
 
-    async function loadExistingFolders() {
-      const selectQuizFolder = document.getElementById('quiz-folder-select');
-      const selectContentFolder = document.getElementById('content-folder-select');
+    // NÂNG CẤP: LOAD FOLDER THEO ĐÚNG NỘI DUNG (type)
+    async function loadExistingFoldersForType(contentType, selectElementId) {
+      const selectEl = document.getElementById(selectElementId);
+      if (!selectEl) return;
 
       const { data } = await _supabase
         .from('class_contents')
         .select('description')
-        .eq('class_id', currentClassId);
+        .eq('class_id', currentClassId)
+        .eq('type', contentType);
 
       if (data && data.length > 0) {
         const uniqueFolders = [...new Set(data.map(d => d.description).filter(Boolean))];
-        const optionsHtml = '<option value="">-- Chọn Folder đã có --</option>' + 
-          uniqueFolders.map(f => `<option value="${f}">📂 ${f}</option>`).join('');
-
-        selectQuizFolder.innerHTML = optionsHtml;
-        selectContentFolder.innerHTML = optionsHtml;
-      } else {
-        const emptyHtml = '<option value="">Chưa có Folder nào (Hãy nhập mới bên phải)</option>';
-        selectQuizFolder.innerHTML = emptyHtml;
-        selectContentFolder.innerHTML = emptyHtml;
+        if (uniqueFolders.length > 0) {
+          selectEl.innerHTML = '<option value="">-- Chọn Folder đã có --</option>' + 
+            uniqueFolders.map(f => `<option value="${f}">📂 ${f}</option>`).join('');
+          return;
+        }
       }
+
+      selectEl.innerHTML = '<option value="">Chưa có Folder nào (Hãy nhập mới bên phải)</option>';
+    }
+
+    async function onContentTypeChange() {
+      toggleUploadInput();
+      const type = document.getElementById('content-type').value;
+      await loadExistingFoldersForType(type, 'content-folder-select');
+      document.getElementById('content-folder-input').value = '';
     }
 
     function onSelectQuizFolderChange() {
@@ -762,7 +768,8 @@
 
           showToast("Đã xóa tài liệu thành công!", "success");
           await loadClassContentsForAdmin();
-          await loadExistingFolders();
+          await loadExistingFoldersForType('exercise', 'quiz-folder-select');
+          await onContentTypeChange();
           await loadClassQuizzes();
         } catch (err) {
           showToast("Lỗi khi xóa tài liệu: " + err.message, "error");
@@ -770,7 +777,7 @@
       });
     }
 
-    // TẠO ĐỀ THI ONLINE MỚI (LỚP HỌC MULTI-CHECK / CÔNG KHAI)
+    // TẠO ĐỀ THI ONLINE MỚI
     async function handleCreateQuiz(e) {
       e.preventDefault();
       
@@ -880,7 +887,6 @@
 
         const newQuizId = createdQuiz.id;
 
-        // ĐĂNG VÀO NGHĨA LỚP HỌC ĐƯỢC TICK
         if (isClassSelected) {
           const classContentRows = selectedClassIds.map(classId => ({
             class_id: classId,
@@ -897,7 +903,6 @@
           if (classContentErr) throw classContentErr;
         }
 
-        // ĐĂNG LÊN WEB CHUNG PUBLIC
         if (isPublicSelected) {
           await _supabase
             .from('toananhviet')
@@ -925,7 +930,7 @@
       }
     }
 
-    // ĐĂNG TÀI LIỆU/VIDEO (LỚP HỌC MULTI-CHECK / CÔNG KHAI)
+    // ĐĂNG TÀI LIỆU/VIDEO
     async function handleUploadContent(e) {
       e.preventDefault();
       
@@ -999,7 +1004,6 @@
           }
         }
 
-        // ĐĂNG VÀO CÁC LỚP HỌC ĐƯỢC TICK
         if (isClassSelected) {
           const classContentRows = selectedClassIds.map(classId => ({
             class_id: classId,
@@ -1016,7 +1020,6 @@
           if (dbErr) throw dbErr;
         }
 
-        // ĐĂNG LÊN WEB CHUNG PUBLIC
         if (isPublicSelected) {
           const cleanGrade = grade.replace(/\D/g, '') || grade;
 
@@ -1037,9 +1040,8 @@
 
         showToast("Đã đăng bài học / tài liệu thành công!", "success");
         document.getElementById('upload-content-form').reset();
-        toggleUploadInput();
+        await onContentTypeChange();
         await loadClassContentsForAdmin();
-        await loadExistingFolders();
 
       } catch (err) {
         console.error(err);
