@@ -137,6 +137,22 @@
     .class-checkbox-item:hover { border-color: #0284c7; background: #f0f9ff; }
     .class-checkbox-item input { accent-color: #0284c7; width: 16px; height: 16px; }
 
+    /* LAYOUT CHO TAB QUẢN LÝ CÔNG KHAI (SIDEBAR + MAIN) */
+    .public-layout-container { display: flex; gap: 20px; align-items: flex-start; }
+    .public-filter-sidebar {
+      width: 220px; flex-shrink: 0; background: #f8fafc; border: 1px solid #e2e8f0;
+      border-radius: 12px; padding: 16px; box-sizing: border-box;
+    }
+    .public-filter-title { font-size: 13px; font-weight: 800; color: #0284c7; text-transform: uppercase; margin-bottom: 8px; }
+    .public-filter-group { margin-bottom: 16px; }
+    .public-filter-btn {
+      display: block; width: 100%; text-align: left; padding: 8px 12px; margin-bottom: 4px;
+      font-size: 13px; font-weight: 600; color: #475569; background: #ffffff;
+      border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; transition: all 0.15s;
+    }
+    .public-filter-btn:hover { background: #f1f5f9; color: #0284c7; }
+    .public-filter-btn.active { background: #0284c7; color: #ffffff; border-color: #0284c7; font-weight: 700; }
+
     /* TOAST & MODAL */
     #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
     .toast-notification { pointer-events: auto; background: #ffffff; color: #0f172a; padding: 12px 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 600; border-left: 5px solid #10b981; animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards; min-width: 280px; }
@@ -316,7 +332,6 @@
       <button class="tab-btn" id="tab-create-quiz-btn" onclick="switchTab('create-quiz')">Tạo Đề Thi</button>
       <button class="tab-btn" id="tab-upload-btn" onclick="switchTab('upload')">Đăng Video/Tài Liệu Mới</button>
       <button class="tab-btn" id="tab-students-btn" onclick="switchTab('students')">Danh Sách Học Sinh</button>
-      <!-- TAB MỚI 6: QUẢN LÝ NỘI DUNG CÔNG KHAI -->
       <button class="tab-btn" id="tab-public-contents-btn" onclick="switchTab('public-contents')">🌐 Nội Dung Công Khai</button>
     </div>
 
@@ -596,22 +611,51 @@
         <button class="sub-tab-btn" onclick="switchPublicSubTab('quizzes', this)">📝 Thi Online (quiz-list.html)</button>
       </div>
 
-      <div style="overflow-x: auto;">
-        <table class="admin-table">
-          <thead id="public-table-head">
-            <tr>
-              <th>#</th>
-              <th>Tiêu đề</th>
-              <th>Lớp</th>
-              <th>Loại đề / Học kỳ</th>
-              <th>File / Chi tiết</th>
-              <th>Thao Tác</th>
-            </tr>
-          </thead>
-          <tbody id="public-table-body">
-            <tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Đang tải dữ liệu...</td></tr>
-          </tbody>
-        </table>
+      <!-- CẤU TRÚC LAYOUT VỚI SIDEBAR LỌC CỘT TRÁI -->
+      <div class="public-layout-container">
+        
+        <!-- SIDEBAR BÊN TRÁI ĐỂ LỌC -->
+        <aside class="public-filter-sidebar">
+          <div class="public-filter-group">
+            <div class="public-filter-title">Lọc theo Khối Lớp</div>
+            <button class="public-filter-btn active" onclick="filterPublicData('grade', 'all', this)">Tất cả lớp</button>
+            <button class="public-filter-btn" onclick="filterPublicData('grade', '6', this)">Toán 6</button>
+            <button class="public-filter-btn" onclick="filterPublicData('grade', '7', this)">Toán 7</button>
+            <button class="public-filter-btn" onclick="filterPublicData('grade', '8', this)">Toán 8</button>
+            <button class="public-filter-btn" onclick="filterPublicData('grade', '9', this)">Toán 9</button>
+            <button class="public-filter-btn" onclick="filterPublicData('grade', '10', this)">Thi thử vào 10</button>
+          </div>
+
+          <div class="public-filter-group">
+            <div class="public-filter-title">Lọc theo Học Kỳ / Loại</div>
+            <button class="public-filter-btn active" onclick="filterPublicData('semester', 'all', this)">Tất cả học kỳ</button>
+            <button class="public-filter-btn" onclick="filterPublicData('semester', 'Đề giữa kì 1', this)">Đề giữa kì 1</button>
+            <button class="public-filter-btn" onclick="filterPublicData('semester', 'Đề cuối kì 1', this)">Đề cuối kì 1</button>
+            <button class="public-filter-btn" onclick="filterPublicData('semester', 'Đề giữa kì 2', this)">Đề giữa kì 2</button>
+            <button class="public-filter-btn" onclick="filterPublicData('semester', 'Đề cuối kì 2', this)">Đề cuối kì 2</button>
+            <button class="public-filter-btn" onclick="filterPublicData('semester', 'Chuyên đề', this)">Chuyên đề Toán</button>
+          </div>
+        </aside>
+
+        <!-- BẢNG DỮ LIỆU CHÍNH BÊN PHẢI -->
+        <div style="flex-grow: 1; overflow-x: auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Tiêu đề</th>
+                <th>Lớp</th>
+                <th>Loại đề / Học kỳ</th>
+                <th>File / Chi tiết</th>
+                <th>Thao Tác</th>
+              </tr>
+            </thead>
+            <tbody id="public-table-body">
+              <tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Đang tải dữ liệu...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
   </main>
@@ -635,8 +679,11 @@
     let currentHistoryEmailKey = '';
     let currentHistoryStudentName = '';
 
-    // CACHE DỮ LIỆU NỘI DUNG CÔNG KHAI
+    // CACHE DỮ LIỆU NỘI DUNG CÔNG KHAI DÙNG CHO SIDEBAR LỌC
     let publicSubTabType = 'docs';
+    let rawPublicDataList = [];
+    let filterPublicGrade = 'all';
+    let filterPublicSemester = 'all';
 
     // TOAST & MODAL HELPERS
     function showToast(message, type = 'success') {
@@ -1644,43 +1691,23 @@
       document.getElementById('submission-detail-modal').classList.remove('active');
     }
 
-    // --- LOGIC CHO TAB 6: QUẢN LÝ NỘI DUNG CÔNG KHAI ---
-    async function loadPublicContents() {
+    // --- LOGIC MỚI CHO TAB 6: QUẢN LÝ NỘI DUNG CÔNG KHAI + TÍNH NĂNG LỌC CỘT TRÁI ---
+    async function fetchPublicDataFromSupabase() {
       const tbody = document.getElementById('public-table-body');
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Đang tải nội dung...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Đang tải dữ liệu...</td></tr>';
 
       try {
         if (publicSubTabType === 'docs') {
-          // Bảng toananhviet (Tài liệu Toán)
+          // Lấy dữ liệu từ bảng toananhviet
           const { data, error } = await _supabase
             .from('toananhviet')
-            .select('*')
-            .order('id', { ascending: false });
+            .select('*');
 
           if (error) throw error;
-
-          if (!data || data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Chưa có Tài liệu Toán công khai nào.</td></tr>';
-            return;
-          }
-
-          tbody.innerHTML = data.map((item, idx) => `
-            <tr>
-              <td>${idx + 1}</td>
-              <td><strong>${item.tieu_de || item.title || 'Không có tiêu đề'}</strong></td>
-              <td>Lớp ${item.lop || '---'}</td>
-              <td><span class="status-badge" style="background:#e0f2fe; color:#0369a1;">${item.loai_de || '---'}</span></td>
-              <td>
-                <a href="${item.link_file || item.file_url || '#'}" target="_blank" class="btn-action">📎 Mở File</a>
-              </td>
-              <td>
-                <button class="btn-delete" onclick="deletePublicDoc('${item.id}', '${(item.tieu_de || item.title || '').replace(/'/g, "\\'")}')">🗑️ Xóa</button>
-              </td>
-            </tr>
-          `).join('');
+          rawPublicDataList = data || [];
 
         } else {
-          // Bảng quizzes (Đề thi Online Công Khai: is_private = false)
+          // Lấy dữ liệu từ bảng quizzes (is_private = false)
           const { data, error } = await _supabase
             .from('quizzes')
             .select('*')
@@ -1688,33 +1715,69 @@
             .order('created_at', { ascending: false });
 
           if (error) throw error;
-
-          if (!data || data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Chưa có Đề thi Online công khai nào.</td></tr>';
-            return;
-          }
-
-          tbody.innerHTML = data.map((item, idx) => `
-            <tr>
-              <td>${idx + 1}</td>
-              <td><strong>${item.title || 'Không có tiêu đề'}</strong></td>
-              <td>Lớp ${item.grade || '---'}</td>
-              <td><span class="status-badge" style="background:#fef3c7; color:#d97706;">${item.semester || '---'}</span></td>
-              <td>
-                <span style="font-size:12.5px; color:#475569;">⏱️ ${item.duration || 45} phút | 📝 ${item.answer_keys?.length || 0} câu</span>
-              </td>
-              <td>
-                <div style="display:flex; gap:6px;">
-                  <a href="quiz-room.html?id=${item.id}" target="_blank" class="btn-action">Thi thử</a>
-                  <button class="btn-delete" onclick="deletePublicQuiz('${item.id}', '${(item.title || '').replace(/'/g, "\\'")}')">🗑️ Xóa</button>
-                </div>
-              </td>
-            </tr>
-          `).join('');
+          rawPublicDataList = data || [];
         }
+
+        renderFilteredPublicTable();
+
       } catch (err) {
         console.error("Lỗi tải nội dung công khai:", err);
         tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 30px;">Lỗi tải dữ liệu: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderFilteredPublicTable() {
+      const tbody = document.getElementById('public-table-body');
+
+      // Lọc danh sách theo tùy chọn ở Cột trái
+      let list = rawPublicDataList.filter(item => {
+        const itemGrade = (publicSubTabType === 'docs' ? item.lop : item.grade) || '';
+        const itemSemester = (publicSubTabType === 'docs' ? item.loai_de : item.semester) || '';
+
+        const matchGrade = (filterPublicGrade === 'all') || (itemGrade.toString().trim() === filterPublicGrade.toString().trim());
+        const matchSemester = (filterPublicSemester === 'all') || (itemSemester.toString().trim().toLowerCase() === filterPublicSemester.toString().trim().toLowerCase());
+
+        return matchGrade && matchSemester;
+      });
+
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Không tìm thấy nội dung phù hợp với bộ lọc.</td></tr>';
+        return;
+      }
+
+      if (publicSubTabType === 'docs') {
+        tbody.innerHTML = list.map((item, idx) => `
+          <tr>
+            <td>${idx + 1}</td>
+            <td><strong>${item.tieu_de || 'Không có tiêu đề'}</strong></td>
+            <td>Lớp ${item.lop || '---'}</td>
+            <td><span class="status-badge" style="background:#e0f2fe; color:#0369a1;">${item.loai_de || '---'}</span></td>
+            <td>
+              <a href="${item.link_file || item.file_url || '#'}" target="_blank" class="btn-action">📎 Mở File</a>
+            </td>
+            <td>
+              <button class="btn-delete" onclick="deletePublicDoc('${item.tieu_de.replace(/'/g, "\\'")}')">🗑️ Xóa</button>
+            </td>
+          </tr>
+        `).join('');
+      } else {
+        tbody.innerHTML = list.map((item, idx) => `
+          <tr>
+            <td>${idx + 1}</td>
+            <td><strong>${item.title || 'Không có tiêu đề'}</strong></td>
+            <td>Lớp ${item.grade || '---'}</td>
+            <td><span class="status-badge" style="background:#fef3c7; color:#d97706;">${item.semester || '---'}</span></td>
+            <td>
+              <span style="font-size:12.5px; color:#475569;">⏱️ ${item.duration || 45} phút | 📝 ${item.answer_keys?.length || 0} câu</span>
+            </td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <a href="quiz-room.html?id=${item.id}" target="_blank" class="btn-action">🔍 Thi thử</a>
+                <button class="btn-delete" onclick="deletePublicQuiz('${item.id}', '${(item.title || '').replace(/'/g, "\\'")}')">🗑️ Xóa</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
       }
     }
 
@@ -1722,23 +1785,37 @@
       publicSubTabType = type;
       document.querySelectorAll('#tab-public-contents .sub-tab-btn').forEach(b => b.classList.remove('active'));
       btnEl.classList.add('active');
-      loadPublicContents();
+      fetchPublicDataFromSupabase();
     }
 
-    function deletePublicDoc(id, title) {
-      showConfirmModal('Xóa Tài Liệu Công Khai', `Bạn có chắc chắn muốn xóa tài liệu công khai: "${title}" không? Hành động này sẽ gỡ tài liệu khỏi trang Tài Liệu Toán.`, async () => {
+    function filterPublicData(filterType, val, btnEl) {
+      if (filterType === 'grade') {
+        filterPublicGrade = val;
+        btnEl.parentElement.querySelectorAll('.public-filter-btn').forEach(b => b.classList.remove('active'));
+      } else if (filterType === 'semester') {
+        filterPublicSemester = val;
+        btnEl.parentElement.querySelectorAll('.public-filter-btn').forEach(b => b.classList.remove('active'));
+      }
+      btnEl.classList.add('active');
+      renderFilteredPublicTable();
+    }
+
+    // XÓA TÀI LIỆU CÔNG KHAI BẰNG KHÓA CHÍNH (tieu_de)
+    function deletePublicDoc(tieuDe) {
+      showConfirmModal('Xóa Tài Liệu Công Khai', `Bạn có chắc chắn muốn xóa tài liệu công khai: "${tieuDe}" không? Hành động này sẽ gỡ tài liệu khỏi trang Tài Liệu Toán.`, async () => {
         try {
-          const { error } = await _supabase.from('toananhviet').delete().eq('id', id);
+          const { error } = await _supabase.from('toananhviet').delete().eq('tieu_de', tieuDe);
           if (error) throw error;
 
           showToast("Đã xóa tài liệu công khai thành công!", "success");
-          loadPublicContents();
+          fetchPublicDataFromSupabase();
         } catch (err) {
           showToast("Lỗi xóa tài liệu: " + err.message, "error");
         }
       });
     }
 
+    // XÓA ĐỀ THI CÔNG KHAI
     function deletePublicQuiz(id, title) {
       showConfirmModal('Xóa Đề Thi Công Khai', `Bạn có chắc chắn muốn xóa đề thi công khai: "${title}" không? Học sinh sẽ không thể thi đề này nữa.`, async () => {
         try {
@@ -1746,7 +1823,7 @@
           if (error) throw error;
 
           showToast("Đã xóa đề thi công khai thành công!", "success");
-          loadPublicContents();
+          fetchPublicDataFromSupabase();
         } catch (err) {
           showToast("Lỗi xóa đề thi: " + err.message, "error");
         }
@@ -1800,7 +1877,7 @@
       } else if (tabName === 'public-contents') {
         document.getElementById('tab-public-contents').classList.remove('hidden');
         document.getElementById('tab-public-contents-btn').classList.add('active');
-        loadPublicContents();
+        fetchPublicDataFromSupabase();
       }
     }
 
