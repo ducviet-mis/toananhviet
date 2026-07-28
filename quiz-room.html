@@ -97,22 +97,6 @@
       white-space: nowrap;
     }
 
-    .open-pdf-ext-btn {
-      background: #0284c7;
-      color: white;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-size: 0.88rem;
-      font-weight: 700;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-      border: none;
-      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.2);
-    }
-
     .exam-wrapper {
       display: flex;
       flex: 1;
@@ -851,6 +835,7 @@
       cursor: pointer;
       color: #64748b;
       padding: 0;
+      transition: all 0.2s;
     }
     .tab-btn.active {
       color: #0284c7;
@@ -858,7 +843,7 @@
       border-top: 3px solid #0284c7;
     }
 
-    /* ĐẶC BIỆT: CSS ÉP GIAO DIỆN HEADER MOBILE THÀNH 1 DÒNG DUY NHẤT */
+    /* CSS ĐÃ SỬA: ÉP GIAO DIỆN HEADER MOBILE THÀNH 1 DÒNG DUY NHẤT & HIỂN THỊ TRỌN VẸN TÊN THÍ SINH */
     @media (max-width: 900px) {
       html, body {
         overflow: auto !important;
@@ -870,45 +855,39 @@
         flex-wrap: nowrap !important;
         justify-content: space-between !important;
         align-items: center !important;
-        padding: 5px 8px !important;
-        gap: 4px !important;
+        padding: 6px 10px !important;
+        gap: 6px !important;
       }
       .nav-left, .nav-center, .nav-right {
-        display: contents !important; /* Xóa bỏ khung phân chia để 4 phần tử xếp chung 1 hàng */
+        display: contents !important;
       }
       .back-btn {
-        font-size: 0.72rem !important;
-        padding: 4px 6px !important;
+        font-size: 0.75rem !important;
+        padding: 4px 8px !important;
         gap: 2px !important;
         flex-shrink: 0 !important;
       }
       .student-badge-center {
-        font-size: 0.72rem !important;
-        padding: 4px 8px !important;
-        max-width: 120px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
+        font-size: 0.75rem !important;
+        padding: 4px 10px !important;
+        max-width: none !important; /* Mở rộng tối đa để hiện trọn vẹn tên */
+        overflow: visible !important;
         white-space: nowrap !important;
-        flex-shrink: 1 !important;
+        flex-shrink: 0 !important;
       }
       .exam-title-head {
-        font-size: 0.72rem !important;
-        padding: 4px 6px !important;
-        max-width: 80px !important;
+        font-size: 0.75rem !important;
+        padding: 4px 8px !important;
+        max-width: 100px !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         white-space: nowrap !important;
         flex-shrink: 1 !important;
-      }
-      .open-pdf-ext-btn {
-        font-size: 0.72rem !important;
-        padding: 4px 8px !important;
-        flex-shrink: 0 !important;
       }
 
       .exam-wrapper {
         flex-direction: column;
-        height: calc(100vh - 42px - 46px) !important;
+        height: calc(100vh - 44px - 46px) !important;
         overflow: hidden;
       }
       .mobile-tabs { display: flex; }
@@ -1005,7 +984,7 @@
     </div>
   </div>
 
-  <!-- HEADER GỌN GÀNG 1 DÒNG TRÊN MOBILE -->
+  <!-- HEADER TINH GỌN (CHỈ CÓ 3 PHẦN TỬ TRÊN 1 HÀNG) -->
   <header>
     <nav class="nav-container">
       <div class="nav-left">
@@ -1014,13 +993,12 @@
 
       <div class="nav-center">
         <span class="student-badge-center" id="header-student-name">
-          👤 Thí sinh: Đang tải...
+          Thí sinh: Đang tải...
         </span>
       </div>
 
       <div class="nav-right">
         <span class="exam-title-head" id="exam-title-header">Đang tải đề...</span>
-        <a href="#" id="btn-open-pdf-ext" target="_blank" class="open-pdf-ext-btn">↗️ Mở đề</a>
       </div>
     </nav>
   </header>
@@ -1150,9 +1128,6 @@
       if (!filePath.startsWith('http://') && !filePath.startsWith('https://')) {
         absoluteUrl = window.location.origin + (filePath.startsWith('/') ? '' : '/') + filePath;
       }
-
-      const btnExt = document.getElementById('btn-open-pdf-ext');
-      if (btnExt) btnExt.href = absoluteUrl;
 
       return `https://docs.google.com/gview?url=${encodeURIComponent(absoluteUrl)}&embedded=true`;
     }
