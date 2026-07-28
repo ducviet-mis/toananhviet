@@ -147,7 +147,6 @@
     @keyframes toastIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes toastOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-20px); } }
 
-    /* ĐÃ NÂNG Z-INDEX CỦA CUSTOM-MODAL LÊN CAO NHẤT (999999) ĐỂ KHÔNG BỊ MODAL KHÁC CHE */
     .custom-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); z-index: 999999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: all 0.2s ease; }
     .custom-modal-overlay.active { opacity: 1; pointer-events: auto; }
     .custom-modal-box { background: white; border-radius: 16px; padding: 24px; max-width: 400px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); text-align: center; transform: scale(0.9); transition: transform 0.2s ease; }
@@ -159,10 +158,8 @@
     .btn-modal-cancel { background: #f1f5f9; color: #475569; }
     .btn-modal-confirm { background: #ef4444; color: white; }
 
-    /* MODAL LỊCH SỬ NỘP BÀI (Z-INDEX: 99998) */
     #history-modal { z-index: 99998; }
 
-    /* SCOREBOARD MODAL STYLES */
     .scoreboard-modal-card {
       background: #ffffff; width: 95%; max-width: 600px; max-height: 85vh;
       border-radius: 20px; overflow-y: auto; padding: 24px; position: relative;
@@ -184,7 +181,6 @@
     .sb-row-incorrect { background-color: #fff1f2 !important; color: #be123c !important; }
     .sb-row-skipped { background-color: #ffffff !important; color: #64748b !important; }
 
-    /* HISTORY ATTEMPTS LIST STYLES */
     .attempt-item-card {
       background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
       padding: 14px 16px; margin-bottom: 10px; display: flex;
@@ -196,7 +192,7 @@
 
   <div id="toast-container"></div>
 
-  <!-- MODAL XÁC NHẬN CHUNG (ĐÃ SỬA Z-INDEX CỰC CAO) -->
+  <!-- MODAL XÁC NHẬN CHUNG -->
   <div id="custom-modal" class="custom-modal-overlay">
     <div class="custom-modal-box">
       <div class="custom-modal-title" id="modal-title">Xác nhận thao tác</div>
@@ -318,16 +314,18 @@
       <button class="tab-btn active" id="tab-tracker-btn" onclick="switchTab('tracker')">Tiến Độ Bài Tập</button>
       <button class="tab-btn" id="tab-manage-contents-btn" onclick="switchTab('manage-contents')">Tài Liệu Lớp</button>
       <button class="tab-btn" id="tab-create-quiz-btn" onclick="switchTab('create-quiz')">Tạo Đề Thi</button>
-      <button class="tab-btn" id="tab-upload-btn" onclick="switchTab('upload')">Tạo Video/Tài Liệu</button>
+      <button class="tab-btn" id="tab-upload-btn" onclick="switchTab('upload')">Đăng Video/Tài Liệu Mới</button>
       <button class="tab-btn" id="tab-students-btn" onclick="switchTab('students')">Danh Sách Học Sinh</button>
+      <!-- TAB MỚI 6: QUẢN LÝ NỘI DUNG CÔNG KHAI -->
+      <button class="tab-btn" id="tab-public-contents-btn" onclick="switchTab('public-contents')">🌐 Nội Dung Công Khai</button>
     </div>
 
     <!-- TAB 1: THEO DÕI TIẾN ĐỘ LÀM BÀI -->
     <div id="tab-tracker" class="panel-card">
       <div class="card-title-row">
-        <h3 class="card-title">Kết Quả Làm Bài</h3>
+        <h3 class="card-title">Tình Trạng Học Sinh Làm Bài (Điểm Cao Nhất)</h3>
         <div>
-          <label style="font-size: 13px; font-weight: 600; color: #475569; margin-right: 8px;">Chọn đề:</label>
+          <label style="font-size: 13px; font-weight: 600; color: #475569; margin-right: 8px;">Chọn Đề Thi / Bài Tập:</label>
           <select id="select-quiz" class="select-class-dropdown" style="border: 1px solid #cbd5e1;" onchange="loadSubmissionTracker()">
             <option value="">-- Chọn bài thi --</option>
           </select>
@@ -586,6 +584,36 @@
         </table>
       </div>
     </div>
+
+    <!-- TAB 6: QUẢN LÝ NỘI DUNG CÔNG KHAI CỦA WEB -->
+    <div id="tab-public-contents" class="panel-card hidden">
+      <div class="card-title-row">
+        <h3 class="card-title">Quản Lý Nội Dung Công Khai Trên Web</h3>
+      </div>
+
+      <div class="sub-content-tabs">
+        <button class="sub-tab-btn active" onclick="switchPublicSubTab('docs', this)">📚 Tài Liệu Toán (category.html)</button>
+        <button class="sub-tab-btn" onclick="switchPublicSubTab('quizzes', this)">📝 Thi Online (quiz-list.html)</button>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="admin-table">
+          <thead id="public-table-head">
+            <tr>
+              <th>#</th>
+              <th>Tiêu đề</th>
+              <th>Lớp</th>
+              <th>Loại đề / Học kỳ</th>
+              <th>File / Chi tiết</th>
+              <th>Thao Tác</th>
+            </tr>
+          </thead>
+          <tbody id="public-table-body">
+            <tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Đang tải dữ liệu...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -606,6 +634,9 @@
     let currentQuizData = null;
     let currentHistoryEmailKey = '';
     let currentHistoryStudentName = '';
+
+    // CACHE DỮ LIỆU NỘI DUNG CÔNG KHAI
+    let publicSubTabType = 'docs';
 
     // TOAST & MODAL HELPERS
     function showToast(message, type = 'success') {
@@ -1408,7 +1439,7 @@
       }
 
       if (classStudentsList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 30px;">Chưa có danh sách học sinh trong lớp để đối soát.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 25px;">Chưa có danh sách học sinh trong lớp để đối soát.</td></tr>';
         return;
       }
 
@@ -1417,7 +1448,6 @@
         const userSubsList = currentQuizSubmissionsMap[studentEmailKey] || [];
 
         if (userSubsList.length > 0) {
-          // Lấy lần làm bài có ĐIỂM CAO NHẤT
           const bestSub = [...userSubsList].sort((a, b) => Number(b.mcq_score || 0) - Number(a.mcq_score || 0))[0];
 
           const mins = Math.floor((bestSub.time_spent || 0) / 60);
@@ -1433,7 +1463,7 @@
               <td>${mins > 0 ? mins + 'p ' : ''}${secs}s</td>
               <td><span style="font-size: 13px; color: #334155; font-weight: 600;">${submitTimeStr}</span></td>
               <td>
-                <button class="btn-action" onclick="openHistoryModal('${studentEmailKey}', '${student.student_name}')">Lịch sử</button>
+                <button class="btn-action" onclick="openHistoryModal('${studentEmailKey}', '${student.student_name}')">📜 Lịch sử nộp bài</button>
               </td>
             </tr>
           `;
@@ -1488,15 +1518,15 @@
                   Lần ${attemptNum} - <span style="color: #0284c7;">${Number(sub.mcq_score || 0).toFixed(1)} điểm</span>
                 </div>
                 <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
-                  Thời điểm nộp bài: <b>${dateStr}</b> (${mins > 0 ? mins + ' phút ' : ''}${secs} giây)
+                  ⏰ Thời điểm nộp bài: <b>${dateStr}</b> (${mins > 0 ? mins + ' phút ' : ''}${secs} giây)
                 </div>
                 <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
-                  Bài tự luận: ${essayHtml}
+                  📄 Bài tự luận: ${essayHtml}
                 </div>
               </div>
               <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
-                <button class="btn-action" onclick="openSubmissionDetailModal('${sub.id}', ${attemptNum})">Chi tiết</button>
-                <button class="btn-delete" onclick="deleteSingleSubmission('${sub.id}', ${attemptNum})">Xóa bài</button>
+                <button class="btn-action" onclick="openSubmissionDetailModal('${sub.id}', ${attemptNum})">👁️ Xem phiếu làm bài</button>
+                <button class="btn-delete" onclick="deleteSingleSubmission('${sub.id}', ${attemptNum})">🗑️ Xóa bài</button>
               </div>
             </div>
           `;
@@ -1514,24 +1544,31 @@
     function deleteSingleSubmission(submissionId, attemptNum) {
       showConfirmModal('Xóa bài làm', `Bạn có chắc chắn muốn xóa bài nộp Lần ${attemptNum} này không? Hành động không thể hoàn tác.`, async () => {
         try {
-          // Gọi lệnh xóa từ Supabase
-          const { error } = await _supabase.from('quiz_submissions').delete().eq('id', submissionId);
+          const { data, error } = await _supabase
+            .from('quiz_submissions')
+            .delete()
+            .eq('id', submissionId)
+            .select();
+
           if (error) throw error;
+
+          if (!data || data.length === 0) {
+            showToast("Xóa thất bại! Vui lòng kiểm tra lại quyền Policy DELETE trên Supabase.", "error");
+            return;
+          }
 
           showToast("Đã xóa bài nộp thành công!", "success");
 
-          // Xóa item trong bộ nhớ cache local để cập nhật tức thì
           if (currentHistoryEmailKey && currentQuizSubmissionsMap[currentHistoryEmailKey]) {
             currentQuizSubmissionsMap[currentHistoryEmailKey] = currentQuizSubmissionsMap[currentHistoryEmailKey].filter(s => s.id !== submissionId);
           }
 
-          // Cập nhật lại giao diện ngay tại chỗ
           openHistoryModal(currentHistoryEmailKey, currentHistoryStudentName);
           loadSubmissionTracker();
 
         } catch (err) {
           console.error("Lỗi xóa bài:", err);
-          showToast("Lỗi xóa bài (Kiểm tra quyền RLS Supabase): " + err.message, "error");
+          showToast("Lỗi hệ thống: " + err.message, "error");
         }
       });
     }
@@ -1607,6 +1644,115 @@
       document.getElementById('submission-detail-modal').classList.remove('active');
     }
 
+    // --- LOGIC CHO TAB 6: QUẢN LÝ NỘI DUNG CÔNG KHAI ---
+    async function loadPublicContents() {
+      const tbody = document.getElementById('public-table-body');
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Đang tải nội dung...</td></tr>';
+
+      try {
+        if (publicSubTabType === 'docs') {
+          // Bảng toananhviet (Tài liệu Toán)
+          const { data, error } = await _supabase
+            .from('toananhviet')
+            .select('*')
+            .order('id', { ascending: false });
+
+          if (error) throw error;
+
+          if (!data || data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Chưa có Tài liệu Toán công khai nào.</td></tr>';
+            return;
+          }
+
+          tbody.innerHTML = data.map((item, idx) => `
+            <tr>
+              <td>${idx + 1}</td>
+              <td><strong>${item.tieu_de || item.title || 'Không có tiêu đề'}</strong></td>
+              <td>Lớp ${item.lop || '---'}</td>
+              <td><span class="status-badge" style="background:#e0f2fe; color:#0369a1;">${item.loai_de || '---'}</span></td>
+              <td>
+                <a href="${item.link_file || item.file_url || '#'}" target="_blank" class="btn-action">📎 Mở File</a>
+              </td>
+              <td>
+                <button class="btn-delete" onclick="deletePublicDoc('${item.id}', '${(item.tieu_de || item.title || '').replace(/'/g, "\\'")}')">🗑️ Xóa</button>
+              </td>
+            </tr>
+          `).join('');
+
+        } else {
+          // Bảng quizzes (Đề thi Online Công Khai: is_private = false)
+          const { data, error } = await _supabase
+            .from('quizzes')
+            .select('*')
+            .eq('is_private', false)
+            .order('created_at', { ascending: false });
+
+          if (error) throw error;
+
+          if (!data || data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Chưa có Đề thi Online công khai nào.</td></tr>';
+            return;
+          }
+
+          tbody.innerHTML = data.map((item, idx) => `
+            <tr>
+              <td>${idx + 1}</td>
+              <td><strong>${item.title || 'Không có tiêu đề'}</strong></td>
+              <td>Lớp ${item.grade || '---'}</td>
+              <td><span class="status-badge" style="background:#fef3c7; color:#d97706;">${item.semester || '---'}</span></td>
+              <td>
+                <span style="font-size:12.5px; color:#475569;">⏱️ ${item.duration || 45} phút | 📝 ${item.answer_keys?.length || 0} câu</span>
+              </td>
+              <td>
+                <div style="display:flex; gap:6px;">
+                  <a href="quiz-room.html?id=${item.id}" target="_blank" class="btn-action">Thi thử</a>
+                  <button class="btn-delete" onclick="deletePublicQuiz('${item.id}', '${(item.title || '').replace(/'/g, "\\'")}')">🗑️ Xóa</button>
+                </div>
+              </td>
+            </tr>
+          `).join('');
+        }
+      } catch (err) {
+        console.error("Lỗi tải nội dung công khai:", err);
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 30px;">Lỗi tải dữ liệu: ${err.message}</td></tr>`;
+      }
+    }
+
+    function switchPublicSubTab(type, btnEl) {
+      publicSubTabType = type;
+      document.querySelectorAll('#tab-public-contents .sub-tab-btn').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+      loadPublicContents();
+    }
+
+    function deletePublicDoc(id, title) {
+      showConfirmModal('Xóa Tài Liệu Công Khai', `Bạn có chắc chắn muốn xóa tài liệu công khai: "${title}" không? Hành động này sẽ gỡ tài liệu khỏi trang Tài Liệu Toán.`, async () => {
+        try {
+          const { error } = await _supabase.from('toananhviet').delete().eq('id', id);
+          if (error) throw error;
+
+          showToast("Đã xóa tài liệu công khai thành công!", "success");
+          loadPublicContents();
+        } catch (err) {
+          showToast("Lỗi xóa tài liệu: " + err.message, "error");
+        }
+      });
+    }
+
+    function deletePublicQuiz(id, title) {
+      showConfirmModal('Xóa Đề Thi Công Khai', `Bạn có chắc chắn muốn xóa đề thi công khai: "${title}" không? Học sinh sẽ không thể thi đề này nữa.`, async () => {
+        try {
+          const { error } = await _supabase.from('quizzes').delete().eq('id', id);
+          if (error) throw error;
+
+          showToast("Đã xóa đề thi công khai thành công!", "success");
+          loadPublicContents();
+        } catch (err) {
+          showToast("Lỗi xóa đề thi: " + err.message, "error");
+        }
+      });
+    }
+
     function toggleUploadInput() {
       const type = document.getElementById('content-type').value;
       const fileGroup = document.getElementById('file-input-group');
@@ -1627,12 +1773,14 @@
       document.getElementById('tab-create-quiz').classList.add('hidden');
       document.getElementById('tab-upload').classList.add('hidden');
       document.getElementById('tab-students').classList.add('hidden');
+      document.getElementById('tab-public-contents').classList.add('hidden');
       
       document.getElementById('tab-tracker-btn').classList.remove('active');
       document.getElementById('tab-manage-contents-btn').classList.remove('active');
       document.getElementById('tab-create-quiz-btn').classList.remove('active');
       document.getElementById('tab-upload-btn').classList.remove('active');
       document.getElementById('tab-students-btn').classList.remove('active');
+      document.getElementById('tab-public-contents-btn').classList.remove('active');
 
       if (tabName === 'tracker') {
         document.getElementById('tab-tracker').classList.remove('hidden');
@@ -1646,9 +1794,13 @@
       } else if (tabName === 'upload') {
         document.getElementById('tab-upload').classList.remove('hidden');
         document.getElementById('tab-upload-btn').classList.add('active');
-      } else {
+      } else if (tabName === 'students') {
         document.getElementById('tab-students').classList.remove('hidden');
         document.getElementById('tab-students-btn').classList.add('active');
+      } else if (tabName === 'public-contents') {
+        document.getElementById('tab-public-contents').classList.remove('hidden');
+        document.getElementById('tab-public-contents-btn').classList.add('active');
+        loadPublicContents();
       }
     }
 
