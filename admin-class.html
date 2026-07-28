@@ -174,6 +174,36 @@
     </div>
   </div>
 
+  <!-- MODAL TẠO LỚP HỌC MỚI -->
+  <div id="create-class-modal" class="custom-modal-overlay">
+    <div class="custom-modal-box" style="text-align: left; max-width: 450px;">
+      <div class="custom-modal-title" style="margin-bottom: 4px;">Tạo Lớp Học Mới</div>
+      <div class="custom-modal-desc" style="margin-bottom: 16px;">Nhập thông tin chi tiết để thêm lớp mới vào hệ thống.</div>
+      
+      <form onsubmit="handleCreateClass(event)">
+        <div class="form-group">
+          <label>Mã Class ID (Viết hoa, không dấu, không cách)</label>
+          <input type="text" id="new-class-id" class="form-control" placeholder="VD: TOAN8-TAV01" style="text-transform: uppercase;" required>
+        </div>
+
+        <div class="form-group">
+          <label>Tên Lớp Học</label>
+          <input type="text" id="new-class-title" class="form-control" placeholder="VD: Lớp Toàn Diện Toán 8" required>
+        </div>
+
+        <div class="form-group">
+          <label>Tên Giáo Viên Đảm Nhận</label>
+          <input type="text" id="new-class-teacher" class="form-control" value="Thầy Đặng Đức Việt" required>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+          <button type="button" class="btn-modal btn-modal-cancel" onclick="closeCreateClassModal()">Hủy</button>
+          <button type="submit" id="btn-submit-create-class" class="btn-submit" style="padding: 8px 18px;">Tạo Lớp</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <header class="site-header"></header>
 
   <main class="admin-container">
@@ -182,7 +212,10 @@
         <h1 class="admin-title">Dashboard Quản Lý</h1>
         <div style="font-size: 13px; opacity: 0.9; margin-top: 4px;">Theo dõi danh sách học sinh, tạo đề thi và quản lý tài liệu</div>
       </div>
-      <div>
+      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+        <button type="button" class="btn-action" style="background: #ffffff; color: #0284c7; font-weight: 800; border: none; padding: 8px 14px; border-radius: 8px;" onclick="openCreateClassModal()">
+          ➕ Tạo Lớp Học Mới
+        </button>
         <select id="select-class" class="select-class-dropdown" onchange="onClassChange()">
           <option value="">Đang tải lớp học...</option>
         </select>
@@ -514,6 +547,90 @@
 
       btnConfirm.addEventListener('click', confirmHandler);
       btnCancel.addEventListener('click', closeHandler);
+    }
+
+    // MODAL TẠO LỚP HỌC MỚI HELPERS
+    function openCreateClassModal() {
+      document.getElementById('create-class-modal').classList.add('active');
+      document.getElementById('new-class-id').focus();
+    }
+
+    function closeCreateClassModal() {
+      document.getElementById('create-class-modal').classList.remove('active');
+      document.getElementById('new-class-id').value = '';
+      document.getElementById('new-class-title').value = '';
+    }
+
+    async function handleCreateClass(e) {
+      e.preventDefault();
+      
+      const classId = document.getElementById('new-class-id').value.trim().toUpperCase();
+      const title = document.getElementById('new-class-title').value.trim();
+      const teacher = document.getElementById('new-class-teacher').value.trim();
+      const btn = document.getElementById('btn-submit-create-class');
+
+      if (!classId || !title) {
+        showToast("Vui lòng điền đầy đủ Mã Lớp và Tên Lớp!", "error");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "⏳ Đang tạo...";
+
+      try {
+        const { data, error } = await _supabase
+          .from('classes')
+          .insert([
+            {
+              class_id: classId,
+              title: title,
+              teacher: teacher || 'Thầy Đặng Đức Việt'
+            }
+          ])
+          .select()
+          .single();
+
+        if (error) {
+          if (error.code === '23505') {
+            showToast("Mã Class ID này đã tồn tại, vui lòng chọn mã khác!", "error");
+          } else {
+            showToast("Lỗi khi tạo lớp: " + error.message, "error");
+          }
+          return;
+        }
+
+        showToast("🎉 Đã tạo lớp học mới thành công!", "success");
+        closeCreateClassModal();
+
+        await reloadClassesList(classId);
+
+      } catch (err) {
+        showToast("Lỗi hệ thống: " + err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Tạo Lớp";
+      }
+    }
+
+    async function reloadClassesList(selectClassId = '') {
+      const { data: classes } = await _supabase.from('classes').select('*');
+      const classSelect = document.getElementById('select-class');
+
+      if (classes && classes.length > 0) {
+        allClassesList = classes;
+        classSelect.innerHTML = classes.map(c => `<option value="${c.class_id}">${c.title} (${c.class_id})</option>`).join('');
+        
+        if (selectClassId) {
+          currentClassId = selectClassId;
+          classSelect.value = selectClassId;
+        } else {
+          currentClassId = classes[0].class_id;
+        }
+
+        renderClassCheckboxes('quiz');
+        renderClassCheckboxes('content');
+        loadClassData();
+      }
     }
 
     // LOGIC CHECK PERMISSION & INIT
