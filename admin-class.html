@@ -250,6 +250,36 @@
     </div>
   </div>
 
+  <!-- MODAL CHỈNH SỬA LỚP HỌC -->
+  <div id="edit-class-modal" class="custom-modal-overlay">
+    <div class="custom-modal-box" style="text-align: left; max-width: 450px;">
+      <div class="custom-modal-title" style="margin-bottom: 4px;">Chỉnh Sửa Thông Tin Lớp Học</div>
+      <div class="custom-modal-desc" style="margin-bottom: 16px;">Cập nhật lại tên lớp hoặc giáo viên đảm nhận.</div>
+      
+      <form onsubmit="handleEditClass(event)">
+        <div class="form-group">
+          <label>Mã Class ID (Không thể sửa)</label>
+          <input type="text" id="edit-class-id" class="form-control" style="background-color: #f1f5f9; cursor: not-allowed;" readonly>
+        </div>
+
+        <div class="form-group">
+          <label>Tên Lớp Học</label>
+          <input type="text" id="edit-class-title" class="form-control" placeholder="VD: Lớp Toàn Diện Toán 8" required>
+        </div>
+
+        <div class="form-group">
+          <label>Tên Giáo Viên Đảm Nhận</label>
+          <input type="text" id="edit-class-teacher" class="form-control" placeholder="VD: Thầy Đặng Đức Việt" required>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+          <button type="button" class="btn-modal btn-modal-cancel" onclick="closeEditClassModal()">Hủy</button>
+          <button type="submit" id="btn-submit-edit-class" class="btn-submit" style="padding: 8px 18px;">Lưu Thay Đổi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- MODAL XEM LỊCH SỬ CÁC LẦN NỘP BÀI CỦA HỌC SINH -->
   <div id="history-modal" class="custom-modal-overlay">
     <div class="custom-modal-box" style="text-align: left; max-width: 650px; width: 95%;">
@@ -316,10 +346,18 @@
         <h1 class="admin-title">Dashboard Quản Lý</h1>
         <div style="font-size: 13px; opacity: 0.9; margin-top: 4px;">Theo dõi danh sách học sinh, tạo đề thi và quản lý tài liệu</div>
       </div>
-      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-        <button type="button" class="btn-action" style="background: #ffffff; color: #0284c7; font-weight: 800; border: none; padding: 8px 14px; border-radius: 8px;" onclick="openCreateClassModal()">
-          ➕ Tạo Lớp Học Mới
-        </button>
+      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button type="button" class="btn-action" style="background: #ffffff; color: #0284c7; font-weight: 800; border: none; padding: 8px 14px; border-radius: 8px;" onclick="openCreateClassModal()">
+            ➕ Tạo Lớp Mới
+          </button>
+          <button type="button" class="btn-action" style="background: #e0f2fe; color: #0369a1; font-weight: 800; border: none; padding: 8px 14px; border-radius: 8px;" onclick="openEditClassModal()">
+            ✏️ Chỉnh Sửa Lớp
+          </button>
+          <button type="button" class="btn-action" style="background: #fef2f2; color: #ef4444; font-weight: 800; border: none; padding: 8px 14px; border-radius: 8px;" onclick="handleDeleteCurrentClass()">
+            🗑️ Xóa Lớp
+          </button>
+        </div>
         <select id="select-class" class="select-class-dropdown" onchange="onClassChange()">
           <option value="">Đang tải lớp học...</option>
         </select>
@@ -789,6 +827,105 @@
       }
     }
 
+    // MODAL CHỈNH SỬA & XÓA LỚP HỌC HELPERS
+    function openEditClassModal() {
+      if (!currentClassId) {
+        showToast("Vui lòng chọn lớp học cần chỉnh sửa!", "error");
+        return;
+      }
+
+      const currentClassObj = allClassesList.find(c => c.class_id === currentClassId);
+      if (!currentClassObj) {
+        showToast("Không tìm thấy dữ liệu lớp học!", "error");
+        return;
+      }
+
+      document.getElementById('edit-class-id').value = currentClassObj.class_id;
+      document.getElementById('edit-class-title').value = currentClassObj.title || '';
+      document.getElementById('edit-class-teacher').value = currentClassObj.teacher || 'Thầy Đặng Đức Việt';
+
+      document.getElementById('edit-class-modal').classList.add('active');
+    }
+
+    function closeEditClassModal() {
+      document.getElementById('edit-class-modal').classList.remove('active');
+    }
+
+    async function handleEditClass(e) {
+      e.preventDefault();
+
+      const title = document.getElementById('edit-class-title').value.trim();
+      const teacher = document.getElementById('edit-class-teacher').value.trim();
+      const btn = document.getElementById('btn-submit-edit-class');
+
+      if (!title) {
+        showToast("Tên lớp học không được để trống!", "error");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "⏳ Đang lưu...";
+
+      try {
+        const { error } = await _supabase
+          .from('classes')
+          .update({
+            title: title,
+            teacher: teacher
+          })
+          .eq('class_id', currentClassId);
+
+        if (error) throw error;
+
+        showToast("🎉 Cập nhật thông tin lớp thành công!", "success");
+        closeEditClassModal();
+        await reloadClassesList(currentClassId);
+
+      } catch (err) {
+        console.error(err);
+        showToast("Lỗi khi cập nhật lớp: " + err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Lưu Thay Đổi";
+      }
+    }
+
+    function handleDeleteCurrentClass() {
+      if (!currentClassId) {
+        showToast("Chưa chọn lớp học để xóa!", "error");
+        return;
+      }
+
+      const currentClassObj = allClassesList.find(c => c.class_id === currentClassId);
+      const className = currentClassObj ? currentClassObj.title : currentClassId;
+
+      showConfirmModal(
+        'Xóa Lớp Học', 
+        `Bạn có chắc chắn muốn xóa lớp "${className}" (${currentClassId})? Toàn bộ tài liệu và liên kết học sinh trong lớp này sẽ bị xóa theo!`, 
+        async () => {
+          try {
+            // 1. Xóa thành viên thuộc lớp
+            await _supabase.from('class_members').delete().eq('class_id', currentClassId);
+            
+            // 2. Xóa tài liệu/bài tập thuộc lớp
+            await _supabase.from('class_contents').delete().eq('class_id', currentClassId);
+
+            // 3. Xóa lớp học trong bảng classes
+            const { error } = await _supabase.from('classes').delete().eq('class_id', currentClassId);
+
+            if (error) throw error;
+
+            showToast("🗑️ Đã xóa lớp học thành công!", "success");
+            await reloadClassesList();
+
+          } catch (err) {
+            console.error(err);
+            showToast("Lỗi khi xóa lớp học: " + err.message, "error");
+          }
+        }
+      );
+    }
+
     async function reloadClassesList(selectClassId = '') {
       const { data: classes } = await _supabase.from('classes').select('*');
       const classSelect = document.getElementById('select-class');
@@ -797,16 +934,24 @@
         allClassesList = classes;
         classSelect.innerHTML = classes.map(c => `<option value="${c.class_id}">${c.title} (${c.class_id})</option>`).join('');
         
-        if (selectClassId) {
+        if (selectClassId && classes.some(c => c.class_id === selectClassId)) {
           currentClassId = selectClassId;
           classSelect.value = selectClassId;
         } else {
           currentClassId = classes[0].class_id;
+          classSelect.value = currentClassId;
         }
 
         renderClassCheckboxes('quiz');
         renderClassCheckboxes('content');
         loadClassData();
+      } else {
+        allClassesList = [];
+        currentClassId = '';
+        classSelect.innerHTML = '<option value="">Chưa có lớp học nào</option>';
+        document.getElementById('students-table-body').innerHTML = '<tr><td colspan="5" style="text-align: center; color: #64748b; padding: 30px;">Không có lớp học.</td></tr>';
+        document.getElementById('tracker-table-body').innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 30px;">Không có lớp học.</td></tr>';
+        document.getElementById('admin-contents-view-container').innerHTML = '<div style="text-align: center; color: #64748b; padding: 30px;">Không có lớp học.</div>';
       }
     }
 
@@ -838,21 +983,7 @@
       const isTeacher = await checkTeacherPermission();
       if (!isTeacher) return;
 
-      const { data: classes } = await _supabase.from('classes').select('*');
-      const classSelect = document.getElementById('select-class');
-
-      if (classes && classes.length > 0) {
-        allClassesList = classes;
-        classSelect.innerHTML = classes.map(c => `<option value="${c.class_id}">${c.title} (${c.class_id})</option>`).join('');
-        currentClassId = classes[0].class_id;
-
-        renderClassCheckboxes('quiz');
-        renderClassCheckboxes('content');
-
-        loadClassData();
-      } else {
-        classSelect.innerHTML = '<option value="">Chưa có lớp học nào</option>';
-      }
+      await reloadClassesList();
     }
 
     function renderClassCheckboxes(prefix) {
@@ -1691,14 +1822,13 @@
       document.getElementById('submission-detail-modal').classList.remove('active');
     }
 
-    // --- LOGIC MỚI CHO TAB 6: QUẢN LÝ NỘI DUNG CÔNG KHAI + TÍNH NĂNG LỌC CỘT TRÁI ---
+    // TAB 6: QUẢN LÝ NỘI DUNG CÔNG KHAI
     async function fetchPublicDataFromSupabase() {
       const tbody = document.getElementById('public-table-body');
       tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Đang tải dữ liệu...</td></tr>';
 
       try {
         if (publicSubTabType === 'docs') {
-          // Lấy dữ liệu từ bảng toananhviet
           const { data, error } = await _supabase
             .from('toananhviet')
             .select('*');
@@ -1707,7 +1837,6 @@
           rawPublicDataList = data || [];
 
         } else {
-          // Lấy dữ liệu từ bảng quizzes (is_private = false)
           const { data, error } = await _supabase
             .from('quizzes')
             .select('*')
@@ -1729,7 +1858,6 @@
     function renderFilteredPublicTable() {
       const tbody = document.getElementById('public-table-body');
 
-      // Lọc danh sách theo tùy chọn ở Cột trái
       let list = rawPublicDataList.filter(item => {
         const itemGrade = (publicSubTabType === 'docs' ? item.lop : item.grade) || '';
         const itemSemester = (publicSubTabType === 'docs' ? item.loai_de : item.semester) || '';
@@ -1800,7 +1928,6 @@
       renderFilteredPublicTable();
     }
 
-    // XÓA TÀI LIỆU CÔNG KHAI BẰNG KHÓA CHÍNH (tieu_de)
     function deletePublicDoc(tieuDe) {
       showConfirmModal('Xóa Tài Liệu Công Khai', `Bạn có chắc chắn muốn xóa tài liệu công khai: "${tieuDe}" không? Hành động này sẽ gỡ tài liệu khỏi trang Tài Liệu Toán.`, async () => {
         try {
@@ -1815,7 +1942,6 @@
       });
     }
 
-    // XÓA ĐỀ THI CÔNG KHAI
     function deletePublicQuiz(id, title) {
       showConfirmModal('Xóa Đề Thi Công Khai', `Bạn có chắc chắn muốn xóa đề thi công khai: "${title}" không? Học sinh sẽ không thể thi đề này nữa.`, async () => {
         try {
