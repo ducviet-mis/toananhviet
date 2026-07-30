@@ -64,9 +64,13 @@
     .nav-item:hover { background: #1e293b; color: #f8fafc; }
     .nav-item.active { background: #0284c7; color: #ffffff; font-weight: 700; }
 
+    /* SIDEBAR FOOTER (NÚT VỀ TRANG CHỦ & USER PROFILE) */
     .sidebar-footer {
       padding: 16px;
       border-top: 1px solid #1e293b;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
     .btn-out {
       color: #94a3b8;
@@ -80,6 +84,47 @@
       transition: background 0.2s;
     }
     .btn-out:hover { background: #1e293b; color: #ffffff; }
+
+    .user-profile-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .user-profile-box:hover { background: #334155; }
+
+    .avatar-img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid #0284c7;
+      flex-shrink: 0;
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .user-name-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .user-role-text {
+      font-size: 11px;
+      font-weight: 500;
+      color: #94a3b8;
+    }
 
     /* KHU VỰC NỘI DUNG PHẢI */
     .admin-content-wrapper {
@@ -132,8 +177,6 @@
     .btn-topbar:hover { background: #f1f5f9; color: #0284c7; border-color: #0284c7; }
     .btn-topbar-danger { color: #ef4444; border-color: #fca5a5; }
     .btn-topbar-danger:hover { background: #fef2f2; border-color: #ef4444; color: #ef4444; }
-
-    .admin-profile-name { font-size: 13.5px; font-weight: 700; color: #1e293b; }
 
     /* VÙNG HIỂN THỊ CHÍNH BANEL */
     .admin-main-content { padding: 28px; flex-grow: 1; }
@@ -459,8 +502,17 @@
         </nav>
       </div>
 
+      <!-- FOOTER SIDEBAR VỚI AVATAR TÀI KHOẢN -->
       <div class="sidebar-footer">
         <a href="index.html" class="btn-out">Về Trang Chủ</a>
+
+        <div class="user-profile-box" onclick="window.location.href='profile.html'">
+          <img id="sidebar-user-avatar" src="assets/default-avatar.png" alt="Avatar" class="avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=Dang+Viet&background=0284c7&color=fff'">
+          <div class="user-details">
+            <div class="user-name-text" id="sidebar-user-name">Đặng Đức Việt</div>
+            <div class="user-role-text">Giáo viên / Admin</div>
+          </div>
+        </div>
       </div>
     </aside>
 
@@ -480,10 +532,6 @@
             <button type="button" class="btn-topbar" onclick="openEditClassModal()">Sửa Thông Tin</button>
             <button type="button" class="btn-topbar btn-topbar-danger" onclick="handleDeleteCurrentClass()">Xóa Lớp</button>
           </div>
-        </div>
-
-        <div>
-          <span class="admin-profile-name">Thầy Đặng Đức Việt</span>
         </div>
       </header>
 
@@ -1066,7 +1114,7 @@
       }
     }
 
-    // LOGIC CHECK PERMISSION
+    // LOGIC CHECK PERMISSION & TẢI PROFILE VÀ AVATAR USER
     async function checkTeacherPermission() {
       const { data: { user } } = await _supabase.auth.getUser();
       if (!user) {
@@ -1077,7 +1125,7 @@
 
       const { data: profile } = await _supabase
         .from('profiles')
-        .select('role')
+        .select('*')
         .eq('id', user.id)
         .single();
 
@@ -1087,6 +1135,17 @@
         setTimeout(() => window.location.href = 'index.html', 1500);
         return false;
       }
+
+      // LOAD THÔNG TIN CÁ NHÂN VÀ AVATAR VÀO SIDEBAR FOOTER
+      if (profile) {
+        if (profile.full_name) {
+          document.getElementById('sidebar-user-name').innerText = profile.full_name;
+        }
+        if (profile.avatar_url) {
+          document.getElementById('sidebar-user-avatar').src = profile.avatar_url;
+        }
+      }
+
       return true;
     }
 
