@@ -15,11 +15,22 @@
   const isAdminClass = currentPath.includes('admin-class.html');
 
   // 1. Cấu trúc HTML Header gọn gàng chuẩn
+  // Tạo dải cờ đuôi nheo (bunting) trang trí Quốc khánh 2/9
+  const buntingPennants = Array.from({ length: 24 }).map((_, i) =>
+    `<span class="pennant ${i % 2 === 0 ? 'p-red' : 'p-gold'}"></span>`
+  ).join('');
+
   const siteHeader = document.querySelector('.site-header');
   if (siteHeader) {
     siteHeader.innerHTML = `
+      <div class="national-day-banner">
+        <span class="star-icon">★</span>
+        <span>Chào mừng 81 năm Quốc khánh nước CHXHCN Việt Nam (2/9/1945 - 2/9/2026)</span>
+        <span class="star-icon">★</span>
+      </div>
       <nav class="nav-container">
         <a href="index.html" class="logo" style="text-decoration:none; font-weight:800; color:#0284c7; font-size:18px; display:flex; align-items:center; gap:8px;">
+          <span class="mini-vn-flag" aria-hidden="true"><span class="mini-vn-star">★</span></span>
           <img src="assets/logo.png" alt="Logo" class="logo-img" style="height:35px;" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
           TOÁN ANH VIỆT
         </a>
@@ -41,6 +52,7 @@
           <li id="auth-menu-item"><a href="login.html">Đăng nhập</a></li>
         </ul>
       </nav>
+      <div class="bunting-strip" aria-hidden="true">${buntingPennants}</div>
     `;
   }
 
@@ -87,6 +99,27 @@
       .badge-teacher-tag { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important; color: #ffffff !important; font-size: 10px !important; font-weight: 800 !important; padding: 2px 6px !important; border-radius: 10px !important; letter-spacing: 0.3px !important; display: inline-block !important; }
       .admin-menu-item { background-color: #f0f9ff !important; color: #0284c7 !important; font-weight: 700 !important; }
       .admin-menu-item:hover { background-color: #e0f2fe !important; }
+
+      /* ===== TRANG TRÍ QUỐC KHÁNH 2/9 ===== */
+      .national-day-banner { background: linear-gradient(90deg, #a91e19, #da251d 40%, #da251d 60%, #a91e19) !important; background-size: 200% 100% !important; animation: ndbShimmer 8s linear infinite !important; color: #fff !important; text-align: center !important; padding: 7px 16px !important; font-size: 12.5px !important; font-weight: 700 !important; letter-spacing: 0.2px !important; display: flex !important; align-items: center !important; justify-content: center !important; gap: 8px !important; box-shadow: 0 2px 8px rgba(218,37,29,0.25) !important; position: relative !important; z-index: 10000 !important; }
+      .national-day-banner .star-icon { color: #ffcd00 !important; font-size: 14px !important; animation: ndbTwinkle 1.8s ease-in-out infinite !important; }
+      @keyframes ndbShimmer { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
+      @keyframes ndbTwinkle { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.85); } }
+
+      .mini-vn-flag { display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 26px !important; height: 18px !important; background: #da251d !important; border-radius: 3px !important; box-shadow: 0 1px 4px rgba(218,37,29,0.4) !important; flex-shrink: 0 !important; }
+      .mini-vn-star { color: #ffcd00 !important; font-size: 11px !important; line-height: 1 !important; }
+
+      .bunting-strip { display: flex !important; justify-content: space-between !important; align-items: flex-start !important; width: 100% !important; max-width: 1200px !important; margin: 0 auto !important; height: 12px !important; padding: 0 20px !important; overflow: hidden !important; }
+      .pennant { display: inline-block !important; width: 14px !important; height: 11px !important; clip-path: polygon(0 0, 100% 0, 50% 100%) !important; flex-shrink: 0 !important; animation: buntingSway 2.6s ease-in-out infinite !important; transform-origin: top center !important; }
+      .pennant.p-red { background: #da251d !important; }
+      .pennant.p-gold { background: #ffcd00 !important; animation-delay: 0.3s !important; }
+      .pennant:nth-child(odd) { animation-delay: 0.15s !important; }
+      @keyframes buntingSway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+
+      @media (max-width: 640px) {
+        .national-day-banner { font-size: 11px !important; padding: 6px 10px !important; }
+        .bunting-strip { display: none !important; }
+      }
     `;
     document.head.appendChild(style);
   }
