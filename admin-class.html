@@ -4,63 +4,173 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quản Lý Lớp Học - Gia Sư Toán Anh Việt</title>
-  <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
+    * { box-sizing: border-box; }
     body { background-color: #f8fafc; font-family: 'Inter', sans-serif; color: #0f172a; margin: 0; padding: 0; }
-    .admin-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; min-height: 80vh; }
     
-    .admin-header-card {
-      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-      color: white; border-radius: 18px; padding: 24px 30px;
-      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.15); margin-bottom: 25px;
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
+    /* LAYOUT KHUNG ADMIN (SIDEBAR + MAIN) */
+    .admin-wrapper { display: flex; min-height: 100vh; }
+
+    /* CỘT SIDEBAR BÊN TRÁI */
+    .admin-sidebar {
+      width: 250px;
+      background: #0f172a;
+      color: #f8fafc;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      border-right: 1px solid #1e293b;
     }
-    .admin-title { font-size: 22px; font-weight: 800; margin: 0; }
-    .select-class-dropdown {
-      background: #ffffff; color: #0f172a; border: none; padding: 10px 16px;
-      border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; outline: none;
+    .sidebar-brand {
+      padding: 20px 24px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      border-bottom: 1px solid #1e293b;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .sidebar-menu {
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 11px 16px;
+      background: transparent;
+      color: #94a3b8;
+      border: none;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+    .nav-item:hover { background: #1e293b; color: #f8fafc; }
+    .nav-item.active { background: #0284c7; color: #ffffff; font-weight: 700; }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid #1e293b;
+    }
+    .btn-out {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      display: block;
+      text-align: center;
+      padding: 8px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+    .btn-out:hover { background: #1e293b; color: #ffffff; }
+
+    /* KHU VỰC NỘI DUNG PHẢI */
+    .admin-content-wrapper {
+      flex-grow: 1;
+      margin-left: 250px;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
     }
 
-    .admin-tabs { display: flex; gap: 10px; border-bottom: 2px solid #e2e8f0; margin-bottom: 25px; flex-wrap: wrap; }
-    .tab-btn {
-      padding: 12px 22px; font-weight: 700; font-size: 14px; color: #64748b;
-      background: none; border: none; border-bottom: 3px solid transparent;
-      cursor: pointer; transition: all 0.2s; margin-bottom: -2px;
+    /* TOPBAR CỐ ĐỊNH PHÍA TRÊN */
+    .admin-topbar {
+      height: 64px;
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 90;
     }
-    .tab-btn.active { color: #0284c7; border-color: #0284c7; }
+    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .topbar-label { font-size: 13px; font-weight: 700; color: #475569; }
+    .select-class-dropdown {
+      background: #ffffff;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13.5px;
+      cursor: pointer;
+      outline: none;
+    }
+    .select-class-dropdown:focus { border-color: #0284c7; }
+
+    .btn-topbar {
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 12.5px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-topbar:hover { background: #f1f5f9; color: #0284c7; border-color: #0284c7; }
+    .btn-topbar-danger { color: #ef4444; border-color: #fca5a5; }
+    .btn-topbar-danger:hover { background: #fef2f2; border-color: #ef4444; color: #ef4444; }
+
+    .admin-profile-name { font-size: 13.5px; font-weight: 700; color: #1e293b; }
+
+    /* VÙNG HIỂN THỊ CHÍNH BANEL */
+    .admin-main-content { padding: 28px; flex-grow: 1; }
 
     .panel-card {
-      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px;
-      padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 25px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      margin-bottom: 25px;
     }
-    .card-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
-    .card-title { font-size: 17px; font-weight: 800; color: #1e293b; margin: 0; }
+    .card-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .card-title { font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; }
 
-    .admin-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
     .admin-table th { background: #f8fafc; color: #475569; font-weight: 700; padding: 12px 14px; border-bottom: 2px solid #e2e8f0; text-align: left; }
     .admin-table td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 500; }
     
-    .status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+    .status-badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; }
     .badge-done { background: #dcfce7; color: #15803d; }
     .badge-pending { background: #fef2f2; color: #b91c1c; }
     
     .btn-action {
       background: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; padding: 6px 12px;
-      border-radius: 8px; font-weight: 700; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px;
+      border-radius: 6px; font-weight: 700; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center;
     }
     .btn-action:hover { background: #0284c7; color: #ffffff; }
 
     .btn-delete {
       background: #fef2f2; color: #ef4444; border: 1px solid #fca5a5; padding: 6px 12px;
-      border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px;
+      border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center;
     }
     .btn-delete:hover { background: #ef4444; color: #ffffff; }
 
     /* FORM STYLES */
-    .form-group { margin-bottom: 16px; }
+    .form-group { margin-bottom: 18px; }
     .form-group label { display: block; font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 6px; }
     .form-control {
       width: 100%; padding: 10px 14px; font-size: 14px; border: 1px solid #cbd5e1;
@@ -68,14 +178,14 @@
     }
     .form-control:focus { border-color: #0284c7; box-shadow: 0 0 0 3px rgba(2,132,199,0.1); }
     .btn-submit {
-      background: #0284c7; color: white; border: none; padding: 12px 20px;
-      border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px; transition: background 0.2s;
+      background: #0284c7; color: white; border: none; padding: 11px 20px;
+      border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px; transition: background 0.2s;
     }
     .btn-submit:hover { background: #0369a1; }
     .hidden { display: none !important; }
 
-    /* VIEW CONTENT FOLDER STYLES */
-    .sub-content-tabs { display: flex; gap: 10px; border-bottom: 1.5px solid #e2e8f0; margin-bottom: 20px; }
+    /* SUB CONTENT TABS */
+    .sub-content-tabs { display: flex; gap: 8px; border-bottom: 1.5px solid #e2e8f0; margin-bottom: 20px; }
     .sub-tab-btn {
       background: none; border: none; padding: 8px 16px; font-size: 13px; font-weight: 700;
       color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1.5px;
@@ -83,8 +193,8 @@
     .sub-tab-btn.active { color: #0284c7; border-color: #0284c7; }
 
     .folder-card {
-      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px;
-      margin-bottom: 14px; overflow: hidden;
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;
+      margin-bottom: 12px; overflow: hidden;
     }
     .folder-header {
       padding: 14px 18px; background: #ffffff; cursor: pointer;
@@ -93,8 +203,8 @@
     }
     .folder-header:hover { background: #f8fafc; }
     .folder-card.open .folder-header { border-bottom: 1px solid #f1f5f9; background: #f0f9ff; }
-    .folder-title { font-size: 15px; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 8px; }
-    .folder-toggle-icon { font-size: 12px; color: #0284c7; transition: transform 0.3s ease; }
+    .folder-title { font-size: 14.5px; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 8px; }
+    .folder-toggle-icon { font-size: 11px; color: #0284c7; transition: transform 0.2s ease; }
     .folder-card.open .folder-toggle-icon { transform: rotate(180deg); }
 
     .folder-body { display: none; padding: 10px 16px 16px 16px; }
@@ -103,61 +213,55 @@
     .sub-item-card {
       display: flex; justify-content: space-between; align-items: center;
       padding: 10px 14px; background: #f8fafc; border: 1px solid #e2e8f0;
-      border-radius: 10px; margin-top: 8px;
+      border-radius: 8px; margin-top: 8px;
     }
-    .sub-item-title { font-size: 13.5px; font-weight: 700; color: #334155; margin: 0; display: flex; align-items: center; gap: 8px; }
+    .sub-item-title { font-size: 13.5px; font-weight: 700; color: #334155; margin: 0; }
 
     /* SCOPE SELECTION UI */
-    .scope-selector-box {
-      display: flex; gap: 12px; margin-bottom: 15px; flex-wrap: wrap;
-    }
+    .scope-selector-box { display: flex; gap: 12px; margin-bottom: 15px; flex-wrap: wrap; }
     .scope-option-btn {
       flex: 1; min-width: 200px; padding: 12px 16px; border: 2px solid #e2e8f0;
-      border-radius: 12px; background: #ffffff; cursor: pointer; display: flex;
+      border-radius: 10px; background: #ffffff; cursor: pointer; display: flex;
       align-items: center; gap: 10px; transition: all 0.2s ease; user-select: none;
     }
-    .scope-option-btn input[type="checkbox"] {
-      width: 18px; height: 18px; accent-color: #0284c7; cursor: pointer;
-    }
-    .scope-option-btn.active {
-      border-color: #0284c7; background: #f0f9ff; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
-    }
+    .scope-option-btn input[type="checkbox"] { width: 18px; height: 18px; accent-color: #0284c7; cursor: pointer; }
+    .scope-option-btn.active { border-color: #0284c7; background: #f0f9ff; }
     .scope-title { font-size: 14px; font-weight: 700; color: #0f172a; margin: 0; }
     .scope-desc { font-size: 12px; color: #64748b; margin-top: 2px; }
 
     .class-checkbox-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px;
-      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-top: 8px;
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-top: 8px;
     }
     .class-checkbox-item {
       display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600;
-      color: #334155; cursor: pointer; background: #ffffff; padding: 8px 12px; border-radius: 8px;
+      color: #334155; cursor: pointer; background: #ffffff; padding: 8px 12px; border-radius: 6px;
       border: 1px solid #cbd5e1; transition: all 0.15s ease;
     }
     .class-checkbox-item:hover { border-color: #0284c7; background: #f0f9ff; }
     .class-checkbox-item input { accent-color: #0284c7; width: 16px; height: 16px; }
 
-    /* LAYOUT CHO TAB QUẢN LÝ CÔNG KHAI (SIDEBAR + MAIN) */
+    /* LAYOUT TAB CÔNG KHAI */
     .public-layout-container { display: flex; gap: 20px; align-items: flex-start; }
     .public-filter-sidebar {
       width: 220px; flex-shrink: 0; background: #f8fafc; border: 1px solid #e2e8f0;
-      border-radius: 12px; padding: 16px; box-sizing: border-box;
+      border-radius: 10px; padding: 16px; box-sizing: border-box;
     }
-    .public-filter-title { font-size: 13px; font-weight: 800; color: #0284c7; text-transform: uppercase; margin-bottom: 8px; }
+    .public-filter-title { font-size: 12px; font-weight: 800; color: #0284c7; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
     .public-filter-group { margin-bottom: 16px; }
     .public-filter-btn {
       display: block; width: 100%; text-align: left; padding: 8px 12px; margin-bottom: 4px;
       font-size: 13px; font-weight: 600; color: #475569; background: #ffffff;
-      border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; transition: all 0.15s;
+      border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; transition: all 0.15s;
     }
     .public-filter-btn:hover { background: #f1f5f9; color: #0284c7; }
     .public-filter-btn.active { background: #0284c7; color: #ffffff; border-color: #0284c7; font-weight: 700; }
 
     /* TOAST & MODAL */
     #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-    .toast-notification { pointer-events: auto; background: #ffffff; color: #0f172a; padding: 12px 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 600; border-left: 5px solid #10b981; animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards; min-width: 280px; }
+    .toast-notification { pointer-events: auto; background: #ffffff; color: #0f172a; padding: 12px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; border-left: 4px solid #10b981; animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards; min-width: 280px; }
     .toast-notification.error { border-left-color: #ef4444; }
-    .toast-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; flex-shrink: 0; }
+    .toast-icon { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; flex-shrink: 0; font-weight: 800; }
     .toast-notification.success .toast-icon { background: #10b981; }
     .toast-notification.error .toast-icon { background: #ef4444; }
     @keyframes toastIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
@@ -165,12 +269,12 @@
 
     .custom-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); z-index: 999999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: all 0.2s ease; }
     .custom-modal-overlay.active { opacity: 1; pointer-events: auto; }
-    .custom-modal-box { background: white; border-radius: 16px; padding: 24px; max-width: 400px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); text-align: center; transform: scale(0.9); transition: transform 0.2s ease; }
+    .custom-modal-box { background: white; border-radius: 12px; padding: 24px; max-width: 420px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); text-align: center; transform: scale(0.95); transition: transform 0.2s ease; }
     .custom-modal-overlay.active .custom-modal-box { transform: scale(1); }
     .custom-modal-title { font-size: 17px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
-    .custom-modal-desc { font-size: 14px; color: #64748b; margin-bottom: 20px; line-height: 1.5; }
+    .custom-modal-desc { font-size: 13.5px; color: #64748b; margin-bottom: 20px; line-height: 1.5; }
     .custom-modal-actions { display: flex; gap: 10px; justify-content: center; }
-    .btn-modal { padding: 10px 18px; border-radius: 8px; font-weight: 700; font-size: 13px; border: none; cursor: pointer; }
+    .btn-modal { padding: 9px 18px; border-radius: 6px; font-weight: 700; font-size: 13px; border: none; cursor: pointer; }
     .btn-modal-cancel { background: #f1f5f9; color: #475569; }
     .btn-modal-confirm { background: #ef4444; color: white; }
 
@@ -178,17 +282,17 @@
 
     .scoreboard-modal-card {
       background: #ffffff; width: 95%; max-width: 600px; max-height: 85vh;
-      border-radius: 20px; overflow-y: auto; padding: 24px; position: relative;
+      border-radius: 14px; overflow-y: auto; padding: 24px; position: relative;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); box-sizing: border-box; text-align: left;
     }
     #submission-detail-modal { z-index: 99999; }
-    #printable-scoreboard-card { background: #ffffff; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; box-sizing: border-box; }
+    #printable-scoreboard-card { background: #ffffff; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; box-sizing: border-box; }
     .sb-header { border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 18px; }
     .sb-brand { font-size: 13px; font-weight: 800; color: #0284c7; letter-spacing: 0.5px; margin-bottom: 6px; text-transform: uppercase; }
     .sb-info-row { font-size: 13.5px; color: #334155; margin-bottom: 4px; }
     .sb-info-row strong { color: #0f172a; }
     .sb-score-container { display: flex; justify-content: center; align-items: center; margin: 20px 0; }
-    .score-card-flat { padding: 14px 40px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 18px; font-size: 3rem; font-weight: 800; color: #64748b; text-align: center; }
+    .score-card-flat { padding: 14px 40px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; font-size: 2.8rem; font-weight: 800; color: #64748b; text-align: center; }
     .sb-table-wrapper { margin-top: 16px; overflow-x: auto; border-radius: 8px; }
     .sb-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; }
     .sb-table th { background: #f8fafc; color: #334155; font-weight: 700; padding: 10px; border: 1px solid #e2e8f0; }
@@ -198,7 +302,7 @@
     .sb-row-skipped { background-color: #ffffff !important; color: #64748b !important; }
 
     .attempt-item-card {
-      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
       padding: 14px 16px; margin-bottom: 10px; display: flex;
       justify-content: space-between; align-items: center; gap: 12px;
     }
@@ -285,10 +389,10 @@
     <div class="custom-modal-box" style="text-align: left; max-width: 650px; width: 95%;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 10px;">
         <div>
-          <div class="custom-modal-title" id="history-student-name" style="margin: 0; font-size: 18px; color: #0284c7;">Lịch sử làm bài</div>
+          <div class="custom-modal-title" id="history-student-name" style="margin: 0; font-size: 17px; color: #0284c7;">Lịch sử làm bài</div>
           <div style="font-size: 12.5px; color: #64748b; margin-top: 2px;" id="history-quiz-title">Bài thi: --</div>
         </div>
-        <button onclick="closeHistoryModal()" style="background: none; border: none; font-size: 20px; color: #64748b; cursor: pointer; font-weight: 800;">✕</button>
+        <button onclick="closeHistoryModal()" style="background: none; border: none; font-size: 18px; color: #64748b; cursor: pointer; font-weight: 800;">✕</button>
       </div>
 
       <div id="history-attempts-container" style="max-height: 60vh; overflow-y: auto; padding-right: 4px;">
@@ -297,16 +401,16 @@
     </div>
   </div>
 
-  <!-- MODAL XEM BẢNG KẾT QUẢ CHI TIẾT LẦN NỘP (GIỐNG QUIZROOM) -->
+  <!-- MODAL XEM BẢNG KẾT QUẢ CHI TIẾT LẦN NỘP -->
   <div id="submission-detail-modal" class="custom-modal-overlay">
     <div class="scoreboard-modal-card">
       <div style="display: flex; justify-content: flex-end; margin-bottom: -10px;">
-        <button onclick="closeSubmissionDetailModal()" style="background: none; border: none; font-size: 20px; color: #64748b; cursor: pointer; font-weight: 800;">✕</button>
+        <button onclick="closeSubmissionDetailModal()" style="background: none; border: none; font-size: 18px; color: #64748b; cursor: pointer; font-weight: 800;">✕</button>
       </div>
 
       <div id="printable-scoreboard-card">
         <div class="sb-header">
-          <div class="sb-brand">🎓 TOÁN ANH VIỆT - PHIẾU KẾT QUẢ BÀI THI</div>
+          <div class="sb-brand">TOÁN ANH VIỆT - PHIẾU KẾT QUẢ BÀI THI</div>
           <div class="sb-info-row">Họ và tên: <strong id="detail-student-name">--</strong></div>
           <div class="sb-info-row">Bài thi: <strong id="detail-quiz-title">--</strong></div>
           <div class="sb-info-row">Thời gian nộp: <strong id="detail-sub-date">--</strong></div>
@@ -338,365 +442,378 @@
     </div>
   </div>
 
-  <header class="site-header"></header>
-
-  <main class="admin-container">
-    <div class="admin-header-card">
+  <!-- BỐ CỤC KHUNG ADMIN MỚI -->
+  <div class="admin-wrapper">
+    
+    <!-- SIDEBAR BÊN TRÁI -->
+    <aside class="admin-sidebar">
       <div>
-        <h1 class="admin-title">Dashboard Quản Lý</h1>
-        <div style="font-size: 13px; opacity: 0.9; margin-top: 4px;">Theo dõi danh sách học sinh, tạo đề thi và quản lý tài liệu</div>
+        <div class="sidebar-brand">Quản Lý Hệ Thống</div>
+        <nav class="sidebar-menu">
+          <button class="nav-item active" id="tab-tracker-btn" onclick="switchTab('tracker')">Tiến Độ Bài Tập</button>
+          <button class="nav-item" id="tab-manage-contents-btn" onclick="switchTab('manage-contents')">Tài Liệu Lớp</button>
+          <button class="nav-item" id="tab-create-quiz-btn" onclick="switchTab('create-quiz')">Tạo Đề Thi</button>
+          <button class="nav-item" id="tab-upload-btn" onclick="switchTab('upload')">Đăng Video/Tài Liệu Mới</button>
+          <button class="nav-item" id="tab-students-btn" onclick="switchTab('students')">Danh Sách Học Sinh</button>
+          <button class="nav-item" id="tab-public-contents-btn" onclick="switchTab('public-contents')">Nội Dung Công Khai</button>
+        </nav>
       </div>
-      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <button type="button" class="btn-action" style="background: #ffffff; color: #0284c7; font-weight: 800; border: none; padding: 8px 14px; border-radius: 8px;" onclick="openCreateClassModal()">
-            Tạo Lớp Mới
-          </button>
-          <button type="button" class="btn-action" style="background: #e0f2fe; color: #0369a1; font-weight: 800; border: none; padding: 8px 14px; border-radius: 8px;" onclick="openEditClassModal()">
-            Chỉnh Sửa Lớp
-          </button>
-          <button type="button" class="btn-action" style="background: #fef2f2; color: #ef4444; font-weight: 800; border: none; padding: 8px 14px; border-radius: 8px;" onclick="handleDeleteCurrentClass()">
-            Xóa Lớp
-          </button>
-        </div>
-        <select id="select-class" class="select-class-dropdown" onchange="onClassChange()">
-          <option value="">Đang tải lớp học...</option>
-        </select>
+
+      <div class="sidebar-footer">
+        <a href="index.html" class="btn-out">Về Trang Chủ</a>
       </div>
-    </div>
+    </aside>
 
-    <div class="admin-tabs">
-      <button class="tab-btn active" id="tab-tracker-btn" onclick="switchTab('tracker')">Tiến Độ Bài Tập</button>
-      <button class="tab-btn" id="tab-manage-contents-btn" onclick="switchTab('manage-contents')">Tài Liệu Lớp</button>
-      <button class="tab-btn" id="tab-create-quiz-btn" onclick="switchTab('create-quiz')">Tạo Đề Thi</button>
-      <button class="tab-btn" id="tab-upload-btn" onclick="switchTab('upload')">Đăng Video/Tài Liệu Mới</button>
-      <button class="tab-btn" id="tab-students-btn" onclick="switchTab('students')">Danh Sách Học Sinh</button>
-      <button class="tab-btn" id="tab-public-contents-btn" onclick="switchTab('public-contents')">Nội Dung Công Khai</button>
-    </div>
-
-    <!-- TAB 1: THEO DÕI TIẾN ĐỘ LÀM BÀI -->
-    <div id="tab-tracker" class="panel-card">
-      <div class="card-title-row">
-        <h3 class="card-title">Tình Trạng Học Sinh Làm Bài (Điểm Cao Nhất)</h3>
-        <div>
-          <label style="font-size: 13px; font-weight: 600; color: #475569; margin-right: 8px;">Chọn Đề Thi / Bài Tập:</label>
-          <select id="select-quiz" class="select-class-dropdown" style="border: 1px solid #cbd5e1;" onchange="loadSubmissionTracker()">
-            <option value="">-- Chọn bài thi --</option>
+    <!-- NỘI DUNG CHÍNH BÊN PHẢI -->
+    <div class="admin-content-wrapper">
+      
+      <!-- TOPBAR CỐ ĐỊNH -->
+      <header class="admin-topbar">
+        <div class="topbar-left">
+          <span class="topbar-label">Lớp đang chọn:</span>
+          <select id="select-class" class="select-class-dropdown" onchange="onClassChange()">
+            <option value="">Đang tải lớp học...</option>
           </select>
+
+          <div style="display: flex; gap: 6px; margin-left: 10px;">
+            <button type="button" class="btn-topbar" onclick="openCreateClassModal()">Tạo Lớp Mới</button>
+            <button type="button" class="btn-topbar" onclick="openEditClassModal()">Sửa Thông Tin</button>
+            <button type="button" class="btn-topbar btn-topbar-danger" onclick="handleDeleteCurrentClass()">Xóa Lớp</button>
+          </div>
         </div>
-      </div>
 
-      <div style="overflow-x: auto;">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Họ và Tên</th>
-              <th>Email</th>
-              <th>Trạng Thái</th>
-              <th>Điểm Cao Nhất</th>
-              <th>Thời Gian Làm</th>
-              <th>Thời Gian Nộp Bài</th>
-              <th>Thao Tác</th>
-            </tr>
-          </thead>
-          <tbody id="tracker-table-body">
-            <tr><td colspan="7" style="text-align: center; color: #64748b; padding: 30px;">Vui lòng chọn lớp và đề thi để xem tiến độ.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+        <div>
+          <span class="admin-profile-name">Thầy Đặng Đức Việt</span>
+        </div>
+      </header>
 
-    <!-- TAB 2: DANH SÁCH BÀI HỌC VÀ TÀI LIỆU HIỆN CÓ -->
-    <div id="tab-manage-contents" class="panel-card hidden">
-      <div class="card-title-row">
-        <h3 class="card-title">Tài liệu lớp </h3>
-      </div>
+      <!-- KHU VỰC HIỂN THỊ CÁC TAB -->
+      <main class="admin-main-content">
 
-      <div class="sub-content-tabs">
-        <button class="sub-tab-btn active" onclick="switchAdminSubTab('video', this)">Bài giảng & Video</button>
-        <button class="sub-tab-btn" onclick="switchAdminSubTab('exercise', this)">Bài tập</button>
-        <button class="sub-tab-btn" onclick="switchAdminSubTab('doc', this)">Tài liệu </button>
-      </div>
+        <!-- TAB 1: THEO DÕI TIẾN ĐỘ LÀM BÀI -->
+        <div id="tab-tracker" class="panel-card">
+          <div class="card-title-row">
+            <h3 class="card-title">Tình Trạng Học Sinh Làm Bài (Điểm Cao Nhất)</h3>
+            <div>
+              <label style="font-size: 13px; font-weight: 600; color: #475569; margin-right: 8px;">Chọn Đề Thi / Bài Tập:</label>
+              <select id="select-quiz" class="select-class-dropdown" style="border: 1px solid #cbd5e1;" onchange="loadSubmissionTracker()">
+                <option value="">-- Chọn bài thi --</option>
+              </select>
+            </div>
+          </div>
 
-      <div id="admin-contents-view-container">
-        <p style="text-align: center; color: #64748b; padding: 30px;">Đang tải danh sách bài học...</p>
-      </div>
-    </div>
+          <div style="overflow-x: auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Họ và Tên</th>
+                  <th>Email</th>
+                  <th>Trạng Thái</th>
+                  <th>Điểm Cao Nhất</th>
+                  <th>Thời Gian Làm</th>
+                  <th>Thời Gian Nộp Bài</th>
+                  <th>Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody id="tracker-table-body">
+                <tr><td colspan="7" style="text-align: center; color: #64748b; padding: 30px;">Vui lòng chọn lớp và đề thi để xem tiến độ.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-    <!-- TAB 3: TẠO ĐỀ THI ONLINE MỚI -->
-    <div id="tab-create-quiz" class="panel-card hidden">
-      <h3 class="card-title" style="margin-bottom: 20px;">Tạo Đề Thi</h3>
-      <form id="create-quiz-form" onsubmit="handleCreateQuiz(event)">
-        
-        <div class="form-group">
-          <label>Phạm Vi Đăng</label>
-          <div class="scope-selector-box">
-            <label class="scope-option-btn active" id="quiz-scope-class-lbl">
-              <input type="checkbox" id="quiz-scope-class" checked onchange="toggleScopeUI('quiz')">
-              <div>
-                <div class="scope-title">Lớp học (Nội bộ)</div>
-                <div class="scope-desc">Giao bài thi vào thư mục lớp cho học sinh</div>
+        <!-- TAB 2: DANH SÁCH BÀI HỌC VÀ TÀI LIỆU HIỆN CÓ -->
+        <div id="tab-manage-contents" class="panel-card hidden">
+          <div class="card-title-row">
+            <h3 class="card-title">Tài Liệu Lớp Học</h3>
+          </div>
+
+          <div class="sub-content-tabs">
+            <button class="sub-tab-btn active" onclick="switchAdminSubTab('video', this)">Bài Giảng & Video</button>
+            <button class="sub-tab-btn" onclick="switchAdminSubTab('exercise', this)">Bài Tập</button>
+            <button class="sub-tab-btn" onclick="switchAdminSubTab('doc', this)">Tài Liệu PDF</button>
+          </div>
+
+          <div id="admin-contents-view-container">
+            <p style="text-align: center; color: #64748b; padding: 30px;">Đang tải danh sách bài học...</p>
+          </div>
+        </div>
+
+        <!-- TAB 3: TẠO ĐỀ THI ONLINE MỚI -->
+        <div id="tab-create-quiz" class="panel-card hidden">
+          <h3 class="card-title" style="margin-bottom: 20px;">Tạo Đề Thi Online</h3>
+          <form id="create-quiz-form" onsubmit="handleCreateQuiz(event)">
+            
+            <div class="form-group">
+              <label>Phạm Vi Đăng</label>
+              <div class="scope-selector-box">
+                <label class="scope-option-btn active" id="quiz-scope-class-lbl">
+                  <input type="checkbox" id="quiz-scope-class" checked onchange="toggleScopeUI('quiz')">
+                  <div>
+                    <div class="scope-title">Lớp Học (Nội bộ)</div>
+                    <div class="scope-desc">Giao bài thi vào thư mục lớp cho học sinh</div>
+                  </div>
+                </label>
+
+                <label class="scope-option-btn" id="quiz-scope-public-lbl">
+                  <input type="checkbox" id="quiz-scope-public" onchange="toggleScopeUI('quiz')">
+                  <div>
+                    <div class="scope-title">Công Khai</div>
+                    <div class="scope-desc">Hiển thị ở trang Thi Online cho mọi người</div>
+                  </div>
+                </label>
               </div>
-            </label>
+            </div>
 
-            <label class="scope-option-btn" id="quiz-scope-public-lbl">
-              <input type="checkbox" id="quiz-scope-public" onchange="toggleScopeUI('quiz')">
-              <div>
-                <div class="scope-title">Công khai</div>
-                <div class="scope-desc">Hiển thị ở trang Thi Online cho mọi người</div>
+            <div class="form-group" id="quiz-class-selection-group">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label style="margin: 0;">Chọn Lớp Học</label>
+                <button type="button" onclick="toggleSelectAllClasses('quiz')" style="background: none; border: none; color: #0284c7; font-size: 12px; font-weight: 700; cursor: pointer;">Select All / Clear All</button>
               </div>
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group" id="quiz-class-selection-group">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <label style="margin: 0;">Chọn Lớp Học</label>
-            <button type="button" onclick="toggleSelectAllClasses('quiz')" style="background: none; border: none; color: #0284c7; font-size: 12px; font-weight: 700; cursor: pointer;">Select All / Clear All</button>
-          </div>
-          <div class="class-checkbox-grid" id="quiz-classes-checkbox-container">
-            <span style="color: #64748b; font-size: 13px;">Đang tải danh sách lớp...</span>
-          </div>
-        </div>
-
-        <div class="form-group" id="quiz-folder-group">
-          <label>Chọn Thư Mục</label>
-          <div style="display: flex; gap: 10px;">
-            <select id="quiz-folder-select" class="form-control" style="flex: 1;" onchange="onSelectQuizFolderChange()">
-              <option value="">-- Chọn thư mục --</option>
-            </select>
-            <input type="text" id="quiz-folder-input" class="form-control" style="flex: 1;" placeholder="Tạo thư mục mới...">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Tên Đề Thi</label>
-          <input type="text" id="quiz-title-input" class="form-control" placeholder="Ví dụ: Đề Khảo Sát Giữa Kỳ 1 - Toán 8" required>
-        </div>
-
-        <div style="display: flex; gap: 15px;">
-          <div class="form-group" style="flex: 1;">
-            <label>Khối lớp</label>
-            <select id="quiz-grade-select" class="form-control">
-              <option value="6">Lớp 6</option>
-              <option value="7">Lớp 7</option>
-              <option value="8" selected>Lớp 8</option>
-              <option value="9">Lớp 9</option>
-              <option value="10">Thi thử vào 10</option>
-            </select>
-          </div>
-
-          <div class="form-group" style="flex: 1;">
-            <label>Học kỳ</label>
-            <select id="quiz-semester-select" class="form-control">
-              <option value="Đề giữa kì 1">Đề giữa kì 1</option>
-              <option value="Đề cuối kì 1">Đề cuối kì 1</option>
-              <option value="Đề giữa kì 2">Đề giữa kì 2</option>
-              <option value="Đề cuối kì 2">Đề cuối kì 2</option>
-              <option value="Chuyên đề">Chuyên đề Toán</option>
-            </select>
-          </div>
-
-          <div class="form-group" style="flex: 1;">
-            <label>Thời gian (Phút)</label>
-            <input type="number" id="quiz-duration-input" class="form-control" value="45" min="1" required>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>📄 Chọn File Đề Thi (PDF/Word)</label>
-          <input type="file" id="quiz-pdf-file" class="form-control" accept=".pdf,.doc,.docx" required>
-        </div>
-
-        <div class="form-group">
-          <label>Đáp Án</label>
-          <textarea id="quiz-answers-input" class="form-control" rows="3" placeholder="Nhập chuỗi đáp án. Ví dụ: 1A, 2B, 3C, 4D, 5A..." required></textarea>
-        </div>
-
-        <button type="submit" id="btn-submit-quiz" class="btn-submit" style="background: #10b981;">Tạo Đề Thi</button>
-      </form>
-    </div>
-
-    <!-- TAB 4: ĐĂNG TÀI LIỆU / VIDEO CHO LỚP HOẶC WEB CHUNG -->
-    <div id="tab-upload" class="panel-card hidden">
-      <h3 class="card-title" style="margin-bottom: 20px;">Đăng Tài Liệu / Video</h3>
-      <form id="upload-content-form" onsubmit="handleUploadContent(event)">
-        
-        <div class="form-group">
-          <label>Phạm Vi Đăng</label>
-          <div class="scope-selector-box">
-            <label class="scope-option-btn active" id="content-scope-class-lbl">
-              <input type="checkbox" id="content-scope-class" checked onchange="toggleScopeUI('content')">
-              <div>
-                <div class="scope-title">Lớp học (Nội bộ)</div>
-                <div class="scope-desc">Đẩy tài liệu vào kho bài giảng học sinh</div>
+              <div class="class-checkbox-grid" id="quiz-classes-checkbox-container">
+                <span style="color: #64748b; font-size: 13px;">Đang tải danh sách lớp...</span>
               </div>
-            </label>
+            </div>
 
-            <label class="scope-option-btn" id="content-scope-public-lbl">
-              <input type="checkbox" id="content-scope-public" onchange="toggleScopeUI('content')">
-              <div>
-                <div class="scope-title">Công khai </div>
-                <div class="scope-desc">Đăng lên Tài liệu công khai</div>
+            <div class="form-group" id="quiz-folder-group">
+              <label>Chọn Thư Mục</label>
+              <div style="display: flex; gap: 10px;">
+                <select id="quiz-folder-select" class="form-control" style="flex: 1;" onchange="onSelectQuizFolderChange()">
+                  <option value="">-- Chọn thư mục --</option>
+                </select>
+                <input type="text" id="quiz-folder-input" class="form-control" style="flex: 1;" placeholder="Tạo thư mục mới...">
               </div>
-            </label>
+            </div>
+
+            <div class="form-group">
+              <label>Tên Đề Thi</label>
+              <input type="text" id="quiz-title-input" class="form-control" placeholder="Ví dụ: Đề Khảo Sát Giữa Kỳ 1 - Toán 8" required>
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+              <div class="form-group" style="flex: 1;">
+                <label>Khối Lớp</label>
+                <select id="quiz-grade-select" class="form-control">
+                  <option value="6">Lớp 6</option>
+                  <option value="7">Lớp 7</option>
+                  <option value="8" selected>Lớp 8</option>
+                  <option value="9">Lớp 9</option>
+                  <option value="10">Thi thử vào 10</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="flex: 1;">
+                <label>Học Kỳ</label>
+                <select id="quiz-semester-select" class="form-control">
+                  <option value="Đề giữa kì 1">Đề giữa kì 1</option>
+                  <option value="Đề cuối kì 1">Đề cuối kì 1</option>
+                  <option value="Đề giữa kì 2">Đề giữa kì 2</option>
+                  <option value="Đề cuối kì 2">Đề cuối kì 2</option>
+                  <option value="Chuyên đề">Chuyên đề Toán</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="flex: 1;">
+                <label>Thời Gian Làm Bài (Phút)</label>
+                <input type="number" id="quiz-duration-input" class="form-control" value="45" min="1" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Chọn File Đề Thi (PDF / Word)</label>
+              <input type="file" id="quiz-pdf-file" class="form-control" accept=".pdf,.doc,.docx" required>
+            </div>
+
+            <div class="form-group">
+              <label>Chuỗi Đáp Án Dạng Chuẩn</label>
+              <textarea id="quiz-answers-input" class="form-control" rows="3" placeholder="Nhập chuỗi đáp án. Ví dụ: 1A, 2B, 3C, 4D, 5A..." required></textarea>
+            </div>
+
+            <button type="submit" id="btn-submit-quiz" class="btn-submit" style="background: #10b981;">Tạo Đề Thi</button>
+          </form>
+        </div>
+
+        <!-- TAB 4: ĐĂNG TÀI LIỆU / VIDEO -->
+        <div id="tab-upload" class="panel-card hidden">
+          <h3 class="card-title" style="margin-bottom: 20px;">Đăng Tài Liệu / Video Mới</h3>
+          <form id="upload-content-form" onsubmit="handleUploadContent(event)">
+            
+            <div class="form-group">
+              <label>Phạm Vi Đăng</label>
+              <div class="scope-selector-box">
+                <label class="scope-option-btn active" id="content-scope-class-lbl">
+                  <input type="checkbox" id="content-scope-class" checked onchange="toggleScopeUI('content')">
+                  <div>
+                    <div class="scope-title">Lớp Học (Nội bộ)</div>
+                    <div class="scope-desc">Đẩy tài liệu vào kho bài giảng học sinh</div>
+                  </div>
+                </label>
+
+                <label class="scope-option-btn" id="content-scope-public-lbl">
+                  <input type="checkbox" id="content-scope-public" onchange="toggleScopeUI('content')">
+                  <div>
+                    <div class="scope-title">Công Khai</div>
+                    <div class="scope-desc">Đăng lên mục Tài liệu công khai trên Website</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group" id="content-class-selection-group">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label style="margin: 0;">Chọn Lớp Học</label>
+                <button type="button" onclick="toggleSelectAllClasses('content')" style="background: none; border: none; color: #0284c7; font-size: 12px; font-weight: 700; cursor: pointer;">Select All / Clear All</button>
+              </div>
+              <div class="class-checkbox-grid" id="content-classes-checkbox-container">
+                <span style="color: #64748b; font-size: 13px;">Đang tải danh sách lớp...</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+              <div class="form-group" style="flex: 1;">
+                <label>Loại Nội Dung</label>
+                <select id="content-type" class="form-control" onchange="onContentTypeChange()">
+                  <option value="doc">Tài liệu (File PDF / Word)</option>
+                  <option value="video">Bài giảng Video (Link YouTube)</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="flex: 2;" id="file-input-group">
+                <label>Chọn File Tài Liệu (PDF / Word)</label>
+                <input type="file" id="content-file" class="form-control" accept=".pdf,.doc,.docx">
+              </div>
+
+              <div class="form-group hidden" style="flex: 2;" id="url-input-group">
+                <label id="url-label">Đường Dẫn Video (YouTube URL)</label>
+                <input type="text" id="content-url" class="form-control" placeholder="Dán URL video YouTube tại đây...">
+              </div>
+            </div>
+
+            <div class="form-group" id="content-folder-group">
+              <label>Chọn Thư Mục</label>
+              <div style="display: flex; gap: 10px;">
+                <select id="content-folder-select" class="form-control" style="flex: 1;" onchange="onSelectContentFolderChange()">
+                  <option value="">-- Chọn thư mục --</option>
+                </select>
+                <input type="text" id="content-folder-input" class="form-control" style="flex: 1;" placeholder="Tạo thư mục mới...">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Tiêu Đề Tài Liệu</label>
+              <input type="text" id="content-title" class="form-control" placeholder="Ví dụ: Chuyên đề Hằng Đẳng Thức - Bài Tập Củng Cố" required>
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+              <div class="form-group" style="flex: 1;">
+                <label>Khối Lớp</label>
+                <select id="content-grade-select" class="form-control">
+                  <option value="6">Lớp 6</option>
+                  <option value="7">Lớp 7</option>
+                  <option value="8" selected>Lớp 8</option>
+                  <option value="9">Lớp 9</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="flex: 1;">
+                <label>Học Kỳ</label>
+                <select id="content-semester-select" class="form-control">
+                  <option value="Đề giữa kì 1">Đề giữa kì 1</option>
+                  <option value="Đề cuối kì 1">Đề cuối kì 1</option>
+                  <option value="Đề giữa kì 2">Đề giữa kì 2</option>
+                  <option value="Đề cuối kì 2">Đề cuối kì 2</option>
+                  <option value="Chuyên đề">Chuyên đề Toán</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" id="btn-submit-upload" class="btn-submit">Đăng Tài Liệu</button>
+          </form>
+        </div>
+
+        <!-- TAB 5: QUẢN LÝ DANH SÁCH HỌC SINH -->
+        <div id="tab-students" class="panel-card hidden">
+          <div class="card-title-row">
+            <h3 class="card-title">Danh Sách Học Sinh Trong Lớp</h3>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Họ và Tên</th>
+                  <th>Email</th>
+                  <th>Ngày Tham Gia</th>
+                  <th>Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody id="students-table-body">
+                <tr><td colspan="5" style="text-align: center; color: #64748b; padding: 30px;">Đang tải danh sách học sinh...</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
-        <div class="form-group" id="content-class-selection-group">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <label style="margin: 0;">Chọn Lớp Học</label>
-            <button type="button" onclick="toggleSelectAllClasses('content')" style="background: none; border: none; color: #0284c7; font-size: 12px; font-weight: 700; cursor: pointer;">Select All / Clear All</button>
-          </div>
-          <div class="class-checkbox-grid" id="content-classes-checkbox-container">
-            <span style="color: #64748b; font-size: 13px;">Đang tải danh sách lớp...</span>
-          </div>
-        </div>
-
-        <div style="display: flex; gap: 15px;">
-          <div class="form-group" style="flex: 1;">
-            <label>Loại nội dung</label>
-            <select id="content-type" class="form-control" onchange="onContentTypeChange()">
-              <option value="doc">Tài liệu (File PDF/Word)</option>
-              <option value="video">Bài giảng Video (Link YouTube)</option>
-            </select>
+        <!-- TAB 6: QUẢN LÝ NỘI DUNG CÔNG KHAI -->
+        <div id="tab-public-contents" class="panel-card hidden">
+          <div class="card-title-row">
+            <h3 class="card-title">Quản Lý Nội Dung Công Khai</h3>
           </div>
 
-          <div class="form-group" style="flex: 2;" id="file-input-group">
-            <label>Chọn File tài liệu (PDF/Word)</label>
-            <input type="file" id="content-file" class="form-control" accept=".pdf,.doc,.docx">
+          <div class="sub-content-tabs">
+            <button class="sub-tab-btn active" onclick="switchPublicSubTab('docs', this)">Tài Liệu Toán</button>
+            <button class="sub-tab-btn" onclick="switchPublicSubTab('quizzes', this)">Thi Online</button>
           </div>
 
-          <div class="form-group hidden" style="flex: 2;" id="url-input-group">
-            <label id="url-label">Đường dẫn Video (YouTube URL)</label>
-            <input type="text" id="content-url" class="form-control" placeholder="Dán URL video YouTube tại đây...">
-          </div>
-        </div>
+          <div class="public-layout-container">
+            <!-- SIDEBAR LỌC CỘT TRÁI -->
+            <aside class="public-filter-sidebar">
+              <div class="public-filter-group">
+                <div class="public-filter-title">Khối Lớp</div>
+                <button class="public-filter-btn active" onclick="filterPublicData('grade', 'all', this)">Tất cả lớp</button>
+                <button class="public-filter-btn" onclick="filterPublicData('grade', '6', this)">Toán 6</button>
+                <button class="public-filter-btn" onclick="filterPublicData('grade', '7', this)">Toán 7</button>
+                <button class="public-filter-btn" onclick="filterPublicData('grade', '8', this)">Toán 8</button>
+                <button class="public-filter-btn" onclick="filterPublicData('grade', '9', this)">Toán 9</button>
+                <button class="public-filter-btn" onclick="filterPublicData('grade', '10', this)">Thi thử vào 10</button>
+              </div>
 
-        <div class="form-group" id="content-folder-group">
-          <label>Chọn Thư Mục</label>
-          <div style="display: flex; gap: 10px;">
-            <select id="content-folder-select" class="form-control" style="flex: 1;" onchange="onSelectContentFolderChange()">
-              <option value="">-- Chọn thư mục --</option>
-            </select>
-            <input type="text" id="content-folder-input" class="form-control" style="flex: 1;" placeholder="Tạo thư mục mới...">
-          </div>
-        </div>
+              <div class="public-filter-group">
+                <div class="public-filter-title">Học Kỳ</div>
+                <button class="public-filter-btn active" onclick="filterPublicData('semester', 'all', this)">Tất cả học kỳ</button>
+                <button class="public-filter-btn" onclick="filterPublicData('semester', 'Đề giữa kì 1', this)">Đề giữa kì 1</button>
+                <button class="public-filter-btn" onclick="filterPublicData('semester', 'Đề cuối kì 1', this)">Đề cuối kì 1</button>
+                <button class="public-filter-btn" onclick="filterPublicData('semester', 'Đề giữa kì 2', this)">Đề giữa kì 2</button>
+                <button class="public-filter-btn" onclick="filterPublicData('semester', 'Đề cuối kì 2', this)">Đề cuối kì 2</button>
+                <button class="public-filter-btn" onclick="filterPublicData('semester', 'Chuyên đề', this)">Chuyên đề Toán</button>
+              </div>
+            </aside>
 
-        <div class="form-group">
-          <label>Tiêu Đề Tài Liệu</label>
-          <input type="text" id="content-title" class="form-control" placeholder="Ví dụ: Chuyên đề Hằng Đẳng Thức - Bài Tập Củng Cố" required>
-        </div>
-
-        <div style="display: flex; gap: 15px;">
-          <div class="form-group" style="flex: 1;">
-            <label>Khối lớp</label>
-            <select id="content-grade-select" class="form-control">
-              <option value="6">Lớp 6</option>
-              <option value="7">Lớp 7</option>
-              <option value="8" selected>Lớp 8</option>
-              <option value="9">Lớp 9</option>
-            </select>
-          </div>
-
-          <div class="form-group" style="flex: 1;">
-            <label>Học kỳ</label>
-            <select id="content-semester-select" class="form-control">
-              <option value="Đề giữa kì 1">Đề giữa kì 1</option>
-              <option value="Đề cuối kì 1">Đề cuối kì 1</option>
-              <option value="Đề giữa kì 2">Đề giữa kì 2</option>
-              <option value="Đề cuối kì 2">Đề cuối kì 2</option>
-              <option value="Chuyên đề">Chuyên đề Toán</option>
-            </select>
+            <!-- BẢNG DỮ LIỆU CỘT PHẢI -->
+            <div style="flex-grow: 1; overflow-x: auto;">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Tiêu Đề</th>
+                    <th>Lớp</th>
+                    <th>Loại Đề / Học Kỳ</th>
+                    <th>Chi Tiết File</th>
+                    <th>Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="public-table-body">
+                  <tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Đang tải dữ liệu...</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
-        <button type="submit" id="btn-submit-upload" class="btn-submit">Đăng Tài Liệu</button>
-      </form>
+      </main>
     </div>
-
-    <!-- TAB 5: QUẢN LÝ DANH SÁCH HỌC SINH -->
-    <div id="tab-students" class="panel-card hidden">
-      <div class="card-title-row">
-        <h3 class="card-title">Danh Sách Học Sinh Trong Lớp</h3>
-      </div>
-
-      <div style="overflow-x: auto;">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Họ và Tên</th>
-              <th>Email</th>
-              <th>Ngày Tham Gia</th>
-              <th>Thao Tác</th>
-            </tr>
-          </thead>
-          <tbody id="students-table-body">
-            <tr><td colspan="5" style="text-align: center; color: #64748b; padding: 30px;">Đang tải danh sách học sinh...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- TAB 6: QUẢN LÝ NỘI DUNG CÔNG KHAI CỦA WEB -->
-    <div id="tab-public-contents" class="panel-card hidden">
-      <div class="card-title-row">
-        <h3 class="card-title">Quản Lý Nội Dung Công Khai</h3>
-      </div>
-
-      <div class="sub-content-tabs">
-        <button class="sub-tab-btn active" onclick="switchPublicSubTab('docs', this)">Tài Liệu Toán</button>
-        <button class="sub-tab-btn" onclick="switchPublicSubTab('quizzes', this)">Thi Online</button>
-      </div>
-
-      <!-- CẤU TRÚC LAYOUT VỚI SIDEBAR LỌC CỘT TRÁI -->
-      <div class="public-layout-container">
-        
-        <!-- SIDEBAR BÊN TRÁI ĐỂ LỌC -->
-        <aside class="public-filter-sidebar">
-          <div class="public-filter-group">
-            <div class="public-filter-title">Khối Lớp</div>
-            <button class="public-filter-btn active" onclick="filterPublicData('grade', 'all', this)">Tất cả lớp</button>
-            <button class="public-filter-btn" onclick="filterPublicData('grade', '6', this)">Toán 6</button>
-            <button class="public-filter-btn" onclick="filterPublicData('grade', '7', this)">Toán 7</button>
-            <button class="public-filter-btn" onclick="filterPublicData('grade', '8', this)">Toán 8</button>
-            <button class="public-filter-btn" onclick="filterPublicData('grade', '9', this)">Toán 9</button>
-            <button class="public-filter-btn" onclick="filterPublicData('grade', '10', this)">Thi thử vào 10</button>
-          </div>
-
-          <div class="public-filter-group">
-            <div class="public-filter-title">Học Kỳ</div>
-            <button class="public-filter-btn active" onclick="filterPublicData('semester', 'all', this)">Tất cả học kỳ</button>
-            <button class="public-filter-btn" onclick="filterPublicData('semester', 'Đề giữa kì 1', this)">Đề giữa kì 1</button>
-            <button class="public-filter-btn" onclick="filterPublicData('semester', 'Đề cuối kì 1', this)">Đề cuối kì 1</button>
-            <button class="public-filter-btn" onclick="filterPublicData('semester', 'Đề giữa kì 2', this)">Đề giữa kì 2</button>
-            <button class="public-filter-btn" onclick="filterPublicData('semester', 'Đề cuối kì 2', this)">Đề cuối kì 2</button>
-            <button class="public-filter-btn" onclick="filterPublicData('semester', 'Chuyên đề', this)">Chuyên đề Toán</button>
-          </div>
-        </aside>
-
-        <!-- BẢNG DỮ LIỆU CHÍNH BÊN PHẢI -->
-        <div style="flex-grow: 1; overflow-x: auto;">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Tiêu đề</th>
-                <th>Lớp</th>
-                <th>Loại đề / Học kỳ</th>
-                <th>File / Chi tiết</th>
-                <th>Thao Tác</th>
-              </tr>
-            </thead>
-            <tbody id="public-table-body">
-              <tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Đang tải dữ liệu...</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-      </div>
-    </div>
-  </main>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -717,7 +834,7 @@
     let currentHistoryEmailKey = '';
     let currentHistoryStudentName = '';
 
-    // CACHE DỮ LIỆU NỘI DUNG CÔNG KHAI DÙNG CHO SIDEBAR LỌC
+    // CACHE DỮ LIỆU CÔNG KHAI
     let publicSubTabType = 'docs';
     let rawPublicDataList = [];
     let filterPublicGrade = 'all';
@@ -764,7 +881,7 @@
       btnCancel.addEventListener('click', closeHandler);
     }
 
-    // MODAL TẠO LỚP HỌC MỚI HELPERS
+    // MODAL TẠO LỚP HỌC
     function openCreateClassModal() {
       document.getElementById('create-class-modal').classList.add('active');
       document.getElementById('new-class-id').focus();
@@ -790,7 +907,7 @@
       }
 
       btn.disabled = true;
-      btn.innerText = "⏳ Đang tạo...";
+      btn.innerText = "Đang xử lý...";
 
       try {
         const { data, error } = await _supabase
@@ -807,16 +924,15 @@
 
         if (error) {
           if (error.code === '23505') {
-            showToast("Mã Class ID này đã tồn tại, vui lòng chọn mã khác!", "error");
+            showToast("Mã Class ID này đã tồn tại trên hệ thống!", "error");
           } else {
             showToast("Lỗi khi tạo lớp: " + error.message, "error");
           }
           return;
         }
 
-        showToast("🎉 Đã tạo lớp học mới thành công!", "success");
+        showToast("Đã tạo lớp học mới thành công!", "success");
         closeCreateClassModal();
-
         await reloadClassesList(classId);
 
       } catch (err) {
@@ -827,7 +943,7 @@
       }
     }
 
-    // MODAL CHỈNH SỬA & XÓA LỚP HỌC HELPERS
+    // MODAL CHỈNH SỬA LỚP
     function openEditClassModal() {
       if (!currentClassId) {
         showToast("Vui lòng chọn lớp học cần chỉnh sửa!", "error");
@@ -864,7 +980,7 @@
       }
 
       btn.disabled = true;
-      btn.innerText = "⏳ Đang lưu...";
+      btn.innerText = "Đang lưu...";
 
       try {
         const { error } = await _supabase
@@ -877,7 +993,7 @@
 
         if (error) throw error;
 
-        showToast("🎉 Cập nhật thông tin lớp thành công!", "success");
+        showToast("Cập nhật thông tin lớp thành công!", "success");
         closeEditClassModal();
         await reloadClassesList(currentClassId);
 
@@ -901,21 +1017,16 @@
 
       showConfirmModal(
         'Xóa Lớp Học', 
-        `Bạn có chắc chắn muốn xóa lớp "${className}" (${currentClassId})? Toàn bộ tài liệu và liên kết học sinh trong lớp này sẽ bị xóa theo!`, 
+        `Bạn có chắc chắn muốn xóa lớp "${className}" (${currentClassId})? Toàn bộ tài liệu và liên kết học sinh thuộc lớp này sẽ bị xóa!`, 
         async () => {
           try {
-            // 1. Xóa thành viên thuộc lớp
             await _supabase.from('class_members').delete().eq('class_id', currentClassId);
-            
-            // 2. Xóa tài liệu/bài tập thuộc lớp
             await _supabase.from('class_contents').delete().eq('class_id', currentClassId);
-
-            // 3. Xóa lớp học trong bảng classes
             const { error } = await _supabase.from('classes').delete().eq('class_id', currentClassId);
 
             if (error) throw error;
 
-            showToast("🗑️ Đã xóa lớp học thành công!", "success");
+            showToast("Đã xóa lớp học thành công!", "success");
             await reloadClassesList();
 
           } catch (err) {
@@ -955,7 +1066,7 @@
       }
     }
 
-    // LOGIC CHECK PERMISSION & INIT
+    // LOGIC CHECK PERMISSION
     async function checkTeacherPermission() {
       const { data: { user } } = await _supabase.auth.getUser();
       if (!user) {
@@ -1059,13 +1170,13 @@
       if (data && data.length > 0) {
         const uniqueFolders = [...new Set(data.map(d => d.description).filter(Boolean))];
         if (uniqueFolders.length > 0) {
-          selectEl.innerHTML = '<option value="">-- Chọn Folder đã có --</option>' + 
-            uniqueFolders.map(f => `<option value="${f}">📂 ${f}</option>`).join('');
+          selectEl.innerHTML = '<option value="">-- Chọn Thư mục đã có --</option>' + 
+            uniqueFolders.map(f => `<option value="${f}">${f}</option>`).join('');
           return;
         }
       }
 
-      selectEl.innerHTML = '<option value="">Chưa có Folder nào (Hãy nhập mới bên phải)</option>';
+      selectEl.innerHTML = '<option value="">Chưa có Thư mục (Nhập mới bên phải)</option>';
     }
 
     async function onContentTypeChange() {
@@ -1130,19 +1241,16 @@
         html += `
           <div class="folder-card ${isOpen}">
             <div class="folder-header" onclick="toggleFolder(this)">
-              <h4 class="folder-title">📁 ${folderName} <span style="font-size: 12px; font-weight: 600; color: #64748b;">(${items.length} mục)</span></h4>
+              <h4 class="folder-title">Thư mục: ${folderName} <span style="font-size: 12px; font-weight: 600; color: #64748b;">(${items.length} mục)</span></h4>
               <span class="folder-toggle-icon">▼</span>
             </div>
             <div class="folder-body">
         `;
 
         items.forEach(item => {
-          let icon = '📄';
           let targetUrl = item.content_url || '#';
 
-          if (type === 'video') icon = '🎬';
-          else if (type === 'exercise') {
-            icon = '📝';
+          if (type === 'exercise') {
             targetUrl = item.content_url && item.content_url.includes('quiz-room.html') 
               ? item.content_url 
               : `quiz-room.html?id=${item.content_url || ''}`;
@@ -1150,10 +1258,7 @@
 
           html += `
             <div class="sub-item-card">
-              <div class="sub-item-title">
-                <span>${icon}</span>
-                <span>${item.title}</span>
-              </div>
+              <div class="sub-item-title">${item.title}</div>
               <div style="display: flex; gap: 8px; align-items: center;">
                 <a href="${targetUrl}" target="_blank" class="btn-action">Xem</a>
                 <button class="btn-delete" onclick="deleteClassContent('${item.id}', '${item.title}')">Xóa</button>
@@ -1215,7 +1320,7 @@
       const selectedClassIds = Array.from(document.querySelectorAll('.quiz-class-check:checked')).map(cb => cb.value);
 
       if (isClassSelected && selectedClassIds.length === 0) {
-        showToast("Vui lòng tick chọn ít nhất 1 Lớp học!", "error");
+        showToast("Vui lòng chọn ít nhất 1 Lớp học!", "error");
         return;
       }
 
@@ -1269,7 +1374,7 @@
       }
 
       btn.disabled = true;
-      btn.innerText = '⏳ Đang upload file PDF & tạo đề thi...';
+      btn.innerText = 'Đang xử lý tải lên...';
 
       try {
         const file = fileInput.files[0];
@@ -1349,7 +1454,7 @@
         showToast("Lỗi khi tạo đề thi: " + err.message, "error");
       } finally {
         btn.disabled = false;
-        btn.innerText = '🚀 Tạo Đề Thi';
+        btn.innerText = 'Tạo Đề Thi';
       }
     }
 
@@ -1368,7 +1473,7 @@
       const selectedClassIds = Array.from(document.querySelectorAll('.content-class-check:checked')).map(cb => cb.value);
 
       if (isClassSelected && selectedClassIds.length === 0) {
-        showToast("Vui lòng tick chọn ít nhất 1 Lớp học!", "error");
+        showToast("Vui lòng chọn ít nhất 1 Lớp học!", "error");
         return;
       }
 
@@ -1388,7 +1493,7 @@
 
       let finalUrl = '';
       btn.disabled = true;
-      btn.innerText = '⏳ Đang xử lý tải lên...';
+      btn.innerText = 'Đang xử lý tải lên...';
 
       try {
         if (type === 'doc') {
@@ -1396,7 +1501,7 @@
           if (!fileInput.files || fileInput.files.length === 0) {
             showToast("Vui lòng chọn file cần đăng!", "error");
             btn.disabled = false;
-            btn.innerText = '🚀 Đăng Tài Liệu';
+            btn.innerText = 'Đăng Tài Liệu';
             return;
           }
 
@@ -1422,7 +1527,7 @@
           if (!finalUrl) {
             showToast("Vui lòng nhập đường dẫn Video YouTube!", "error");
             btn.disabled = false;
-            btn.innerText = '🚀 Đăng Tài Liệu';
+            btn.innerText = 'Đăng Tài Liệu';
             return;
           }
         }
@@ -1471,7 +1576,7 @@
         showToast("Lỗi upload: " + err.message, "error");
       } finally {
         btn.disabled = false;
-        btn.innerText = '🚀 Đăng Tài Liệu';
+        btn.innerText = 'Đăng Tài Liệu';
       }
     }
 
@@ -1586,7 +1691,6 @@
       }
     }
 
-    // TẢI VÀ HIỂN THỊ DỮ LIỆU ĐIỂM CAO NHẤT
     async function loadSubmissionTracker() {
       const quizId = document.getElementById('select-quiz').value;
       const tbody = document.getElementById('tracker-table-body');
@@ -1637,7 +1741,7 @@
               <td><strong>${student.student_name}</strong></td>
               <td>${student.student_email}</td>
               <td><span class="status-badge badge-done">Đã nộp (${userSubsList.length} lần)</span></td>
-              <td><strong style="color: #0284c7; font-size: 15px;">${Number(bestSub.mcq_score || 0).toFixed(1)}đ</strong></td>
+              <td><strong style="color: #0284c7; font-size: 14.5px;">${Number(bestSub.mcq_score || 0).toFixed(1)}đ</strong></td>
               <td>${mins > 0 ? mins + 'p ' : ''}${secs}s</td>
               <td><span style="font-size: 13px; color: #334155; font-weight: 600;">${submitTimeStr}</span></td>
               <td>
@@ -1661,7 +1765,6 @@
       }).join('');
     }
 
-    // HIỂN THỊ MODAL LỊCH SỬ NỘP BÀI
     function openHistoryModal(emailKey, studentName) {
       currentHistoryEmailKey = emailKey;
       currentHistoryStudentName = studentName;
@@ -1686,7 +1789,7 @@
 
           let essayHtml = 'Không có';
           if (sub.essay_files && Array.isArray(sub.essay_files) && sub.essay_files.length > 0) {
-            essayHtml = sub.essay_files.map((url, i) => `<a href="${url}" target="_blank" class="btn-action" style="padding: 3px 8px;">📎 File ${i+1}</a>`).join(' ');
+            essayHtml = sub.essay_files.map((url, i) => `<a href="${url}" target="_blank" class="btn-action" style="padding: 3px 8px;">File ${i+1}</a>`).join(' ');
           }
 
           return `
@@ -1696,10 +1799,10 @@
                   Lần ${attemptNum} - <span style="color: #0284c7;">${Number(sub.mcq_score || 0).toFixed(1)} điểm</span>
                 </div>
                 <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
-                  ⏰ Thời điểm nộp bài: <b>${dateStr}</b> (${mins > 0 ? mins + ' phút ' : ''}${secs} giây)
+                  Thời điểm nộp bài: <b>${dateStr}</b> (${mins > 0 ? mins + ' phút ' : ''}${secs} giây)
                 </div>
                 <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
-                  📄 Bài tự luận: ${essayHtml}
+                  Bài tự luận: ${essayHtml}
                 </div>
               </div>
               <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
@@ -1718,7 +1821,6 @@
       document.getElementById('history-modal').classList.remove('active');
     }
 
-    // HÀM XÓA BÀI NỘP CHUẨN XÁC VÀ CẬP NHẬT REALTIME
     function deleteSingleSubmission(submissionId, attemptNum) {
       showConfirmModal('Xóa bài làm', `Bạn có chắc chắn muốn xóa bài nộp Lần ${attemptNum} này không? Hành động không thể hoàn tác.`, async () => {
         try {
@@ -1751,7 +1853,6 @@
       });
     }
 
-    // HIỂN THỊ CHI TIẾT ĐÁP ÁN CỦA 1 LẦN NỘP
     function openSubmissionDetailModal(submissionId, attemptNum) {
       let foundSub = null;
       for (const subsList of Object.values(currentQuizSubmissionsMap)) {
@@ -1822,7 +1923,7 @@
       document.getElementById('submission-detail-modal').classList.remove('active');
     }
 
-    // TAB 6: QUẢN LÝ NỘI DUNG CÔNG KHAI
+    // TAB 6: NỘI DUNG CÔNG KHAI
     async function fetchPublicDataFromSupabase() {
       const tbody = document.getElementById('public-table-body');
       tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Đang tải dữ liệu...</td></tr>';
@@ -1896,7 +1997,7 @@
             <td>Lớp ${item.grade || '---'}</td>
             <td><span class="status-badge" style="background:#fef3c7; color:#d97706;">${item.semester || '---'}</span></td>
             <td>
-              <span style="font-size:12.5px; color:#475569;">⏱️ ${item.duration || 45} phút | 📝 ${item.answer_keys?.length || 0} câu</span>
+              <span style="font-size:12.5px; color:#475569;">Thời gian: ${item.duration || 45} phút | Số câu: ${item.answer_keys?.length || 0}</span>
             </td>
             <td>
               <div style="display:flex; gap:6px;">
@@ -2009,7 +2110,5 @@
 
     document.addEventListener('DOMContentLoaded', initAdmin);
   </script>
-  <script src="header.js"></script>
-  <script src="footer.js"></script>
 </body>
 </html>
