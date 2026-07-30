@@ -31,11 +31,22 @@
       border-right: 1px solid #1e293b;
     }
     .sidebar-brand {
-      padding: 20px 24px;
+      padding: 18px 20px;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .sidebar-brand-img {
+      height: 32px;
+      width: auto;
+      object-fit: contain;
+    }
+    .sidebar-brand-title {
       font-size: 15px;
       font-weight: 800;
       color: #ffffff;
-      border-bottom: 1px solid #1e293b;
       letter-spacing: 0.5px;
       text-transform: uppercase;
     }
@@ -80,23 +91,27 @@
       display: block;
       text-align: center;
       padding: 8px;
-      border-radius: 6px;
+      border-radius: 8px;
       transition: background 0.2s;
     }
     .btn-out:hover { background: #1e293b; color: #ffffff; }
 
+    /* KHUNG PROFILE BO TRÒN MỀM MẠI */
     .user-profile-box {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 10px 12px;
+      padding: 10px 14px;
       background: #1e293b;
       border: 1px solid #334155;
-      border-radius: 8px;
+      border-radius: 12px;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.2s ease;
     }
-    .user-profile-box:hover { background: #334155; }
+    .user-profile-box:hover { 
+      background: #273549; 
+      border-color: #0284c7;
+    }
 
     .avatar-img {
       width: 38px;
@@ -491,7 +506,12 @@
     <!-- SIDEBAR BÊN TRÁI -->
     <aside class="admin-sidebar">
       <div>
-        <div class="sidebar-brand">Quản Lý Hệ Thống</div>
+        <!-- LOGO & BRAND THƯƠNG HIỆU -->
+        <a href="index.html" class="sidebar-brand">
+          <img src="assets/logo.png" alt="Logo" class="sidebar-brand-img" onerror="this.style.display='none'">
+          <span class="sidebar-brand-title">Toán Anh Việt</span>
+        </a>
+
         <nav class="sidebar-menu">
           <button class="nav-item active" id="tab-tracker-btn" onclick="switchTab('tracker')">Tiến Độ Bài Tập</button>
           <button class="nav-item" id="tab-manage-contents-btn" onclick="switchTab('manage-contents')">Tài Liệu Lớp</button>
@@ -502,7 +522,7 @@
         </nav>
       </div>
 
-      <!-- FOOTER SIDEBAR VỚI AVATAR TÀI KHOẢN -->
+      <!-- FOOTER SIDEBAR VỚI AVATAR TÀI KHOẢN CÓ KHUNG BO TRÒN MỀM MẠI -->
       <div class="sidebar-footer">
         <a href="index.html" class="btn-out">Về Trang Chủ</a>
 
