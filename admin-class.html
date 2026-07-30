@@ -30,28 +30,29 @@
       z-index: 100;
       border-right: 1px solid #1e293b;
     }
+
+    /* KHU VỰC LOGO & BRAND */
     .sidebar-brand {
-      padding: 18px 20px;
+      padding: 16px 20px;
       border-bottom: 1px solid #1e293b;
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
+      background: #ffffff;
+      margin: 12px;
+      border-radius: 12px;
       text-decoration: none;
+      transition: transform 0.2s ease;
     }
+    .sidebar-brand:hover { transform: translateY(-1px); }
     .sidebar-brand-img {
-      height: 32px;
+      height: 36px;
       width: auto;
       object-fit: contain;
     }
-    .sidebar-brand-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: #ffffff;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
+
     .sidebar-menu {
-      padding: 16px 12px;
+      padding: 10px 12px;
       display: flex;
       flex-direction: column;
       gap: 4px;
@@ -96,7 +97,7 @@
     }
     .btn-out:hover { background: #1e293b; color: #ffffff; }
 
-    /* KHUNG PROFILE BO TRÒN MỀM MẠI */
+    /* KHUNG PROFILE CÁ NHÂN BO TRÒN MỀM MẠI */
     .user-profile-box {
       display: flex;
       align-items: center;
@@ -506,10 +507,9 @@
     <!-- SIDEBAR BÊN TRÁI -->
     <aside class="admin-sidebar">
       <div>
-        <!-- LOGO & BRAND THƯƠNG HIỆU -->
+        <!-- LOGO & BRAND THƯƠNG HIỆU (KHUNG TRẮNG NỔI BẬT) -->
         <a href="index.html" class="sidebar-brand">
-          <img src="assets/logo.png" alt="Logo" class="sidebar-brand-img" onerror="this.style.display='none'">
-          <span class="sidebar-brand-title">Toán Anh Việt</span>
+          <img src="assets/logo.png" alt="Toán Anh Việt" class="sidebar-brand-img" onerror="this.src='assets/favicon.png'">
         </a>
 
         <nav class="sidebar-menu">
@@ -522,12 +522,12 @@
         </nav>
       </div>
 
-      <!-- FOOTER SIDEBAR VỚI AVATAR TÀI KHOẢN CÓ KHUNG BO TRÒN MỀM MẠI -->
+      <!-- FOOTER SIDEBAR VỚI AVATAR TÀI KHOẢN BO TRÒN MỀM MẠI -->
       <div class="sidebar-footer">
         <a href="index.html" class="btn-out">Về Trang Chủ</a>
 
         <div class="user-profile-box" onclick="window.location.href='profile.html'">
-          <img id="sidebar-user-avatar" src="assets/default-avatar.png" alt="Avatar" class="avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=Dang+Viet&background=0284c7&color=fff'">
+          <img id="sidebar-user-avatar" src="https://ui-avatars.com/api/?name=Dang+Viet&background=0284c7&color=fff" alt="Avatar" class="avatar-img">
           <div class="user-details">
             <div class="user-name-text" id="sidebar-user-name">Đặng Đức Việt</div>
             <div class="user-role-text">Giáo viên / Admin</div>
@@ -1134,7 +1134,7 @@
       }
     }
 
-    // LOGIC CHECK PERMISSION & TẢI PROFILE VÀ AVATAR USER
+    // LOGIC CHECK PERMISSION & TẢI NGUYÊN BẢN PROFILE VÀ AVATAR
     async function checkTeacherPermission() {
       const { data: { user } } = await _supabase.auth.getUser();
       if (!user) {
@@ -1156,13 +1156,19 @@
         return false;
       }
 
-      // LOAD THÔNG TIN CÁ NHÂN VÀ AVATAR VÀO SIDEBAR FOOTER
-      if (profile) {
-        if (profile.full_name) {
-          document.getElementById('sidebar-user-name').innerText = profile.full_name;
-        }
-        if (profile.avatar_url) {
-          document.getElementById('sidebar-user-avatar').src = profile.avatar_url;
+      // LOAD CHUẨN XÁC TÊN VÀ AVATAR THẬT TỪ PROFILE
+      const displayName = profile?.full_name || user.user_metadata?.full_name || 'Đặng Đức Việt';
+      const avatarSrc = profile?.avatar_url || user.user_metadata?.avatar_url;
+
+      if (document.getElementById('sidebar-user-name')) {
+        document.getElementById('sidebar-user-name').innerText = displayName;
+      }
+
+      if (document.getElementById('sidebar-user-avatar')) {
+        if (avatarSrc) {
+          document.getElementById('sidebar-user-avatar').src = avatarSrc;
+        } else {
+          document.getElementById('sidebar-user-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=0284c7&color=fff`;
         }
       }
 
