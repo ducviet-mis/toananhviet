@@ -31,28 +31,19 @@
       border-right: 1px solid #1e293b;
     }
 
-    /* KHU VỰC LOGO & BRAND */
+    /* KHU VỰC TIÊU ĐỀ SIDEBAR TRẮNG SANG TRỌNG */
     .sidebar-brand {
-      padding: 16px 20px;
+      padding: 20px 24px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
       border-bottom: 1px solid #1e293b;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #ffffff;
-      margin: 12px;
-      border-radius: 12px;
-      text-decoration: none;
-      transition: transform 0.2s ease;
-    }
-    .sidebar-brand:hover { transform: translateY(-1px); }
-    .sidebar-brand-img {
-      height: 36px;
-      width: auto;
-      object-fit: contain;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
 
     .sidebar-menu {
-      padding: 10px 12px;
+      padding: 16px 12px;
       display: flex;
       flex-direction: column;
       gap: 4px;
@@ -507,10 +498,8 @@
     <!-- SIDEBAR BÊN TRÁI -->
     <aside class="admin-sidebar">
       <div>
-        <!-- LOGO & BRAND THƯƠNG HIỆU (KHUNG TRẮNG NỔI BẬT) -->
-        <a href="index.html" class="sidebar-brand">
-          <img src="assets/logo.png" alt="Toán Anh Việt" class="sidebar-brand-img" onerror="this.src='assets/favicon.png'">
-        </a>
+        <!-- CHỮ THƯƠNG HIỆU TRẮNG QUẢN LÝ HỆ THỐNG -->
+        <div class="sidebar-brand">Quản Lý Hệ Thống</div>
 
         <nav class="sidebar-menu">
           <button class="nav-item active" id="tab-tracker-btn" onclick="switchTab('tracker')">Tiến Độ Bài Tập</button>
@@ -1134,7 +1123,7 @@
       }
     }
 
-    // LOGIC CHECK PERMISSION & TẢI NGUYÊN BẢN PROFILE VÀ AVATAR
+    // LOGIC CHECK PERMISSION & TẢI PROFILE VÀ AVATAR
     async function checkTeacherPermission() {
       const { data: { user } } = await _supabase.auth.getUser();
       if (!user) {
@@ -1156,7 +1145,7 @@
         return false;
       }
 
-      // LOAD CHUẨN XÁC TÊN VÀ AVATAR THẬT TỪ PROFILE
+      // LOAD TÊN VÀ AVATAR THẬT TỪ PROFILE
       const displayName = profile?.full_name || user.user_metadata?.full_name || 'Đặng Đức Việt';
       const avatarSrc = profile?.avatar_url || user.user_metadata?.avatar_url;
 
