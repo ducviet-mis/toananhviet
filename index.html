@@ -5,10 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gia sư Toán - Kho tài liệu Toán miễn phí</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="doc-card-premium.css">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Nhúng thư viện Netlify Identity Widget -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script src="doc-card-premium.js"></script>
 
 </head>
 <body>
@@ -277,7 +279,7 @@
         const jsonFiles = files.filter(f => f.name.endsWith('.json')).reverse().slice(0, 8);
         
         if (jsonFiles.length === 0) {
-          container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Chưa có tài liệu nào được đăng.</p>';
+          container.innerHTML = '<p class="doc-empty-state">Chưa có tài liệu nào được đăng.</p>';
           return;
         }
 
@@ -286,25 +288,19 @@
           const res = await fetch(fileObj.download_url);
           const doc = await res.json();
           const detailLink = `detail.html?file=${encodeURIComponent(fileObj.download_url)}`;
-          
-          const cardHtml = `
-            <div class="doc-card-premium" onclick="window.location.href='${detailLink}'">
-              <div class="card-meta">
-                <span class="card-badge">${doc.grade}</span>
-                <span class="card-id">${doc.category}</span>
-              </div>
-              <h3 class="card-title">${doc.title}</h3>
-              <p class="card-desc">Tài liệu ôn thi bám sát chương trình, tối ưu hóa phương pháp giải và bứt phá tư duy Toán học hiệu quả.</p>
-              <div class="card-footer">
-                <span>📅 Đăng: ${doc.date}</span>
-                <span class="card-action-btn">📖 Xem tài liệu →</span>
-              </div>
-            </div>
-          `;
-          container.innerHTML += cardHtml;
+
+          container.innerHTML += DocCard.buildDocCardHTML({
+            grade: doc.grade,
+            category: doc.category,
+            title: doc.title,
+            desc: 'Tài liệu ôn thi bám sát chương trình, tối ưu hóa phương pháp giải và bứt phá tư duy Toán học hiệu quả.',
+            dateLabel: doc.date,
+            link: detailLink,
+            actionLabel: '📖 Xem tài liệu',
+          });
         }
       } catch (error) {
-        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Đã xảy ra lỗi khi tải dữ liệu từ kho lưu trữ.</p>';
+        container.innerHTML = '<p class="doc-empty-state">Đã xảy ra lỗi khi tải dữ liệu từ kho lưu trữ.</p>';
       }
     }
 
@@ -376,7 +372,7 @@
           if (error) {
             alert("Gặp sự cố khi gửi đăng ký: " + error.message);
           } else {
-            alert("🎉 Đăng ký thành công! Thầy Việt sẽ liên hệ tư vấn cho bạn sớm nhất nhé.");
+            alert("Đăng ký thành công! Thầy Việt sẽ liên hệ tư vấn cho bạn sớm nhất nhé.");
             registerForm.reset();
           }
         });
