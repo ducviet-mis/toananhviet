@@ -29,11 +29,11 @@
     head.appendChild(metaTitle);
   }
 
-  // 4. Khai báo Icon chất lượng cao cho iPhone (Sử dụng assets/favicon.png)
+  // 4. Khai báo Icon chất lượng cao cho iPhone (Sử dụng assets/iconapp.png)
   if (!document.querySelector('link[rel="apple-touch-icon"]')) {
     const appleIcon = document.createElement('link');
     appleIcon.rel = 'apple-touch-icon';
-    appleIcon.href = '/assets/favicon.png';
+    appleIcon.href = '/assets/iconapp.png';
     head.appendChild(appleIcon);
   }
 
