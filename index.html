@@ -386,36 +386,19 @@
   <script src="header.js"></script>
   <script src="footer.js"></script>
 
-  <!-- ================= TÍCH HỢP CHATBOT COZE CHÍNH THỨC ================= -->
-<style>
-  #coze-chat-widget {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 999999;
-    border: none;
-    width: 400px;
-    height: 600px;
-    max-width: calc(100vw - 40px);
-    max-height: calc(100vh - 40px);
-  }
-</style>
-
+ <!-- ================= TÍCH HỢP CHATBOT COZE ================= -->
 <script src="https://sf-cdn.coze.com/obj/unedited-static/bihead/coze/chatSDK.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    new CozeWebSDK.WebChatClient({
-      config: {
-        bot_id: '7668682211020800005',
-      },
-      componentProps: {
-        title: 'Trợ lý Toán Anh Việt',
-      },
-      el: document.body
-    });
+  new CozeWebSDK.WebChatClient({
+    config: {
+      bot_id: '7668682211020800005',
+    },
+    componentProps: {
+      title: 'Trợ lý Toán Anh Việt',
+    },
   });
 </script>
-<!-- ====================================================================== -->
+<!-- ========================================================= -->
 
 </body>
 </html>
