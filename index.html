@@ -386,240 +386,26 @@
   <script src="header.js"></script>
   <script src="footer.js"></script>
 
-  <!-- ================= START: AI CHATBOT TOÁN ANH VIỆT (TỰ THIẾT KẾ & XỬ LÝ CHUẨN COZE V3) ================= -->
-  <style>
-    :root {
-      --primary-color: #0284c7; /* Tone màu xanh tiệp màu với trang Toán Anh Việt */
-      --chat-width: 380px;
-      --chat-height: 520px;
-    }
-
-    #tav-chat-launcher {
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
-      width: 60px;
-      height: 60px;
-      background: var(--primary-color);
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 26px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s ease;
-      z-index: 9999;
-    }
-    #tav-chat-launcher:hover { transform: scale(1.1); }
-
-    #tav-chat-box {
-      position: fixed;
-      bottom: 95px;
-      right: 25px;
-      width: var(--chat-width);
-      height: var(--chat-height);
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
-      font-family: 'Inter', Arial, sans-serif;
-      z-index: 9999;
-    }
-
-    .tav-chat-header {
-      background: var(--primary-color);
-      color: white;
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: bold;
-      font-size: 16px;
-    }
-    .tav-chat-header .close-btn {
-      cursor: pointer;
-      font-size: 20px;
-      border: none;
-      background: none;
-      color: white;
-    }
-
-    .tav-chat-body {
-      flex: 1;
-      padding: 15px;
-      overflow-y: auto;
-      background: #f8f9fa;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .tav-msg {
-      max-width: 80%;
-      padding: 10px 14px;
-      border-radius: 14px;
-      font-size: 14px;
-      line-height: 1.4;
-      word-wrap: break-word;
-      white-space: pre-wrap;
-    }
-    .tav-msg.user {
-      align-self: flex-end;
-      background: var(--primary-color);
-      color: white;
-      border-bottom-right-radius: 2px;
-    }
-    .tav-msg.ai {
-      align-self: flex-start;
-      background: #e9ecef;
-      color: #333;
-      border-bottom-left-radius: 2px;
-    }
-
-    .tav-chat-footer {
-      padding: 10px;
-      background: white;
-      display: flex;
-      gap: 8px;
-      border-top: 1px solid #eee;
-    }
-    .tav-chat-footer input {
-      flex: 1;
-      padding: 10px 12px;
-      border: 1px solid #ddd;
-      border-radius: 20px;
-      outline: none;
-    }
-    .tav-chat-footer button {
-      background: var(--primary-color);
-      color: white;
-      border: none;
-      padding: 0 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-  </style>
-
-  <!-- GIAO DIỆN CHATBOT -->
-  <div id="tav-chat-launcher" onclick="toggleTavChat()">💬</div>
-
-  <div id="tav-chat-box">
-    <div class="tav-chat-header">
-      <span>Trợ lý Toán Anh Việt</span>
-      <button class="close-btn" onclick="toggleTavChat()">✕</button>
-    </div>
-    <div class="tav-chat-body" id="tav-chat-body">
-      <div class="tav-msg ai">Xin chào! Tôi là Trợ lý AI Toán Anh Việt. Bạn cần hỗ trợ gì hôm nay?</div>
-    </div>
-    <div class="tav-chat-footer">
-      <input type="text" id="tav-chat-input" placeholder="Nhập câu hỏi..." onkeypress="handleTavKeyPress(event)">
-      <button onclick="sendTavMsg()">Gửi</button>
-    </div>
-  </div>
-
-  <script>
-    const COZE_PAT = "pat_a9q7qHMjE2GkeRCwIm7haFVl0sgzvV2KbnpRClR3WdoSAzazeA72Acq3q7US9iep"; 
-    const BOT_ID = "7668682211020800005";
-
-    function toggleTavChat() {
-      const chatBox = document.getElementById('tav-chat-box');
-      chatBox.style.display = (chatBox.style.display === 'flex') ? 'none' : 'flex';
-    }
-
-    function handleTavKeyPress(e) {
-      if (e.key === 'Enter') sendTavMsg();
-    }
-
-    async function sendTavMsg() {
-      const inputEl = document.getElementById('tav-chat-input');
-      const bodyEl = document.getElementById('tav-chat-body');
-      const text = inputEl.value.trim();
-
-      if (!text) return;
-
-      bodyEl.innerHTML += `<div class="tav-msg user">${text}</div>`;
-      inputEl.value = '';
-      bodyEl.scrollTop = bodyEl.scrollHeight;
-
-      const loadId = 'load-' + Date.now();
-      bodyEl.innerHTML += `<div class="tav-msg ai" id="${loadId}">Đang suy nghĩ...</div>`;
-      bodyEl.scrollTop = bodyEl.scrollHeight;
-
-      try {
-        // 1. Tạo phiên chat mới
-        const res = await fetch('https://api.coze.com/v3/chat', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${COZE_PAT}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            bot_id: BOT_ID,
-            user_id: "student_user",
-            stream: false,
-            additional_messages: [{ role: "user", content: text, content_type: "text" }]
-          })
-        });
-
-        const data = await res.json();
-        const loadEl = document.getElementById(loadId);
-
-        if (data.code === 0 && data.data) {
-          const chatId = data.data.id;
-          const conversationId = data.data.conversation_id;
-
-          // 2. Chờ AI suy nghĩ và lấy kết quả
-          let completed = false;
-          let attempts = 0;
-          while (!completed && attempts < 15) {
-            await new Promise(r => setTimeout(r, 1500)); // Chờ 1.5 giây mỗi lần kiểm tra
-            attempts++;
-
-            const statusRes = await fetch(`https://api.coze.com/v3/chat/retrieve?chat_id=${chatId}&conversation_id=${conversationId}`, {
-              headers: { 'Authorization': `Bearer ${COZE_PAT}` }
-            });
-            const statusData = await statusRes.json();
-
-            if (statusData.data && statusData.data.status === 'completed') {
-              completed = true;
-              
-              // 3. Lấy nội dung tin nhắn câu trả lời
-              const msgRes = await fetch(`https://api.coze.com/v3/chat/message/list?chat_id=${chatId}&conversation_id=${conversationId}`, {
-                headers: { 'Authorization': `Bearer ${COZE_PAT}` }
-              });
-              const msgData = await msgRes.json();
-              
-              if (msgData.data) {
-                const aiMsg = msgData.data.find(m => m.role === 'assistant' && m.type === 'answer');
-                if (aiMsg) {
-                  loadEl.innerText = aiMsg.content;
-                } else {
-                  loadEl.innerText = "Không thể đọc câu trả lời từ AI.";
-                }
-              }
-            }
-          }
-
-          if (!completed) {
-            loadEl.innerText = "Hệ thống phản hồi lâu, bạn vui lòng thử lại sau giây lát nhé!";
-          }
-
-        } else {
-          loadEl.innerText = "Lỗi: " + (data.msg || "Không thể kết nối tới Coze");
-        }
-      } catch (err) {
-        document.getElementById(loadId).innerText = "Lỗi kết nối mạng!";
+ <!-- COZE CHAT SDK CHÍNH CHỦ -->
+<script src="https://sf-cdn.coze.com/obj/unedited-static/bihead/coze/chatSDK.js"></script>
+<script>
+  new CozeWebSDK.WebChatClient({
+    config: {
+      bot_id: '7668682211020800005',
+    },
+    componentProps: {
+      title: 'Trợ lý Toán Anh Việt',
+      icon: 'https://toananhviet.io.vn/assets/favicon.png',
+    },
+    auth: {
+      type: 'token',
+      token: 'pat_a9q7qHMjE2GkeRCwIm7haFVl0sgzvV2KbnpRClR3WdoSAzazeA72Acq3q7US9iep',
+      onRefreshToken: function () {
+        return 'pat_a9q7qHMjE2GkeRCwIm7haFVl0sgzvV2KbnpRClR3WdoSAzazeA72Acq3q7US9iep';
       }
-
-      bodyEl.scrollTop = bodyEl.scrollHeight;
     }
-  </script>
-  <!-- ================= END: AI CHATBOT TOÁN ANH VIỆT ================= -->
+  });
+</script>
 
 </body>
 </html>
