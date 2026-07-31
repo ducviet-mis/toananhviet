@@ -1,53 +1,3 @@
-// 1. Tự động thêm các thẻ Meta PWA vào <head>
-(function injectPWAMeta() {
-  const head = document.head;
-
-  // Thẻ cho phép chạy full màn hình trên iOS
-  if (!document.querySelector('meta[name="apple-mobile-web-app-capable"]')) {
-    const metaCapable = document.createElement('meta');
-    metaCapable.name = 'apple-mobile-web-app-capable';
-    metaCapable.content = 'yes';
-    head.appendChild(metaCapable);
-  }
-
-  // Thẻ style cho thanh trạng thái
-  if (!document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')) {
-    const metaStatus = document.createElement('meta');
-    metaStatus.name = 'apple-mobile-web-app-status-bar-style';
-    metaStatus.content = 'default';
-    head.appendChild(metaStatus);
-  }
-
-  // Tiêu đề App
-  if (!document.querySelector('meta[name="apple-mobile-web-app-title"]')) {
-    const metaTitle = document.createElement('meta');
-    metaTitle.name = 'apple-mobile-web-app-title';
-    metaTitle.content = 'Toán Anh Việt';
-    head.appendChild(metaTitle);
-  }
-
-  // Link tới manifest.json
-  if (!document.querySelector('link[rel="manifest"]')) {
-    const linkManifest = document.createElement('link');
-    linkManifest.rel = 'manifest';
-    linkManifest.href = '/manifest.json';
-    head.appendChild(linkManifest);
-  }
-})();
-
-// 2. Chặn hành vi bật thanh Safari khi bấm chuyển trang (Chỉ chạy trên iOS PWA)
-if (("standalone" in window.navigator) && window.navigator.standalone) {
-  document.addEventListener('click', function(event) {
-    let noddy = event.target;
-    while (noddy && noddy.nodeName !== "A" && noddy.nodeName !== "HTML") {
-      noddy = noddy.parentNode;
-    }
-    if (noddy && 'href' in noddy && noddy.href.indexOf('http') !== -1 && noddy.href.indexOf(document.location.host) !== -1) {
-      event.preventDefault();
-      document.location.href = noddy.href;
-    }
-  }, false);
-}
 (async function initUniversalHeader() {
   const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
@@ -75,7 +25,8 @@ if (("standalone" in window.navigator) && window.navigator.standalone) {
     siteHeader.innerHTML = `
       <div class="national-day-banner">
         <span class="star-icon">★</span>
-        <span>Chào mừng 81 năm Quốc khánh nước CHXHCN Việt Nam (2/9/1945 - 2/9/2026)</span>
+        <span class="ndb-text-full">Chào mừng 81 năm Quốc khánh nước CHXHCN Việt Nam (2/9/1945 - 2/9/2026)</span>
+        <span class="ndb-text-short">Chào mừng Quốc khánh 2/9 🇻🇳</span>
         <span class="star-icon">★</span>
       </div>
       <nav class="nav-container">
@@ -84,6 +35,11 @@ if (("standalone" in window.navigator) && window.navigator.standalone) {
           <img src="assets/logo.png" alt="Logo" class="logo-img" style="height:35px;" onerror="this.src='https://via.placeholder.com/40?text=TAV'">
           TOÁN ANH VIỆT
         </a>
+        <button class="nav-toggle" id="nav-toggle-btn" aria-label="Mở menu" aria-expanded="false">
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+        </button>
         <ul class="nav-menu" id="main-nav-menu">
           <li><a href="index.html" class="${isHome ? 'active' : ''}">Trang chủ</a></li>
           
@@ -102,6 +58,7 @@ if (("standalone" in window.navigator) && window.navigator.standalone) {
           <li id="auth-menu-item"><a href="login.html">Đăng nhập</a></li>
         </ul>
       </nav>
+      <div class="nav-overlay" id="nav-overlay"></div>
       <div class="bunting-strip" aria-hidden="true">${buntingPennants}</div>
     `;
   }
@@ -170,9 +127,102 @@ if (("standalone" in window.navigator) && window.navigator.standalone) {
         .national-day-banner { font-size: 11px !important; padding: 6px 10px !important; }
         .bunting-strip { display: none !important; }
       }
+
+      /* ================================================================
+         TỐI ƯU MOBILE: HAMBURGER MENU + DRAWER (chỉ áp dụng ≤768px)
+         ================================================================ */
+      .ndb-text-short { display: none !important; }
+
+      .nav-toggle { display: none; flex-direction: column; justify-content: center; align-items: center; gap: 5px; width: 40px; height: 40px; background: transparent !important; border: none; cursor: pointer; border-radius: 8px; padding: 0; flex-shrink: 0; }
+      .nav-toggle:hover { background: #f1f5f9 !important; }
+      .nav-toggle-bar { width: 20px; height: 2px; background: #334155; border-radius: 2px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease; }
+      .nav-toggle.nav-toggle-active .nav-toggle-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+      .nav-toggle.nav-toggle-active .nav-toggle-bar:nth-child(2) { opacity: 0; }
+      .nav-toggle.nav-toggle-active .nav-toggle-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+      .nav-overlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); z-index: 9998; opacity: 0; transition: opacity 0.3s ease; }
+      .nav-overlay.nav-overlay-open { display: block !important; opacity: 1 !important; }
+
+      @media (max-width: 768px) {
+        .nav-container { flex-direction: row !important; gap: 0 !important; justify-content: space-between !important; align-items: center !important; padding: 10px 14px !important; }
+        .logo { font-size: 16px !important; }
+        .logo-img { height: 30px !important; }
+        .nav-toggle { display: flex !important; }
+
+        .nav-menu { position: fixed !important; top: 0 !important; right: -300px !important; bottom: auto !important; width: 280px !important; max-width: 82vw !important; height: 100vh !important; height: 100dvh !important; background: #ffffff !important; flex-direction: column !important; align-items: stretch !important; justify-content: flex-start !important; flex-wrap: nowrap !important; gap: 4px !important; margin: 0 !important; padding: 70px 16px 24px !important; box-shadow: -12px 0 40px rgba(15, 23, 42, 0.18) !important; transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important; overflow-y: auto !important; z-index: 9999 !important; }
+        .nav-menu.nav-menu-open { right: 0 !important; }
+        .nav-menu li { width: 100% !important; display: block !important; }
+        .nav-menu li a { display: block !important; width: 100% !important; box-sizing: border-box !important; padding: 12px 14px !important; font-size: 15px !important; }
+
+        .nav-dropdown .dropdown-content { display: none !important; position: static !important; box-shadow: none !important; border: none !important; margin-top: 2px !important; margin-left: 10px !important; padding: 2px 0 2px 10px !important; border-left: 2px solid #e0f2fe !important; border-radius: 0 !important; }
+        .nav-dropdown:hover .dropdown-content { display: none !important; }
+        .nav-dropdown.nav-dropdown-open .dropdown-content { display: block !important; }
+
+        .user-profile-dropdown { margin-left: 0 !important; padding-bottom: 0 !important; width: 100% !important; margin-top: 10px !important; padding-top: 10px !important; border-top: 1px solid #f1f5f9 !important; }
+        .user-profile-dropdown > .menu-avatar-img { margin-right: 8px !important; }
+        .dropdown-menu-box { display: none !important; position: static !important; box-shadow: none !important; border: none !important; width: 100% !important; margin-top: 8px !important; animation: none !important; }
+        .user-profile-dropdown:hover .dropdown-menu-box { display: none !important; }
+        .user-profile-dropdown.dropdown-menu-open .dropdown-menu-box { display: block !important; }
+
+        .national-day-banner { flex-wrap: nowrap !important; overflow: hidden !important; }
+        .national-day-banner .ndb-text-full { display: none !important; }
+        .national-day-banner .ndb-text-short { display: inline !important; }
+      }
     `;
     document.head.appendChild(style);
   }
+
+  // 2.5 Tương tác Menu Mobile (Hamburger + Overlay + Dropdown chạm)
+  (function initMobileNavInteractions() {
+    const toggleBtn = document.getElementById('nav-toggle-btn');
+    const navMenu = document.getElementById('main-nav-menu');
+    const overlay = document.getElementById('nav-overlay');
+    if (!toggleBtn || !navMenu || !overlay) return;
+
+    function closeMobileMenu() {
+      navMenu.classList.remove('nav-menu-open');
+      overlay.classList.remove('nav-overlay-open');
+      toggleBtn.classList.remove('nav-toggle-active');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      navMenu.querySelectorAll('.nav-dropdown-open').forEach(el => el.classList.remove('nav-dropdown-open'));
+      navMenu.querySelectorAll('.dropdown-menu-open').forEach(el => el.classList.remove('dropdown-menu-open'));
+    }
+
+    function openMobileMenu() {
+      navMenu.classList.add('nav-menu-open');
+      overlay.classList.add('nav-overlay-open');
+      toggleBtn.classList.add('nav-toggle-active');
+      toggleBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      navMenu.classList.contains('nav-menu-open') ? closeMobileMenu() : openMobileMenu();
+    });
+
+    overlay.addEventListener('click', closeMobileMenu);
+
+    // Đóng menu khi bấm 1 link điều hướng thực sự (không phải nút mở dropdown)
+    navMenu.addEventListener('click', (e) => {
+      const link = e.target.closest('a');
+      if (!link) return;
+
+      // Nút "Tài liệu Toán ▾" trên mobile: chạm để xổ ra thay vì hover
+      if (link.classList.contains('dropbtn') && window.innerWidth <= 768) {
+        e.preventDefault();
+        link.closest('.nav-dropdown')?.classList.toggle('nav-dropdown-open');
+        return;
+      }
+
+      closeMobileMenu();
+    });
+
+    // Đóng menu khi resize lên desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) closeMobileMenu();
+    });
+  })();
 
   // 3. Cache UI Render
   const cachedUser = localStorage.getItem('tav_user_session');
@@ -238,6 +288,16 @@ if (("standalone" in window.navigator) && window.navigator.standalone) {
       localStorage.removeItem('tav_user_session');
       if (_supabase) await _supabase.auth.signOut();
       window.location.reload();
+    });
+
+    // Trên mobile, hover không hoạt động ổn định -> chạm vào avatar để mở/đóng dropdown
+    const profileToggle = authLI.querySelector('.user-profile-dropdown');
+    profileToggle?.addEventListener('click', (e) => {
+      if (window.innerWidth > 768) return;
+      const clickedInsideMenu = e.target.closest('.dropdown-menu-box');
+      if (clickedInsideMenu) return; // để các link bên trong hoạt động bình thường
+      e.preventDefault();
+      profileToggle.classList.toggle('dropdown-menu-open');
     });
   }
 })();
