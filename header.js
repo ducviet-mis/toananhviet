@@ -1,3 +1,53 @@
+// 1. Tự động thêm các thẻ Meta PWA vào <head>
+(function injectPWAMeta() {
+  const head = document.head;
+
+  // Thẻ cho phép chạy full màn hình trên iOS
+  if (!document.querySelector('meta[name="apple-mobile-web-app-capable"]')) {
+    const metaCapable = document.createElement('meta');
+    metaCapable.name = 'apple-mobile-web-app-capable';
+    metaCapable.content = 'yes';
+    head.appendChild(metaCapable);
+  }
+
+  // Thẻ style cho thanh trạng thái
+  if (!document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')) {
+    const metaStatus = document.createElement('meta');
+    metaStatus.name = 'apple-mobile-web-app-status-bar-style';
+    metaStatus.content = 'default';
+    head.appendChild(metaStatus);
+  }
+
+  // Tiêu đề App
+  if (!document.querySelector('meta[name="apple-mobile-web-app-title"]')) {
+    const metaTitle = document.createElement('meta');
+    metaTitle.name = 'apple-mobile-web-app-title';
+    metaTitle.content = 'Toán Anh Việt';
+    head.appendChild(metaTitle);
+  }
+
+  // Link tới manifest.json
+  if (!document.querySelector('link[rel="manifest"]')) {
+    const linkManifest = document.createElement('link');
+    linkManifest.rel = 'manifest';
+    linkManifest.href = '/manifest.json';
+    head.appendChild(linkManifest);
+  }
+})();
+
+// 2. Chặn hành vi bật thanh Safari khi bấm chuyển trang (Chỉ chạy trên iOS PWA)
+if (("standalone" in window.navigator) && window.navigator.standalone) {
+  document.addEventListener('click', function(event) {
+    let noddy = event.target;
+    while (noddy && noddy.nodeName !== "A" && noddy.nodeName !== "HTML") {
+      noddy = noddy.parentNode;
+    }
+    if (noddy && 'href' in noddy && noddy.href.indexOf('http') !== -1 && noddy.href.indexOf(document.location.host) !== -1) {
+      event.preventDefault();
+      document.location.href = noddy.href;
+    }
+  }, false);
+}
 (async function initUniversalHeader() {
   const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
