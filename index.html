@@ -386,26 +386,25 @@
   <script src="header.js"></script>
   <script src="footer.js"></script>
 
- <!-- COZE CHAT SDK CHÍNH CHỦ -->
-<script src="https://sf-cdn.coze.com/obj/unedited-static/bihead/coze/chatSDK.js"></script>
-<script>
-  new CozeWebSDK.WebChatClient({
-    config: {
-      bot_id: '7668682211020800005',
-    },
-    componentProps: {
-      title: 'Trợ lý Toán Anh Việt',
-      icon: 'https://toananhviet.io.vn/assets/favicon.png',
-    },
-    auth: {
-      type: 'token',
-      token: 'pat_a9q7qHMjE2GkeRCwIm7haFVl0sgzvV2KbnpRClR3WdoSAzazeA72Acq3q7US9iep',
-      onRefreshToken: function () {
-        return 'pat_a9q7qHMjE2GkeRCwIm7haFVl0sgzvV2KbnpRClR3WdoSAzazeA72Acq3q7US9iep';
+  <!-- ================= TÍCH HỢP COZE CHATBOT SDK CHÍNH CHỦ ================= -->
+  <script src="https://sf-cdn.coze.com/obj/unedited-static/bihead/coze/chatSDK.js"></script>
+  <script>
+    new CozeWebSDK.WebChatClient({
+      config: {
+        bot_id: '7668682211020800005',
+      },
+      componentProps: {
+        title: 'Trợ lý Toán Anh Việt',
+      },
+      auth: {
+        type: 'token',
+        token: 'pat_a9q7qHMjE2GkeRCwIm7haFVl0sgzvV2KbnpRClR3WdoSAzazeA72Acq3q7US9iep',
+        onRefreshToken: function () {
+          return 'pat_a9q7qHMjE2GkeRCwIm7haFVl0sgzvV2KbnpRClR3WdoSAzazeA72Acq3q7US9iep';
+        }
       }
-    }
-  });
-</script>
+    });
+  </script>
 
 </body>
 </html>
