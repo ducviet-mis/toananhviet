@@ -360,17 +360,20 @@
       container.innerHTML = html;
     }
 
-    /* MỞ POPUP LỊCH SỬ DÀNH CHO HỌC SINH */
+    /* MỞ POPUP LỊCH SỬ DÀNH CHO HỌC SINH (ĐÃ ĐỒNG BỘ THEO USER EMAIL) */
     async function openStudentHistoryModal(quizId, quizTitle) {
-      if (!currentUser) {
-        alert("Vui lòng đăng nhập để xem lịch sử làm bài!");
+      if (!currentUser || !currentUser.email) {
+        alert("Vui lòng đăng nhập tài khoản để xem lịch sử làm bài!");
         return;
       }
 
       const modal = document.getElementById('student-history-modal');
       const container = document.getElementById('history-attempts-container');
 
-      document.getElementById('history-student-name').innerText = `Lịch sử làm bài của bạn`;
+      const studentEmail = currentUser.email.toLowerCase().trim();
+      const studentName = currentUser.user_metadata?.full_name || studentEmail;
+
+      document.getElementById('history-student-name').innerText = `Lịch sử làm bài: ${studentName}`;
       document.getElementById('history-quiz-title').innerText = `Bài thi: ${quizTitle}`;
 
       modal.classList.add('active');
@@ -380,16 +383,16 @@
       const { data: qData } = await _supabase.from('quizzes').select('*').eq('id', quizId).single();
       activeQuizData = qData;
 
-      // Tải các lần nộp của Học sinh này
+      // ĐỒNG BỘ TRUY VẤN: Lọc theo user_email giống hệt trang Admin
       const { data: submissions, error } = await _supabase
         .from('quiz_submissions')
         .select('*')
         .eq('quiz_id', quizId)
-        .eq('user_id', currentUser.id)
+        .ilike('user_email', studentEmail)
         .order('created_at', { ascending: false });
 
       if (error || !submissions || submissions.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #64748b; padding: 20px;">Bạn chưa nộp bài lần nào cho đề thi này.</p>';
+        container.innerHTML = '<p style="text-align: center; color: #64748b; padding: 20px;">Bạn chưa có lượt nộp bài nào cho đề thi này.</p>';
         return;
       }
 
@@ -434,7 +437,7 @@
         return;
       }
 
-      document.getElementById('detail-student-name').innerText = currentUser.user_metadata?.full_name || currentUser.email;
+      document.getElementById('detail-student-name').innerText = foundSub.user_name || currentUser.user_metadata?.full_name || currentUser.email;
       document.getElementById('detail-quiz-title').innerText = `${activeQuizData.title} (Lần ${attemptNum})`;
       document.getElementById('detail-sub-date').innerText = foundSub.created_at ? new Date(foundSub.created_at).toLocaleString('vi-VN') : '---';
 
