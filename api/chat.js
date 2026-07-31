@@ -11,9 +11,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Sử dụng model gemini-1.5-flash chính thức
-const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`, {
-    method: 'POST',
+    // Endpoint và Tên Model chuẩn nhất hiện tại
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -31,15 +31,15 @@ const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/m
 
     const data = await response.json();
 
-    // Nếu Google báo lỗi (ví dụ sai Key hoặc hết quota)
+    // Kiểm tra nếu Google trả về lỗi Quota hay Key
     if (data.error) {
-      return res.status(200).json({ reply: `⚠️ Lỗi từ Google API: ${data.error.message}` });
+      return res.status(200).json({ reply: `⚠️ Lỗi Google API (${data.error.code}): ${data.error.message}` });
     }
 
     const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Tớ chưa nghĩ ra lời giải, cậu hỏi lại nhé!";
     return res.status(200).json({ reply });
 
   } catch (error) {
-    return res.status(200).json({ reply: `⚠️ Lỗi server: ${error.message}` });
+    return res.status(200).json({ reply: `⚠️ Lỗi Server: ${error.message}` });
   }
 }
