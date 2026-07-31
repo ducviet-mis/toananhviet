@@ -11,8 +11,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Gọi endpoint v1 chuẩn chính thức của Google (Stable Release)
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+    // Endpoint chuẩn v1beta với model gemini-2.0-flash (Model mới nhất trong AI Studio của cậu)
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -28,7 +28,6 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // Nếu Google báo lỗi (Key / Quota)
     if (data.error) {
       return res.status(200).json({ reply: `⚠️ Lỗi Google API (${data.error.code}): ${data.error.message}` });
     }
