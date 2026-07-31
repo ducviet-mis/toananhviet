@@ -386,104 +386,92 @@
   <script src="header.js"></script>
   <script src="footer.js"></script>
 
-  <!-- ================== KHUNG CHATBOT AI GIA SƯ ================== -->
-<!-- 1. Nút bấm mở Chatbot ở góc phải màn hình -->
+ <!-- ================== KHUNG CHATBOT AI GIA SƯ ================== -->
 <div id="ai-chat-btn" onclick="toggleChat()" style="position: fixed; bottom: 20px; right: 20px; background: #0d6efd; color: white; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 9999; font-size: 28px;">
   🤖
 </div>
 
-<!-- 2. Cửa sổ Khung Chat -->
 <div id="ai-chat-window" style="display: none; position: fixed; bottom: 90px; right: 20px; width: 350px; height: 480px; background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 9999; flex-direction: column; overflow: hidden; font-family: sans-serif;">
-  <!-- Header -->
   <div style="background: #0d6efd; color: white; padding: 12px 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
     <span>🤖 Trợ Lý Gia Sư AI - Toán Anh Việt</span>
     <span onclick="toggleChat()" style="cursor: pointer; font-size: 18px;">✖</span>
   </div>
   
-  <!-- Lịch sử tin nhắn -->
   <div id="chat-messages" style="flex: 1; padding: 12px; overflow-y: auto; background: #f8f9fa; display: flex; flex-direction: column; gap: 8px;">
     <div style="background: #e9ecef; color: #333; padding: 8px 12px; border-radius: 8px; max-width: 80%; font-size: 14px;">
       Xin chào! Tớ là AI Gia sư của Toán Anh Việt. Bạn cần tớ hướng dẫn bài tập hay giải đáp thắc mắc gì nào? 😊
     </div>
   </div>
 
-  <!-- Khung nhập tin nhắn -->
   <div style="padding: 10px; border-top: 1px solid #ddd; display: flex; gap: 6px; background: white;">
     <input type="text" id="chat-input" placeholder="Nhập câu hỏi hoặc mã đề (VD: 8G01)..." onkeypress="handleKeyPress(event)" style="flex: 1; padding: 8px 12px; border: 1px solid #ccc; border-radius: 20px; outline: none; font-size: 14px;">
     <button onclick="sendMessage()" style="background: #0d6efd; color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold;">Gửi</button>
   </div>
 </div>
 
-<!-- 3. Kịch bản Xử lý AI Gemini -->
-<script>
-  // 🔑 API Key chuẩn của bạn
-  const GEMINI_API_KEY = "AQ.Ab8RN6J-jqzdQoEbPwrIpXAZbODcSDhZOG1XOe8ZPasgbDdv3w"; 
+<!-- Import Thư viện Google Gen AI SDK chính thức -->
+<script type="importmap">
+  {
+    "imports": {
+      "@google/genai": "https://esm.run/@google/genai"
+    }
+  }
+</script>
 
-  function toggleChat() {
+<script type="module">
+  import { GoogleGenAI } from '@google/genai';
+
+  // Key AQ. xịn của bạn
+  const GEMINI_API_KEY = "AQ.Ab8RN6KnZOIvhiS888Oc5F-8LxMoPoYb6cq2aqzMFIK7wetLsg"; 
+  const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+
+  window.toggleChat = function() {
     const win = document.getElementById('ai-chat-window');
     win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'flex' : 'none';
-  }
+  };
 
-  function handleKeyPress(e) {
-    if (e.key === 'Enter') sendMessage();
-  }
+  window.handleKeyPress = function(e) {
+    if (e.key === 'Enter') window.sendMessage();
+  };
 
-  async function sendMessage() {
+  window.sendMessage = async function() {
     const input = document.getElementById('chat-input');
     const msg = input.value.trim();
     if (!msg) return;
 
-    // 1. Hiển thị tin nhắn người dùng
     appendMessage(msg, 'user');
     input.value = '';
 
-    // 2. Trạng thái AI đang suy nghĩ
     const loadingId = appendMessage("🤖 AI đang suy nghĩ...", 'ai-loading');
 
-    // 3. Prompt đóng vai Gia sư
     const promptText = `Bạn là Trợ lý AI Gia Sư của trang web 'Toán Anh Việt'. 
 Nhiệm vụ: Giải thích ngắn gọn, thân thiện, dễ hiểu cho học sinh cấp 2.
 Nếu hỏi mã đề (VD: 8G01, 8C02), hãy nhắc học sinh nhập mã đó vào ô 'Tìm kiếm mã đề' trên web.
 Câu hỏi: ${msg}`;
 
     try {
-      // Endpoint truyền key trực tiếp qua URL
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-      
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: promptText }]
-          }]
-        })
+      // Gọi SDK chuẩn của Google Gemini
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: promptText,
       });
 
-      const data = await response.json();
-      
-      // Xóa thông báo loading
       const loadingEl = document.getElementById(loadingId);
       if (loadingEl) loadingEl.remove();
 
-      if (response.ok && data.candidates && data.candidates[0].content.parts[0].text) {
-        let reply = data.candidates[0].content.parts[0].text;
-        reply = reply.replace(/\n/g, '<br>'); // Giữ định dạng xuống dòng
+      if (response && response.text) {
+        let reply = response.text.replace(/\n/g, '<br>');
         appendMessage(reply, 'ai');
       } else {
-        console.error("Gemini API Error:", data);
-        const errorDetail = data.error ? data.error.message : "Chưa phản hồi được";
-        appendMessage(`⚠️ Lỗi: ${errorDetail}`, 'ai');
+        appendMessage("AI chưa trả lời được câu này, bạn thử hỏi lại xem sao nhé!", 'ai');
       }
     } catch (err) {
+      console.error(err);
       const loadingEl = document.getElementById(loadingId);
       if (loadingEl) loadingEl.remove();
-      appendMessage("⚠️ Lỗi kết nối mạng, bạn thử lại nhé!", 'ai');
-      console.error(err);
+      appendMessage("⚠️ " + (err.message || "Lỗi kết nối AI!"), 'ai');
     }
-  }
+  };
 
   function appendMessage(text, sender) {
     const box = document.getElementById('chat-messages');
@@ -513,5 +501,6 @@ Câu hỏi: ${msg}`;
     return msgId;
   }
 </script>
+<!-- ================== END KHUNG CHATBOT ================== -->
 </body>
 </html>
