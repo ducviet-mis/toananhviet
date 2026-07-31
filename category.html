@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Danh mục tài liệu - Gia sư Toán Anh Việt</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="doc-card-premium.css">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="doc-card-premium.js"></script>
   <style>
     .category-container {
       max-width: 1200px;
@@ -169,27 +171,20 @@
     function renderCardsList(list) {
       const container = document.getElementById('category-docs-container');
       if (!list || list.length === 0) {
-        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #64748b; padding: 40px 0;">Thầy Việt đang cập nhật bộ tài liệu cho chuyên mục này, học sinh quay lại sau nhé!</p>';
+        container.innerHTML = '<p class="doc-empty-state">Thầy Việt đang cập nhật bộ tài liệu cho chuyên mục này, học sinh quay lại sau nhé!</p>';
         return;
       }
 
       container.innerHTML = list.map(doc => {
         const encodedTitle = encodeURIComponent(doc.tieu_de || '');
-
-        return `
-          <div class="doc-card-premium" onclick="window.location.href='detail.html?title=${encodedTitle}'">
-            <div class="card-meta">
-              <span class="card-badge">Toán ${doc.lop || currentGrade}</span>
-              <span class="card-id">${doc.loai_de || 'Tài liệu'}</span>
-            </div>
-            <h3 class="card-title">${doc.tieu_de}</h3>
-            <p class="card-desc">${doc.mo_ta || 'Tài liệu chuẩn hóa bám sát cấu trúc đề thi mới, đi kèm lời giải chi tiết.'}</p>
-            <div class="card-footer">
-              <span>📅 Ngày đăng: Mới cập nhật</span>
-              <span class="card-action-btn">Xem chi tiết →</span>
-            </div>
-          </div>
-        `;
+        return DocCard.buildDocCardHTML({
+          grade: `Toán ${doc.lop || currentGrade}`,
+          category: doc.loai_de || 'Tài liệu',
+          title: doc.tieu_de,
+          desc: doc.mo_ta || 'Tài liệu chuẩn hóa bám sát cấu trúc đề thi mới, đi kèm lời giải chi tiết.',
+          dateLabel: 'Mới cập nhật',
+          link: `detail.html?title=${encodedTitle}`,
+        });
       }).join('');
     }
 
