@@ -1757,3 +1757,54 @@ body {
   .lead-stat strong { font-size: 1.25rem; }
   .lead-stat span { font-size: 0.65rem; }
 }
+
+/* ================================================================
+   TỐI ƯU GIAO DIỆN MOBILE (chỉ áp dụng ≤768px, PC giữ nguyên 100%)
+   ================================================================ */
+@media (max-width: 768px) {
+  /* --- Hero section: giảm khoảng trắng + cỡ chữ cho vừa màn hình --- */
+  .hero-descartes { padding: 40px 16px 44px; }
+
+  .hero-badge-vn {
+    font-size: 0.64rem;
+    padding: 5px 12px;
+    margin-bottom: 12px;
+    white-space: normal;
+    line-height: 1.4;
+  }
+
+  .hero-title {
+    font-size: 1.85rem;
+    line-height: 1.28;
+    margin-bottom: 12px;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    padding: 0 4px;
+  }
+
+  /* Bớt sao trang trí để đỡ rối trên màn hẹp */
+  .vn-stars-decor .vs-6,
+  .vn-stars-decor .vs-3 { display: none; }
+  .vn-star { font-size: 11px !important; }
+
+  /* --- Ô tìm kiếm: chặn nút "Tìm kiếm" bị vỡ xuống 2 dòng --- */
+  .search-main-box { width: 100%; }
+  .search-form-premium { flex-wrap: nowrap; padding: 5px; gap: 4px; }
+  .search-form-premium input { min-width: 0; font-size: 0.9rem; padding: 10px 6px; }
+  .search-icon { font-size: 1rem; margin-left: 8px; }
+  .search-btn { flex-shrink: 0; white-space: nowrap; padding: 10px 16px; font-size: 0.82rem; }
+
+  /* --- Giảm khoảng cách chung giữa các section --- */
+  .tutor-section { padding: 46px 16px; }
+  .recent-docs { margin: 44px auto; padding: 0 16px; }
+  .section-header { margin-bottom: 26px; }
+  .section-header h2 { font-size: 1.35rem; }
+}
+
+@media (max-width: 420px) {
+  .hero-title { font-size: 1.6rem; }
+  .hero-descartes { padding: 32px 14px 36px; }
+}
