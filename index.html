@@ -386,9 +386,24 @@
   <script src="header.js"></script>
   <script src="footer.js"></script>
 
-  <!-- ================= TÍCH HỢP COZE CHATBOT SDK CHÍNH CHỦ ================= -->
-  <script src="https://sf-cdn.coze.com/obj/unedited-static/bihead/coze/chatSDK.js"></script>
-  <script>
+  <!-- ================= TÍCH HỢP CHATBOT COZE CHÍNH THỨC ================= -->
+<style>
+  #coze-chat-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999999;
+    border: none;
+    width: 400px;
+    height: 600px;
+    max-width: calc(100vw - 40px);
+    max-height: calc(100vh - 40px);
+  }
+</style>
+
+<script src="https://sf-cdn.coze.com/obj/unedited-static/bihead/coze/chatSDK.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
     new CozeWebSDK.WebChatClient({
       config: {
         bot_id: '7668682211020800005',
@@ -396,15 +411,11 @@
       componentProps: {
         title: 'Trợ lý Toán Anh Việt',
       },
-      auth: {
-        type: 'token',
-        token: 'pat_a9q7qHMjE2GkeRCwIm7haFVl0sgzvV2KbnpRClR3WdoSAzazeA72Acq3q7US9iep',
-        onRefreshToken: function () {
-          return 'pat_a9q7qHMjE2GkeRCwIm7haFVl0sgzvV2KbnpRClR3WdoSAzazeA72Acq3q7US9iep';
-        }
-      }
+      el: document.body
     });
-  </script>
+  });
+</script>
+<!-- ====================================================================== -->
 
 </body>
 </html>
