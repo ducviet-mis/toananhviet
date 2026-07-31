@@ -416,8 +416,8 @@
 
 <!-- 3. Kịch bản Xử lý AI Gemini -->
 <script>
-  // 🔑 ĐIỀN API KEY CỦA BẠN VÀO ĐÂY (Giữ nguyên dấu ngoặc kép)
-  const GEMINI_API_KEY = "AQ.Ab8RN6LSSInsstEDptlYFOh0OzrC1Tai0eeSc-yoFEYtDICiaQ"; 
+  // 🔑 API Key chuẩn của bạn
+  const GEMINI_API_KEY = "AQ.Ab8RN6J-jqzdQoEbPwrIpXAZbODcSDhZOG1XOe8ZPasgbDdv3w"; 
 
   function toggleChat() {
     const win = document.getElementById('ai-chat-window');
@@ -447,12 +447,14 @@ Nếu hỏi mã đề (VD: 8G01, 8C02), hãy nhắc học sinh nhập mã đó v
 Câu hỏi: ${msg}`;
 
     try {
-      // Gọi Endpoint Gemini API chuẩn
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+      // Endpoint truyền key trực tiếp qua URL
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
       
       const response = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
           contents: [{
             parts: [{ text: promptText }]
@@ -471,15 +473,14 @@ Câu hỏi: ${msg}`;
         reply = reply.replace(/\n/g, '<br>'); // Giữ định dạng xuống dòng
         appendMessage(reply, 'ai');
       } else {
-        // In ra lỗi cụ thể từ Google để dễ bắt bệnh
         console.error("Gemini API Error:", data);
         const errorDetail = data.error ? data.error.message : "Chưa phản hồi được";
-        appendMessage(`⚠️ Lỗi API: ${errorDetail}`, 'ai');
+        appendMessage(`⚠️ Lỗi: ${errorDetail}`, 'ai');
       }
     } catch (err) {
       const loadingEl = document.getElementById(loadingId);
       if (loadingEl) loadingEl.remove();
-      appendMessage("⚠️ Lỗi kết nối mạng hoặc sai API Key!", 'ai');
+      appendMessage("⚠️ Lỗi kết nối mạng, bạn thử lại nhé!", 'ai');
       console.error(err);
     }
   }
