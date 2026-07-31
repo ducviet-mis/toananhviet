@@ -29,6 +29,7 @@
       left: 0;
       z-index: 100;
       border-right: 1px solid #1e293b;
+      transition: transform 0.3s ease;
     }
 
     /* KHU VỰC TIÊU ĐỀ SIDEBAR TRẮNG SANG TRỌNG */
@@ -40,6 +41,9 @@
       border-bottom: 1px solid #1e293b;
       letter-spacing: 0.5px;
       text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .sidebar-menu {
@@ -155,7 +159,7 @@
       top: 0;
       z-index: 90;
     }
-    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .topbar-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .topbar-label { font-size: 13px; font-weight: 700; color: #475569; }
     .select-class-dropdown {
       background: #ffffff;
@@ -185,6 +189,36 @@
     .btn-topbar-danger { color: #ef4444; border-color: #fca5a5; }
     .btn-topbar-danger:hover { background: #fef2f2; border-color: #ef4444; color: #ef4444; }
 
+    /* MENU HAMBURGER NÚT MOBILE */
+    .mobile-toggle-btn {
+      display: none;
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 18px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+    .sidebar-close-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(2px);
+      z-index: 99;
+    }
+
     /* VÙNG HIỂN THỊ CHÍNH BANEL */
     .admin-main-content { padding: 28px; flex-grow: 1; }
 
@@ -196,7 +230,7 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.02);
       margin-bottom: 25px;
     }
-    .card-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .card-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 12px; }
     .card-title { font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; }
 
     .admin-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
@@ -235,10 +269,10 @@
     .hidden { display: none !important; }
 
     /* SUB CONTENT TABS */
-    .sub-content-tabs { display: flex; gap: 8px; border-bottom: 1.5px solid #e2e8f0; margin-bottom: 20px; }
+    .sub-content-tabs { display: flex; gap: 8px; border-bottom: 1.5px solid #e2e8f0; margin-bottom: 20px; overflow-x: auto; }
     .sub-tab-btn {
       background: none; border: none; padding: 8px 16px; font-size: 13px; font-weight: 700;
-      color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1.5px;
+      color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1.5px; white-space: nowrap;
     }
     .sub-tab-btn.active { color: #0284c7; border-color: #0284c7; }
 
@@ -263,7 +297,7 @@
     .sub-item-card {
       display: flex; justify-content: space-between; align-items: center;
       padding: 10px 14px; background: #f8fafc; border: 1px solid #e2e8f0;
-      border-radius: 8px; margin-top: 8px;
+      border-radius: 8px; margin-top: 8px; flex-wrap: wrap; gap: 8px;
     }
     .sub-item-title { font-size: 13.5px; font-weight: 700; color: #334155; margin: 0; }
 
@@ -290,6 +324,8 @@
     }
     .class-checkbox-item:hover { border-color: #0284c7; background: #f0f9ff; }
     .class-checkbox-item input { accent-color: #0284c7; width: 16px; height: 16px; }
+
+    .form-flex-row { display: flex; gap: 15px; }
 
     /* LAYOUT TAB CÔNG KHAI */
     .public-layout-container { display: flex; gap: 20px; align-items: flex-start; }
@@ -354,13 +390,125 @@
     .attempt-item-card {
       background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
       padding: 14px 16px; margin-bottom: 10px; display: flex;
-      justify-content: space-between; align-items: center; gap: 12px;
+      justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+
+    /* ========================================================= */
+    /* RESPONSIVE DESIGNS CHO THIẾT BỊ DI ĐỘNG (MOBILE & TABLET) */
+    /* ========================================================= */
+    @media (max-width: 768px) {
+      .mobile-toggle-btn { display: inline-flex; }
+      .sidebar-close-btn { display: block; }
+      .sidebar-overlay.active { display: block; }
+
+      .admin-sidebar {
+        transform: translateX(-100%);
+        box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+      }
+      .admin-sidebar.mobile-open {
+        transform: translateX(0);
+      }
+
+      .admin-content-wrapper {
+        margin-left: 0 !important;
+        width: 100%;
+      }
+
+      .admin-topbar {
+        padding: 12px 16px;
+        height: auto;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .topbar-left {
+        width: 100%;
+        gap: 8px;
+      }
+      .topbar-left .select-class-dropdown {
+        flex: 1;
+        min-width: 140px;
+      }
+
+      .topbar-left > div {
+        width: 100%;
+        margin-left: 0 !important;
+        margin-top: 4px;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px !important;
+      }
+      .btn-topbar {
+        text-align: center;
+        padding: 6px 4px;
+        font-size: 11.5px;
+      }
+
+      .admin-main-content {
+        padding: 14px;
+      }
+
+      .panel-card {
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+
+      .card-title-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .card-title-row > div {
+        width: 100%;
+      }
+      .card-title-row select {
+        width: 100%;
+        margin-top: 4px;
+      }
+
+      .form-flex-row {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .scope-option-btn {
+        min-width: 100%;
+      }
+
+      .public-layout-container {
+        flex-direction: column;
+      }
+      .public-filter-sidebar {
+        width: 100%;
+      }
+
+      .class-checkbox-grid {
+        grid-template-columns: 1fr;
+      }
+
+      /* Flex nhóm nút chọn folder/file dạng dọc */
+      .form-group div[style*="display: flex"] {
+        flex-direction: column;
+      }
+
+      .attempt-item-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .attempt-item-card > div:last-child {
+        align-items: flex-start !important;
+        flex-direction: row !important;
+        width: 100%;
+        justify-content: flex-start;
+        margin-top: 8px;
+      }
     }
   </style>
 </head>
 <body>
 
   <div id="toast-container"></div>
+  <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
 
   <!-- MODAL XÁC NHẬN CHUNG -->
   <div id="custom-modal" class="custom-modal-overlay">
@@ -496,10 +644,13 @@
   <div class="admin-wrapper">
     
     <!-- SIDEBAR BÊN TRÁI -->
-    <aside class="admin-sidebar">
+    <aside class="admin-sidebar" id="admin-sidebar">
       <div>
         <!-- CHỮ THƯƠNG HIỆU TRẮNG QUẢN LÝ HỆ THỐNG -->
-        <div class="sidebar-brand">Quản Lý Hệ Thống</div>
+        <div class="sidebar-brand">
+          <span>Quản Lý Hệ Thống</span>
+          <button class="sidebar-close-btn" onclick="toggleMobileSidebar()">✕</button>
+        </div>
 
         <nav class="sidebar-menu">
           <button class="nav-item active" id="tab-tracker-btn" onclick="switchTab('tracker')">Tiến Độ Bài Tập</button>
@@ -530,6 +681,7 @@
       
       <!-- TOPBAR CỐ ĐỊNH -->
       <header class="admin-topbar">
+        <button class="mobile-toggle-btn" onclick="toggleMobileSidebar()">☰</button>
         <div class="topbar-left">
           <span class="topbar-label">Lớp đang chọn:</span>
           <select id="select-class" class="select-class-dropdown" onchange="onClassChange()">
@@ -647,7 +799,7 @@
               <input type="text" id="quiz-title-input" class="form-control" placeholder="Ví dụ: Đề Khảo Sát Giữa Kỳ 1 - Toán 8" required>
             </div>
 
-            <div style="display: flex; gap: 15px;">
+            <div class="form-flex-row">
               <div class="form-group" style="flex: 1;">
                 <label>Khối Lớp</label>
                 <select id="quiz-grade-select" class="form-control">
@@ -726,7 +878,7 @@
               </div>
             </div>
 
-            <div style="display: flex; gap: 15px;">
+            <div class="form-flex-row">
               <div class="form-group" style="flex: 1;">
                 <label>Loại Nội Dung</label>
                 <select id="content-type" class="form-control" onchange="onContentTypeChange()">
@@ -761,7 +913,7 @@
               <input type="text" id="content-title" class="form-control" placeholder="Ví dụ: Chuyên đề Hằng Đẳng Thức - Bài Tập Củng Cố" required>
             </div>
 
-            <div style="display: flex; gap: 15px;">
+            <div class="form-flex-row">
               <div class="form-group" style="flex: 1;">
                 <label>Khối Lớp</label>
                 <select id="content-grade-select" class="form-control">
@@ -848,7 +1000,7 @@
             </aside>
 
             <!-- BẢNG DỮ LIỆU CỘT PHẢI -->
-            <div style="flex-grow: 1; overflow-x: auto;">
+            <div style="flex-grow: 1; overflow-x: auto; width: 100%;">
               <table class="admin-table">
                 <thead>
                   <tr>
@@ -896,6 +1048,14 @@
     let rawPublicDataList = [];
     let filterPublicGrade = 'all';
     let filterPublicSemester = 'all';
+
+    // TOGGLE MOBILE SIDEBAR
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('admin-sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      sidebar.classList.toggle('mobile-open');
+      overlay.classList.toggle('active');
+    }
 
     // TOAST & MODAL HELPERS
     function showToast(message, type = 'success') {
@@ -2146,6 +2306,14 @@
     }
 
     function switchTab(tabName) {
+      // Tự động đóng sidebar mobile khi chọn tab
+      if (window.innerWidth <= 768) {
+        const sidebar = document.getElementById('admin-sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+      }
+
       document.getElementById('tab-tracker').classList.add('hidden');
       document.getElementById('tab-manage-contents').classList.add('hidden');
       document.getElementById('tab-create-quiz').classList.add('hidden');
