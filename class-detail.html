@@ -64,16 +64,67 @@
     .resource-btn {
       background-color: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd;
       padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 700;
-      text-decoration: none; transition: all 0.2s ease; white-space: nowrap;
+      text-decoration: none; transition: all 0.2s ease; white-space: nowrap; cursor: pointer;
     }
     .resource-btn:hover { background-color: #0284c7; color: #ffffff; }
     .resource-btn.exam-btn { background: #f97316; color: #ffffff; border: none; }
     .resource-btn.exam-btn:hover { background: #ea580c; }
+    .resource-btn.history-btn { background: #0284c7; color: #ffffff; border: none; }
+    .resource-btn.history-btn:hover { background: #0369a1; }
 
     .empty-content-msg {
       text-align: center; padding: 50px 20px; color: #64748b;
       background: #ffffff; border-radius: 16px; border: 2px dashed #cbd5e1;
     }
+
+    /* OVERLAY & MODAL STYLES */
+    .custom-modal-overlay { 
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+      background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); 
+      z-index: 999999; display: flex; align-items: center; justify-content: center; 
+      opacity: 0; pointer-events: none; transition: all 0.2s ease; 
+    }
+    .custom-modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .custom-modal-box { 
+      background: white; border-radius: 12px; padding: 24px; 
+      max-width: 420px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
+      text-align: center; transform: scale(0.95); transition: transform 0.2s ease; 
+    }
+    .custom-modal-overlay.active .custom-modal-box { transform: scale(1); }
+    .custom-modal-title { font-size: 17px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
+    
+    .attempt-item-card {
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
+      padding: 14px 16px; margin-bottom: 10px; display: flex;
+      justify-content: space-between; align-items: center; gap: 12px; text-align: left;
+    }
+    .btn-action {
+      background: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; padding: 6px 12px;
+      border-radius: 6px; font-weight: 700; font-size: 12px; text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center;
+    }
+    .btn-action:hover { background: #0284c7; color: #ffffff; }
+
+    /* SCOREBOARD MODAL */
+    .scoreboard-modal-card {
+      background: #ffffff; width: 95%; max-width: 600px; max-height: 85vh;
+      border-radius: 14px; overflow-y: auto; padding: 24px; position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); box-sizing: border-box; text-align: left;
+    }
+    #printable-scoreboard-card { background: #ffffff; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; box-sizing: border-box; }
+    .sb-header { border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 18px; }
+    .sb-brand { font-size: 13px; font-weight: 800; color: #0284c7; letter-spacing: 0.5px; margin-bottom: 6px; text-transform: uppercase; }
+    .sb-info-row { font-size: 13.5px; color: #334155; margin-bottom: 4px; }
+    .sb-info-row strong { color: #0f172a; }
+    .sb-score-container { display: flex; justify-content: center; align-items: center; margin: 20px 0; }
+    .score-card-flat { padding: 14px 40px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; font-size: 2.8rem; font-weight: 800; color: #64748b; text-align: center; }
+    .sb-table-wrapper { margin-top: 16px; overflow-x: auto; border-radius: 8px; }
+    .sb-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; }
+    .sb-table th { background: #f8fafc; color: #334155; font-weight: 700; padding: 10px; border: 1px solid #e2e8f0; }
+    .sb-table td { padding: 8px; border: 1px solid #e2e8f0; font-weight: 600; }
+    .sb-row-correct { background-color: #ecfdf5 !important; color: #047857 !important; }
+    .sb-row-incorrect { background-color: #fff1f2 !important; color: #be123c !important; }
+    .sb-row-skipped { background-color: #ffffff !important; color: #64748b !important; }
+    .btn-modal-cancel { background: #f1f5f9; color: #475569; padding: 9px 18px; border-radius: 6px; font-weight: 700; font-size: 13px; border: none; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -105,6 +156,64 @@
     </div>
   </main>
 
+  <!-- MODAL XEM LỊCH SỬ CÁC LẦN NỘP BÀI CỦA HỌC SINH -->
+  <div id="student-history-modal" class="custom-modal-overlay">
+    <div class="custom-modal-box" style="text-align: left; max-width: 650px; width: 95%;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 10px;">
+        <div>
+          <div class="custom-modal-title" id="history-student-name" style="margin: 0; font-size: 17px; color: #0284c7;">Lịch sử làm bài</div>
+          <div style="font-size: 12.5px; color: #64748b; margin-top: 2px;" id="history-quiz-title">Bài thi: --</div>
+        </div>
+        <button onclick="closeStudentHistoryModal()" style="background: none; border: none; font-size: 18px; color: #64748b; cursor: pointer; font-weight: 800;">✕</button>
+      </div>
+
+      <div id="history-attempts-container" style="max-height: 60vh; overflow-y: auto; padding-right: 4px;">
+        <p style="text-align: center; color: #64748b; padding: 20px;">Đang tải danh sách lần làm...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL XEM BẢNG KẾT QUẢ CHI TIẾT LẦN NỘP -->
+  <div id="student-submission-detail-modal" class="custom-modal-overlay">
+    <div class="scoreboard-modal-card">
+      <div style="display: flex; justify-content: flex-end; margin-bottom: -10px;">
+        <button onclick="closeStudentSubmissionDetailModal()" style="background: none; border: none; font-size: 18px; color: #64748b; cursor: pointer; font-weight: 800;">✕</button>
+      </div>
+
+      <div id="printable-scoreboard-card">
+        <div class="sb-header">
+          <div class="sb-brand">TOÁN ANH VIỆT - PHIẾU KẾT QUẢ BÀI THI</div>
+          <div class="sb-info-row">Họ và tên: <strong id="detail-student-name">--</strong></div>
+          <div class="sb-info-row">Bài thi: <strong id="detail-quiz-title">--</strong></div>
+          <div class="sb-info-row">Thời gian nộp: <strong id="detail-sub-date">--</strong></div>
+          <div class="sb-info-row">Thời gian làm: <strong id="detail-time-spent">--</strong></div>
+        </div>
+
+        <div class="sb-score-container">
+          <div id="detail-score-box" class="score-card-flat">0.0đ</div>
+        </div>
+
+        <div class="sb-table-wrapper">
+          <table class="sb-table">
+            <thead>
+              <tr>
+                <th>Câu</th>
+                <th>Đã chọn</th>
+                <th>Đáp án đúng</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody id="detail-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="margin-top: 18px; text-align: right;">
+        <button class="btn-modal-cancel" onclick="closeStudentSubmissionDetailModal()">Đóng</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
@@ -115,6 +224,9 @@
 
     let allClassContents = [];
     let currentTabType = 'video';
+    let currentUser = null;
+    let cachedSubmissionsMap = {};
+    let activeQuizData = null;
 
     async function initClassDetail() {
       if (!currentClassId) {
@@ -124,14 +236,18 @@
 
       document.getElementById('class-code-text').innerText = currentClassId;
 
-      // 1. Tải thông tin lớp
+      // 1. Kiểm tra User đang đăng nhập
+      const { data: { user } } = await _supabase.auth.getUser();
+      currentUser = user;
+
+      // 2. Tải thông tin lớp
       const { data: classInfo } = await _supabase.from('classes').select('*').eq('class_id', currentClassId).single();
       if (classInfo) {
         document.getElementById('class-title-text').innerText = classInfo.title;
         document.getElementById('class-teacher-text').innerText = classInfo.teacher || 'Thầy Đặng Đức Việt';
       }
 
-      // 2. Tải toàn bộ nội dung của lớp từ Supabase
+      // 3. Tải toàn bộ nội dung của lớp từ Supabase
       loadClassContentsFromSupabase();
     }
 
@@ -195,17 +311,31 @@
           let btnText = 'Xem Tài Liệu';
           let btnClass = 'resource-btn';
           let targetUrl = item.content_url || '#';
+          let actionButtons = '';
 
           if (type === 'video') {
             icon = '🎬';
             btnText = 'Xem Video';
+            actionButtons = `<a href="${targetUrl}" target="_blank" class="${btnClass}">${btnText}</a>`;
           } else if (type === 'exercise') {
             icon = '📝';
             btnText = 'Làm Bài Thi';
             btnClass = 'resource-btn exam-btn';
+            
+            const quizId = item.content_url && item.content_url.includes('quiz-room.html') 
+              ? item.content_url.split('id=')[1] 
+              : item.content_url;
+
             targetUrl = item.content_url && item.content_url.includes('quiz-room.html') 
               ? item.content_url 
-              : `quiz-room.html?id=${item.content_url || ''}`;
+              : `quiz-room.html?id=${quizId || ''}`;
+
+            actionButtons = `
+              <button onclick="openStudentHistoryModal('${quizId}', '${item.title.replace(/'/g, "\\'")}')" class="resource-btn history-btn">Lịch sử</button>
+              <a href="${targetUrl}" target="_blank" class="${btnClass}">${btnText}</a>
+            `;
+          } else {
+            actionButtons = `<a href="${targetUrl}" target="_blank" class="${btnClass}">${btnText}</a>`;
           }
 
           html += `
@@ -214,7 +344,9 @@
                 <span>${icon}</span>
                 <span>${item.title}</span>
               </div>
-              <a href="${targetUrl}" target="_blank" class="${btnClass}">${btnText}</a>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                ${actionButtons}
+              </div>
             </div>
           `;
         });
@@ -226,6 +358,135 @@
       }
 
       container.innerHTML = html;
+    }
+
+    /* MỞ POPUP LỊCH SỬ DÀNH CHO HỌC SINH */
+    async function openStudentHistoryModal(quizId, quizTitle) {
+      if (!currentUser) {
+        alert("Vui lòng đăng nhập để xem lịch sử làm bài!");
+        return;
+      }
+
+      const modal = document.getElementById('student-history-modal');
+      const container = document.getElementById('history-attempts-container');
+
+      document.getElementById('history-student-name').innerText = `Lịch sử làm bài của bạn`;
+      document.getElementById('history-quiz-title').innerText = `Bài thi: ${quizTitle}`;
+
+      modal.classList.add('active');
+      container.innerHTML = '<p style="text-align: center; color: #64748b; padding: 20px;">Đang tải lịch sử bài làm...</p>';
+
+      // Tải thông tin Quiz
+      const { data: qData } = await _supabase.from('quizzes').select('*').eq('id', quizId).single();
+      activeQuizData = qData;
+
+      // Tải các lần nộp của Học sinh này
+      const { data: submissions, error } = await _supabase
+        .from('quiz_submissions')
+        .select('*')
+        .eq('quiz_id', quizId)
+        .eq('user_id', currentUser.id)
+        .order('created_at', { ascending: false });
+
+      if (error || !submissions || submissions.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #64748b; padding: 20px;">Bạn chưa nộp bài lần nào cho đề thi này.</p>';
+        return;
+      }
+
+      cachedSubmissionsMap[quizId] = submissions;
+
+      const total = submissions.length;
+      container.innerHTML = submissions.map((sub, idx) => {
+        const attemptNum = total - idx;
+        const dateStr = sub.created_at ? new Date(sub.created_at).toLocaleString('vi-VN') : '---';
+        const mins = Math.floor((sub.time_spent || 0) / 60);
+        const secs = (sub.time_spent || 0) % 60;
+
+        return `
+          <div class="attempt-item-card">
+            <div>
+              <div style="font-size: 14px; font-weight: 800; color: #1e293b;">
+                Lần ${attemptNum} - <span style="color: #0284c7;">${Number(sub.mcq_score || 0).toFixed(1)} điểm</span>
+              </div>
+              <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
+                Thời điểm nộp bài: <b>${dateStr}</b> (${mins > 0 ? mins + ' phút ' : ''}${secs} giây)
+              </div>
+            </div>
+            <div>
+              <button class="btn-action" onclick="openStudentSubmissionDetailModal('${quizId}', '${sub.id}', ${attemptNum})">Chi tiết</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function closeStudentHistoryModal() {
+      document.getElementById('student-history-modal').classList.remove('active');
+    }
+
+    /* MỞ BẢNG ĐIỂM CHI TIẾT TỪNG LẦN NỘP */
+    function openStudentSubmissionDetailModal(quizId, submissionId, attemptNum) {
+      const subsList = cachedSubmissionsMap[quizId] || [];
+      const foundSub = subsList.find(s => s.id === submissionId);
+
+      if (!foundSub || !activeQuizData) {
+        alert("Không tìm thấy dữ liệu chi tiết lần nộp!");
+        return;
+      }
+
+      document.getElementById('detail-student-name').innerText = currentUser.user_metadata?.full_name || currentUser.email;
+      document.getElementById('detail-quiz-title').innerText = `${activeQuizData.title} (Lần ${attemptNum})`;
+      document.getElementById('detail-sub-date').innerText = foundSub.created_at ? new Date(foundSub.created_at).toLocaleString('vi-VN') : '---';
+
+      const mins = Math.floor((foundSub.time_spent || 0) / 60);
+      const secs = (foundSub.time_spent || 0) % 60;
+      document.getElementById('detail-time-spent').innerText = `${mins > 0 ? mins + ' phút ' : ''}${secs} giây`;
+
+      document.getElementById('detail-score-box').innerText = `${Number(foundSub.mcq_score || 0).toFixed(1)}đ`;
+
+      const tbody = document.getElementById('detail-table-body');
+      tbody.innerHTML = '';
+
+      const userAnsMap = foundSub.mcq_answers || {};
+      const answerKeys = activeQuizData.answer_keys || [];
+
+      if (answerKeys.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="padding: 15px; color: #64748b;">Chưa có đáp án chuẩn cho đề thi này.</td></tr>';
+      } else {
+        answerKeys.forEach(item => {
+          const studentAns = userAnsMap[item.q_number] || userAnsMap[String(item.q_number)] || '';
+          const sysKey = item.correct_answer || '';
+
+          let rowClass = 'sb-row-skipped';
+          let statusText = 'Bỏ qua';
+
+          if (studentAns) {
+            if (studentAns.toString().trim().toLowerCase() === sysKey.toString().trim().toLowerCase()) {
+              rowClass = 'sb-row-correct';
+              statusText = 'Chính xác';
+            } else {
+              rowClass = 'sb-row-incorrect';
+              statusText = 'Sai';
+            }
+          }
+
+          const tr = document.createElement('tr');
+          tr.className = rowClass;
+          tr.innerHTML = `
+            <td><strong>Câu ${item.q_number}</strong></td>
+            <td>${studentAns ? studentAns.toString().toUpperCase() : '---'}</td>
+            <td>${sysKey.toString().toUpperCase()}</td>
+            <td>${statusText}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      document.getElementById('student-submission-detail-modal').classList.add('active');
+    }
+
+    function closeStudentSubmissionDetailModal() {
+      document.getElementById('student-submission-detail-modal').classList.remove('active');
     }
 
     function switchContentTab(type, btnEl) {
