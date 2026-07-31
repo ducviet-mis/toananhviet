@@ -7,7 +7,7 @@
   "theme_color": "#ffffff",
   "icons": [
     {
-      "src": "/assets/favicon.png",
+      "src": "/assets/iconapp.png",
       "sizes": "512x512",
       "type": "image/png"
     }
