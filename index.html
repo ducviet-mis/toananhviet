@@ -271,11 +271,10 @@
     async function fetchLatestDocuments() {
       const container = document.getElementById('latest-docs-container');
       try {
-        // Lấy 6 tài liệu mới nhất từ bảng Supabase toananhviet
+        // Gọi dữ liệu giống hệt trang category.html để tránh lỗi schema
         const { data, error } = await _supabase
           .from('toananhviet')
           .select('*')
-          .order('id', { ascending: false })
           .limit(6);
 
         if (error) throw error;
