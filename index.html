@@ -264,38 +264,43 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     async function fetchLatestDocuments() {
       const container = document.getElementById('latest-docs-container');
       try {
-        const response = await fetch('https://api.github.com/repos/ducviet-mis/toananhviet/contents/documents');
-        if (!response.ok) throw new Error('Không thể lấy danh sách file.');
-        
-        const files = await response.json();
-        const jsonFiles = files.filter(f => f.name.endsWith('.json')).reverse().slice(0, 8);
-        
-        if (jsonFiles.length === 0) {
+        // Lấy 6 tài liệu mới nhất từ bảng Supabase toananhviet
+        const { data, error } = await _supabase
+          .from('toananhviet')
+          .select('*')
+          .order('id', { ascending: false })
+          .limit(6);
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
           container.innerHTML = '<p class="doc-empty-state">Chưa có tài liệu nào được đăng.</p>';
           return;
         }
 
-        container.innerHTML = '';
-        for (const fileObj of jsonFiles) {
-          const res = await fetch(fileObj.download_url);
-          const doc = await res.json();
-          const detailLink = `detail.html?file=${encodeURIComponent(fileObj.download_url)}`;
-
-          container.innerHTML += DocCard.buildDocCardHTML({
-            grade: doc.grade,
-            category: doc.category,
-            title: doc.title,
-            desc: 'Tài liệu ôn thi bám sát chương trình, tối ưu hóa phương pháp giải và bứt phá tư duy Toán học hiệu quả.',
-            dateLabel: doc.date,
-            link: detailLink,
-            actionLabel: '📖 Xem tài liệu',
+        container.innerHTML = data.map(doc => {
+          const encodedTitle = encodeURIComponent(doc.tieu_de || '');
+          return DocCard.buildDocCardHTML({
+            grade: `Toán ${doc.lop || '8'}`,
+            category: doc.loai_de || 'Tài liệu',
+            title: doc.tieu_de,
+            desc: doc.mo_ta || 'Tài liệu ôn thi bám sát chương trình, tối ưu hóa phương pháp giải và bứt phá tư duy Toán học hiệu quả.',
+            dateLabel: 'Mới cập nhật',
+            link: `detail.html?title=${encodedTitle}`,
+            actionLabel: '📖 Xem tài liệu'
           });
-        }
+        }).join('');
+
       } catch (error) {
-        container.innerHTML = '<p class="doc-empty-state">Đã xảy ra lỗi khi tải dữ liệu từ kho lưu trữ.</p>';
+        console.error("Lỗi khi nạp dữ liệu Supabase:", error);
+        container.innerHTML = '<p class="doc-empty-state">Đã xảy ra lỗi khi tải dữ liệu từ cơ sở dữ liệu.</p>';
       }
     }
 
@@ -342,10 +347,6 @@
     document.addEventListener("DOMContentLoaded", () => {
       const registerForm = document.getElementById('tuvangiasu-form');
       if (registerForm && window.supabase) {
-        const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
-        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
         registerForm.addEventListener('submit', async (e) => {
           e.preventDefault();
           const nameInput = document.getElementById('fullname')?.value;
