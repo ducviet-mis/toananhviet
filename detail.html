@@ -6,147 +6,406 @@
   <title>Chi tiết tài liệu - Gia sư Toán Anh Việt</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="assets/favicon.png">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
+    /* ===== Design tokens ===== */
+    :root {
+      --paper: #f5f8fc;
+      --surface: #ffffff;
+      --line: #e1e8f2;
+      --line-soft: #edf1f7;
+      --ink: #0f1e33;
+      --ink-soft: #5b6b84;
+      --ink-faint: #90a0b7;
+      --accent: #2457e0;
+      --accent-deep: #16359e;
+      --accent-soft: #eaf1ff;
+      --mark: #f5a524;
+      --mark-soft: #fef3e0;
+      --danger: #e0433f;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --font-display: 'Space Grotesk', 'Inter', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    /* ===== Page canvas: faint graph-paper texture, on-brand for a math site ===== */
+    main {
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(rgba(36, 87, 224, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(36, 87, 224, 0.045) 1px, transparent 1px);
+      background-size: 28px 28px;
+      padding-bottom: 60px;
+      font-family: var(--font-body);
+      color: var(--ink);
+    }
+
     .detail-container {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 30px;
-      margin-top: 30px;
-      max-width: 1200px;
+      gap: 24px;
+      margin-top: 28px;
+      max-width: 1180px;
       margin-left: auto;
       margin-right: auto;
       padding: 0 20px;
       box-sizing: border-box;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 860px) {
       .detail-container {
-        grid-template-columns: 280px 1fr;
+        grid-template-columns: 300px 1fr;
+        align-items: start;
       }
     }
+
+    /* ===== Sidebar ===== */
     .detail-sidebar {
-      background: white;
-      padding: 20px;
-      border-radius: 16px;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-      height: fit-content;
+      background: var(--surface);
+      padding: 22px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 30px -18px rgba(15, 30, 51, 0.18);
+      position: sticky;
+      top: 20px;
     }
+
+    .thumb-frame {
+      position: relative;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 16px;
+      border: 1px solid var(--line);
+      background: var(--accent-soft);
+    }
+    .thumb-frame img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+    }
+    .thumb-corner {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 26px;
+      height: 26px;
+      border-top: 2px solid rgba(255,255,255,0.85);
+      border-left: 2px solid rgba(255,255,255,0.85);
+      border-radius: 4px 0 0 0;
+      pointer-events: none;
+    }
+
+    .doc-badges {
+      margin-bottom: 16px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      letter-spacing: 0.02em;
+    }
+    .badge svg { width: 12px; height: 12px; flex-shrink: 0; }
+    .badge-grade { background: var(--accent); color: #fff; }
+    .badge-cat { background: var(--accent-soft); color: var(--accent-deep); }
+
+    .meta-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 18px;
+      padding-bottom: 18px;
+      border-bottom: 1px dashed var(--line);
+    }
+    .meta-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      font-family: var(--font-mono);
+    }
+    .meta-row svg { width: 14px; height: 14px; color: var(--ink-faint); flex-shrink: 0; }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.18s ease;
+      cursor: pointer;
+      border: none;
+      font-family: var(--font-body);
+    }
+    .btn-action svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    .btn-download {
+      background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+      color: #fff !important;
+      width: 100%;
+      box-shadow: 0 8px 18px -8px rgba(36, 87, 224, 0.55);
+    }
+    .btn-download:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px -8px rgba(36, 87, 224, 0.65);
+    }
+
+    .btn-secondary {
+      background-color: var(--paper);
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background-color: var(--line-soft); }
+
+    .share-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .share-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 9px 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      border-radius: var(--radius-sm);
+      color: white;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: opacity 0.15s ease;
+    }
+    .share-btn svg { width: 16px; height: 16px; }
+    .share-btn:hover { opacity: 0.88; }
+    .share-fb { background-color: #1877f2; }
+    .share-zalo { background-color: #0068ff; }
+    .share-copy { background-color: #64748b; }
+
+    .btn-report {
+      width: 100%;
+      margin-top: 16px;
+      background: none;
+      border: none;
+      color: var(--ink-faint);
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 6px;
+      font-family: var(--font-body);
+      transition: color 0.15s ease;
+    }
+    .btn-report svg { width: 13px; height: 13px; }
+    .btn-report:hover { color: var(--danger); }
+
+    /* ===== Main column ===== */
     .detail-main {
-      background: white;
-      padding: 24px;
-      border-radius: 16px;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      background: var(--surface);
+      padding: 28px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 30px -18px rgba(15, 30, 51, 0.18);
       display: flex;
       flex-direction: column;
       min-height: 600px;
     }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 16px;
+      height: 2px;
+      background: var(--mark);
+      border-radius: 2px;
+    }
+
+    #detail-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      color: var(--ink);
+      margin: 0 0 16px 0;
+      line-height: 1.35;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    #detail-description {
+      background: var(--mark-soft);
+      padding: 16px 18px;
+      border-left: 4px solid var(--mark);
+      font-size: 14px;
+      color: #4a3a10;
+      margin-bottom: 22px;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      line-height: 1.6;
+    }
+    #detail-description strong { color: #7a5a06; }
+
+    .section-divider {
+      border: 0;
+      border-top: 1px solid var(--line-soft);
+      margin-bottom: 18px;
+    }
+
     .viewer-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 10px;
-      background: #f8fafc;
+      background: var(--paper);
       padding: 12px 16px;
-      border-radius: 10px;
-      border: 1px solid #e2e8f0;
-      margin-bottom: 15px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      margin-bottom: 16px;
     }
+    .viewer-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--accent-deep);
+      font-family: var(--font-display);
+    }
+    .viewer-label svg { width: 16px; height: 16px; }
+    .viewer-actions { display: flex; gap: 8px; }
+    .viewer-actions .btn-action { font-size: 12.5px; padding: 7px 12px; }
+
     .doc-viewer {
       width: 100%;
       height: 700px;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      background-color: #f1f5f9;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background-color: var(--paper);
     }
     .no-preview {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 350px;
-      color: #64748b;
+      gap: 10px;
+      height: 340px;
+      color: var(--ink-soft);
       text-align: center;
-      padding: 20px;
+      padding: 24px;
+      border: 1.5px dashed var(--line);
+      border-radius: var(--radius-md);
+      background: var(--paper);
     }
-    .btn-action {
-      display: inline-block;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-weight: 600;
-      text-decoration: none;
-      font-size: 14px;
-      transition: all 0.2s;
-      cursor: pointer;
-      border: none;
-      font-family: 'Inter', sans-serif;
-    }
-    .btn-download {
-      background-color: #0284c7;
-      color: white !important;
-      width: 100%;
+    .no-preview svg { width: 34px; height: 34px; color: var(--ink-faint); }
+    .no-preview p { margin: 0; font-size: 14.5px; max-width: 340px; }
+    .no-preview.is-error svg { color: var(--danger); }
+    .no-preview.is-error p { color: var(--danger); font-weight: 600; }
+
+    #viewer-container p.loading-text {
       text-align: center;
-      box-sizing: border-box;
-      margin-top: 10px;
+      padding: 60px 0;
+      color: var(--ink-faint);
+      font-family: var(--font-mono);
+      font-size: 13px;
     }
-    .btn-download:hover {
-      background-color: #0369a1;
-    }
-    .btn-secondary {
-      background-color: #f1f5f9;
-      color: #334155;
-      border: 1px solid #cbd5e1;
-    }
-    .btn-secondary:hover {
-      background-color: #e2e8f0;
-    }
-    .share-buttons {
-      display: flex;
-      gap: 8px;
-      margin-top: 15px;
-    }
-    .share-btn {
-      flex: 1;
-      padding: 8px;
-      font-size: 12px;
-      text-align: center;
-      border-radius: 6px;
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .share-fb { background-color: #1877f2; }
-    .share-zalo { background-color: #0068ff; }
-    .share-copy { background-color: #64748b; border: none; cursor: pointer; }
-    
+
+    /* ===== Related section ===== */
     .related-section {
-      margin-top: 30px;
-      border-top: 2px solid #f1f5f9;
-      padding-top: 20px;
+      margin-top: 32px;
+      border-top: 1px solid var(--line-soft);
+      padding-top: 22px;
     }
+    .related-heading {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      color: var(--ink);
+      margin: 0;
+      font-weight: 700;
+      font-family: var(--font-display);
+    }
+    .related-heading svg { width: 18px; height: 18px; color: var(--accent); }
+
     .related-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 15px;
-      margin-top: 15px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
     }
     .related-card {
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 16px;
       text-decoration: none;
       color: inherit;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
       display: flex;
-      flex-direction: column;
-      background: white;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, var(--accent-soft), var(--surface));
     }
     .related-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+      box-shadow: 0 12px 24px -14px rgba(36, 87, 224, 0.35);
+      border-color: var(--accent);
+    }
+    .related-card .rc-icon {
+      flex-shrink: 0;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .related-card .rc-icon svg { width: 18px; height: 18px; }
+    .related-card h4 {
+      font-size: 13.5px;
+      margin: 0;
+      color: var(--ink);
+      font-weight: 600;
+      line-height: 1.4;
+      font-family: var(--font-body);
+    }
+    .related-empty {
+      font-size: 13px;
+      color: var(--ink-faint);
+      font-family: var(--font-mono);
     }
   </style>
 </head>
@@ -158,54 +417,94 @@
   <main>
     <div class="detail-container">
       <aside class="detail-sidebar">
-        <img id="detail-thumbnail" src="assets/favicon.png" alt="Ảnh tài liệu" style="width: 100%; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-        
-        <div class="doc-badges" style="margin-bottom: 15px; display: flex; gap: 6px; flex-wrap: wrap;">
-          <span class="badge badge-grade" id="detail-grade" style="background:#0284c7; color:white; padding: 4px 10px; border-radius:6px; font-size:12px; font-weight:600;">-</span>
-          <span class="badge badge-cat" id="detail-cat" style="background:#e0f2fe; color:#0369a1; padding: 4px 10px; border-radius:6px; font-size:12px; font-weight:600;">-</span>
-        </div>
-        
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 6px;" id="detail-date">Ngày đăng: Mới cập nhật</p>
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;" id="detail-views">Lượt xem: 1,240</p>
-        
-        <a href="#" id="btn-download-direct" class="btn-action btn-download" target="_blank" download>Tải trực tiếp file gốc</a>
-        
-        <div class="share-buttons">
-          <a href="#" id="btn-share-fb" target="_blank" class="share-btn share-fb">Facebook</a>
-          <a href="#" id="btn-share-zalo" target="_blank" class="share-btn share-zalo">Zalo</a>
-          <button onclick="copyDocumentLink()" class="share-btn share-copy">Copy Link</button>
+        <div class="thumb-frame">
+          <img id="detail-thumbnail" src="assets/favicon.png" alt="Ảnh tài liệu">
+          <span class="thumb-corner"></span>
         </div>
 
-        <button onclick="reportError()" style="width:100%; margin-top:15px; background:none; border:none; color:#ef4444; font-size:12px; cursor:pointer; text-decoration:underline;">
-          ⚠️ Báo liên kết hỏng / lỗi tài liệu
+        <div class="doc-badges">
+          <span class="badge badge-grade" id="detail-grade">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-6 9 6-9 6-9-6z"/><path d="M3 12v5l9 5 9-5v-5"/></svg>
+            -
+          </span>
+          <span class="badge badge-cat" id="detail-cat">-</span>
+        </div>
+
+        <div class="meta-list">
+          <p class="meta-row" id="detail-date">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            Ngày đăng: Mới cập nhật
+          </p>
+          <p class="meta-row" id="detail-views">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            Lượt xem: 1,240
+          </p>
+        </div>
+
+        <a href="#" id="btn-download-direct" class="btn-action btn-download" target="_blank" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+          Tải trực tiếp file gốc
+        </a>
+
+        <div class="share-buttons">
+          <a href="#" id="btn-share-fb" target="_blank" class="share-btn share-fb">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0022 12z"/></svg>
+            Facebook
+          </a>
+          <a href="#" id="btn-share-zalo" target="_blank" class="share-btn share-zalo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+            Zalo
+          </a>
+          <button onclick="copyDocumentLink()" class="share-btn share-copy">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy Link
+          </button>
+        </div>
+
+        <button onclick="reportError()" class="btn-report">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22V15"/></svg>
+          Báo liên kết hỏng / lỗi tài liệu
         </button>
       </aside>
 
       <section class="detail-main">
-        <h1 id="detail-title" style="font-size: 22px; color: #1e293b; margin-bottom: 12px; line-height: 1.4; font-weight: 700;">Đang tải tiêu đề...</h1>
-        
-        <div id="detail-description" style="background: #f8fafc; padding: 14px; border-left: 4px solid #0284c7; font-size: 14px; color: #334155; margin-bottom: 15px; border-radius: 0 8px 8px 0; line-height: 1.5;">
-          Đang tải thông tin mô tả tài liệu...
+        <span class="eyebrow">Chi tiết tài liệu</span>
+        <h1 id="detail-title">Đang tải tiêu đề...</h1>
+
+        <div id="detail-description">
+          <strong>📌 Tóm tắt:</strong> Đang tải thông tin mô tả tài liệu...
         </div>
 
-        <hr style="border: 0; border-top: 1px solid #e2e8f0; margin-bottom: 15px;">
-        
+        <hr class="section-divider">
+
         <div class="viewer-header">
-          <span style="font-size: 14px; font-weight: 700; color: #0284c7;">Xem trực tuyến tài liệu:</span>
-          <div style="display: flex; gap: 8px;">
-            <a href="#" id="btn-open-newtab" target="_blank" class="btn-action btn-secondary" style="font-size: 12px; padding: 6px 12px;">↗️ Mở cửa sổ mới</a>
-            <button onclick="toggleFullscreen()" class="btn-action btn-secondary" style="font-size: 12px; padding: 6px 12px;">🔲 Toàn màn hình</button>
+          <span class="viewer-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            Xem trực tuyến tài liệu
+          </span>
+          <div class="viewer-actions">
+            <a href="#" id="btn-open-newtab" target="_blank" class="btn-action btn-secondary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg>
+              Mở cửa sổ mới
+            </a>
+            <button onclick="toggleFullscreen()" class="btn-action btn-secondary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+              Toàn màn hình
+            </button>
           </div>
         </div>
-        
+
         <div id="viewer-container">
-          <p style="text-align: center; padding: 50px 0; color: #64748b;">Đang chuẩn bị trình đọc trực tuyến...</p>
+          <p class="loading-text">Đang chuẩn bị trình đọc trực tuyến...</p>
         </div>
 
         <div class="related-section">
-          <h3 style="font-size: 16px; color: #1e293b; margin: 0; font-weight: 700;">Tài liệu cùng khối lớp</h3>
+          <h3 class="related-heading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+            Tài liệu cùng khối lớp
+          </h3>
           <div id="related-docs-container" class="related-grid">
-            <p style="font-size: 13px; color: #94a3b8;">Đang tìm tài liệu liên quan...</p>
+            <p class="related-empty">Đang tìm tài liệu liên quan...</p>
           </div>
         </div>
       </section>
@@ -223,7 +522,11 @@
 
       if (!docTitleParam) {
         document.getElementById('detail-title').innerText = "Không tìm thấy tài liệu!";
-        document.getElementById('viewer-container').innerHTML = `<p class="no-preview">Thiếu thông tin tên bài hoặc đường dẫn không hợp lệ.</p>`;
+        document.getElementById('viewer-container').innerHTML = `
+          <div class="no-preview is-error">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
+            <p>Thiếu thông tin tên bài hoặc đường dẫn không hợp lệ.</p>
+          </div>`;
         document.getElementById('detail-description').style.display = 'none';
         return;
       }
@@ -241,9 +544,11 @@
 
         document.getElementById('detail-title').innerText = doc.tieu_de || "Tài liệu Toán THCS";
         document.title = (doc.tieu_de || "Chi tiết tài liệu") + " - Gia sư Toán Anh Việt";
-        document.getElementById('detail-grade').innerText = `Toán ${doc.lop || 'THCS'}`;
+        document.getElementById('detail-grade').innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-6 9 6-9 6-9-6z"/><path d="M3 12v5l9 5 9-5v-5"/></svg>
+          Toán ${doc.lop || 'THCS'}`;
         document.getElementById('detail-cat').innerText = doc.loai_de || 'Tài liệu chung';
-        
+
         if (doc.anh_bia) {
           document.getElementById('detail-thumbnail').src = doc.anh_bia;
         }
@@ -253,7 +558,7 @@
 
         // Đọc đường dẫn từ cột link_file trong bảng toananhviet
         const fileUrl = doc.link_file || doc.file_url || doc.url || '';
-        
+
         document.getElementById('btn-download-direct').href = fileUrl || '#';
         document.getElementById('btn-open-newtab').href = fileUrl || '#';
 
@@ -266,7 +571,8 @@
         } else {
           document.getElementById('viewer-container').innerHTML = `
             <div class="no-preview">
-              <p style="font-size: 15px; color: #475569;">Tài liệu này chưa được gắn link file trực tuyến trên hệ thống.</p>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+              <p>Tài liệu này chưa được gắn link file trực tuyến trên hệ thống.</p>
             </div>
           `;
         }
@@ -277,8 +583,9 @@
         console.error("Lỗi nạp bài:", error);
         document.getElementById('detail-title').innerText = "Không tìm thấy tài liệu!";
         document.getElementById('viewer-container').innerHTML = `
-          <div class="no-preview">
-            <p style="color: #ef4444; font-weight: bold;"> Không tìm thấy bài viết này trong cơ sở dữ liệu.</p>
+          <div class="no-preview is-error">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
+            <p>Không tìm thấy bài viết này trong cơ sở dữ liệu.</p>
           </div>
         `;
       }
@@ -294,15 +601,16 @@
         viewerContainer.innerHTML = `<iframe id="doc-iframe" class="doc-viewer" src="${fullFileUrl}" type="application/pdf"></iframe>`;
       } else if (fileExtension === 'docx' || fileExtension === 'doc') {
         viewerContainer.innerHTML = `
-          <iframe id="doc-iframe" class="doc-viewer" 
-                  src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeUrl}" 
+          <iframe id="doc-iframe" class="doc-viewer"
+                  src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeUrl}"
                   frameborder="0">
           </iframe>
         `;
       } else {
         viewerContainer.innerHTML = `
           <div class="no-preview">
-            <p style="font-size: 16px;">Vui lòng bấm nút <b>"Tải trực tiếp file gốc"</b> bên trái để xem nội dung.</p>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+            <p>Vui lòng bấm nút <b>"Tải trực tiếp file gốc"</b> bên trái để xem nội dung.</p>
           </div>
         `;
       }
@@ -312,7 +620,10 @@
       const container = document.getElementById('related-docs-container');
       container.innerHTML = `
         <a href="category.html?grade=${currentGrade || 8}" class="related-card">
-          <h4 style="font-size: 14px; margin: 0; color: #0284c7;">👉 Khám phá thêm các đề kiểm tra Toán lớp ${currentGrade || 8}</h4>
+          <span class="rc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+          <h4>Khám phá thêm các đề kiểm tra Toán lớp ${currentGrade || 8}</h4>
         </a>
       `;
     }
