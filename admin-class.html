@@ -11,7 +11,7 @@
     /* === RESET & BASE === */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { 
-      background: #f0f5fe; 
+      background: #f2f6fc; 
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
       color: #0a1628; 
       min-height: 100vh;
@@ -19,18 +19,16 @@
 
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #e8eef9; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #2563eb, #0ea5e9); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 10px; }
 
     /* === LAYOUT === */
     .admin-wrapper { display: flex; min-height: 100vh; }
 
-    /* === SIDEBAR - Premium Glassmorphism === */
+    /* === SIDEBAR === */
     .admin-sidebar {
-      width: 270px;
-      background: rgba(10, 22, 40, 0.94);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      color: #f1f5f9;
+      width: 260px;
+      background: #0a1628;
+      color: #e2e8f0;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
@@ -42,47 +40,38 @@
       z-index: 100;
       border-right: 1px solid rgba(255,255,255,0.06);
       transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 4px 0 40px rgba(0,20,60,0.25);
+      box-shadow: 2px 0 24px rgba(0,0,0,0.08);
     }
 
     .sidebar-brand {
-      padding: 24px 26px;
-      font-size: 13px;
-      font-weight: 800;
-      color: #ffffff;
+      padding: 22px 24px 18px 24px;
       border-bottom: 1px solid rgba(255,255,255,0.06);
-      letter-spacing: 1px;
-      text-transform: uppercase;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: linear-gradient(135deg, rgba(37,99,235,0.2) 0%, transparent 100%);
-      position: relative;
     }
-    .sidebar-brand::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 20%;
-      width: 60%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #3b82f6, transparent);
-      border-radius: 4px;
+    .sidebar-brand .brand-text {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
     }
-    .sidebar-brand .brand-icon { display: inline-flex; align-items: center; gap: 10px; }
-    .sidebar-brand .brand-icon span {
-      font-weight: 900;
-      font-size: 16px;
-      background: linear-gradient(135deg, #60a5fa, #3b82f6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .sidebar-brand .brand-sub {
+      font-size: 10px;
+      font-weight: 400;
+      color: #64748b;
+      letter-spacing: 0.5px;
+      text-transform: none;
+      display: block;
+      margin-top: 2px;
     }
 
     .sidebar-menu {
-      padding: 18px 14px;
+      padding: 16px 12px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 2px;
       flex-grow: 1;
     }
 
@@ -91,30 +80,28 @@
       align-items: center;
       gap: 12px;
       width: 100%;
-      padding: 12px 18px;
+      padding: 11px 16px;
       background: transparent;
       color: #94a3b8;
       border: none;
-      border-radius: 12px;
-      font-size: 13.5px;
-      font-weight: 600;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
       text-align: left;
-      position: relative;
     }
-    .nav-item .nav-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
-    .nav-item:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; transform: translateX(4px); }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
     .nav-item.active {
-      background: linear-gradient(135deg, rgba(37,99,235,0.3), rgba(14,165,233,0.15));
+      background: rgba(37,99,235,0.15);
       color: #60a5fa;
-      font-weight: 700;
-      box-shadow: inset 3px 0 0 #3b82f6;
+      font-weight: 600;
+      border-left: 3px solid #3b82f6;
+      border-radius: 8px 0 0 8px;
     }
-    .nav-item.active .nav-icon { color: #3b82f6; }
 
     .sidebar-footer {
-      padding: 18px 16px 20px;
+      padding: 16px;
       border-top: 1px solid rgba(255,255,255,0.06);
       display: flex;
       flex-direction: column;
@@ -125,439 +112,402 @@
       color: #94a3b8;
       text-decoration: none;
       font-size: 12.5px;
-      font-weight: 600;
+      font-weight: 500;
       display: block;
       text-align: center;
-      padding: 10px;
-      border-radius: 10px;
+      padding: 9px;
+      border-radius: 8px;
       transition: all 0.2s;
       border: 1px solid rgba(255,255,255,0.06);
     }
-    .btn-out:hover { background: rgba(255,255,255,0.08); color: #ffffff; border-color: rgba(255,255,255,0.12); }
+    .btn-out:hover { background: rgba(255,255,255,0.06); color: #ffffff; border-color: rgba(255,255,255,0.1); }
 
     .user-profile-box {
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 12px 16px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 14px;
+      gap: 12px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
     }
-    .user-profile-box:hover {
-      background: rgba(255,255,255,0.08);
-      border-color: rgba(59,130,246,0.4);
-      transform: scale(1.02);
-    }
+    .user-profile-box:hover { background: rgba(255,255,255,0.06); border-color: rgba(59,130,246,0.3); }
 
     .avatar-img {
-      width: 42px;
-      height: 42px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid #3b82f6;
       flex-shrink: 0;
-      box-shadow: 0 0 20px rgba(59,130,246,0.2);
     }
     .user-details { display: flex; flex-direction: column; overflow: hidden; }
-    .user-name-text { font-size: 14px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .user-role-text { font-size: 11px; font-weight: 500; color: #64748b; letter-spacing: 0.3px; }
+    .user-name-text { font-size: 13px; font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-role-text { font-size: 11px; font-weight: 400; color: #64748b; }
 
     .sidebar-close-btn { display: none; background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer; }
-    .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10,22,40,0.7); backdrop-filter: blur(6px); z-index: 99; }
-    .mobile-toggle-btn { display: none; background: linear-gradient(135deg, #2563eb, #0ea5e9); color: #ffffff; border: none; padding: 8px 14px; border-radius: 10px; font-size: 20px; cursor: pointer; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+    .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10,22,40,0.6); backdrop-filter: blur(4px); z-index: 99; }
+    .mobile-toggle-btn { display: none; background: #2563eb; color: #ffffff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 18px; cursor: pointer; align-items: center; justify-content: center; }
 
     /* === CONTENT WRAPPER === */
-    .admin-content-wrapper { flex-grow: 1; margin-left: 270px; display: flex; flex-direction: column; min-width: 0; }
+    .admin-content-wrapper { flex-grow: 1; margin-left: 260px; display: flex; flex-direction: column; min-width: 0; }
 
     /* === TOPBAR === */
     .admin-topbar {
-      height: 72px;
-      background: rgba(255,255,255,0.7);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(226,232,240,0.6);
+      height: 64px;
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 32px;
+      padding: 0 28px;
       position: sticky;
       top: 0;
       z-index: 90;
-      box-shadow: 0 2px 20px rgba(0,0,0,0.04);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.02);
     }
 
-    .topbar-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-    .topbar-label { font-size: 13px; font-weight: 700; color: #475569; letter-spacing: 0.3px; }
+    .topbar-left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .topbar-label { font-size: 13px; font-weight: 600; color: #475569; }
 
     .select-class-dropdown {
-      background: #ffffff;
+      background: #f8fafc;
       color: #0a1628;
-      border: 1.5px solid #dbeafe;
-      padding: 10px 18px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 13.5px;
+      border: 1.5px solid #e2e8f0;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 13px;
       cursor: pointer;
       outline: none;
-      transition: all 0.25s;
-      min-width: 200px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      transition: all 0.2s;
+      min-width: 180px;
     }
-    .select-class-dropdown:focus { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59,130,246,0.15); }
-    .select-class-dropdown:hover { border-color: #93c5fd; }
+    .select-class-dropdown:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+    .select-class-dropdown:hover { border-color: #94a3b8; }
 
     .topbar-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
     .btn-topbar {
-      padding: 9px 18px;
-      border-radius: 10px;
-      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
       font-size: 12px;
-      border: 1.5px solid #dbeafe;
+      border: 1.5px solid #e2e8f0;
       background: #ffffff;
-      color: #1e40af;
+      color: #1e293b;
       cursor: pointer;
-      transition: all 0.25s;
+      transition: all 0.2s;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
     }
-    .btn-topbar:hover { background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; box-shadow: 0 4px 12px rgba(37,99,235,0.15); transform: translateY(-1px); }
-    .btn-topbar-primary { background: linear-gradient(135deg, #2563eb, #0ea5e9); color: #ffffff; border: none; box-shadow: 0 4px 12px rgba(37,99,235,0.25); }
-    .btn-topbar-primary:hover { background: linear-gradient(135deg, #1d4ed8, #0284c7); color: #ffffff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
+    .btn-topbar:hover { background: #f1f5f9; border-color: #94a3b8; }
+    .btn-topbar-primary { background: #2563eb; color: #ffffff; border: none; }
+    .btn-topbar-primary:hover { background: #1d4ed8; }
     .btn-topbar-danger { color: #dc2626; border-color: #fca5a5; }
-    .btn-topbar-danger:hover { background: #fef2f2; border-color: #dc2626; color: #b91c1c; box-shadow: 0 4px 12px rgba(220,38,38,0.15); }
+    .btn-topbar-danger:hover { background: #fef2f2; border-color: #dc2626; }
 
     /* === MAIN CONTENT === */
-    .admin-main-content { padding: 32px; flex-grow: 1; }
+    .admin-main-content { padding: 28px; flex-grow: 1; }
 
     /* === PANEL CARD === */
     .panel-card {
       background: #ffffff;
-      border: 1px solid rgba(226,232,240,0.6);
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.03), 0 1px 4px rgba(0,0,0,0.02);
-      margin-bottom: 28px;
-      transition: all 0.3s ease;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+      margin-bottom: 24px;
     }
-    .panel-card:hover { box-shadow: 0 8px 40px rgba(0,0,0,0.05); }
 
     .card-title-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       gap: 16px;
       flex-wrap: wrap;
     }
     .card-title {
-      font-size: 19px;
-      font-weight: 800;
+      font-size: 17px;
+      font-weight: 700;
       color: #0a1628;
       margin: 0;
-      letter-spacing: -0.3px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      letter-spacing: -0.2px;
     }
-    .card-title .title-accent { width: 4px; height: 28px; background: linear-gradient(180deg, #2563eb, #0ea5e9); border-radius: 4px; display: inline-block; }
 
     /* === TABLE === */
-    .admin-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13.5px; }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .admin-table th {
-      background: #f8fbff;
+      background: #f8fafc;
       color: #475569;
-      font-weight: 700;
-      padding: 14px 16px;
+      font-weight: 600;
+      padding: 12px 14px;
       border-bottom: 2px solid #e2e8f0;
       text-align: left;
-      font-size: 11.5px;
+      font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.4px;
     }
-    .admin-table td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; font-weight: 500; color: #1e293b; vertical-align: middle; }
-    .admin-table tr { transition: all 0.2s; }
-    .admin-table tr:hover td { background: #f8fbff; }
+    .admin-table td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 400; color: #1e293b; vertical-align: middle; }
+    .admin-table tr:hover td { background: #f8fafc; }
     .admin-table tr:last-child td { border-bottom: none; }
 
     /* === BADGES === */
     .status-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 5px 14px;
-      border-radius: 20px;
-      font-size: 11.5px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      gap: 6px;
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
     }
-    .status-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
     .badge-done { background: #dcfce7; color: #15803d; }
-    .badge-done::before { background: #22c55e; }
     .badge-pending { background: #fef2f2; color: #b91c1c; }
-    .badge-pending::before { background: #ef4444; }
     .badge-warning { background: #fef3c7; color: #d97706; }
-    .badge-warning::before { background: #f59e0b; }
     .badge-info { background: #dbeafe; color: #1d4ed8; }
-    .badge-info::before { background: #3b82f6; }
 
     /* === BUTTONS === */
     .btn-action {
       background: #eff6ff;
       color: #2563eb;
       border: 1px solid #bfdbfe;
-      padding: 7px 16px;
-      border-radius: 8px;
-      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 600;
       font-size: 12px;
       text-decoration: none;
       cursor: pointer;
       transition: all 0.2s;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
     }
-    .btn-action:hover { background: #2563eb; color: #ffffff; border-color: #2563eb; box-shadow: 0 4px 14px rgba(37,99,235,0.3); transform: translateY(-1px); }
+    .btn-action:hover { background: #2563eb; color: #ffffff; border-color: #2563eb; }
 
     .btn-delete {
       background: #fef2f2;
       color: #dc2626;
       border: 1px solid #fca5a5;
-      padding: 7px 16px;
-      border-radius: 8px;
-      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 600;
       font-size: 12px;
       cursor: pointer;
       transition: all 0.2s;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
     }
-    .btn-delete:hover { background: #dc2626; color: #ffffff; border-color: #dc2626; box-shadow: 0 4px 14px rgba(220,38,38,0.3); transform: translateY(-1px); }
+    .btn-delete:hover { background: #dc2626; color: #ffffff; border-color: #dc2626; }
 
     /* === FORMS === */
-    .form-group { margin-bottom: 20px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; }
     .form-control {
       width: 100%;
-      padding: 12px 16px;
-      font-size: 14px;
+      padding: 10px 14px;
+      font-size: 13.5px;
       border: 1.5px solid #e2e8f0;
-      border-radius: 12px;
+      border-radius: 8px;
       box-sizing: border-box;
       font-family: inherit;
       outline: none;
       background: #fafcff;
-      transition: all 0.25s;
+      transition: all 0.2s;
     }
-    .form-control:focus { border-color: #3b82f6; background: #ffffff; box-shadow: 0 0 0 4px rgba(59,130,246,0.1); }
-    .form-control::placeholder { color: #94a3b8; }
+    .form-control:focus { border-color: #3b82f6; background: #ffffff; box-shadow: 0 0 0 3px rgba(59,130,246,0.08); }
 
     .btn-submit {
-      background: linear-gradient(135deg, #2563eb, #0ea5e9);
+      background: #2563eb;
       color: white;
       border: none;
-      padding: 14px 32px;
-      border-radius: 12px;
-      font-weight: 700;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-weight: 600;
       cursor: pointer;
       font-size: 14px;
-      transition: all 0.3s;
-      box-shadow: 0 4px 16px rgba(37,99,235,0.3);
-      letter-spacing: 0.3px;
+      transition: all 0.2s;
     }
-    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(37,99,235,0.4); }
-    .btn-submit:active { transform: translateY(0); }
-
-    .btn-submit-success { background: linear-gradient(135deg, #059669, #10b981); box-shadow: 0 4px 16px rgba(5,150,105,0.3); }
-    .btn-submit-success:hover { box-shadow: 0 8px 28px rgba(5,150,105,0.4); }
+    .btn-submit:hover { background: #1d4ed8; }
+    .btn-submit-success { background: #059669; }
+    .btn-submit-success:hover { background: #047857; }
 
     .hidden { display: none !important; }
 
     /* === TABS === */
     .sub-content-tabs {
       display: flex;
-      gap: 4px;
+      gap: 2px;
       border-bottom: 2px solid #e2e8f0;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       overflow-x: auto;
-      background: #f8fbff;
-      border-radius: 12px 12px 0 0;
-      padding: 4px 4px 0 4px;
     }
     .sub-tab-btn {
       background: none;
       border: none;
-      padding: 12px 22px;
+      padding: 10px 20px;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 600;
       color: #64748b;
       cursor: pointer;
-      border-bottom: 3px solid transparent;
+      border-bottom: 2.5px solid transparent;
       margin-bottom: -2px;
       white-space: nowrap;
-      transition: all 0.25s;
-      border-radius: 8px 8px 0 0;
+      transition: all 0.2s;
     }
-    .sub-tab-btn:hover { color: #2563eb; background: rgba(37,99,235,0.04); }
-    .sub-tab-btn.active { color: #2563eb; border-color: #2563eb; background: rgba(37,99,235,0.06); }
+    .sub-tab-btn:hover { color: #2563eb; }
+    .sub-tab-btn.active { color: #2563eb; border-color: #2563eb; }
 
     /* === FOLDER === */
     .folder-card {
       background: #ffffff;
       border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      margin-bottom: 14px;
+      border-radius: 10px;
+      margin-bottom: 12px;
       overflow: hidden;
-      transition: all 0.3s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      transition: all 0.2s;
     }
-    .folder-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
     .folder-header {
-      padding: 16px 20px;
+      padding: 14px 18px;
       background: #fafcff;
       cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
       user-select: none;
-      transition: all 0.25s;
+      transition: all 0.2s;
     }
-    .folder-header:hover { background: #f0f7ff; }
+    .folder-header:hover { background: #f1f5f9; }
     .folder-card.open .folder-header { border-bottom: 1px solid #e2e8f0; background: #eff6ff; }
     .folder-title {
-      font-size: 14.5px;
-      font-weight: 700;
+      font-size: 14px;
+      font-weight: 600;
       color: #0a1628;
       margin: 0;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
-    .folder-title .folder-count { font-size: 11px; font-weight: 600; color: #64748b; background: #e2e8f0; padding: 2px 10px; border-radius: 20px; }
-    .folder-toggle-icon { font-size: 11px; color: #3b82f6; transition: transform 0.3s ease; }
+    .folder-title .folder-count { font-size: 11px; font-weight: 500; color: #64748b; background: #e2e8f0; padding: 2px 8px; border-radius: 12px; }
+    .folder-toggle-icon { font-size: 10px; color: #64748b; transition: transform 0.25s ease; }
     .folder-card.open .folder-toggle-icon { transform: rotate(180deg); }
 
-    .folder-body { display: none; padding: 12px 18px 18px 18px; }
+    .folder-body { display: none; padding: 10px 16px 16px 16px; }
     .folder-card.open .folder-body { display: block; }
 
     .sub-item-card {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 14px 18px;
-      background: #f8fbff;
+      padding: 12px 16px;
+      background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      margin-top: 10px;
+      border-radius: 8px;
+      margin-top: 8px;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
       transition: all 0.2s;
     }
     .sub-item-card:hover { border-color: #93c5fd; background: #eff6ff; }
-    .sub-item-title { font-size: 13.5px; font-weight: 700; color: #1e293b; margin: 0; display: flex; align-items: center; gap: 8px; }
+    .sub-item-title { font-size: 13px; font-weight: 600; color: #1e293b; margin: 0; }
 
     /* === SCOPE SELECTOR === */
     .scope-selector-box {
       display: flex;
-      gap: 14px;
-      margin-bottom: 18px;
+      gap: 12px;
+      margin-bottom: 16px;
       flex-wrap: wrap;
     }
     .scope-option-btn {
       flex: 1;
-      min-width: 200px;
-      padding: 16px 20px;
+      min-width: 180px;
+      padding: 14px 18px;
       border: 2px solid #e2e8f0;
-      border-radius: 14px;
+      border-radius: 10px;
       background: #ffffff;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 14px;
-      transition: all 0.25s;
+      gap: 12px;
+      transition: all 0.2s;
       user-select: none;
     }
-    .scope-option-btn input[type="checkbox"] { width: 20px; height: 20px; accent-color: #2563eb; cursor: pointer; flex-shrink: 0; }
-    .scope-option-btn.active { border-color: #3b82f6; background: #eff6ff; box-shadow: 0 0 0 4px rgba(59,130,246,0.08); }
-    .scope-title { font-size: 14px; font-weight: 700; color: #0a1628; margin: 0; }
+    .scope-option-btn input[type="checkbox"] { width: 18px; height: 18px; accent-color: #2563eb; cursor: pointer; flex-shrink: 0; }
+    .scope-option-btn.active { border-color: #3b82f6; background: #eff6ff; }
+    .scope-title { font-size: 13.5px; font-weight: 600; color: #0a1628; margin: 0; }
     .scope-desc { font-size: 12px; color: #64748b; margin-top: 2px; }
 
     .class-checkbox-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 10px;
-      background: #f8fbff;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 8px;
+      background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 16px;
-      margin-top: 8px;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 6px;
     }
     .class-checkbox-item {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 13.5px;
-      font-weight: 600;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 500;
       color: #1e293b;
       cursor: pointer;
       background: #ffffff;
-      padding: 10px 16px;
-      border-radius: 10px;
+      padding: 8px 14px;
+      border-radius: 8px;
       border: 1.5px solid #e2e8f0;
       transition: all 0.15s ease;
     }
     .class-checkbox-item:hover { border-color: #93c5fd; background: #eff6ff; }
-    .class-checkbox-item input { accent-color: #2563eb; width: 17px; height: 17px; }
+    .class-checkbox-item input { accent-color: #2563eb; width: 16px; height: 16px; }
 
-    .form-flex-row { display: flex; gap: 16px; }
+    .form-flex-row { display: flex; gap: 14px; }
     .form-flex-row .form-group { flex: 1; }
 
     /* === PUBLIC FILTER === */
-    .public-layout-container { display: flex; gap: 24px; align-items: flex-start; }
+    .public-layout-container { display: flex; gap: 20px; align-items: flex-start; }
     .public-filter-sidebar {
-      width: 220px;
+      width: 200px;
       flex-shrink: 0;
-      background: #f8fbff;
+      background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 20px;
+      border-radius: 10px;
+      padding: 18px;
       box-sizing: border-box;
     }
-    .public-filter-title { font-size: 11px; font-weight: 800; color: #2563eb; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }
-    .public-filter-group { margin-bottom: 20px; }
+    .public-filter-title { font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px; }
+    .public-filter-group { margin-bottom: 16px; }
     .public-filter-btn {
       display: block;
       width: 100%;
       text-align: left;
-      padding: 9px 16px;
-      margin-bottom: 4px;
+      padding: 8px 14px;
+      margin-bottom: 3px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 500;
       color: #475569;
       background: transparent;
       border: 1px solid transparent;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
       transition: all 0.15s;
     }
     .public-filter-btn:hover { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
-    .public-filter-btn.active { background: linear-gradient(135deg, #2563eb, #0ea5e9); color: #ffffff; border-color: #2563eb; font-weight: 700; box-shadow: 0 4px 12px rgba(37,99,235,0.25); }
+    .public-filter-btn.active { background: #2563eb; color: #ffffff; border-color: #2563eb; font-weight: 600; }
 
     /* === TOAST === */
     #toast-container {
       position: fixed;
-      top: 24px;
+      top: 20px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 9999999;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       pointer-events: none;
       max-width: 90%;
     }
@@ -565,24 +515,21 @@
       pointer-events: auto;
       background: #ffffff;
       color: #0a1628;
-      padding: 16px 24px;
-      border-radius: 14px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+      padding: 14px 22px;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
       display: flex;
       align-items: center;
-      gap: 14px;
-      font-size: 13.5px;
-      font-weight: 600;
-      border-left: 4px solid #10b981;
-      animation: toastIn 0.4s ease, toastOut 0.4s ease 2.8s forwards;
-      min-width: 280px;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      border-left: 4px solid #059669;
+      animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+      min-width: 240px;
     }
-    .toast-notification.error { border-left-color: #ef4444; }
-    .toast-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; flex-shrink: 0; font-weight: 800; }
-    .toast-notification.success .toast-icon { background: #10b981; }
-    .toast-notification.error .toast-icon { background: #ef4444; }
-    @keyframes toastIn { from { opacity: 0; transform: translateY(-24px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-    @keyframes toastOut { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-24px) scale(0.95); } }
+    .toast-notification.error { border-left-color: #dc2626; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(-16px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes toastOut { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-16px) scale(0.96); } }
 
     /* === MODAL === */
     .custom-modal-overlay {
@@ -591,87 +538,87 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(10,22,40,0.6);
-      backdrop-filter: blur(8px);
+      background: rgba(10,22,40,0.5);
+      backdrop-filter: blur(4px);
       z-index: 999999;
       display: flex;
       align-items: center;
       justify-content: center;
       opacity: 0;
       pointer-events: none;
-      transition: all 0.3s ease;
+      transition: all 0.25s ease;
     }
     .custom-modal-overlay.active { opacity: 1; pointer-events: auto; }
     .custom-modal-box {
       background: white;
-      border-radius: 20px;
-      padding: 32px;
-      max-width: 460px;
+      border-radius: 14px;
+      padding: 28px;
+      max-width: 440px;
       width: 92%;
-      box-shadow: 0 32px 64px rgba(0,0,0,0.2);
+      box-shadow: 0 20px 48px rgba(0,0,0,0.15);
       text-align: center;
-      transform: scale(0.92) translateY(16px);
-      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform: scale(0.94) translateY(12px);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .custom-modal-overlay.active .custom-modal-box { transform: scale(1) translateY(0); }
-    .custom-modal-title { font-size: 20px; font-weight: 800; color: #0a1628; margin-bottom: 8px; }
-    .custom-modal-desc { font-size: 14px; color: #64748b; margin-bottom: 24px; line-height: 1.6; }
+    .custom-modal-title { font-size: 18px; font-weight: 700; color: #0a1628; margin-bottom: 8px; }
+    .custom-modal-desc { font-size: 13.5px; color: #64748b; margin-bottom: 22px; line-height: 1.5; }
 
-    .btn-modal { padding: 11px 24px; border-radius: 10px; font-weight: 700; font-size: 13px; border: none; cursor: pointer; transition: all 0.2s; }
+    .btn-modal { padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 13px; border: none; cursor: pointer; transition: all 0.2s; }
     .btn-modal-cancel { background: #f1f5f9; color: #475569; }
     .btn-modal-cancel:hover { background: #e2e8f0; }
     .btn-modal-confirm { background: #dc2626; color: white; }
-    .btn-modal-confirm:hover { background: #b91c1c; box-shadow: 0 4px 16px rgba(220,38,38,0.3); }
+    .btn-modal-confirm:hover { background: #b91c1c; }
 
     .scoreboard-modal-card {
       background: #ffffff;
       width: 95%;
       max-width: 640px;
       max-height: 85vh;
-      border-radius: 20px;
+      border-radius: 14px;
       overflow-y: auto;
-      padding: 32px;
+      padding: 28px;
       position: relative;
-      box-shadow: 0 32px 64px rgba(0,0,0,0.15);
+      box-shadow: 0 20px 48px rgba(0,0,0,0.12);
       box-sizing: border-box;
       text-align: left;
     }
 
     #printable-scoreboard-card {
       background: #ffffff;
-      border-radius: 14px;
-      padding: 24px;
+      border-radius: 10px;
+      padding: 20px;
       border: 1px solid #e2e8f0;
       box-sizing: border-box;
     }
-    .sb-header { border-bottom: 2px solid #f1f5f9; padding-bottom: 16px; margin-bottom: 20px; }
-    .sb-brand { font-size: 12px; font-weight: 800; color: #2563eb; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase; }
-    .sb-info-row { font-size: 13.5px; color: #334155; margin-bottom: 4px; }
+    .sb-header { border-bottom: 2px solid #f1f5f9; padding-bottom: 14px; margin-bottom: 18px; }
+    .sb-brand { font-size: 12px; font-weight: 700; color: #2563eb; letter-spacing: 0.5px; margin-bottom: 6px; text-transform: uppercase; }
+    .sb-info-row { font-size: 13px; color: #334155; margin-bottom: 3px; }
     .sb-info-row strong { color: #0a1628; }
-    .sb-score-container { display: flex; justify-content: center; align-items: center; margin: 20px 0; }
+    .sb-score-container { display: flex; justify-content: center; align-items: center; margin: 18px 0; }
     .score-card-flat {
-      padding: 16px 48px;
-      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      padding: 14px 40px;
+      background: #eff6ff;
       border: 2px solid #93c5fd;
-      border-radius: 14px;
-      font-size: 2.8rem;
-      font-weight: 800;
+      border-radius: 10px;
+      font-size: 2.6rem;
+      font-weight: 700;
       color: #1d4ed8;
       text-align: center;
     }
-    .sb-table-wrapper { margin-top: 16px; overflow-x: auto; border-radius: 10px; }
+    .sb-table-wrapper { margin-top: 14px; overflow-x: auto; border-radius: 8px; }
     .sb-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; }
-    .sb-table th { background: #f8fbff; color: #334155; font-weight: 700; padding: 10px; border: 1px solid #e2e8f0; }
-    .sb-table td { padding: 8px; border: 1px solid #e2e8f0; font-weight: 600; }
+    .sb-table th { background: #f8fafc; color: #334155; font-weight: 600; padding: 8px; border: 1px solid #e2e8f0; }
+    .sb-table td { padding: 7px; border: 1px solid #e2e8f0; font-weight: 500; }
     .sb-row-correct { background-color: #ecfdf5 !important; color: #047857 !important; }
     .sb-row-incorrect { background-color: #fff1f2 !important; color: #be123c !important; }
     .sb-row-skipped { background-color: #ffffff !important; color: #64748b !important; }
 
     .attempt-item-card {
-      background: #f8fbff;
+      background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 16px 18px;
+      border-radius: 10px;
+      padding: 14px 16px;
       margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
@@ -685,7 +632,7 @@
     /* === RESPONSIVE === */
     @media (max-width: 1024px) {
       .admin-main-content { padding: 20px; }
-      .panel-card { padding: 20px; }
+      .panel-card { padding: 18px; }
     }
 
     @media (max-width: 768px) {
@@ -695,34 +642,34 @@
 
       .admin-sidebar {
         transform: translateX(-100%);
-        box-shadow: 4px 0 30px rgba(0,0,0,0.4);
+        box-shadow: 2px 0 30px rgba(0,0,0,0.2);
       }
       .admin-sidebar.mobile-open { transform: translateX(0); }
 
       .admin-content-wrapper { margin-left: 0 !important; width: 100%; }
 
       .admin-topbar {
-        padding: 12px 16px;
+        padding: 10px 16px;
         height: auto;
         flex-direction: row;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
         flex-wrap: wrap;
       }
 
       .topbar-left { width: 100%; gap: 8px; flex-wrap: wrap; }
-      .topbar-left .select-class-dropdown { flex: 1; min-width: 140px; }
+      .topbar-left .select-class-dropdown { flex: 1; min-width: 120px; }
 
       .topbar-actions {
         width: 100%;
         display: grid !important;
         grid-template-columns: 1fr 1fr 1fr;
-        gap: 6px !important;
+        gap: 4px !important;
       }
       .btn-topbar { text-align: center; padding: 6px 4px; font-size: 11px; justify-content: center; }
 
-      .admin-main-content { padding: 14px; }
-      .panel-card { padding: 16px; margin-bottom: 16px; }
+      .admin-main-content { padding: 12px; }
+      .panel-card { padding: 14px; margin-bottom: 14px; }
 
       .card-title-row { flex-direction: column; align-items: flex-start; }
       .card-title-row > div { width: 100%; }
@@ -738,19 +685,19 @@
       .attempt-item-card { flex-direction: column; align-items: flex-start; }
       .attempt-item-card > div:last-child { align-items: flex-start !important; flex-direction: row !important; width: 100%; justify-content: flex-start; margin-top: 8px; }
 
-      .custom-modal-box { padding: 24px; }
-      .scoreboard-modal-card { padding: 20px; }
+      .custom-modal-box { padding: 20px; }
+      .scoreboard-modal-card { padding: 18px; }
       
       .admin-table { font-size: 12px; }
-      .admin-table th, .admin-table td { padding: 10px 12px; }
+      .admin-table th, .admin-table td { padding: 8px 10px; }
     }
 
     @media (max-width: 480px) {
       .topbar-actions { grid-template-columns: 1fr 1fr; }
-      .topbar-left .select-class-dropdown { min-width: 100px; font-size: 12px; padding: 8px 12px; }
+      .topbar-left .select-class-dropdown { min-width: 80px; font-size: 12px; padding: 6px 10px; }
       .btn-topbar { font-size: 10px; padding: 4px 6px; }
-      .card-title { font-size: 16px; }
-      .score-card-flat { font-size: 2rem; padding: 12px 24px; }
+      .card-title { font-size: 15px; }
+      .score-card-flat { font-size: 2rem; padding: 10px 20px; }
     }
   </style>
 </head>
@@ -834,7 +781,7 @@
           <div class="custom-modal-title" id="history-student-name" style="margin: 0; font-size: 17px; color: #2563eb;">Lịch sử làm bài</div>
           <div style="font-size: 12.5px; color: #64748b; margin-top: 2px;" id="history-quiz-title">Bài thi: --</div>
         </div>
-        <button onclick="closeHistoryModal()" style="background: none; border: none; font-size: 18px; color: #64748b; cursor: pointer; font-weight: 800;">✕</button>
+        <button onclick="closeHistoryModal()" style="background: none; border: none; font-size: 18px; color: #64748b; cursor: pointer; font-weight: 600;">×</button>
       </div>
       <div id="history-attempts-container" style="max-height: 60vh; overflow-y: auto; padding-right: 4px;">
         <p style="text-align: center; color: #64748b; padding: 20px;">Đang tải danh sách lần làm...</p>
@@ -846,18 +793,18 @@
   <div id="submission-detail-modal" class="custom-modal-overlay">
     <div class="scoreboard-modal-card">
       <div style="display: flex; justify-content: flex-end; margin-bottom: -10px;">
-        <button onclick="closeSubmissionDetailModal()" style="background: none; border: none; font-size: 18px; color: #64748b; cursor: pointer; font-weight: 800;">✕</button>
+        <button onclick="closeSubmissionDetailModal()" style="background: none; border: none; font-size: 18px; color: #64748b; cursor: pointer; font-weight: 600;">×</button>
       </div>
       <div id="printable-scoreboard-card">
         <div class="sb-header">
-          <div class="sb-brand">📘 TOÁN ANH VIỆT - PHIẾU KẾT QUẢ BÀI THI</div>
+          <div class="sb-brand">TOÁN ANH VIỆT - PHIẾU KẾT QUẢ BÀI THI</div>
           <div class="sb-info-row">Họ và tên: <strong id="detail-student-name">--</strong></div>
           <div class="sb-info-row">Bài thi: <strong id="detail-quiz-title">--</strong></div>
           <div class="sb-info-row">Thời gian nộp: <strong id="detail-sub-date">--</strong></div>
           <div class="sb-info-row">Thời gian làm: <strong id="detail-time-spent">--</strong></div>
         </div>
         <div class="sb-score-container">
-          <div id="detail-score-box" class="score-card-flat">0.0đ</div>
+          <div id="detail-score-box" class="score-card-flat">0.0</div>
         </div>
         <div class="sb-table-wrapper">
           <table class="sb-table">
@@ -879,37 +826,28 @@
     <aside class="admin-sidebar" id="admin-sidebar">
       <div>
         <div class="sidebar-brand">
-          <span class="brand-icon">📚 <span>Quản Lý Hệ Thống</span></span>
-          <button class="sidebar-close-btn" onclick="toggleMobileSidebar()">✕</button>
+          <div>
+            <div class="brand-text">Quản Lý Hệ Thống</div>
+            <span class="brand-sub">Gia Sư Toán Anh Việt</span>
+          </div>
+          <button class="sidebar-close-btn" onclick="toggleMobileSidebar()">×</button>
         </div>
         <nav class="sidebar-menu">
-          <button class="nav-item active" id="tab-tracker-btn" onclick="switchTab('tracker')">
-            <span class="nav-icon">📊</span> Tiến Độ Bài Tập
-          </button>
-          <button class="nav-item" id="tab-manage-contents-btn" onclick="switchTab('manage-contents')">
-            <span class="nav-icon">📁</span> Tài Liệu Lớp
-          </button>
-          <button class="nav-item" id="tab-create-quiz-btn" onclick="switchTab('create-quiz')">
-            <span class="nav-icon">📝</span> Tạo Đề Thi
-          </button>
-          <button class="nav-item" id="tab-upload-btn" onclick="switchTab('upload')">
-            <span class="nav-icon">📤</span> Đăng Video/Tài Liệu
-          </button>
-          <button class="nav-item" id="tab-students-btn" onclick="switchTab('students')">
-            <span class="nav-icon">👨‍🎓</span> Danh Sách Học Sinh
-          </button>
-          <button class="nav-item" id="tab-public-contents-btn" onclick="switchTab('public-contents')">
-            <span class="nav-icon">🌐</span> Nội Dung Công Khai
-          </button>
+          <button class="nav-item active" id="tab-tracker-btn" onclick="switchTab('tracker')">Tiến Độ Bài Tập</button>
+          <button class="nav-item" id="tab-manage-contents-btn" onclick="switchTab('manage-contents')">Tài Liệu Lớp</button>
+          <button class="nav-item" id="tab-create-quiz-btn" onclick="switchTab('create-quiz')">Tạo Đề Thi</button>
+          <button class="nav-item" id="tab-upload-btn" onclick="switchTab('upload')">Đăng Tài Liệu</button>
+          <button class="nav-item" id="tab-students-btn" onclick="switchTab('students')">Danh Sách Học Sinh</button>
+          <button class="nav-item" id="tab-public-contents-btn" onclick="switchTab('public-contents')">Nội Dung Công Khai</button>
         </nav>
       </div>
       <div class="sidebar-footer">
-        <a href="index.html" class="btn-out">🏠 Về Trang Chủ</a>
+        <a href="index.html" class="btn-out">Về Trang Chủ</a>
         <div class="user-profile-box" onclick="window.location.href='profile.html'">
           <img id="sidebar-user-avatar" src="https://ui-avatars.com/api/?name=Dang+Viet&background=2563eb&color=fff" alt="Avatar" class="avatar-img">
           <div class="user-details">
             <div class="user-name-text" id="sidebar-user-name">Đặng Đức Việt</div>
-            <div class="user-role-text">👨‍🏫 Giáo viên / Admin</div>
+            <div class="user-role-text">Giáo viên / Admin</div>
           </div>
         </div>
       </div>
@@ -922,14 +860,14 @@
       <header class="admin-topbar">
         <button class="mobile-toggle-btn" onclick="toggleMobileSidebar()">☰</button>
         <div class="topbar-left">
-          <span class="topbar-label">📖 Lớp đang chọn:</span>
+          <span class="topbar-label">Lớp đang chọn:</span>
           <select id="select-class" class="select-class-dropdown" onchange="onClassChange()">
             <option value="">Đang tải lớp học...</option>
           </select>
           <div class="topbar-actions">
-            <button type="button" class="btn-topbar btn-topbar-primary" onclick="openCreateClassModal()">➕ Tạo Lớp</button>
-            <button type="button" class="btn-topbar" onclick="openEditClassModal()">✏️ Sửa</button>
-            <button type="button" class="btn-topbar btn-topbar-danger" onclick="handleDeleteCurrentClass()">🗑️ Xóa</button>
+            <button type="button" class="btn-topbar btn-topbar-primary" onclick="openCreateClassModal()">Tạo Lớp</button>
+            <button type="button" class="btn-topbar" onclick="openEditClassModal()">Sửa</button>
+            <button type="button" class="btn-topbar btn-topbar-danger" onclick="handleDeleteCurrentClass()">Xóa</button>
           </div>
         </div>
       </header>
@@ -940,9 +878,9 @@
         <!-- TAB 1: TRACKER -->
         <div id="tab-tracker" class="panel-card">
           <div class="card-title-row">
-            <h3 class="card-title"><span class="title-accent"></span> Tình Trạng Học Sinh Làm Bài</h3>
-            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-              <label style="font-size: 13px; font-weight: 600; color: #475569;">📋 Chọn đề:</label>
+            <h3 class="card-title">Tình Trạng Học Sinh Làm Bài</h3>
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <label style="font-size: 13px; font-weight: 500; color: #475569;">Chọn đề:</label>
               <select id="select-quiz" class="select-class-dropdown" style="border: 1px solid #cbd5e1; min-width: 160px;" onchange="loadSubmissionTracker()">
                 <option value="">-- Chọn bài thi --</option>
               </select>
@@ -962,7 +900,7 @@
                 </tr>
               </thead>
               <tbody id="tracker-table-body">
-                <tr><td colspan="7" style="text-align: center; color: #94a3b8; padding: 40px;">Vui lòng chọn lớp và đề thi để xem tiến độ.</td></tr>
+                <tr><td colspan="7" style="text-align: center; color: #94a3b8; padding: 36px;">Vui lòng chọn lớp và đề thi để xem tiến độ.</td></tr>
               </tbody>
             </table>
           </div>
@@ -971,21 +909,21 @@
         <!-- TAB 2: MANAGE CONTENTS -->
         <div id="tab-manage-contents" class="panel-card hidden">
           <div class="card-title-row">
-            <h3 class="card-title"><span class="title-accent"></span> Tài Liệu Lớp Học</h3>
+            <h3 class="card-title">Tài Liệu Lớp Học</h3>
           </div>
           <div class="sub-content-tabs">
-            <button class="sub-tab-btn active" onclick="switchAdminSubTab('video', this)">🎬 Bài Giảng & Video</button>
-            <button class="sub-tab-btn" onclick="switchAdminSubTab('exercise', this)">📝 Bài Tập</button>
-            <button class="sub-tab-btn" onclick="switchAdminSubTab('doc', this)">📄 Tài Liệu PDF</button>
+            <button class="sub-tab-btn active" onclick="switchAdminSubTab('video', this)">Bài Giảng & Video</button>
+            <button class="sub-tab-btn" onclick="switchAdminSubTab('exercise', this)">Bài Tập</button>
+            <button class="sub-tab-btn" onclick="switchAdminSubTab('doc', this)">Tài Liệu PDF</button>
           </div>
           <div id="admin-contents-view-container">
-            <p style="text-align: center; color: #94a3b8; padding: 40px;">Đang tải danh sách bài học...</p>
+            <p style="text-align: center; color: #94a3b8; padding: 36px;">Đang tải danh sách bài học...</p>
           </div>
         </div>
 
         <!-- TAB 3: CREATE QUIZ -->
         <div id="tab-create-quiz" class="panel-card hidden">
-          <h3 class="card-title" style="margin-bottom: 20px;"><span class="title-accent"></span> Tạo Đề Thi Online</h3>
+          <h3 class="card-title" style="margin-bottom: 20px;">Tạo Đề Thi Online</h3>
           <form id="create-quiz-form" onsubmit="handleCreateQuiz(event)">
             
             <div class="form-group">
@@ -994,14 +932,14 @@
                 <label class="scope-option-btn active" id="quiz-scope-class-lbl">
                   <input type="checkbox" id="quiz-scope-class" checked onchange="toggleScopeUI('quiz')">
                   <div>
-                    <div class="scope-title">🏫 Lớp Học (Nội bộ)</div>
+                    <div class="scope-title">Lớp Học (Nội bộ)</div>
                     <div class="scope-desc">Giao bài thi vào thư mục lớp cho học sinh</div>
                   </div>
                 </label>
                 <label class="scope-option-btn" id="quiz-scope-public-lbl">
                   <input type="checkbox" id="quiz-scope-public" onchange="toggleScopeUI('quiz')">
                   <div>
-                    <div class="scope-title">🌐 Công Khai</div>
+                    <div class="scope-title">Công Khai</div>
                     <div class="scope-desc">Hiển thị ở trang Thi Online cho mọi người</div>
                   </div>
                 </label>
@@ -1011,7 +949,7 @@
             <div class="form-group" id="quiz-class-selection-group">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <label style="margin: 0;">Chọn Lớp Học</label>
-                <button type="button" onclick="toggleSelectAllClasses('quiz')" style="background: none; border: none; color: #2563eb; font-size: 12px; font-weight: 700; cursor: pointer;">☑️ Select All / Clear All</button>
+                <button type="button" onclick="toggleSelectAllClasses('quiz')" style="background: none; border: none; color: #2563eb; font-size: 12px; font-weight: 600; cursor: pointer;">Select All / Clear All</button>
               </div>
               <div class="class-checkbox-grid" id="quiz-classes-checkbox-container">
                 <span style="color: #94a3b8; font-size: 13px;">Đang tải danh sách lớp...</span>
@@ -1070,13 +1008,13 @@
               <textarea id="quiz-answers-input" class="form-control" rows="3" placeholder="Nhập chuỗi đáp án. Ví dụ: 1A, 2B, 3C, 4D, 5A..." required></textarea>
             </div>
 
-            <button type="submit" id="btn-submit-quiz" class="btn-submit btn-submit-success">✅ Tạo Đề Thi</button>
+            <button type="submit" id="btn-submit-quiz" class="btn-submit btn-submit-success">Tạo Đề Thi</button>
           </form>
         </div>
 
         <!-- TAB 4: UPLOAD -->
         <div id="tab-upload" class="panel-card hidden">
-          <h3 class="card-title" style="margin-bottom: 20px;"><span class="title-accent"></span> Đăng Tài Liệu / Video Mới</h3>
+          <h3 class="card-title" style="margin-bottom: 20px;">Đăng Tài Liệu / Video Mới</h3>
           <form id="upload-content-form" onsubmit="handleUploadContent(event)">
             
             <div class="form-group">
@@ -1085,14 +1023,14 @@
                 <label class="scope-option-btn active" id="content-scope-class-lbl">
                   <input type="checkbox" id="content-scope-class" checked onchange="toggleScopeUI('content')">
                   <div>
-                    <div class="scope-title">🏫 Lớp Học (Nội bộ)</div>
+                    <div class="scope-title">Lớp Học (Nội bộ)</div>
                     <div class="scope-desc">Đẩy tài liệu vào kho bài giảng học sinh</div>
                   </div>
                 </label>
                 <label class="scope-option-btn" id="content-scope-public-lbl">
                   <input type="checkbox" id="content-scope-public" onchange="toggleScopeUI('content')">
                   <div>
-                    <div class="scope-title">🌐 Công Khai</div>
+                    <div class="scope-title">Công Khai</div>
                     <div class="scope-desc">Đăng lên mục Tài liệu công khai trên Website</div>
                   </div>
                 </label>
@@ -1102,7 +1040,7 @@
             <div class="form-group" id="content-class-selection-group">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <label style="margin: 0;">Chọn Lớp Học</label>
-                <button type="button" onclick="toggleSelectAllClasses('content')" style="background: none; border: none; color: #2563eb; font-size: 12px; font-weight: 700; cursor: pointer;">☑️ Select All / Clear All</button>
+                <button type="button" onclick="toggleSelectAllClasses('content')" style="background: none; border: none; color: #2563eb; font-size: 12px; font-weight: 600; cursor: pointer;">Select All / Clear All</button>
               </div>
               <div class="class-checkbox-grid" id="content-classes-checkbox-container">
                 <span style="color: #94a3b8; font-size: 13px;">Đang tải danh sách lớp...</span>
@@ -1113,8 +1051,8 @@
               <div class="form-group" style="flex: 1;">
                 <label>Loại Nội Dung</label>
                 <select id="content-type" class="form-control" onchange="onContentTypeChange()">
-                  <option value="doc">📄 Tài liệu (File PDF / Word)</option>
-                  <option value="video">🎬 Bài giảng Video (Link YouTube)</option>
+                  <option value="doc">Tài liệu (File PDF / Word)</option>
+                  <option value="video">Bài giảng Video (Link YouTube)</option>
                 </select>
               </div>
               <div class="form-group" style="flex: 2;" id="file-input-group">
@@ -1164,14 +1102,14 @@
               </div>
             </div>
 
-            <button type="submit" id="btn-submit-upload" class="btn-submit">📤 Đăng Tài Liệu</button>
+            <button type="submit" id="btn-submit-upload" class="btn-submit">Đăng Tài Liệu</button>
           </form>
         </div>
 
         <!-- TAB 5: STUDENTS -->
         <div id="tab-students" class="panel-card hidden">
           <div class="card-title-row">
-            <h3 class="card-title"><span class="title-accent"></span> Danh Sách Học Sinh Trong Lớp</h3>
+            <h3 class="card-title">Danh Sách Học Sinh Trong Lớp</h3>
           </div>
           <div style="overflow-x: auto;">
             <table class="admin-table">
@@ -1185,7 +1123,7 @@
                 </tr>
               </thead>
               <tbody id="students-table-body">
-                <tr><td colspan="5" style="text-align: center; color: #94a3b8; padding: 40px;">Đang tải danh sách học sinh...</td></tr>
+                <tr><td colspan="5" style="text-align: center; color: #94a3b8; padding: 36px;">Đang tải danh sách học sinh...</td></tr>
               </tbody>
             </table>
           </div>
@@ -1194,17 +1132,17 @@
         <!-- TAB 6: PUBLIC CONTENTS -->
         <div id="tab-public-contents" class="panel-card hidden">
           <div class="card-title-row">
-            <h3 class="card-title"><span class="title-accent"></span> Quản Lý Nội Dung Công Khai</h3>
+            <h3 class="card-title">Quản Lý Nội Dung Công Khai</h3>
           </div>
           <div class="sub-content-tabs">
-            <button class="sub-tab-btn active" onclick="switchPublicSubTab('docs', this)">📄 Tài Liệu Toán</button>
-            <button class="sub-tab-btn" onclick="switchPublicSubTab('quizzes', this)">📝 Thi Online</button>
+            <button class="sub-tab-btn active" onclick="switchPublicSubTab('docs', this)">Tài Liệu Toán</button>
+            <button class="sub-tab-btn" onclick="switchPublicSubTab('quizzes', this)">Thi Online</button>
           </div>
 
           <div class="public-layout-container">
             <aside class="public-filter-sidebar">
               <div class="public-filter-group">
-                <div class="public-filter-title">📚 Khối Lớp</div>
+                <div class="public-filter-title">Khối Lớp</div>
                 <button class="public-filter-btn active" onclick="filterPublicData('grade', 'all', this)">Tất cả lớp</button>
                 <button class="public-filter-btn" onclick="filterPublicData('grade', '6', this)">Lớp 6</button>
                 <button class="public-filter-btn" onclick="filterPublicData('grade', '7', this)">Lớp 7</button>
@@ -1213,7 +1151,7 @@
                 <button class="public-filter-btn" onclick="filterPublicData('grade', '10', this)">Thi thử vào 10</button>
               </div>
               <div class="public-filter-group">
-                <div class="public-filter-title">📅 Học Kỳ</div>
+                <div class="public-filter-title">Học Kỳ</div>
                 <button class="public-filter-btn active" onclick="filterPublicData('semester', 'all', this)">Tất cả học kỳ</button>
                 <button class="public-filter-btn" onclick="filterPublicData('semester', 'Đề giữa kì 1', this)">Giữa kì 1</button>
                 <button class="public-filter-btn" onclick="filterPublicData('semester', 'Đề cuối kì 1', this)">Cuối kì 1</button>
@@ -1236,7 +1174,7 @@
                   </tr>
                 </thead>
                 <tbody id="public-table-body">
-                  <tr><td colspan="6" style="text-align: center; color: #94a3b8; padding: 40px;">Đang tải dữ liệu...</td></tr>
+                  <tr><td colspan="6" style="text-align: center; color: #94a3b8; padding: 36px;">Đang tải dữ liệu...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1283,8 +1221,7 @@
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
       toast.className = `toast-notification ${type}`;
-      const icon = type === 'success' ? '✓' : '✕';
-      toast.innerHTML = `<div class="toast-icon">${icon}</div><div>${message}</div>`;
+      toast.innerHTML = `<span>${message}</span>`;
       container.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
     }
@@ -1603,7 +1540,7 @@
         html += `
           <div class="folder-card ${isOpen}">
             <div class="folder-header" onclick="toggleFolder(this)">
-              <h4 class="folder-title">📂 ${folderName} <span class="folder-count">${items.length} mục</span></h4>
+              <h4 class="folder-title">${folderName} <span class="folder-count">${items.length}</span></h4>
               <span class="folder-toggle-icon">▼</span>
             </div>
             <div class="folder-body">
@@ -1620,8 +1557,8 @@
             <div class="sub-item-card">
               <div class="sub-item-title">${item.title}</div>
               <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                <a href="${targetUrl}" target="_blank" class="btn-action">👁️ Xem</a>
-                <button class="btn-delete" onclick="deleteClassContent('${item.id}', '${item.title}')">🗑️ Xóa</button>
+                <a href="${targetUrl}" target="_blank" class="btn-action">Xem</a>
+                <button class="btn-delete" onclick="deleteClassContent('${item.id}', '${item.title}')">Xóa</button>
               </div>
             </div>
           `;
@@ -1912,7 +1849,7 @@
           <td><strong>${st.student_name}</strong></td>
           <td>${st.student_email}</td>
           <td>${st.joined_at ? new Date(st.joined_at).toLocaleString('vi-VN') : '---'}</td>
-          <td><button class="btn-delete" onclick="removeStudentFromClass('${st.id}')">🗑️ Xóa khỏi lớp</button></td>
+          <td><button class="btn-delete" onclick="removeStudentFromClass('${st.id}')">Xóa khỏi lớp</button></td>
         </tr>
       `).join('');
 
@@ -1996,11 +1933,11 @@
             <tr>
               <td><strong>${student.student_name}</strong></td>
               <td>${student.student_email}</td>
-              <td><span class="status-badge badge-done">✅ Đã nộp (${userSubsList.length} lần)</span></td>
-              <td><strong style="color: #2563eb; font-size: 15px;">${Number(bestSub.mcq_score || 0).toFixed(1)}đ</strong></td>
+              <td><span class="status-badge badge-done">Đã nộp (${userSubsList.length} lần)</span></td>
+              <td><strong style="color: #2563eb; font-size: 15px;">${Number(bestSub.mcq_score || 0).toFixed(1)}</strong></td>
               <td>${mins > 0 ? mins + 'p ' : ''}${secs}s</td>
-              <td><span style="font-size: 13px; color: #1e293b; font-weight: 600;">${submitTimeStr}</span></td>
-              <td><button class="btn-action" onclick="openHistoryModal('${studentEmailKey}', '${student.student_name}')">📋 Lịch sử</button></td>
+              <td><span style="font-size: 13px; color: #1e293b; font-weight: 500;">${submitTimeStr}</span></td>
+              <td><button class="btn-action" onclick="openHistoryModal('${studentEmailKey}', '${student.student_name}')">Lịch sử</button></td>
             </tr>
           `;
         } else {
@@ -2008,7 +1945,7 @@
             <tr>
               <td><strong>${student.student_name}</strong></td>
               <td>${student.student_email}</td>
-              <td><span class="status-badge badge-pending">⏳ Chưa làm</span></td>
+              <td><span class="status-badge badge-pending">Chưa làm</span></td>
               <td>---</td>
               <td>---</td>
               <td>---</td>
@@ -2027,7 +1964,7 @@
       const modal = document.getElementById('history-modal');
       const container = document.getElementById('history-attempts-container');
 
-      document.getElementById('history-student-name').innerText = `📋 Lịch sử làm bài: ${studentName}`;
+      document.getElementById('history-student-name').innerText = `Lịch sử làm bài: ${studentName}`;
       document.getElementById('history-quiz-title').innerText = `Bài thi: ${currentQuizData?.title || ''}`;
 
       const userSubs = currentQuizSubmissionsMap[emailKey] || [];
@@ -2044,25 +1981,25 @@
 
           let essayHtml = 'Không có';
           if (sub.essay_files && Array.isArray(sub.essay_files) && sub.essay_files.length > 0) {
-            essayHtml = sub.essay_files.map((url, i) => `<a href="${url}" target="_blank" class="btn-action" style="padding: 3px 8px;">📎 File ${i+1}</a>`).join(' ');
+            essayHtml = sub.essay_files.map((url, i) => `<a href="${url}" target="_blank" class="btn-action" style="padding: 3px 8px;">File ${i+1}</a>`).join(' ');
           }
 
           return `
             <div class="attempt-item-card">
               <div>
-                <div style="font-size: 14px; font-weight: 800; color: #1e293b;">
+                <div style="font-size: 14px; font-weight: 700; color: #1e293b;">
                   Lần ${attemptNum} - <span style="color: #2563eb;">${Number(sub.mcq_score || 0).toFixed(1)} điểm</span>
                 </div>
                 <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
-                  🕐 ${dateStr} (${mins > 0 ? mins + ' phút ' : ''}${secs} giây)
+                  ${dateStr} (${mins > 0 ? mins + ' phút ' : ''}${secs} giây)
                 </div>
                 <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
-                  📝 Tự luận: ${essayHtml}
+                  Tự luận: ${essayHtml}
                 </div>
               </div>
               <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
-                <button class="btn-action" onclick="openSubmissionDetailModal('${sub.id}', ${attemptNum})">📊 Chi tiết</button>
-                <button class="btn-delete" onclick="deleteSingleSubmission('${sub.id}', ${attemptNum})">🗑️ Xóa bài</button>
+                <button class="btn-action" onclick="openSubmissionDetailModal('${sub.id}', ${attemptNum})">Chi tiết</button>
+                <button class="btn-delete" onclick="deleteSingleSubmission('${sub.id}', ${attemptNum})">Xóa bài</button>
               </div>
             </div>
           `;
@@ -2117,7 +2054,7 @@
       const mins = Math.floor((foundSub.time_spent || 0) / 60);
       const secs = (foundSub.time_spent || 0) % 60;
       document.getElementById('detail-time-spent').innerText = `${mins > 0 ? mins + ' phút ' : ''}${secs} giây`;
-      document.getElementById('detail-score-box').innerText = `${Number(foundSub.mcq_score || 0).toFixed(1)}đ`;
+      document.getElementById('detail-score-box').innerText = `${Number(foundSub.mcq_score || 0).toFixed(1)}`;
 
       const tbody = document.getElementById('detail-table-body');
       tbody.innerHTML = '';
@@ -2133,15 +2070,15 @@
           const sysKey = item.correct_answer || '';
 
           let rowClass = 'sb-row-skipped';
-          let statusText = '⏭️ Bỏ qua';
+          let statusText = 'Bỏ qua';
 
           if (studentAns) {
             if (studentAns.toString().trim().toLowerCase() === sysKey.toString().trim().toLowerCase()) {
               rowClass = 'sb-row-correct';
-              statusText = '✅ Chính xác';
+              statusText = 'Chính xác';
             } else {
               rowClass = 'sb-row-incorrect';
-              statusText = '❌ Sai';
+              statusText = 'Sai';
             }
           }
 
@@ -2208,8 +2145,8 @@
             <td><strong>${item.tieu_de || 'Không có tiêu đề'}</strong></td>
             <td>Lớp ${item.lop || '---'}</td>
             <td><span class="status-badge badge-info">${item.loai_de || '---'}</span></td>
-            <td><a href="${item.link_file || item.file_url || '#'}" target="_blank" class="btn-action">📂 Mở File</a></td>
-            <td><button class="btn-delete" onclick="deletePublicDoc('${item.tieu_de.replace(/'/g, "\\'")}')">🗑️ Xóa</button></td>
+            <td><a href="${item.link_file || item.file_url || '#'}" target="_blank" class="btn-action">Mở File</a></td>
+            <td><button class="btn-delete" onclick="deletePublicDoc('${item.tieu_de.replace(/'/g, "\\'")}')">Xóa</button></td>
           </tr>
         `).join('');
       } else {
@@ -2219,11 +2156,11 @@
             <td><strong>${item.title || 'Không có tiêu đề'}</strong></td>
             <td>Lớp ${item.grade || '---'}</td>
             <td><span class="status-badge badge-warning">${item.semester || '---'}</span></td>
-            <td><span style="font-size:12.5px; color:#475569;">⏱️ ${item.duration || 45} phút | ${item.answer_keys?.length || 0} câu</span></td>
+            <td><span style="font-size:12.5px; color:#475569;">${item.duration || 45} phút | ${item.answer_keys?.length || 0} câu</span></td>
             <td>
               <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                <a href="quiz-room.html?id=${item.id}" target="_blank" class="btn-action">📝 Thi thử</a>
-                <button class="btn-delete" onclick="deletePublicQuiz('${item.id}', '${(item.title || '').replace(/'/g, "\\'")}')">🗑️ Xóa</button>
+                <a href="quiz-room.html?id=${item.id}" target="_blank" class="btn-action">Thi thử</a>
+                <button class="btn-delete" onclick="deletePublicQuiz('${item.id}', '${(item.title || '').replace(/'/g, "\\'")}')">Xóa</button>
               </div>
             </td>
           </tr>
