@@ -269,6 +269,8 @@
       background: var(--paper);
     }
     .doc-viewer { display: block; width: 100%; height: 700px; border: 0; border-radius: inherit; background: var(--paper); }
+    .viewer-fallback { margin: 0; padding: 10px 12px; color: var(--ink-soft); background: var(--surface); font-size: 12px; line-height: 1.5; text-align: center; }
+    .viewer-fallback a { color: var(--accent); font-weight: 700; }
     .no-preview {
       display: flex;
       flex-direction: column;
@@ -543,10 +545,9 @@
       const encodeUrl = encodeURIComponent(fullFileUrl);
       const viewerContainer = document.getElementById('viewer-container');
       if (fileExtension === 'pdf') {
-        // PDF viewer gốc trên một số mobile browser chỉ render trang đầu khi nhúng iframe.
-        // Google viewer xử lý tài liệu nhiều trang ổn định hơn và vẫn cho phép cuộn dọc.
-        const pdfViewerUrl = 'https://docs.google.com/gview?embedded=1&hl=vi&url=' + encodeUrl;
-        viewerContainer.innerHTML = '<div class="doc-viewer-shell"><iframe id="doc-iframe" class="doc-viewer" src="' + pdfViewerUrl + '" title="Trình xem tài liệu PDF nhiều trang" allow="fullscreen" allowfullscreen></iframe></div>';
+        // Dùng URL PDF gốc để tránh Google Viewer bị trắng khi URL Supabase có token/quyền truy cập.
+        // Khung có cuộn dọc; nút dự phòng mở PDF ngoài tab trên iPhone nếu trình nhúng bị giới hạn.
+        viewerContainer.innerHTML = '<div class="doc-viewer-shell"><iframe id="doc-iframe" class="doc-viewer" src="' + escapeHTML(fullFileUrl) + '#view=FitH" title="Trình xem tài liệu PDF nhiều trang" allow="fullscreen" allowfullscreen></iframe><p class="viewer-fallback">Nếu không thấy nội dung, hãy <a href="' + escapeHTML(fullFileUrl) + '" target="_blank" rel="noopener">mở file PDF</a> ở tab mới.</p></div>';
       } else if (fileExtension === 'docx' || fileExtension === 'doc') {
         viewerContainer.innerHTML = '<div class="doc-viewer-shell"><iframe id="doc-iframe" class="doc-viewer" src="https://view.officeapps.live.com/op/embed.aspx?src=' + encodeUrl + '" frameborder="0" title="Trình xem tài liệu Word" allow="fullscreen" allowfullscreen></iframe></div>';
       } else {
