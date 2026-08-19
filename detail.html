@@ -260,7 +260,15 @@
     .viewer-actions { display: flex; gap: 8px; }
     .viewer-actions .btn-action { min-height: 38px; padding: 7px 12px; font-size: 12.5px; }
     #viewer-container { min-width: 0; }
-    .doc-viewer { display: block; width: 100%; height: 700px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--paper); }
+    .doc-viewer-shell {
+      width: 100%;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--paper);
+    }
+    .doc-viewer { display: block; width: 100%; height: 700px; border: 0; border-radius: inherit; background: var(--paper); }
     .no-preview {
       display: flex;
       flex-direction: column;
@@ -352,7 +360,8 @@
       .viewer-label { width: 100%; font-size: 13px; }
       .viewer-actions { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
       .viewer-actions .btn-action { min-width: 0; min-height: 42px; padding: 8px 7px; font-size: 11.5px; }
-      .doc-viewer { height: clamp(480px,72svh,760px); border-radius: 9px; }
+      .doc-viewer-shell { max-height: 76svh; border-radius: 9px; }
+      .doc-viewer { height: max(680px, 76svh); min-height: 680px; border-radius: 9px; }
       .no-preview { height: min(58svh,420px); min-height: 280px; padding: 20px 14px; }
       .related-section { margin-top: 22px; padding-top: 18px; }
       .related-grid { grid-template-columns: 1fr; gap: 10px; margin-top: 12px; }
@@ -534,9 +543,12 @@
       const encodeUrl = encodeURIComponent(fullFileUrl);
       const viewerContainer = document.getElementById('viewer-container');
       if (fileExtension === 'pdf') {
-        viewerContainer.innerHTML = '<iframe id="doc-iframe" class="doc-viewer" src="' + escapeHTML(fullFileUrl) + '" title="Trình xem tài liệu PDF"></iframe>';
+        // PDF viewer gốc trên một số mobile browser chỉ render trang đầu khi nhúng iframe.
+        // Google viewer xử lý tài liệu nhiều trang ổn định hơn và vẫn cho phép cuộn dọc.
+        const pdfViewerUrl = 'https://docs.google.com/gview?embedded=1&hl=vi&url=' + encodeUrl;
+        viewerContainer.innerHTML = '<div class="doc-viewer-shell"><iframe id="doc-iframe" class="doc-viewer" src="' + pdfViewerUrl + '" title="Trình xem tài liệu PDF nhiều trang" allow="fullscreen" allowfullscreen></iframe></div>';
       } else if (fileExtension === 'docx' || fileExtension === 'doc') {
-        viewerContainer.innerHTML = '<iframe id="doc-iframe" class="doc-viewer" src="https://view.officeapps.live.com/op/embed.aspx?src=' + encodeUrl + '" frameborder="0" title="Trình xem tài liệu Word"></iframe>';
+        viewerContainer.innerHTML = '<div class="doc-viewer-shell"><iframe id="doc-iframe" class="doc-viewer" src="https://view.officeapps.live.com/op/embed.aspx?src=' + encodeUrl + '" frameborder="0" title="Trình xem tài liệu Word" allow="fullscreen" allowfullscreen></iframe></div>';
       } else {
         showNoPreview('Định dạng này chưa hỗ trợ xem trực tuyến. Vui lòng dùng nút <b>“Tải file gốc”</b>.');
       }
