@@ -1837,3 +1837,17 @@ body {
   .hero-title { font-size: 1.6rem; }
   .hero-descartes { padding: 32px 14px 36px; }
 }
+.section-header-modern {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.section-header-modern h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 8px;
+}
+.section-header-modern p {
+  color: #64748B;
+  font-size: 1.05rem;
+}

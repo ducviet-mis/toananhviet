@@ -19,78 +19,83 @@
   <header class="site-header"></header>
 
   <!-- 2. HERO SECTION -->
-  <section class="hero-descartes">
-    <div class="vn-stars-decor" aria-hidden="true">
-      <span class="vn-star vs-1">★</span>
-      <span class="vn-star vs-2">★</span>
-      <span class="vn-star vs-3">★</span>
-      <span class="vn-star vs-4">★</span>
-      <span class="vn-star vs-5">★</span>
-      <span class="vn-star vs-6">★</span>
-    </div>
-    <div class="floating-books-container">
-      <img src="assets/Sách đề thi 1.png" alt="Sách đề thi 1" class="floating-book book-left-top float-book-1" title="SÁCH CÔNG PHÁ ĐỀ LỚP 6">
-      <img src="assets/Sách đề thi 2.png" alt="Sách đề thi 2" class="floating-book book-left-bottom float-book-2" title="SÁCH CÔNG PHÁ ĐỀ LỚP 7">
-      <img src="assets/Sách đề thi 3.png" alt="Sách đề thi 3" class="floating-book book-right-top float-book-2-delay" title="SÁCH CÔNG PHÁ ĐỀ LỚP 8">
-      <img src="assets/Sách đề thi 4.png" alt="Sách đề thi 4" class="floating-book book-right-bottom float-book-1-delay" title="SÁCH CÔNG PHÁ ĐỀ LỚP 9">
-    </div>
-
-    <div class="hero-typography-container">
-      <span class="hero-badge-vn">Chào mừng Quốc khánh 2/9 &nbsp;|&nbsp; Mừng đất nước 81 năm độc lập</span>
-      <h1 class="hero-title">Học Toán thông minh. <br><span class="text-accent">Tìm đúng tài liệu trong vài giây.</span></h1>
-      <p class="hero-subtitle">Nhập mã ID được in trực tiếp trên phiếu đề (VD: 8G01, 8C02) để mở ngay video chữa chi tiết và đáp án đính kèm.</p>
-    </div>
-
-    <div class="search-layout-wrapper">
-      <a href="index.html#register" class="perk-card perk-card--trial">
-        <div class="perk-icon-wrap">
-          <svg class="perk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="8" width="18" height="4"></rect>
-            <path d="M12 8v13"></path>
-            <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path>
-            <path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8"></path>
-            <path d="M16.5 8a2.5 2.5 0 0 0 0-5C13 3 12 8 12 8"></path>
-          </svg>
+  <section class="hero-modern">
+    <div class="hero-container">
+      <div class="hero-left">
+        <span class="hero-badge-modern">Nền tảng Toán Cấp 2 🚀</span>
+        <h1 class="hero-title-modern">Học Toán dễ hơn.<br>Hiểu bài sâu hơn.</h1>
+        <p class="hero-desc-modern">Nền tảng học toán trực tuyến hàng đầu giúp học sinh cấp 2 nắm vững kiến thức, tự tin chinh phục mọi bài thi với phương pháp giảng dạy hiện đại và dễ hiểu.</p>
+        
+        <div class="hero-buttons">
+          <a href="#recent-docs" class="btn-primary-modern">Bắt đầu học &rarr;</a>
+          <a href="#curriculum" class="btn-secondary-modern">Tra cứu bài giải</a>
         </div>
-        <span class="perk-tag">Ưu đãi độc quyền</span>
-        <h4>Học thử miễn phí 0đ</h4>
-        <p>Đánh giá năng lực & trải nghiệm học 1-1 cùng giáo viên trước khi đăng ký.</p>
-        <span class="perk-cta">Đăng ký ngay <span class="perk-arrow">→</span></span>
-      </a>
+      </div>
 
-      <div class="search-main-box">
-        <form onsubmit="handleIdSearch(event)" class="search-form-premium">
-          <span class="search-icon">🔍</span>
-          <input 
-            type="text" 
-            id="search-id-input" 
-            placeholder="Nhập mã đề của bạn (VD: 8G01, 8C02)..." 
-            autocomplete="off"
-          >
-          <button type="submit" class="search-btn">Tìm kiếm</button>
+      <div class="hero-right">
+        <div class="progress-widget">
+          <div class="pw-header">
+            <span>Tiến độ tuần này</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <div class="pw-body">
+            <div class="pw-score-row">
+              <div class="pw-score-box">
+                <span class="score-num">9.5</span><span class="score-den">/10</span>
+                <span class="score-label">Điểm trung bình</span>
+              </div>
+              <div class="pw-stats">
+                <div class="stat-item">
+                  <span class="stat-val">12</span>
+                  <span class="stat-name">Bài giảng đã xem</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-val">45</span>
+                  <span class="stat-name">Bài tập hoàn thành</span>
+                </div>
+              </div>
+            </div>
+            <div class="pw-bar-wrap">
+              <div class="pw-bar-info"><span>Mức độ hoàn thành</span><span>85%</span></div>
+              <div class="pw-bar"><div class="pw-bar-fill" style="width: 85%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-actions-row">
+      <a href="#" class="qa-card" onclick="document.getElementById('search-id-input').focus()">
+        <div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg></div>
+        <h4>Kích hoạt tài liệu</h4>
+        <p>Nhập mã code để mở khóa các bài giảng và tài liệu độc quyền.</p>
+      </a>
+      <div class="qa-card qa-search-card">
+        <div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
+        <h4>Tra cứu đề</h4>
+        <p>Tìm kiếm nhanh chóng đáp án và đề giải chi tiết cho mọi bài toán.</p>
+        <form onsubmit="handleIdSearch(event)" class="qa-search-form">
+          <input type="text" id="search-id-input" placeholder="Nhập mã đề (VD: 8G01)..." required>
+          <button type="submit">&rarr;</button>
         </form>
         <p id="search-error" class="search-error-msg" style="display: none;"></p>
       </div>
-
-      <a href="https://www.facebook.com/261107ddv" target="_blank" class="perk-card perk-card--support">
-        <div class="perk-icon-wrap">
-          <svg class="perk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3v-7a9 9 0 0 1 18 0v7h-3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"></path>
-          </svg>
-        </div>
-        <span class="perk-tag">Luôn sẵn sàng</span>
-        <h4>Hỗ trợ 24/7</h4>
-        <p>Giải đáp thắc mắc bài tập qua Zalo nhanh chóng, tận tâm bất cứ lúc nào.</p>
-        <span class="perk-cta">Nhắn Zalo ngay <span class="perk-arrow">→</span></span>
+      <a href="#curriculum" class="qa-card">
+        <div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></div>
+        <h4>Vào lớp</h4>
+        <p>Truy cập phòng học trực tuyến và xem lại các video bài giảng đã học.</p>
       </a>
     </div>
   </section>
 
   <!-- 3. PHẦN TÀI LIỆU MỚI ĐĂNG TẢI -->
-  <main class="recent-docs">
-    <div class="section-header">
-      <h2>Tài liệu mới đăng tải</h2>
-      <div class="divider"></div>
+  <main class="recent-docs" id="recent-docs">
+    <div class="section-header-modern" style="display: flex; justify-content: space-between; align-items: flex-end; text-align: left;">
+      <div>
+        <h2>Lớp học Nổi bật</h2>
+        <p>Các khóa học được quan tâm nhiều nhất</p>
+      </div>
+      <a href="#" style="color: #0284C7; font-weight: 600; text-decoration: none; font-size: 0.95rem;">Xem tất cả &rarr;</a>
     </div>
     <div class="doc-grid" id="latest-docs-container">
       <p style="text-align: center; grid-column: 1/-1;">Đang tải tài liệu...</p>

@@ -1,222 +1,106 @@
-/* =========================================================
+﻿/* =========================================================
    doc-card-premium.css
-   Bộ giao diện dùng chung cho thẻ tài liệu (doc-card-premium)
-   Dùng trên: index.html, category.html (và mọi trang khác
-   hiển thị .doc-grid trong tương lai)
-   ---------------------------------------------------------
-   Ý tưởng: mỗi thẻ tài liệu được thiết kế như một "tờ đề thi"
-   trong cặp hồ sơ học tập — có tab phân loại màu theo giai đoạn
-   (Giữa kì 1 / Cuối kì 1 / Giữa kì 2 / Cuối kì 2 / Chuyên đề),
-   giúp học sinh quét mắt là nhận ra ngay loại đề mà không cần đọc chữ.
+   Modern Stitch Vibe Card
    ========================================================= */
 
 :root {
-  --doc-blue: #0284c7;
-  --doc-blue-dark: #0369a1;
-  --doc-blue-50: #f0f9ff;
-  --doc-navy: #1e293b;
-  --doc-slate: #64748b;
-  --doc-line: #e2e8f0;
+  --doc-blue: #0EA5E9;
+  --doc-blue-dark: #0284C7;
+  --doc-blue-50: #F0F9FF;
+  --doc-navy: #0F172A;
+  --doc-slate: #64748B;
+  --doc-line: #F1F5F9;
   --doc-bg: #ffffff;
-
-  /* Màu tab theo giai đoạn học tập */
-  --tab-gk1: #16a34a;   /* Giữa kì 1 - xanh lá: khởi động */
-  --tab-ck1: #0284c7;   /* Cuối kì 1 - xanh dương: cột mốc chính */
-  --tab-gk2: #0d9488;   /* Giữa kì 2 - xanh ngọc */
-  --tab-ck2: #1e3a8a;   /* Cuối kì 2 - xanh navy đậm: về đích */
-  --tab-chuyen: #f59e0b;/* Chuyên đề - vàng gold, gợi ánh sao quốc kì */
-  --tab-cuong: #7c3aed; /* Đề cương - tím */
-  --tab-default: #64748b;
 }
 
-/* ---------- Lưới thẻ ---------- */
-.doc-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
-  gap: 26px;
-  margin-top: 4px;
-}
-
-/* ---------- Trạng thái rỗng / đang tải ---------- */
-.doc-grid > p,
-.doc-empty-state {
-  grid-column: 1 / -1;
-  text-align: center;
-  color: var(--doc-slate);
-  background: var(--doc-blue-50);
-  border: 1px dashed var(--doc-line);
-  border-radius: 14px;
-  padding: 36px 20px;
-  font-family: 'Inter', sans-serif;
-  font-size: 14.5px;
-}
-
-/* ---------- Thẻ tài liệu ---------- */
 .doc-card-premium {
   position: relative;
+  display: flex;
+  flex-direction: column;
   background: var(--doc-bg);
   border: 1px solid var(--doc-line);
-  border-radius: var(--radius-lg);
-  padding: 26px 20px 16px;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: left;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   cursor: pointer;
-  overflow: visible;
-  font-family: 'Inter', sans-serif;
-  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-              border-color 0.22s ease;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+  overflow: hidden;
 }
 
 .doc-card-premium:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 16px 32px rgba(2, 132, 199, 0.14);
-  border-color: rgba(2, 132, 199, 0.35);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(14, 165, 233, 0.08);
+  border-color: #BAE6FD;
 }
 
-.doc-card-premium:focus-visible {
-  outline: 2px solid var(--doc-blue);
-  outline-offset: 3px;
-}
-
-/* Tab phân loại kiểu "nhãn cặp hồ sơ" nhô lên mép trên thẻ */
+/* Remove the old side tab if we want to match screenshot, but let's hide it for now */
 .card-tab {
-  position: absolute;
-  top: -13px;
-  left: 20px;
-  min-width: 44px;
-  padding: 5px 10px;
-  border-radius: 7px 7px 3px 3px;
-  clip-path: polygon(6% 0, 94% 0, 100% 100%, 0% 100%);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  color: #ffffff;
-  text-align: center;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  display: none;
 }
 
-.card-tab.tab-gk1     { background: var(--tab-gk1); }
-.card-tab.tab-ck1     { background: var(--tab-ck1); }
-.card-tab.tab-gk2     { background: var(--tab-gk2); }
-.card-tab.tab-ck2     { background: var(--tab-ck2); }
-.card-tab.tab-chuyen  { background: var(--tab-chuyen); }
-.card-tab.tab-cuong   { background: var(--tab-cuong); }
-.card-tab.tab-default { background: var(--tab-default); }
-
-/* Meta: khối lớp + loại đề */
 .card-meta {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .card-badge {
-  background: var(--doc-blue-50);
-  color: var(--doc-blue-dark);
-  font-size: 12.5px;
-  font-weight: 700;
+  background: #E0F2FE;
+  color: #0284C7;
   padding: 4px 10px;
-  border-radius: 999px;
-  white-space: nowrap;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
 }
 
 .card-id {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 0.8rem;
   color: var(--doc-slate);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 60%;
+  font-weight: 500;
 }
 
-/* Tiêu đề */
 .card-title {
-  font-size: 16.5px;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--doc-navy);
+  margin-bottom: 8px;
   line-height: 1.4;
-  margin: 0 0 8px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  transition: color 0.2s ease;
 }
 
-.doc-card-premium:hover .card-title {
-  color: var(--doc-blue-dark);
-}
-
-/* Mô tả */
 .card-desc {
-  font-size: 13.5px;
+  font-size: 0.9rem;
   color: var(--doc-slate);
-  line-height: 1.55;
-  margin: 0 0 18px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  line-height: 1.5;
+  margin-bottom: 24px;
+  flex-grow: 1;
 }
 
-/* Footer: ngày đăng + nút hành động, viền chấm gợi cảm giác "vé xé" */
 .card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding-top: 14px;
-  border-top: 1px dashed var(--doc-line);
-  font-size: 12px;
-  color: var(--doc-slate);
+  border-top: 1px solid var(--doc-line);
+  padding-top: 16px;
 }
 
-.card-footer .card-date,
-.card-footer > span:first-child {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.card-date {
+  font-size: 0.85rem;
+  color: var(--doc-slate);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
 }
 
 .card-action-btn {
-  flex-shrink: 0;
-  font-weight: 700;
-  font-size: 12.5px;
-  color: var(--doc-blue-dark);
-  background: var(--doc-blue-50);
-  padding: 6px 12px;
-  border-radius: 999px;
-  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  font-size: 1rem;
+  color: #0284C7;
+  font-weight: 600;
+  transition: transform 0.2s;
 }
 
 .doc-card-premium:hover .card-action-btn {
-  background: var(--doc-blue);
-  color: #ffffff;
-  transform: translateX(2px);
-}
-
-/* ---------- Responsive ---------- */
-@media (max-width: 640px) {
-  .doc-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-  .doc-card-premium {
-    padding: 24px 16px 14px;
-  }
-}
-
-/* ---------- Tôn trọng người dùng giảm chuyển động ---------- */
-@media (prefers-reduced-motion: reduce) {
-  .doc-card-premium,
-  .card-action-btn,
-  .card-title {
-    transition: none !important;
-  }
-  .doc-card-premium:hover {
-    transform: none;
-  }
+  transform: translateX(4px);
 }
