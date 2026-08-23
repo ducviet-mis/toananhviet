@@ -1210,8 +1210,8 @@
               </div>
               <div class="form-flex-row">
                 <div class="form-group">
-                  <label>Link PDF</label>
-                  <input type="url" id="new-bt-pdf" class="form-control" placeholder="https://..." required>
+                  <label>File PDF Đề Thi</label>
+                  <input type="file" id="new-bt-pdf-file" class="form-control" accept=".pdf" required>
                 </div>
                 <div class="form-group">
                   <label>Link Video Chữa (YouTube)</label>
@@ -2358,20 +2358,40 @@
       if (!bookId) return showToast('Vui lòng chọn sách trước!', 'error');
 
       const btn = e.target.querySelector('button[type="submit"]');
-      btn.innerText = 'Đang thêm...';
+      btn.innerText = 'Đang tải file lên...';
       btn.disabled = true;
 
       const code = document.getElementById('new-bt-code').value.trim().toUpperCase();
       const title = document.getElementById('new-bt-title').value.trim();
-      const pdf = document.getElementById('new-bt-pdf').value.trim();
       const video = document.getElementById('new-bt-video').value.trim();
+      
+      const fileInput = document.getElementById('new-bt-pdf-file');
+      if (!fileInput.files || fileInput.files.length === 0) {
+        showToast('Vui lòng chọn file PDF!', 'error');
+        btn.innerText = 'Thêm Đề Vào Sách';
+        btn.disabled = false;
+        return;
+      }
+
+      const file = fileInput.files[0];
 
       try {
+        // Upload PDF to Supabase Storage (exam_files)
+        const fileName = `book_tests/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+        const { error: storageErr } = await _supabase.storage.from('exam_files').upload(fileName, file);
+        if (storageErr) throw new Error('Lỗi khi tải file lên hệ thống!');
+
+        // Lấy link public
+        const { data: urlData } = _supabase.storage.from('exam_files').getPublicUrl(fileName);
+        const pdfUrl = urlData.publicUrl;
+
+        btn.innerText = 'Đang lưu dữ liệu...';
+
         const { error } = await _supabase.from('book_tests').insert([{
           book_id: bookId,
           test_code: code,
           title: title,
-          pdf_url: pdf,
+          pdf_url: pdfUrl,
           video_url: video
         }]);
 
