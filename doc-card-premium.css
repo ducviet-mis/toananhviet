@@ -14,10 +14,10 @@
   --doc-blue: #0284c7;
   --doc-blue-dark: #0369a1;
   --doc-blue-50: #f0f9ff;
-  --doc-navy: #1e293b;
-  --doc-slate: #64748b;
-  --doc-line: #e2e8f0;
-  --doc-bg: #ffffff;
+  --doc-navy: var(--text-color);
+  --doc-slate: var(--text-muted);
+  --doc-line: var(--glass-border);
+  --doc-bg: var(--glass-bg);
 
   /* Màu tab theo giai đoạn học tập */
   --tab-gk1: #16a34a;   /* Giữa kì 1 - xanh lá: khởi động */
@@ -56,7 +56,7 @@
   position: relative;
   background: var(--doc-bg);
   border: 1px solid var(--doc-line);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   padding: 26px 20px 16px;
   cursor: pointer;
   overflow: visible;
