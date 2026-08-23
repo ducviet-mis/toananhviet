@@ -11,13 +11,13 @@
     /* === RESET & BASE === */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { 
-      background: radial-gradient(circle at 15% 50%, rgba(0, 225, 255, 0.15), transparent 25%),
-                  radial-gradient(circle at 85% 30%, rgba(0, 85, 255, 0.15), transparent 25%),
-                  radial-gradient(circle at 50% 80%, rgba(255, 184, 0, 0.1), transparent 25%);
-      background-color: #040F2D;
+      background: radial-gradient(circle at 15% 50%, rgba(14, 165, 233, 0.05), transparent 25%),
+                  radial-gradient(circle at 85% 30%, rgba(37, 99, 235, 0.05), transparent 25%),
+                  radial-gradient(circle at 50% 80%, rgba(14, 165, 233, 0.03), transparent 25%);
+      background-color: #1e293b;
       background-attachment: fixed;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
-      color: #F8FAFC; 
+      color: #1e293b; 
       min-height: 100vh;
     }
 
@@ -31,9 +31,7 @@
     /* === SIDEBAR === */
     .admin-sidebar {
       width: 260px;
-      background: rgba(10, 22, 40, 0.7);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      background: #0F172A;
       color: #e2e8f0;
       flex-shrink: 0;
       display: flex;
@@ -66,7 +64,7 @@
     .sidebar-brand .brand-sub {
       font-size: 10px;
       font-weight: 400;
-      color: #94A3B8;
+      color: #64748b;
       letter-spacing: 0.5px;
       text-transform: none;
       display: block;
@@ -88,7 +86,7 @@
       width: 100%;
       padding: 11px 16px;
       background: transparent;
-      color: #94A3B8;
+      color: #64748b;
       border: none;
       border-radius: 8px;
       font-size: 13px;
@@ -115,7 +113,7 @@
     }
 
     .btn-out {
-      color: #94A3B8;
+      color: #64748b;
       text-decoration: none;
       font-size: 12.5px;
       font-weight: 500;
@@ -151,9 +149,9 @@
     }
     .user-details { display: flex; flex-direction: column; overflow: hidden; }
     .user-name-text { font-size: 13px; font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .user-role-text { font-size: 11px; font-weight: 400; color: #94A3B8; }
+    .user-role-text { font-size: 11px; font-weight: 400; color: #64748b; }
 
-    .sidebar-close-btn { display: none; background: none; border: none; color: #94A3B8; font-size: 20px; cursor: pointer; }
+    .sidebar-close-btn { display: none; background: none; border: none; color: #64748b; font-size: 20px; cursor: pointer; }
     .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10,22,40,0.6); backdrop-filter: blur(4px); z-index: 99; }
     .mobile-toggle-btn { display: none; background: #27B0F5; color: #ffffff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 18px; cursor: pointer; align-items: center; justify-content: center; }
 
@@ -178,11 +176,11 @@
     }
 
     .topbar-left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-    .topbar-label { font-size: 13px; font-weight: 600; color: #F8FAFC; }
+    .topbar-label { font-size: 13px; font-weight: 600; color: #1e293b; }
 
     .select-class-dropdown {
-      background: rgba(255, 255, 255, 0.05);
-      color: #F8FAFC;
+      background: #ffffff;
+      color: #1e293b;
       border: 1.5px solid #e2e8f0;
       padding: 8px 16px;
       border-radius: 8px;
@@ -194,7 +192,7 @@
       min-width: 180px;
     }
     .select-class-dropdown:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
-    .select-class-dropdown:hover { border-color: #94A3B8; }
+    .select-class-dropdown:hover { border-color: #64748b; }
 
     .topbar-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
@@ -205,13 +203,13 @@
       font-size: 12px;
       border: 1.5px solid #e2e8f0;
       background: var(--glass-bg);
-      color: #F8FAFC;
+      color: #1e293b;
       cursor: pointer;
       transition: all 0.2s;
       display: inline-flex;
       align-items: center;
     }
-    .btn-topbar:hover { background: rgba(255, 255, 255, 0.1); border-color: #94A3B8; }
+    .btn-topbar:hover { background: #f1f5f9; border-color: #64748b; }
     .btn-topbar-primary { background: #27B0F5; color: #ffffff; border: none; }
     .btn-topbar-primary:hover { background: #1a8fcc; }
     .btn-topbar-danger { color: #dc2626; border-color: #fca5a5; }
@@ -243,7 +241,7 @@
     .card-title {
       font-size: 17px;
       font-weight: 700;
-      color: #F8FAFC;
+      color: #1e293b;
       margin: 0;
       letter-spacing: -0.2px;
     }
@@ -253,7 +251,7 @@
     .admin-table th {
       background: rgba(255, 255, 255, 0.4);
       backdrop-filter: blur(5px);
-      color: #F8FAFC;
+      color: #1e293b;
       font-weight: 600;
       padding: 12px 14px;
       border-bottom: 2px solid rgba(255,255,255,0.8);
@@ -262,7 +260,7 @@
       text-transform: uppercase;
       letter-spacing: 0.4px;
     }
-    .admin-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.4); font-weight: 400; color: #F8FAFC; vertical-align: middle; }
+    .admin-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.4); font-weight: 400; color: #1e293b; vertical-align: middle; }
     .admin-table tr:hover td { background: rgba(255,255,255,0.5); }
     .admin-table tr:last-child td { border-bottom: none; }
 
@@ -313,7 +311,7 @@
 
     /* === FORMS === */
     .form-group { margin-bottom: 18px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 600; color: #F8FAFC; margin-bottom: 5px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: #1e293b; margin-bottom: 5px; }
     .form-control {
       width: 100%;
       padding: 10px 14px;
@@ -359,7 +357,7 @@
       padding: 10px 20px;
       font-size: 13px;
       font-weight: 600;
-      color: #94A3B8;
+      color: #64748b;
       cursor: pointer;
       border-bottom: 2.5px solid transparent;
       margin-bottom: -2px;
@@ -372,7 +370,7 @@
     /* === FOLDER === */
     .folder-card {
       background: var(--glass-bg);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid #e2e8f0;
       border-radius: 10px;
       margin-bottom: 12px;
       overflow: hidden;
@@ -388,19 +386,19 @@
       user-select: none;
       transition: all 0.2s;
     }
-    .folder-header:hover { background: rgba(255, 255, 255, 0.1); }
-    .folder-card.open .folder-header { border-bottom: 1px solid rgba(255, 255, 255, 0.1); background: #eff6ff; }
+    .folder-header:hover { background: #f1f5f9; }
+    .folder-card.open .folder-header { border-bottom: 1px solid #e2e8f0; background: #eff6ff; }
     .folder-title {
       font-size: 14px;
       font-weight: 600;
-      color: #F8FAFC;
+      color: #1e293b;
       margin: 0;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .folder-title .folder-count { font-size: 11px; font-weight: 500; color: #94A3B8; background: #e2e8f0; padding: 2px 8px; border-radius: 12px; }
-    .folder-toggle-icon { font-size: 10px; color: #94A3B8; transition: transform 0.25s ease; }
+    .folder-title .folder-count { font-size: 11px; font-weight: 500; color: #64748b; background: #e2e8f0; padding: 2px 8px; border-radius: 12px; }
+    .folder-toggle-icon { font-size: 10px; color: #64748b; transition: transform 0.25s ease; }
     .folder-card.open .folder-toggle-icon { transform: rotate(180deg); }
 
     .folder-body { display: none; padding: 10px 16px 16px 16px; }
@@ -411,8 +409,8 @@
       justify-content: space-between;
       align-items: center;
       padding: 12px 16px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
       border-radius: 8px;
       margin-top: 8px;
       flex-wrap: wrap;
@@ -420,7 +418,7 @@
       transition: all 0.2s;
     }
     .sub-item-card:hover { border-color: #93c5fd; background: #eff6ff; }
-    .sub-item-title { font-size: 13px; font-weight: 600; color: #F8FAFC; margin: 0; }
+    .sub-item-title { font-size: 13px; font-weight: 600; color: #1e293b; margin: 0; }
 
     /* === SCOPE SELECTOR === */
     .scope-selector-box {
@@ -445,15 +443,15 @@
     }
     .scope-option-btn input[type="checkbox"] { width: 18px; height: 18px; accent-color: #27B0F5; cursor: pointer; flex-shrink: 0; }
     .scope-option-btn.active { border-color: #3b82f6; background: #eff6ff; }
-    .scope-title { font-size: 13.5px; font-weight: 600; color: #F8FAFC; margin: 0; }
-    .scope-desc { font-size: 12px; color: #94A3B8; margin-top: 2px; }
+    .scope-title { font-size: 13.5px; font-weight: 600; color: #1e293b; margin: 0; }
+    .scope-desc { font-size: 12px; color: #64748b; margin-top: 2px; }
 
     .class-checkbox-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       gap: 8px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
       border-radius: 10px;
       padding: 14px;
       margin-top: 6px;
@@ -464,7 +462,7 @@
       gap: 10px;
       font-size: 13px;
       font-weight: 500;
-      color: #F8FAFC;
+      color: #1e293b;
       cursor: pointer;
       background: var(--glass-bg);
       padding: 8px 14px;
@@ -483,13 +481,13 @@
     .public-filter-sidebar {
       width: 200px;
       flex-shrink: 0;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
       border-radius: 10px;
       padding: 18px;
       box-sizing: border-box;
     }
-    .public-filter-title { font-size: 11px; font-weight: 700; color: #F8FAFC; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px; }
+    .public-filter-title { font-size: 11px; font-weight: 700; color: #1e293b; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px; }
     .public-filter-group { margin-bottom: 16px; }
     .public-filter-btn {
       display: block;
@@ -499,7 +497,7 @@
       margin-bottom: 3px;
       font-size: 13px;
       font-weight: 500;
-      color: #F8FAFC;
+      color: #1e293b;
       background: transparent;
       border: 1px solid transparent;
       border-radius: 6px;
@@ -525,7 +523,7 @@
     .toast-notification {
       pointer-events: auto;
       background: var(--glass-bg);
-      color: #F8FAFC;
+      color: #1e293b;
       padding: 14px 22px;
       border-radius: 10px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.1);
@@ -572,11 +570,11 @@
       transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .custom-modal-overlay.active .custom-modal-box { transform: scale(1) translateY(0); }
-    .custom-modal-title { font-size: 18px; font-weight: 700; color: #F8FAFC; margin-bottom: 8px; }
-    .custom-modal-desc { font-size: 13.5px; color: #94A3B8; margin-bottom: 22px; line-height: 1.5; }
+    .custom-modal-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+    .custom-modal-desc { font-size: 13.5px; color: #64748b; margin-bottom: 22px; line-height: 1.5; }
 
     .btn-modal { padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 13px; border: none; cursor: pointer; transition: all 0.2s; }
-    .btn-modal-cancel { background: rgba(255, 255, 255, 0.1); color: #F8FAFC; }
+    .btn-modal-cancel { background: #f1f5f9; color: #1e293b; }
     .btn-modal-cancel:hover { background: #e2e8f0; }
     .btn-modal-confirm { background: #dc2626; color: white; }
     .btn-modal-confirm:hover { background: #b91c1c; }
@@ -599,13 +597,13 @@
       background: var(--glass-bg);
       border-radius: 10px;
       padding: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid #e2e8f0;
       box-sizing: border-box;
     }
     .sb-header { border-bottom: 2px solid #f1f5f9; padding-bottom: 14px; margin-bottom: 18px; }
     .sb-brand { font-size: 12px; font-weight: 700; color: #27B0F5; letter-spacing: 0.5px; margin-bottom: 6px; text-transform: uppercase; }
-    .sb-info-row { font-size: 13px; color: #F8FAFC; margin-bottom: 3px; }
-    .sb-info-row strong { color: #F8FAFC; }
+    .sb-info-row { font-size: 13px; color: #1e293b; margin-bottom: 3px; }
+    .sb-info-row strong { color: #1e293b; }
     .sb-score-container { display: flex; justify-content: center; align-items: center; margin: 18px 0; }
     .score-card-flat {
       padding: 14px 40px;
@@ -619,15 +617,15 @@
     }
     .sb-table-wrapper { margin-top: 14px; overflow-x: auto; border-radius: 8px; }
     .sb-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; }
-    .sb-table th { background: rgba(255, 255, 255, 0.05); color: #F8FAFC; font-weight: 600; padding: 8px; border: 1px solid rgba(255, 255, 255, 0.1); }
-    .sb-table td { padding: 7px; border: 1px solid rgba(255, 255, 255, 0.1); font-weight: 500; }
+    .sb-table th { background: #ffffff; color: #1e293b; font-weight: 600; padding: 8px; border: 1px solid #e2e8f0; }
+    .sb-table td { padding: 7px; border: 1px solid #e2e8f0; font-weight: 500; }
     .sb-row-correct { background-color: #ecfdf5 !important; color: #047857 !important; }
     .sb-row-incorrect { background-color: #fff1f2 !important; color: #be123c !important; }
     .sb-row-skipped { background-color: #ffffff !important; color: #64748b !important; }
 
     .attempt-item-card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
       border-radius: 10px;
       padding: 14px 16px;
       margin-bottom: 10px;
@@ -790,12 +788,12 @@
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 10px;">
         <div>
           <div class="custom-modal-title" id="history-student-name" style="margin: 0; font-size: 17px; color: #27B0F5;">Lịch sử làm bài</div>
-          <div style="font-size: 12.5px; color: #94A3B8; margin-top: 2px;" id="history-quiz-title">Bài thi: --</div>
+          <div style="font-size: 12.5px; color: #64748b; margin-top: 2px;" id="history-quiz-title">Bài thi: --</div>
         </div>
-        <button onclick="closeHistoryModal()" style="background: none; border: none; font-size: 18px; color: #94A3B8; cursor: pointer; font-weight: 600;">×</button>
+        <button onclick="closeHistoryModal()" style="background: none; border: none; font-size: 18px; color: #64748b; cursor: pointer; font-weight: 600;">×</button>
       </div>
       <div id="history-attempts-container" style="max-height: 60vh; overflow-y: auto; padding-right: 4px;">
-        <p style="text-align: center; color: #94A3B8; padding: 20px;">Đang tải danh sách lần làm...</p>
+        <p style="text-align: center; color: #64748b; padding: 20px;">Đang tải danh sách lần làm...</p>
       </div>
     </div>
   </div>
@@ -804,7 +802,7 @@
   <div id="submission-detail-modal" class="custom-modal-overlay">
     <div class="scoreboard-modal-card">
       <div style="display: flex; justify-content: flex-end; margin-bottom: -10px;">
-        <button onclick="closeSubmissionDetailModal()" style="background: none; border: none; font-size: 18px; color: #94A3B8; cursor: pointer; font-weight: 600;">×</button>
+        <button onclick="closeSubmissionDetailModal()" style="background: none; border: none; font-size: 18px; color: #64748b; cursor: pointer; font-weight: 600;">×</button>
       </div>
       <div id="printable-scoreboard-card">
         <div class="sb-header">
@@ -892,8 +890,8 @@
           <div class="card-title-row">
             <h3 class="card-title">Tình Trạng Học Sinh Làm Bài</h3>
             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-              <label style="font-size: 13px; font-weight: 500; color: #F8FAFC;">Chọn đề:</label>
-              <select id="select-quiz" class="select-class-dropdown" style="border: 1px solid rgba(255, 255, 255, 0.1); min-width: 160px;" onchange="loadSubmissionTracker()">
+              <label style="font-size: 13px; font-weight: 500; color: #1e293b;">Chọn đề:</label>
+              <select id="select-quiz" class="select-class-dropdown" style="border: 1px solid #e2e8f0; min-width: 160px;" onchange="loadSubmissionTracker()">
                 <option value="">-- Chọn bài thi --</option>
               </select>
             </div>
@@ -912,7 +910,7 @@
                 </tr>
               </thead>
               <tbody id="tracker-table-body">
-                <tr><td colspan="7" style="text-align: center; color: #94A3B8; padding: 36px;">Vui lòng chọn lớp và đề thi để xem tiến độ.</td></tr>
+                <tr><td colspan="7" style="text-align: center; color: #64748b; padding: 36px;">Vui lòng chọn lớp và đề thi để xem tiến độ.</td></tr>
               </tbody>
             </table>
           </div>
@@ -929,7 +927,7 @@
             <button class="sub-tab-btn" onclick="switchAdminSubTab('doc', this)">Tài Liệu PDF</button>
           </div>
           <div id="admin-contents-view-container">
-            <p style="text-align: center; color: #94A3B8; padding: 36px;">Đang tải danh sách bài học...</p>
+            <p style="text-align: center; color: #64748b; padding: 36px;">Đang tải danh sách bài học...</p>
           </div>
         </div>
 
@@ -964,7 +962,7 @@
                 <button type="button" onclick="toggleSelectAllClasses('quiz')" style="background: none; border: none; color: #27B0F5; font-size: 12px; font-weight: 600; cursor: pointer;">Select All / Clear All</button>
               </div>
               <div class="class-checkbox-grid" id="quiz-classes-checkbox-container">
-                <span style="color: #94A3B8; font-size: 13px;">Đang tải danh sách lớp...</span>
+                <span style="color: #64748b; font-size: 13px;">Đang tải danh sách lớp...</span>
               </div>
             </div>
 
@@ -1055,7 +1053,7 @@
                 <button type="button" onclick="toggleSelectAllClasses('content')" style="background: none; border: none; color: #27B0F5; font-size: 12px; font-weight: 600; cursor: pointer;">Select All / Clear All</button>
               </div>
               <div class="class-checkbox-grid" id="content-classes-checkbox-container">
-                <span style="color: #94A3B8; font-size: 13px;">Đang tải danh sách lớp...</span>
+                <span style="color: #64748b; font-size: 13px;">Đang tải danh sách lớp...</span>
               </div>
             </div>
 
@@ -1135,7 +1133,7 @@
                 </tr>
               </thead>
               <tbody id="students-table-body">
-                <tr><td colspan="5" style="text-align: center; color: #94A3B8; padding: 36px;">Đang tải danh sách học sinh...</td></tr>
+                <tr><td colspan="5" style="text-align: center; color: #64748b; padding: 36px;">Đang tải danh sách học sinh...</td></tr>
               </tbody>
             </table>
           </div>
@@ -1186,7 +1184,7 @@
                   </tr>
                 </thead>
                 <tbody id="public-table-body">
-                  <tr><td colspan="6" style="text-align: center; color: #94A3B8; padding: 36px;">Đang tải dữ liệu...</td></tr>
+                  <tr><td colspan="6" style="text-align: center; color: #64748b; padding: 36px;">Đang tải dữ liệu...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1207,7 +1205,7 @@
           </div>
 
           <div id="book-test-manager-section" class="hidden">
-            <h4 style="margin-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 8px;">1. Thêm Đề Mới</h4>
+            <h4 style="margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">1. Thêm Đề Mới</h4>
             <form onsubmit="handleAddBookTest(event)">
               <div class="form-flex-row">
                 <div class="form-group">
@@ -1232,7 +1230,7 @@
               <button type="submit" class="btn-submit">Thêm Đề Vào Sách</button>
             </form>
 
-            <h4 style="margin: 30px 0 15px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 8px;">2. Danh Sách Đề Hiện Có</h4>
+            <h4 style="margin: 30px 0 15px 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">2. Danh Sách Đề Hiện Có</h4>
             <div style="overflow-x: auto;">
               <table class="admin-table">
                 <thead>
@@ -1244,7 +1242,7 @@
                   </tr>
                 </thead>
                 <tbody id="book-tests-table-body">
-                  <tr><td colspan="4" style="text-align: center; color: #94A3B8; padding: 20px;">Đang tải...</td></tr>
+                  <tr><td colspan="4" style="text-align: center; color: #64748b; padding: 20px;">Đang tải...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1450,9 +1448,9 @@
         allClassesList = [];
         currentClassId = '';
         classSelect.innerHTML = '<option value="">Chưa có lớp học nào</option>';
-        document.getElementById('students-table-body').innerHTML = '<tr><td colspan="5" style="text-align: center; color: #94A3B8; padding: 30px;">Không có lớp học.</td></tr>';
-        document.getElementById('tracker-table-body').innerHTML = '<tr><td colspan="7" style="text-align: center; color: #94A3B8; padding: 30px;">Không có lớp học.</td></tr>';
-        document.getElementById('admin-contents-view-container').innerHTML = '<div style="text-align: center; color: #94A3B8; padding: 30px;">Không có lớp học.</div>';
+        document.getElementById('students-table-body').innerHTML = '<tr><td colspan="5" style="text-align: center; color: #64748b; padding: 30px;">Không có lớp học.</td></tr>';
+        document.getElementById('tracker-table-body').innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 30px;">Không có lớp học.</td></tr>';
+        document.getElementById('admin-contents-view-container').innerHTML = '<div style="text-align: center; color: #64748b; padding: 30px;">Không có lớp học.</div>';
       }
     }
 
@@ -1492,7 +1490,7 @@
     function renderClassCheckboxes(prefix) {
       const container = document.getElementById(`${prefix}-classes-checkbox-container`);
       if (!allClassesList || allClassesList.length === 0) {
-        container.innerHTML = '<span style="color: #94A3B8; font-size: 13px;">Không tìm thấy lớp học nào.</span>';
+        container.innerHTML = '<span style="color: #64748b; font-size: 13px;">Không tìm thấy lớp học nào.</span>';
         return;
       }
       container.innerHTML = allClassesList.map(c => `
@@ -1590,7 +1588,7 @@
 
       if (filtered.length === 0) {
         const typeNames = { video: 'video bài giảng', exercise: 'bài tập / đề thi', doc: 'tài liệu PDF' };
-        container.innerHTML = `<div style="text-align: center; color: #94A3B8; padding: 30px;">Chưa có ${typeNames[type]} nào trong lớp này.</div>`;
+        container.innerHTML = `<div style="text-align: center; color: #64748b; padding: 30px;">Chưa có ${typeNames[type]} nào trong lớp này.</div>`;
         return;
       }
 
@@ -1891,7 +1889,7 @@
         .order('joined_at', { ascending: false });
 
       if (error || !members || members.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #94A3B8; padding: 25px;">Chưa có học sinh nào trong lớp này.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #64748b; padding: 25px;">Chưa có học sinh nào trong lớp này.</td></tr>';
         classStudentsList = [];
         return;
       }
@@ -1952,7 +1950,7 @@
         loadSubmissionTracker();
       } else {
         quizSelect.innerHTML = '<option value="">Chưa có bài thi nào</option>';
-        document.getElementById('tracker-table-body').innerHTML = '<tr><td colspan="7" style="text-align: center; color: #94A3B8; padding: 30px;">Chưa có bài thi nào được tạo.</td></tr>';
+        document.getElementById('tracker-table-body').innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 30px;">Chưa có bài thi nào được tạo.</td></tr>';
       }
     }
 
@@ -1962,7 +1960,7 @@
       const tbody = document.getElementById('tracker-table-body');
 
       if (!quizId) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #94A3B8; padding: 30px;">Vui lòng chọn bài thi.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 30px;">Vui lòng chọn bài thi.</td></tr>';
         return;
       }
 
@@ -1985,7 +1983,7 @@
       }
 
       if (classStudentsList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #94A3B8; padding: 25px;">Chưa có danh sách học sinh trong lớp.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 25px;">Chưa có danh sách học sinh trong lớp.</td></tr>';
         return;
       }
 
@@ -2006,7 +2004,7 @@
               <td><span class="status-badge badge-done">Đã nộp (${userSubsList.length} lần)</span></td>
               <td><strong style="color: #27B0F5; font-size: 15px;">${Number(bestSub.mcq_score || 0).toFixed(1)}</strong></td>
               <td>${mins > 0 ? mins + 'p ' : ''}${secs}s</td>
-              <td><span style="font-size: 13px; color: #F8FAFC; font-weight: 500;">${submitTimeStr}</span></td>
+              <td><span style="font-size: 13px; color: #1e293b; font-weight: 500;">${submitTimeStr}</span></td>
               <td><button class="btn-action" onclick="openHistoryModal('${studentEmailKey}', '${student.student_name}')">Lịch sử</button></td>
             </tr>
           `;
@@ -2019,7 +2017,7 @@
               <td>---</td>
               <td>---</td>
               <td>---</td>
-              <td><span style="color: #94A3B8; font-size: 12px;">Chưa có dữ liệu</span></td>
+              <td><span style="color: #64748b; font-size: 12px;">Chưa có dữ liệu</span></td>
             </tr>
           `;
         }
@@ -2040,7 +2038,7 @@
       const userSubs = currentQuizSubmissionsMap[emailKey] || [];
 
       if (userSubs.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #94A3B8; padding: 20px;">Học sinh này chưa nộp bài lần nào.</p>';
+        container.innerHTML = '<p style="text-align: center; color: #64748b; padding: 20px;">Học sinh này chưa nộp bài lần nào.</p>';
       } else {
         const total = userSubs.length;
         container.innerHTML = userSubs.map((sub, idx) => {
@@ -2057,13 +2055,13 @@
           return `
             <div class="attempt-item-card">
               <div>
-                <div style="font-size: 14px; font-weight: 700; color: #F8FAFC;">
+                <div style="font-size: 14px; font-weight: 700; color: #1e293b;">
                   Lần ${attemptNum} - <span style="color: #27B0F5;">${Number(sub.mcq_score || 0).toFixed(1)} điểm</span>
                 </div>
-                <div style="font-size: 12px; color: #94A3B8; margin-top: 4px;">
+                <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
                   ${dateStr} (${mins > 0 ? mins + ' phút ' : ''}${secs} giây)
                 </div>
-                <div style="font-size: 12px; color: #94A3B8; margin-top: 4px;">
+                <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
                   Tự luận: ${essayHtml}
                 </div>
               </div>
@@ -2133,7 +2131,7 @@
       const answerKeys = currentQuizData.answer_keys || [];
 
       if (answerKeys.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="padding: 15px; color: #94A3B8;">Chưa có đáp án chuẩn cho đề thi này.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="padding: 15px; color: #64748b;">Chưa có đáp án chuẩn cho đề thi này.</td></tr>';
       } else {
         answerKeys.forEach(item => {
           const studentAns = userAnsMap[item.q_number] || userAnsMap[String(item.q_number)] || '';
@@ -2174,7 +2172,7 @@
     // ===== PUBLIC CONTENTS =====
     async function fetchPublicDataFromSupabase() {
       const tbody = document.getElementById('public-table-body');
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #94A3B8; padding: 30px;">Đang tải dữ liệu...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Đang tải dữ liệu...</td></tr>';
 
       try {
         if (publicSubTabType === 'docs') {
@@ -2204,7 +2202,7 @@
       });
 
       if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #94A3B8; padding: 30px;">Không tìm thấy nội dung phù hợp.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">Không tìm thấy nội dung phù hợp.</td></tr>';
         return;
       }
 
@@ -2226,7 +2224,7 @@
             <td><strong>${item.title || 'Không có tiêu đề'}</strong></td>
             <td>Lớp ${item.grade || '---'}</td>
             <td><span class="status-badge badge-warning">${item.semester || '---'}</span></td>
-            <td><span style="font-size:12.5px; color: #F8FAFC;">${item.duration || 45} phút | ${item.answer_keys?.length || 0} câu</span></td>
+            <td><span style="font-size:12.5px; color: #1e293b;">${item.duration || 45} phút | ${item.answer_keys?.length || 0} câu</span></td>
             <td>
               <div style="display:flex; gap:6px; flex-wrap:wrap;">
                 <a href="quiz-room.html?id=${item.id}" target="_blank" class="btn-action">Thi thử</a>
@@ -2336,14 +2334,14 @@
         return;
       }
       section.classList.remove('hidden');
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #94A3B8; padding: 20px;">Đang tải...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #64748b; padding: 20px;">Đang tải...</td></tr>';
 
       try {
         const { data, error } = await _supabase.from('book_tests').select('*').eq('book_id', bookId).order('created_at', { ascending: false });
         if (error) throw error;
 
         if (data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #94A3B8; padding: 20px;">Chưa có đề nào trong sách này.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #64748b; padding: 20px;">Chưa có đề nào trong sách này.</td></tr>';
           return;
         }
 

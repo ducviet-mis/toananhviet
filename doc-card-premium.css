@@ -14,10 +14,10 @@
   --doc-blue: #0284c7;
   --doc-blue-dark: #0369a1;
   --doc-blue-50: #f0f9ff;
-  --doc-navy: var(--text-color);
-  --doc-slate: var(--text-muted);
-  --doc-line: var(--glass-border);
-  --doc-bg: var(--glass-bg);
+  --doc-navy: #1e293b;
+  --doc-slate: #64748b;
+  --doc-line: #e2e8f0;
+  --doc-bg: #ffffff;
 
   /* Màu tab theo giai đoạn học tập */
   --tab-gk1: #16a34a;   /* Giữa kì 1 - xanh lá: khởi động */

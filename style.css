@@ -1,17 +1,16 @@
-/* Premium Navy Glassmorphism UI */
 :root {
-  --primary-color: #00E1FF; /* Cyan */
-  --primary-dark: #0055FF; /* Blue */
-  --accent-color: #FFB800; /* Warm Yellow */
-  --text-color: #F8FAFC;
-  --text-muted: #94A3B8;
+  --primary-color: #0EA5E9;
+  --primary-dark: #2563EB;
+  --accent-color: #f97316;
+  --text-color: #0F172A;
+  --text-muted: #475569;
   /* Glassmorphism Variables */
-  --bg-color: #040F2D; /* Navy blue */
-  --glass-bg: rgba(255, 255, 255, 0.05); /* Translucent white */
-  --glass-bg-hover: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-  --glass-blur: blur(20px);
+  --bg-color: #F8FAFC;
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-bg-hover: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --glass-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  --glass-blur: blur(12px);
   --card-bg: var(--glass-bg);
   --radius-lg: 24px;
   --radius-md: 20px;
@@ -27,9 +26,9 @@
 body {
   background-color: var(--bg-color);
   background-image: 
-    radial-gradient(circle at 15% 50%, rgba(0, 225, 255, 0.15), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(0, 85, 255, 0.15), transparent 25%),
-    radial-gradient(circle at 50% 80%, rgba(255, 184, 0, 0.1), transparent 25%);
+    radial-gradient(circle at 15% 50%, rgba(14, 165, 233, 0.05), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(37, 99, 235, 0.05), transparent 25%),
+    radial-gradient(circle at 50% 80%, rgba(14, 165, 233, 0.03), transparent 25%);
   background-attachment: fixed;
   color: var(--text-color);
   line-height: 1.6;
@@ -316,15 +315,15 @@ footer a {
 }
 
 :root {
-  --primary-color: #00E1FF;
-  --primary-dark: #0055FF;
-  --primary-light: rgba(0, 225, 255, 0.2);
-  --accent-color: #FFB800;
-  --accent-hover: #e0a300;
+  --primary-color: #0EA5E9;
+  --primary-dark: #2563EB;
+  --primary-light: rgba(14, 165, 233, 0.1);
+  --accent-color: #f97316;
+  --accent-hover: #ea580c;
   --danger-color: #ef4444;
-  --text-dark: #F8FAFC;
-  --text-muted: #94A3B8;
-  --border-light: rgba(255, 255, 255, 0.1);
+  --text-dark: #0F172A;
+  --text-muted: #475569;
+  --border-light: rgba(255, 255, 255, 0.8);
   --white: #ffffff;
 }
 
@@ -759,7 +758,7 @@ footer a {
 
 .btn-submit:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 225, 255, 0.4);
+  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
   background: var(--accent-hover);
 }
 
@@ -803,7 +802,6 @@ footer a {
 
 body {
   font-family: 'Inter', 'Segoe UI', sans-serif;
-  background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
   color: var(--text-color);
 }
 
@@ -831,7 +829,7 @@ body {
   font-family: 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 500;
-  color: #475569 !important;
+  color: #334155 !important;
   text-decoration: none;
   padding: 8px 16px;
   border-radius: 8px !important;
@@ -852,7 +850,7 @@ body {
 
 .nav-menu li a.highlight {
   background: transparent !important;
-  color: #475569 !important;
+  color: #334155 !important;
   font-weight: 500 !important;
   border-radius: 8px !important;
 }
@@ -868,8 +866,8 @@ body {
   background-color: transparent;
   background-size: 40px 40px;
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(to right, rgba(148, 163, 184, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.1) 1px, transparent 1px);
   background-position: center center;
   border-bottom: 1px solid var(--border-light);
   text-align: center;
@@ -894,16 +892,19 @@ body {
 }
 
 .hero-title {
-  font-size: 3.75rem; /* 60px */
+  font-size: 3.5rem; /* 56px */
   font-weight: 800;
-  color: var(--text-color);
+  color: #0F172A;
   line-height: 1.2;
   letter-spacing: -0.02em;
   margin-bottom: 20px;
 }
 
 .hero-title .text-accent {
-  color: var(--primary-color);
+  background: linear-gradient(to right, #0EA5E9, #2563EB);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #2563EB;
 }
 
 .hero-subtitle {
@@ -1148,7 +1149,7 @@ body {
 
 .search-form-premium:focus-within {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 4px rgba(0, 225, 255, 0.15), var(--glass-shadow);
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15), var(--glass-shadow);
 }
 
 .search-form-premium input {
@@ -1352,7 +1353,7 @@ body {
 .nav-menu li a[href="index.html#register"] {
   background: transparent !important;
   background-color: transparent !important;
-  color: #475569 !important;
+  color: #334155 !important;
   font-weight: 500 !important;
   border-radius: 8px !important;
   box-shadow: none !important;
@@ -1720,12 +1721,12 @@ body {
   background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
   padding: 15px;
   border-radius: var(--radius-lg);
-  box-shadow: 0 10px 25px rgba(0, 225, 255, 0.3);
+  box-shadow: 0 10px 25px rgba(14, 165, 233, 0.3);
 }
 
 .btn-submit:hover {
   transform: translateY(-3px);
-  box-shadow: 0 14px 30px rgba(0, 225, 255, 0.4);
+  box-shadow: 0 14px 30px rgba(14, 165, 233, 0.4);
   background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
 }
 
