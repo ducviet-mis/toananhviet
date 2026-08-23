@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lớp Của Tôi - Gia sư Toán Anh Việt</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .class-page-container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+      min-height: 70vh;
+    }
+
+    /* SIDEBAR TỐI GIẢN CHỈ CÓ 1 MỤC */
+    .class-sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      position: sticky;
+      top: 85px;
+    }
+
+    .sidebar-heading {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 0;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f1f5f9;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .vertical-filter-btn {
+      width: 100%;
+      text-align: left;
+      font-family: 'Inter', sans-serif;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
+      background: #0284c7;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    }
+
+    /* KHU VỰC NỘI DUNG CHÍNH BÊN PHẢI */
+    .class-content-area {
+      flex-grow: 1;
+      min-width: 0;
+    }
+
+    .class-page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .class-page-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: #1e293b;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-join-class-open {
+      background-color: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 11px 20px;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    }
+
+    .btn-join-class-open:hover {
+      background-color: #0369a1;
+      transform: translateY(-1px);
+    }
+
+    /* GRID THẺ LỚP HỌC */
+    .classes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 22px;
+    }
+
+    .class-card-item {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    }
+
+    .class-card-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 28px rgba(2, 132, 199, 0.12);
+      border-color: #bae6fd;
+    }
+
+    .class-card-banner {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      padding: 20px;
+      color: #ffffff;
+    }
+
+    .class-card-name {
+      font-size: 17px;
+      font-weight: 800;
+      margin: 0;
+      line-height: 1.35;
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .class-card-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .class-meta-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .class-enter-btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 10px 0;
+      background-color: #f0f9ff;
+      color: #0284c7;
+      font-weight: 700;
+      font-size: 14px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+      border: 1px solid #bae6fd;
+    }
+
+    .class-enter-btn:hover {
+      background-color: #0284c7;
+      color: #ffffff;
+      border-color: #0284c7;
+    }
+
+    /* TRẠNG THÁI TRỐNG */
+    .empty-classes-box {
+      background: #ffffff;
+      border: 2px dashed #cbd5e1;
+      border-radius: 20px;
+      padding: 50px 20px;
+      text-align: center;
+      grid-column: 1 / -1;
+    }
+
+    .empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 6px; }
+    .empty-desc { font-size: 14px; color: #64748b; max-width: 420px; margin: 0 auto 20px auto; line-height: 1.5; }
+
+    /* MODAL POPUP */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 99999;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden;
+      transition: all 0.25s ease;
+    }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal-box {
+      background: #ffffff; width: 100%; max-width: 430px;
+      border-radius: 20px; padding: 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      position: relative; box-sizing: border-box;
+    }
+    .modal-close-btn { position: absolute; top: 18px; right: 20px; background: transparent; border: none; font-size: 20px; color: #94a3b8; cursor: pointer; }
+    .modal-title { font-size: 20px; font-weight: 800; color: #1e293b; margin: 0 0 6px 0; font-family: 'Inter', sans-serif; }
+    .modal-sub { font-size: 13px; color: #64748b; margin-bottom: 20px; line-height: 1.4; }
+    
+    .input-code-field {
+      width: 100%; padding: 12px 14px; font-size: 15px; font-weight: 700;
+      color: #0f172a; border: 1.5px solid #cbd5e1; border-radius: 10px;
+      text-transform: uppercase; box-sizing: border-box; outline: none; margin-bottom: 16px;
+    }
+    .input-code-field:focus { border-color: #0284c7; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15); }
+
+    .btn-submit-code {
+      width: 100%; padding: 12px; background-color: #0284c7; color: #ffffff;
+      border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer;
+    }
+
+    .modal-status-msg { font-size: 13px; padding: 10px; border-radius: 8px; margin-bottom: 14px; display: none; text-align: center; font-weight: 600; }
+    .modal-status-msg.error { background-color: #fef2f2; color: #ef4444; }
+    .modal-status-msg.success { background-color: #f0fdf4; color: #16a34a; }
+
+    @media (max-width: 768px) {
+      .class-page-container { flex-direction: column; }
+      .class-sidebar { width: 100%; position: static; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER DÙNG CHUNG -->
+  <header class="site-header"></header>
+
+  <main class="class-page-container">
+    
+    <!-- SIDEBAR BÊN TRÁI -->
+    <aside class="class-sidebar">
+      <h3 class="sidebar-heading">Danh mục lớp học</h3>
+      <button class="vertical-filter-btn">Tất cả lớp học</button>
+    </aside>
+
+    <!-- NỘI DUNG CHÍNH BÊN PHẢI -->
+    <section class="class-content-area">
+      <div class="class-page-header">
+        <h1 class="class-page-title">Lớp học của tôi</h1>
+        <button class="btn-join-class-open" onclick="openJoinClassModal()">+ Tham gia lớp mới</button>
+      </div>
+
+      <div class="classes-grid" id="my-classes-container">
+        <p style="text-align: center; grid-column: 1/-1; color: #64748b; padding: 40px 0;">Đang tải danh sách lớp học của bạn...</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL THAM GIA LỚP -->
+  <div class="modal-overlay" id="join-class-modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeJoinClassModal()">✕</button>
+      <h3 class="modal-title">Tham gia lớp học</h3>
+      <p class="modal-sub">Nhập mã Class ID do Thầy Việt cấp để mở khóa bài giảng & đề thi.</p>
+
+      <div class="modal-status-msg" id="modal-msg-box"></div>
+
+      <form onsubmit="handleJoinClassSubmit(event)">
+        <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:6px; text-transform:uppercase;">Mã Class ID</label>
+        <input type="text" id="input-class-code" class="input-code-field" placeholder="VD: TOAN9-DE01" required />
+        <button type="submit" id="btn-submit-join-action" class="btn-submit-code">Tham gia lớp ngay</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let currentAuthUser = null;
+
+    async function verifyAuthSession() {
+      const { data: { user } } = await _supabase.auth.getUser();
+
+      if (user) {
+        currentAuthUser = user;
+        loadUserClassesFromSupabase();
+      } else {
+        const cached = localStorage.getItem('tav_user_session');
+        if (cached) {
+          currentAuthUser = JSON.parse(cached);
+          loadUserClassesFromSupabase();
+        } else {
+          window.location.href = 'login.html';
+        }
+      }
+    }
+
+    // TẢI CÁC LỚP MÀ HỌC SINH ĐÃ THAM GIA TỪ SUPABASE
+    async function loadUserClassesFromSupabase() {
+      const container = document.getElementById('my-classes-container');
+
+      try {
+        // Lấy danh sách class_id mà user này đã tham gia
+        const { data: joined, error: joinedErr } = await _supabase
+          .from('class_members')
+          .select('class_id')
+          .eq('user_email', currentAuthUser.email);
+
+        if (joinedErr) throw joinedErr;
+
+        if (!joined || joined.length === 0) {
+          renderEmptyState();
+          return;
+        }
+
+        const classIds = joined.map(j => j.class_id);
+
+        // Lấy chi tiết thông tin lớp từ bảng classes
+        const { data: classes, error: classesErr } = await _supabase
+          .from('classes')
+          .select('*')
+          .in('class_id', classIds);
+
+        if (classesErr) throw classesErr;
+
+        renderClassesGrid(classes);
+
+      } catch (err) {
+        console.error(err);
+        renderEmptyState();
+      }
+    }
+
+    function renderClassesGrid(list) {
+      const container = document.getElementById('my-classes-container');
+      
+      container.innerHTML = list.map(item => `
+        <div class="class-card-item">
+          <div class="class-card-banner">
+            <h3 class="class-card-name">${item.title}</h3>
+          </div>
+          <div class="class-card-body">
+            <div class="class-meta-info">
+              <div>👨‍🏫 Giáo viên: <b>${item.teacher || 'Thầy Đặng Đức Việt'}</b></div>
+              <div>🔑 Mã Lớp: <code style="color:#0284c7; font-weight:700;">${item.class_id}</code></div>
+            </div>
+           <a href="class-detail.html?class_id=${item.class_id}" class="class-enter-btn">Vào học ngay →</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderEmptyState() {
+      const container = document.getElementById('my-classes-container');
+      container.innerHTML = `
+        <div class="empty-classes-box">
+          <div class="empty-icon">🏫</div>
+          <div class="empty-title">Bạn chưa tham gia lớp học nào</div>
+          <div class="empty-desc">Bấm nút <b>"+ Tham gia lớp mới"</b> ở trên và nhập mã Class ID do Giáo viên cấp để mở khóa tài liệu nhé!</div>
+          <button class="btn-join-class-open" onclick="openJoinClassModal()">+ Tham gia lớp mới</button>
+        </div>
+      `;
+    }
+
+    function openJoinClassModal() {
+      document.getElementById('join-class-modal').classList.add('active');
+      document.getElementById('input-class-code').focus();
+    }
+
+    function closeJoinClassModal() {
+      document.getElementById('join-class-modal').classList.remove('active');
+      document.getElementById('modal-msg-box').style.display = 'none';
+      document.getElementById('input-class-code').value = '';
+    }
+
+    // XỬ LÝ NHẬP MÃ THAM GIA LỚP VÀO SUPABASE
+    async function handleJoinClassSubmit(e) {
+      e.preventDefault();
+      const codeVal = document.getElementById('input-class-code').value.trim().toUpperCase();
+      const btn = document.getElementById('btn-submit-join-action');
+
+      if (!codeVal) return;
+
+      btn.disabled = true;
+      btn.innerText = 'Đang kiểm tra...';
+
+      try {
+        // 1. Kiểm tra xem Mã lớp này có tồn tại trong bảng classes không
+        const { data: classData, error: classErr } = await _supabase
+          .from('classes')
+          .select('*')
+          .eq('class_id', codeVal)
+          .single();
+
+        if (classErr || !classData) {
+          showMsg('Mã Class ID không tồn tại trên hệ thống!', 'error');
+          return;
+        }
+
+        // 2. Thêm học sinh vào bảng class_members
+        const { error: insertErr } = await _supabase
+          .from('class_members')
+          .insert([
+            { user_email: currentAuthUser.email, class_id: codeVal }
+          ]);
+
+        if (insertErr) {
+          if (insertErr.code === '23505') { // Mã trùng lặp trong postgres
+            showMsg('Bạn đã tham gia lớp học này rồi!', 'error');
+          } else {
+            showMsg('Không thể tham gia lớp, thử lại sau!', 'error');
+          }
+          return;
+        }
+
+        showMsg('Tham gia lớp học thành công! 🎉', 'success');
+        setTimeout(() => {
+          closeJoinClassModal();
+          loadUserClassesFromSupabase();
+        }, 1200);
+
+      } catch (err) {
+        showMsg('Lỗi kết nối máy chủ!', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Tham gia lớp ngay';
+      }
+    }
+
+    function showMsg(text, type) {
+      const msgBox = document.getElementById('modal-msg-box');
+      msgBox.innerText = text;
+      msgBox.className = `modal-status-msg ${type}`;
+      msgBox.style.display = 'block';
+    }
+
+    document.addEventListener('DOMContentLoaded', verifyAuthSession);
+  </script>
+  <script src="header.js"></script>
+  <script src="footer.js"></script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh mục tài liệu - Gia sư Toán Anh Việt</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="doc-card-premium.css">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="doc-card-premium.js"></script>
+  <style>
+    .category-container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    .category-sidebar {
+      width: 250px;
+      flex-shrink: 0;
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      position: sticky;
+      top: 85px;
+    }
+
+    .sidebar-heading {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 0;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f1f5f9;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .vertical-filter-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .vertical-filter-btn {
+      width: 100%;
+      text-align: left;
+      font-family: 'Inter', sans-serif;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #64748b;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .vertical-filter-btn:hover {
+      background: #f8fafc;
+      color: #0284c7;
+    }
+
+    .vertical-filter-btn.active {
+      background: #0284c7;
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    }
+
+    .category-content {
+      flex-grow: 1;
+      min-width: 0;
+    }
+
+    .category-page-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    @media (max-width: 768px) {
+      .category-container {
+        flex-direction: column;
+      }
+      .category-sidebar {
+        width: 100%;
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER DÙNG CHUNG -->
+  <header class="site-header"></header>
+
+  <!-- NỘI DUNG CHÍNH BỐ CỤC 2 CỘT -->
+  <main class="category-container">
+    <aside class="category-sidebar">
+      <h3 class="sidebar-heading">Danh mục đề</h3>
+      <div class="vertical-filter-menu">
+        <button class="vertical-filter-btn active" onclick="filterDocs('all', this)">Tất cả</button>
+        <button class="vertical-filter-btn" onclick="filterDocs('giữa kì 1', this)">Đề giữa kì 1</button>
+        <button class="vertical-filter-btn" onclick="filterDocs('cuối kì 1', this)">Đề cuối kì 1</button>
+        <button class="vertical-filter-btn" onclick="filterDocs('giữa kì 2', this)">Đề giữa kì 2</button>
+        <button class="vertical-filter-btn" onclick="filterDocs('cuối kì 2', this)">Đề cuối kì 2</button>
+        <button class="vertical-filter-btn" onclick="filterDocs('Chuyên đề', this)">Chuyên đề Toán</button>
+      </div>
+    </aside>
+
+    <section class="category-content">
+      <h1 class="category-page-title" id="category-page-heading">Tài liệu môn Toán lớp 8</h1>
+
+      <div class="doc-grid" id="category-docs-container">
+        <p style="text-align: center; grid-column: 1/-1; color: #64748b;">Đang tải danh mục tài liệu...</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentGrade = urlParams.get('grade') || '8';
+    let allDocumentsData = [];
+
+    function updatePageHeading() {
+      document.getElementById('category-page-heading').innerText = `Tài liệu môn Toán lớp ${currentGrade}`;
+    }
+
+    async function loadGradeDocuments() {
+      updatePageHeading();
+
+      const container = document.getElementById('category-docs-container');
+      try {
+        const cleanGrade = String(currentGrade).replace(/\D/g, '');
+
+        const { data, error } = await _supabase
+          .from('toananhviet')
+          .select('*')
+          .eq('lop', cleanGrade);
+
+        if (error) throw error;
+
+        allDocumentsData = data || [];
+        renderCardsList(allDocumentsData);
+
+      } catch (err) {
+        console.error("Lỗi khi tải từ Supabase:", err);
+        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #ef4444;">Không thể tải danh sách tài liệu.</p>';
+      }
+    }
+
+    function renderCardsList(list) {
+      const container = document.getElementById('category-docs-container');
+      if (!list || list.length === 0) {
+        container.innerHTML = '<p class="doc-empty-state">Thầy Việt đang cập nhật bộ tài liệu cho chuyên mục này, học sinh quay lại sau nhé!</p>';
+        return;
+      }
+
+      container.innerHTML = list.map(doc => {
+        const encodedTitle = encodeURIComponent(doc.tieu_de || '');
+        return DocCard.buildDocCardHTML({
+          grade: `Toán ${doc.lop || currentGrade}`,
+          category: doc.loai_de || 'Tài liệu',
+          title: doc.tieu_de,
+          desc: doc.mo_ta || 'Tài liệu chuẩn hóa bám sát cấu trúc đề thi mới, đi kèm lời giải chi tiết.',
+          dateLabel: 'Mới cập nhật',
+          link: `detail.html?title=${encodedTitle}`,
+        });
+      }).join('');
+    }
+
+    function filterDocs(keyword, btnElement) {
+      document.querySelectorAll('.vertical-filter-btn').forEach(b => b.classList.remove('active'));
+      btnElement.classList.add('active');
+
+      if (keyword === 'all') {
+        renderCardsList(allDocumentsData);
+      } else {
+        const filtered = allDocumentsData.filter(d => 
+          String(d.loai_de || '').toLowerCase().includes(keyword.toLowerCase()) || 
+          String(d.tieu_de || '').toLowerCase().includes(keyword.toLowerCase())
+        );
+        renderCardsList(filtered);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadGradeDocuments);
+  </script>
+  <script src="header.js"></script>
+  <script src="footer.js"></script>
+</body>
+</html>

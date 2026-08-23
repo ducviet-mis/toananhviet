@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi Tiết Đề Thi - Toán Anh Việt</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f1f5f9;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      margin: 0;
+    }
+    header {
+      flex-shrink: 0;
+    }
+    .split-wrapper {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 80px);
+      overflow: hidden;
+    }
+    .left-pane {
+      width: 58%;
+      height: 100%;
+      border-right: 3px solid #cbd5e1;
+      background: #475569;
+    }
+    .left-pane iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .right-pane {
+      width: 42%;
+      height: 100%;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .video-container {
+      width: 100%;
+      background: #000;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+    .video-container iframe {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: none;
+      display: block;
+    }
+    .info-container {
+      padding: 25px;
+      flex: 1;
+    }
+    .info-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    .meta-badge {
+      display: inline-block;
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      margin-bottom: 15px;
+    }
+    .study-tips {
+      background: #f8fafc;
+      border-left: 4px solid #0284c7;
+      padding: 15px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.9rem;
+      color: #475569;
+      line-height: 1.6;
+    }
+    .error-screen {
+      max-width: 500px;
+      margin: 80px auto;
+      text-align: center;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .back-btn {
+      display: inline-block;
+      background: #0284c7;
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-top: 15px;
+      transition: background 0.2s;
+    }
+    .back-btn:hover {
+      background: #0369a1;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        height: auto;
+        overflow: auto;
+      }
+      .split-wrapper {
+        flex-direction: column;
+        overflow-y: auto;
+        height: auto;
+      }
+      .left-pane {
+        width: 100%;
+        height: 55vh;
+        order: 2;
+        border-right: none;
+        border-top: 3px solid #cbd5e1;
+      }
+      .right-pane {
+        width: 100%;
+        height: auto;
+        order: 1;
+        overflow-y: visible;
+      }
+      .info-container {
+        padding: 15px;
+      }
+      .info-title {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER DÙNG CHUNG -->
+  <header class="site-header"></header>
+
+  <!-- VÙNG HIỂN THỊ NỘI DUNG CHỮA ĐỀ -->
+  <div id="main-content" class="split-wrapper">
+    <div class="left-pane">
+      <iframe id="pdf-viewer" src=""></iframe>
+    </div>
+
+    <div class="right-pane">
+      <div class="video-container">
+        <iframe id="youtube-player" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <div class="info-container">
+        <span class="meta-badge" id="quiz-grade">Khối lớp: --</span>
+        <h1 class="info-title" id="quiz-title">Đang tải tiêu đề...</h1>
+        <div class="study-tips">
+          💡 <b>Hướng dẫn tự học:</b> Học sinh hãy xem kỹ video bài giảng chữa đề ở phía trên, kết hợp đối chiếu trực tiếp với đề bài/lời giải chi tiết bên cột trái để ghi nhớ phương pháp giải nhanh nhất.
+        </div>
+        <div style="margin-top: 20px;">
+          <a href="index.html" class="back-btn" style="background: #64748b;">← Tìm kiếm đề khác</a>
+          <a id="download-pdf-btn" href="#" download target="_blank" class="back-btn" style="background: #10b981; margin-left: 10px;">📥 Tải file gốc</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VÙNG HIỂN THỊ LỖI KHI NHẬP SAI ID -->
+  <div id="error-content" class="error-screen" style="display: none;">
+    <h2 style="color: #ef4444; font-size: 1.5rem; margin-bottom: 10px;">⚠️ Lỗi truy cập mã đề!</h2>
+    <p style="color: #64748b; line-height: 1.6;">Mã đề thi bạn yêu cầu không tồn tại hoặc đã bị gỡ bỏ khỏi hệ thống.</p>
+    <a href="index.html" class="back-btn">Quay lại Trang Chủ</a>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Helper: Lấy YouTube ID từ link bất kỳ
+    function extractYouTubeID(url) {
+      if (!url) return '';
+      // Nếu đã là ID (độ dài 11 ký tự không có dấu /)
+      if (url.length === 11 && !url.includes('/')) return url;
+      
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : url;
+    }
+
+    async function initDetailPage() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const testCode = urlParams.get('test_code') || urlParams.get('id');
+
+      if (!testCode) {
+        showError();
+        return;
+      }
+
+      // Check login
+      const { data: { user } } = await _supabase.auth.getUser();
+      if (!user) {
+        alert("Bạn cần đăng nhập để xem đề thi này!");
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        // Fetch test info
+        const { data: testData, error: testErr } = await _supabase
+          .from('book_tests')
+          .select('*')
+          .eq('test_code', testCode.toUpperCase())
+          .single();
+
+        if (testErr || !testData) {
+          showError("Mã đề thi bạn yêu cầu không tồn tại hoặc đã bị gỡ bỏ khỏi hệ thống.");
+          return;
+        }
+
+        // Check ownership (activation_codes)
+        const { data: codes, error: codesErr } = await _supabase
+          .from('activation_codes')
+          .select('*')
+          .eq('used_by_email', user.email)
+          .eq('book_id', testData.book_id)
+          .eq('is_used', true);
+
+        if (codesErr || !codes || codes.length === 0) {
+          showError("Bạn chưa sở hữu hoặc chưa kích hoạt sách chứa đề thi này!");
+          return;
+        }
+
+        // Display Data
+        document.getElementById('main-content').style.display = 'flex';
+        document.getElementById('error-content').style.display = 'none';
+
+        document.title = `${testCode.toUpperCase()} - Chữa Đề Chi Tiết`;
+        document.getElementById('quiz-title').innerText = testData.title;
+        document.getElementById('quiz-grade').innerText = `Mã đề: ${testData.test_code}`;
+        
+        document.getElementById('pdf-viewer').src = `${testData.pdf_url}#toolbar=0&navpanes=0`;
+        
+        const ytId = extractYouTubeID(testData.video_url);
+        document.getElementById('youtube-player').src = `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0`;
+        document.getElementById('download-pdf-btn').href = testData.pdf_url;
+
+      } catch (err) {
+        console.error(err);
+        showError("Lỗi kết nối đến máy chủ.");
+      }
+    }
+
+    function showError(msg) {
+      document.getElementById('main-content').style.display = 'none';
+      document.getElementById('error-content').style.display = 'block';
+      if(msg) {
+        document.querySelector('#error-content p').innerText = msg;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initDetailPage);
+  </script>
+  <script src="header.js"></script>
+</body>
+</html>

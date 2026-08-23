@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gia sư Toán - Kho tài liệu Toán miễn phí</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="doc-card-premium.css">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Nhúng thư viện Netlify Identity Widget -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script src="doc-card-premium.js"></script>
+
+</head>
+<body>
+
+  <!-- 1. HEADER DÙNG CHUNG -->
+  <header class="site-header"></header>
+
+  <!-- 2. HERO SECTION -->
+  <section class="hero-descartes">
+    <div class="vn-stars-decor" aria-hidden="true">
+      <span class="vn-star vs-1">★</span>
+      <span class="vn-star vs-2">★</span>
+      <span class="vn-star vs-3">★</span>
+      <span class="vn-star vs-4">★</span>
+      <span class="vn-star vs-5">★</span>
+      <span class="vn-star vs-6">★</span>
+    </div>
+    <div class="floating-books-container">
+      <img src="assets/Sách đề thi 1.png" alt="Sách đề thi 1" class="floating-book book-left-top float-book-1" title="SÁCH CÔNG PHÁ ĐỀ LỚP 6">
+      <img src="assets/Sách đề thi 2.png" alt="Sách đề thi 2" class="floating-book book-left-bottom float-book-2" title="SÁCH CÔNG PHÁ ĐỀ LỚP 7">
+      <img src="assets/Sách đề thi 3.png" alt="Sách đề thi 3" class="floating-book book-right-top float-book-2-delay" title="SÁCH CÔNG PHÁ ĐỀ LỚP 8">
+      <img src="assets/Sách đề thi 4.png" alt="Sách đề thi 4" class="floating-book book-right-bottom float-book-1-delay" title="SÁCH CÔNG PHÁ ĐỀ LỚP 9">
+    </div>
+
+    <div class="hero-typography-container">
+      <span class="hero-badge-vn">Chào mừng Quốc khánh 2/9 &nbsp;|&nbsp; Mừng đất nước 81 năm độc lập</span>
+      <h1 class="hero-title">Tìm kiếm bài giảng <br>& đề thi <span class="text-accent">thông minh</span></h1>
+      <p class="hero-subtitle">Nhập mã ID được in trực tiếp trên phiếu đề (VD: 8G01, 8C02) để mở ngay video chữa chi tiết và đáp án đính kèm.</p>
+    </div>
+
+    <div class="search-layout-wrapper">
+      <a href="index.html#register" class="perk-card perk-card--trial">
+        <div class="perk-icon-wrap">
+          <svg class="perk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="8" width="18" height="4"></rect>
+            <path d="M12 8v13"></path>
+            <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path>
+            <path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8"></path>
+            <path d="M16.5 8a2.5 2.5 0 0 0 0-5C13 3 12 8 12 8"></path>
+          </svg>
+        </div>
+        <span class="perk-tag">Ưu đãi độc quyền</span>
+        <h4>Học thử miễn phí 0đ</h4>
+        <p>Đánh giá năng lực & trải nghiệm học 1-1 cùng giáo viên trước khi đăng ký.</p>
+        <span class="perk-cta">Đăng ký ngay <span class="perk-arrow">→</span></span>
+      </a>
+
+      <div class="search-main-box">
+        <form onsubmit="handleIdSearch(event)" class="search-form-premium">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="text" 
+            id="search-id-input" 
+            placeholder="Nhập mã đề của bạn (VD: 8G01, 8C02)..." 
+            autocomplete="off"
+          >
+          <button type="submit" class="search-btn">Tìm kiếm</button>
+        </form>
+        <p id="search-error" class="search-error-msg" style="display: none;"></p>
+      </div>
+
+      <a href="https://www.facebook.com/261107ddv" target="_blank" class="perk-card perk-card--support">
+        <div class="perk-icon-wrap">
+          <svg class="perk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3v-7a9 9 0 0 1 18 0v7h-3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"></path>
+          </svg>
+        </div>
+        <span class="perk-tag">Luôn sẵn sàng</span>
+        <h4>Hỗ trợ 24/7</h4>
+        <p>Giải đáp thắc mắc bài tập qua Zalo nhanh chóng, tận tâm bất cứ lúc nào.</p>
+        <span class="perk-cta">Nhắn Zalo ngay <span class="perk-arrow">→</span></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 3. PHẦN TÀI LIỆU MỚI ĐĂNG TẢI -->
+  <main class="recent-docs">
+    <div class="section-header">
+      <h2>Tài liệu mới đăng tải</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="doc-grid" id="latest-docs-container">
+      <p style="text-align: center; grid-column: 1/-1;">Đang tải tài liệu...</p>
+    </div>
+  </main>
+
+  <!-- PHẦN 1: GIỚI THIỆU GIÁO VIÊN -->
+  <section class="tutor-section" id="teacher">
+    <div class="teacher-profile">
+      <div class="teacher-image-wrapper">
+        <div class="teacher-image-frame">
+          <img src="assets/giao-vien.jpg" alt="Founder Đặng Đức Việt - Gia sư chuyên Toán THCS" onerror="this.src='https://via.placeholder.com/360x480?text=Thay+Duc+Viet'">
+        </div>
+      </div>
+
+      <div class="teacher-info">
+        <h2>FOUNDER ĐẶNG ĐỨC VIỆT</h2>
+        <p class="teacher-tagline">Gia sư chuyên Toán THCS – Đồng hành cùng học sinh bứt phá điểm số</p>
+
+        <div class="info-card primary">
+          <h3>THÔNG TIN GIÁO VIÊN</h3>
+          <ul>
+            <li>Sinh viên xuất sắc Đại học Kinh tế Quốc dân (GPA hiện tại 4.0/4.0 hệ 4 và 9,28/10 hệ 10)</li>
+            <li>Chuyên đào tạo, hỗ trợ cải thiện năng lực cho học sinh mất gốc vững tin lấy lại kiến thức căn bản.</li>
+            <li>Kinh nghiệm ôn luyện bứt phá giúp học sinh trung bình đạt mục tiêu 8+, 9+.</li>
+            <li>Nhà sáng lập và quản trị nội dung của cộng đồng chia sẻ tài liệu Toán THCS.</li>
+          </ul>
+        </div>
+
+        <div class="info-card accent">
+          <h3>PHONG CÁCH GIẢNG DẠY</h3>
+          <ul>
+            <li><strong>Cá nhân hóa lộ trình:</strong> Đánh giá chi tiết năng lực học sinh trong 1-2 buổi đầu để lên giáo trình riêng biệt.</li>
+            <li><strong>Đơn giản hóa:</strong> Đưa những khái niệm hàn lâm về những câu chuyện gần gũi với cuộc sống.</li>
+            <li><strong>Tư duy bản chất:</strong> Giảng giải bản chất Toán học cốt lõi, khơi dậy tò mò và truyền cảm hứng Toán học.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- PHẦN 2: LỘ TRÌNH HỌC TẬP -->
+  <section class="timeline-section" id="curriculum">
+    <h2 class="section-title">LỘ TRÌNH HỌC TẬP TOÀN DIỆN</h2>
+    <div class="timeline-container">
+      <div class="timeline-wrapper">
+        <div class="timeline-item">
+          <div class="timeline-node"></div>
+          <div class="timeline-card">
+            <div class="phase">Chặng 1</div>
+            <h4> Khởi động & Đánh giá </h4>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 5px;">Đánh giá rà soát hổng kiến thức & Lấy lại gốc vững chắc.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-node"></div>
+          <div class="timeline-card">
+            <div class="phase">Chặng 2</div>
+            <h4> Làm chủ chuyên đề </h4>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 5px;">Làm chủ các Chuyên đề trọng điểm thi giữa kỳ/cuối kỳ.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-node"></div>
+          <div class="timeline-card">
+            <div class="phase">Chặng 3</div>
+            <h4> Tăng tốc luyện </h4>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 5px;">Tăng tốc Luyện đề, tối ưu kỹ năng xử lý phòng thi thực tế.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-node"></div>
+          <div class="timeline-card">
+            <div class="phase">Chặng 4</div>
+            <h4> Bứt phá mục tiêu </h4>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 5px;">Bứt phá điểm số tối đa, rèn dạng Toán nâng cao bứt phá 9, 10.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- PHẦN 3: FORM ĐĂNG KÝ TƯ VẤN -->
+  <section class="tutor-section" id="register">
+    <div class="registration-container">
+      <div class="lead-magnet-column">
+        <span class="lead-badge"><span class="lead-badge-dot"></span> Liên hệ tư vấn</span>
+        <h2 class="lead-title">KHÓA HỌC GIA SƯ TOÁN THCS <br><span>TOÁN ANH VIỆT</span></h2>
+        <p class="lead-desc">Chinh phục điểm 9, 10 - Đăng ký nhận lịch học thử ngay hôm nay để được nhận kèm bộ tài liệu thực chiến độc quyền miễn phí.</p>
+
+
+        <div class="books-mockup">
+          <div class="book-item"><img src="assets/Sách đề thi 1.png" alt="Sách đề thi 1"></div>
+          <div class="book-item"><img src="assets/Sách đề thi 2.png" alt="Sách đề thi 2"></div>
+          <div class="book-item"><img src="assets/Sách đề thi 3.png" alt="Sách đề thi 3"></div>
+          <div class="book-item"><img src="assets/Sách đề thi 4.png" alt="Sách đề thi 4"></div>
+        </div>
+      </div>
+
+      <div class="form-column">
+        <div class="form-column-header">
+          <span class="form-column-tag">Nhận quà tặng miễn phí</span>
+          <h3>Đăng ký học thử & nhận quà</h3>
+        </div>
+        <form id="tuvangiasu-form" onsubmit="return false;">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="fullname">Họ tên học sinh:</label>
+              <input type="text" id="fullname" name="fullname" placeholder="Nguyễn Văn A" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Số điện thoại liên hệ:</label>
+              <input type="tel" id="phone" name="phone" placeholder="09xxxxxxxx" required>
+            </div>
+            <div class="form-group">
+              <label for="address">Khu vực:</label>
+              <input type="text" id="address" name="address" placeholder="Quận Cầu Giấy, Hà Nội" required>
+            </div>
+            <div class="form-group">
+              <label for="social">Link Facebook:</label>
+              <input type="text" id="social" name="social" placeholder="facebook.com/nickcuaem" required>
+            </div>
+            <div class="form-group">
+              <label for="grade-select">Lớp đăng ký học:</label>
+              <select id="grade-select" name="grade" required>
+                <option value="" disabled selected>-- Chọn lớp học --</option>
+                <option value="Toán lớp 6">Đăng ký lớp Toán 6</option>
+                <option value="Toán lớp 7">Đăng ký lớp Toán 7</option>
+                <option value="Toán lớp 8">Đăng ký lớp Toán 8</option>
+                <option value="Toán lớp 9">Đăng ký lớp Toán 9</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="demand">Nhu cầu học tập hiện tại:</label>
+              <select id="demand" name="demand" required>
+                <option value="" disabled selected>-- Chọn nhu cầu--</option>
+                <option value="Học sinh mất gốc">Học sinh mất gốc - Lấy lại cơ bản</option>
+                <option value="Học sinh khá">Bồi dưỡng bứt phá mục tiêu điểm 8+, 9+</option>
+                <option value="Thi chuyên">Tập trung ôn đề thi học sinh giỏi / chuyên</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit">NHẬN TƯ VẤN MIỄN PHÍ <span class="btn-arrow">→</span></button>
+
+          <div class="form-footer">
+            <a href="tel:0965193026" class="contact-pill">
+              <span class="contact-pill-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              </span>
+              Hotline/Zalo: 0965193026
+            </a>
+            <a href="https://www.facebook.com/261107ddv" target="_blank" class="contact-pill">
+              <span class="contact-pill-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              </span>
+              Giáo viên Đức Việt
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function fetchLatestDocuments() {
+      const container = document.getElementById('latest-docs-container');
+      try {
+        // Gọi dữ liệu giống hệt trang category.html để tránh lỗi schema
+        const { data, error } = await _supabase
+          .from('toananhviet')
+          .select('*')
+          .limit(6);
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          container.innerHTML = '<p class="doc-empty-state">Chưa có tài liệu nào được đăng.</p>';
+          return;
+        }
+
+        container.innerHTML = data.map(doc => {
+          const encodedTitle = encodeURIComponent(doc.tieu_de || '');
+          return DocCard.buildDocCardHTML({
+            grade: `Toán ${doc.lop || '8'}`,
+            category: doc.loai_de || 'Tài liệu',
+            title: doc.tieu_de,
+            desc: doc.mo_ta || 'Tài liệu ôn thi bám sát chương trình, tối ưu hóa phương pháp giải và bứt phá tư duy Toán học hiệu quả.',
+            dateLabel: 'Mới cập nhật',
+            link: `detail.html?title=${encodedTitle}`,
+            actionLabel: '📖 Xem tài liệu'
+          });
+        }).join('');
+
+      } catch (error) {
+        console.error("Lỗi khi nạp dữ liệu Supabase:", error);
+        container.innerHTML = '<p class="doc-empty-state">Đã xảy ra lỗi khi tải dữ liệu từ cơ sở dữ liệu.</p>';
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", fetchLatestDocuments);
+
+    async function handleIdSearch(event) {
+      event.preventDefault();
+      const inputVal = document.getElementById('search-id-input').value.trim().toUpperCase();
+      const errorEl = document.getElementById('search-error');
+
+      if (!inputVal) {
+        errorEl.innerText = "⚠️ Vui lòng nhập mã đề thi!";
+        errorEl.style.display = "block";
+        errorEl.style.color = "#ef4444";
+        return;
+      }
+
+      errorEl.innerText = "🔍 Đang chuyển hướng đến trang đề thi...";
+      errorEl.style.color = "#0284c7";
+      errorEl.style.display = "block";
+
+      // Chuyển thẳng sang trang xem chi tiết.
+      // Tại view-detail.html sẽ query Supabase (bảng book_tests) để kiểm tra quyền và sự tồn tại.
+      window.location.href = `view-detail.html?id=${inputVal}`;
+    }
+
+    // Xử lý Form Đăng ký học thử
+    document.addEventListener("DOMContentLoaded", () => {
+      const registerForm = document.getElementById('tuvangiasu-form');
+      if (registerForm && window.supabase) {
+        registerForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const nameInput = document.getElementById('fullname')?.value;
+          const phoneInput = document.getElementById('phone')?.value;
+          const areaInput = document.getElementById('address')?.value;
+          const fbInput = document.getElementById('social')?.value;
+          const gradeInput = document.getElementById('grade-select')?.value;
+          const statusInput = document.getElementById('demand')?.value;
+
+          if (!nameInput || !phoneInput) {
+            alert("Vui lòng điền Họ tên và Số điện thoại nhé!");
+            return;
+          }
+
+          const { error } = await _supabase.from('registrations').insert([
+            { name: nameInput, phone: phoneInput, area: areaInput, facebook: fbInput, grade: gradeInput, status: statusInput }
+          ]);
+
+          if (error) {
+            alert("Gặp sự cố khi gửi đăng ký: " + error.message);
+          } else {
+            alert("Đăng ký thành công! Thầy Việt sẽ liên hệ tư vấn cho bạn sớm nhất nhé.");
+            registerForm.reset();
+          }
+        });
+      }
+    });
+  </script>
+  <script src="header.js"></script>
+  <script src="footer.js"></script>
+
+</body>
+</html>

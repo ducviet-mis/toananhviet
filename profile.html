@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thông tin học viên - Toán Anh Việt</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f1f5f9;
+      min-height: 100vh;
+      color: #1e293b;
+    }
+
+    .page-bg {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
+      background: 
+        radial-gradient(ellipse 600px 600px at 10% 20%, rgba(56, 189, 248, 0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 500px 500px at 90% 80%, rgba(139, 92, 246, 0.10) 0%, transparent 70%);
+    }
+
+    main {
+      position: relative; z-index: 1;
+      max-width: 540px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .profile-card {
+      background: #ffffff;
+      border-radius: 24px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 
+        0 4px 6px rgba(0, 0, 0, 0.02),
+        0 20px 40px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+
+    .profile-hero {
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+      padding: 32px 32px 60px 32px;
+      position: relative;
+    }
+
+    .profile-hero::after {
+      content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 40px;
+      background: #ffffff;
+      border-radius: 24px 24px 0 0;
+    }
+
+    .hero-greeting {
+      font-size: 13px; font-weight: 500; color: rgba(255, 255, 255, 0.7);
+      text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px;
+    }
+
+    .hero-name {
+      font-size: 22px; font-weight: 700; color: #ffffff;
+      margin: 0; line-height: 1.3;
+    }
+
+    .hero-email {
+      font-size: 13px; color: rgba(255, 255, 255, 0.65); margin-top: 4px;
+    }
+
+    .avatar-section {
+      display: flex; flex-direction: column; align-items: center;
+      margin-top: -52px; position: relative; z-index: 2;
+    }
+
+    .avatar-ring {
+      width: 108px; height: 108px; border-radius: 50%; padding: 4px;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1, #ec4899);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+    }
+
+    .avatar-img {
+      width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+      border: 3px solid #ffffff; background: #f1f5f9;
+      display: block;
+    }
+
+    .avatar-upload-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 10px; padding: 6px 14px;
+      background: #f1f5f9; border: 1px solid #e2e8f0;
+      border-radius: 20px; font-size: 12px; font-weight: 500;
+      color: #64748b; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .avatar-upload-label:hover {
+      background: #e2e8f0; color: #334155;
+    }
+
+    .avatar-upload-label svg {
+      width: 14px; height: 14px;
+    }
+
+    .avatar-upload-label input { display: none; }
+
+    .profile-body {
+      padding: 24px 32px 32px;
+    }
+
+    .section-label {
+      font-size: 11px; font-weight: 700; color: #94a3b8;
+      text-transform: uppercase; letter-spacing: 1.2px;
+      margin-bottom: 16px; padding-bottom: 8px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .form-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    }
+
+    .form-group { display: flex; flex-direction: column; }
+    .form-group.full-width { grid-column: span 2; }
+
+    .form-group label {
+      font-size: 12px; font-weight: 600; color: #64748b;
+      margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid #e2e8f0; border-radius: 10px;
+      font-size: 14px; font-family: inherit; color: #1e293b;
+      background: #f8fafc;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #0ea5e9;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    }
+
+    .form-group input::placeholder { color: #cbd5e1; }
+
+    .btn-primary {
+      width: 100%; padding: 13px; margin-top: 20px;
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+      color: #ffffff; border: none; border-radius: 12px;
+      font-size: 14px; font-weight: 600; font-family: inherit;
+      cursor: pointer; letter-spacing: 0.3px;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary {
+      width: 100%; padding: 12px; margin-top: 10px;
+      background: #ffffff; color: #334155;
+      border: 1.5px solid #e2e8f0; border-radius: 12px;
+      font-size: 13px; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #f8fafc; border-color: #cbd5e1;
+    }
+
+    .btn-danger {
+      width: 100%; padding: 12px; margin-top: 10px;
+      background: transparent; color: #ef4444;
+      border: 1.5px solid transparent; border-radius: 12px;
+      font-size: 13px; font-weight: 500; font-family: inherit;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+
+    .btn-danger:hover {
+      background: #fef2f2; border-color: #fecaca;
+    }
+
+    .status-msg {
+      text-align: center; margin-top: 12px; font-size: 13px;
+      font-weight: 500; padding: 10px 16px; border-radius: 10px;
+      display: none; animation: fadeSlideIn 0.3s ease;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px);
+      z-index: 99999; display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; visibility: hidden; transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+
+    .modal-box {
+      background: #ffffff; width: 100%; max-width: 400px;
+      border-radius: 20px; padding: 28px;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.12);
+      position: relative;
+      transform: scale(0.95) translateY(10px);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
+
+    .modal-close-btn {
+      position: absolute; top: 14px; right: 14px;
+      width: 32px; height: 32px; border-radius: 8px;
+      background: #f1f5f9; border: none;
+      font-size: 16px; color: #64748b; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close-btn:hover { background: #e2e8f0; color: #334155; }
+
+    .modal-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-icon svg { width: 24px; height: 24px; color: #ffffff; }
+
+    .modal-title { font-size: 18px; font-weight: 700; color: #1e293b; margin: 0 0 4px 0; }
+    .modal-sub { font-size: 13px; color: #94a3b8; margin-bottom: 20px; line-height: 1.5; }
+
+    .form-group-modal { margin-bottom: 14px; }
+
+    .form-label-modal {
+      display: block; font-size: 11px; font-weight: 700; color: #64748b;
+      text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px;
+    }
+
+    .input-modal-field {
+      width: 100%; padding: 12px 14px; font-size: 14px; font-family: inherit;
+      border: 1.5px solid #e2e8f0; border-radius: 10px;
+      box-sizing: border-box; outline: none; background: #f8fafc;
+      transition: all 0.2s ease;
+    }
+
+    .input-modal-field:focus {
+      border-color: #0ea5e9; background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    }
+
+    .btn-submit-pass {
+      width: 100%; padding: 13px; margin-top: 6px;
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+      color: #ffffff; border: none; border-radius: 12px;
+      font-size: 14px; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: all 0.25s ease;
+      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    }
+
+    .btn-submit-pass:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+    }
+
+    .modal-status-msg {
+      font-size: 13px; padding: 10px 14px; border-radius: 10px;
+      margin-bottom: 14px; display: none; text-align: center;
+      font-weight: 500;
+    }
+
+    .modal-status-msg.error { background-color: #fef2f2; color: #ef4444; }
+    .modal-status-msg.success { background-color: #f0fdf4; color: #16a34a; }
+
+    @media (max-width: 600px) {
+      main { margin: 20px auto; padding: 0 12px; }
+      .profile-hero { padding: 24px 24px 50px; }
+      .profile-body { padding: 20px 24px 28px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group.full-width { grid-column: span 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-bg"></div>
+
+  <header class="site-header"></header>
+
+  <main>
+    <div class="profile-card">
+      <div class="profile-hero">
+        <p class="hero-greeting">Hồ sơ học viên</p>
+        <h2 class="hero-name" id="welcome-title">Xin chào, Học viên</h2>
+        <p class="hero-email" id="user-email-display"></p>
+      </div>
+
+      <div class="avatar-section">
+        <div class="avatar-ring">
+          <img id="user-avatar" class="avatar-img" src="https://api.dicebear.com/7.x/identicon/svg?seed=default" alt="Avatar">
+        </div>
+        <label class="avatar-upload-label">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Z" /></svg>
+          Đổi ảnh
+          <input type="file" id="avatar-file-input" accept="image/*" onchange="uploadAvatarFile(this)">
+        </label>
+      </div>
+
+      <div class="profile-body">
+        <form id="profile-form" onsubmit="saveProfile(event)">
+          <p class="section-label">Thông tin cá nhân</p>
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label>Họ và tên học sinh</label>
+              <input type="text" id="p-name" placeholder="Ví dụ: Hải Đăng" required>
+            </div>
+
+            <div class="form-group">
+              <label>Ngày sinh</label>
+              <input type="date" id="p-dob">
+            </div>
+
+            <div class="form-group">
+              <label>Số điện thoại</label>
+              <input type="tel" id="p-phone" placeholder="0987 654 321">
+            </div>
+
+            <div class="form-group">
+              <label>Khối lớp</label>
+              <select id="p-grade">
+                <option value="6">Lớp 6</option>
+                <option value="7">Lớp 7</option>
+                <option value="8">Lớp 8</option>
+                <option value="9">Lớp 9</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Trường đang học</label>
+              <input type="text" id="p-school" placeholder="THCS Bách Khoa">
+            </div>
+          </div>
+
+          <input type="hidden" id="p-avatar-url">
+          <button type="submit" class="btn-primary">Lưu thay đổi</button>
+        </form>
+
+        <button type="button" onclick="openPasswordModal()" class="btn-secondary">Đổi mật khẩu tài khoản</button>
+        <button onclick="handleLogout()" class="btn-danger">Đăng xuất</button>
+
+        <div class="status-msg" id="status-msg"></div>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="password-modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closePasswordModal()">&#10005;</button>
+      <div class="modal-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
+      </div>
+      <h3 class="modal-title">Đổi mật khẩu</h3>
+      <p class="modal-sub">Cập nhật mật khẩu mới để bảo mật tài khoản của bạn.</p>
+      <div class="modal-status-msg" id="pass-modal-msg"></div>
+
+      <form onsubmit="handlePasswordUpdate(event)">
+        <div class="form-group-modal">
+          <label class="form-label-modal">Mật khẩu mới</label>
+          <input type="password" id="input-new-password" class="input-modal-field" placeholder="Tối thiểu 6 ký tự" required />
+        </div>
+        <div class="form-group-modal">
+          <label class="form-label-modal">Xác nhận mật khẩu</label>
+          <input type="password" id="input-confirm-password" class="input-modal-field" placeholder="Nhập lại mật khẩu mới" required />
+        </div>
+        <button type="submit" id="btn-submit-pass-action" class="btn-submit-pass">Cập nhật mật khẩu</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let currentUser = null;
+
+    async function checkUserSession() {
+      const { data: { user } } = await _supabase.auth.getUser();
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+      currentUser = user;
+      document.getElementById('user-email-display').innerText = user.email;
+
+      const { data: profile } = await _supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      const meta = user.user_metadata || {};
+
+      let realName = meta.full_name;
+      if (!realName || realName === 'Học viên') {
+        realName = profile?.full_name;
+      }
+      if (!realName || realName === 'Học viên') {
+        realName = '';
+      }
+
+      const phone = meta.phone || profile?.phone || '';
+      const grade = meta.grade || profile?.grade || '8';
+      const dob = meta.dob || profile?.dob || '';
+      const school = meta.school || profile?.school || '';
+      const avatarUrl = meta.avatar_url || profile?.avatar_url || '';
+
+      document.getElementById('p-name').value = realName;
+      document.getElementById('p-phone').value = phone;
+      document.getElementById('p-grade').value = grade;
+      document.getElementById('p-dob').value = dob;
+      document.getElementById('p-school').value = school;
+
+      const avatarSrc = avatarUrl || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email)}`;
+      document.getElementById('p-avatar-url').value = avatarUrl;
+      document.getElementById('user-avatar').src = avatarSrc;
+
+      document.getElementById('welcome-title').innerText = "Xin chào, " + (realName || "Học viên");
+    }
+
+    async function uploadAvatarFile(inputElement) {
+      if (!inputElement.files || inputElement.files.length === 0) return;
+      const file = inputElement.files[0];
+      const msg = document.getElementById('status-msg');
+
+      msg.style.display = 'block';
+      msg.style.background = '#f0f9ff';
+      msg.style.color = '#0284c7';
+      msg.innerText = 'Đang tải ảnh lên...';
+
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${currentUser.id}/avatar_${Date.now()}.${fileExt}`;
+
+      const { data, error } = await _supabase.storage
+        .from('avatar')
+        .upload(filePath, file, { upsert: true });
+
+      if (error) {
+        msg.style.background = '#fef2f2';
+        msg.style.color = '#ef4444';
+        msg.innerText = 'Lỗi upload: ' + error.message;
+        return;
+      }
+
+      const { data: { publicUrl } } = _supabase.storage.from('avatar').getPublicUrl(filePath);
+
+      document.getElementById('p-avatar-url').value = publicUrl;
+      document.getElementById('user-avatar').src = publicUrl;
+      msg.style.background = '#f0fdf4';
+      msg.style.color = '#16a34a';
+      msg.innerText = 'Tải ảnh thành công! Nhấn Lưu để hoàn tất.';
+    }
+
+    async function saveProfile(e) {
+      e.preventDefault();
+      const msg = document.getElementById('status-msg');
+      msg.style.display = 'block';
+      msg.style.background = '#f0f9ff';
+      msg.style.color = '#0284c7';
+      msg.innerText = 'Đang lưu thông tin...';
+
+      const name = document.getElementById('p-name').value.trim();
+      const phone = document.getElementById('p-phone').value.trim();
+      const grade = document.getElementById('p-grade').value;
+      const dob = document.getElementById('p-dob').value;
+      const school = document.getElementById('p-school').value.trim();
+      const avatarUrl = document.getElementById('p-avatar-url').value;
+
+      const { error: authError } = await _supabase.auth.updateUser({
+        data: {
+          full_name: name,
+          phone: phone,
+          grade: grade,
+          dob: dob,
+          school: school,
+          avatar_url: avatarUrl
+        }
+      });
+
+      const { error: dbError } = await _supabase
+        .from('profiles')
+        .upsert({
+          id: currentUser.id,
+          email: currentUser.email,
+          full_name: name
+        });
+
+      if (authError || dbError) {
+        msg.style.background = '#fef2f2';
+        msg.style.color = '#ef4444';
+        msg.innerText = 'Lỗi: ' + (authError?.message || dbError?.message);
+      } else {
+        localStorage.setItem('tav_user_session', JSON.stringify({
+          name: name,
+          email: currentUser.email,
+          avatar: avatarUrl || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(currentUser.email)}`
+        }));
+
+        msg.style.background = '#f0fdf4';
+        msg.style.color = '#16a34a';
+        msg.innerText = 'Cập nhật thành công!';
+        document.getElementById('welcome-title').innerText = "Xin chào, " + name;
+        setTimeout(() => window.location.reload(), 1000);
+      }
+    }
+
+    function openPasswordModal() {
+      document.getElementById('password-modal').classList.add('active');
+      document.getElementById('input-new-password').focus();
+    }
+
+    function closePasswordModal() {
+      document.getElementById('password-modal').classList.remove('active');
+      const msgBox = document.getElementById('pass-modal-msg');
+      msgBox.style.display = 'none';
+      document.getElementById('input-new-password').value = '';
+      document.getElementById('input-confirm-password').value = '';
+    }
+
+    async function handlePasswordUpdate(e) {
+      e.preventDefault();
+      const newPass = document.getElementById('input-new-password').value.trim();
+      const confirmPass = document.getElementById('input-confirm-password').value.trim();
+      const btn = document.getElementById('btn-submit-pass-action');
+
+      if (newPass.length < 6) {
+        showPassMsg('Mật khẩu mới phải có ít nhất 6 ký tự!', 'error');
+        return;
+      }
+
+      if (newPass !== confirmPass) {
+        showPassMsg('Xác nhận mật khẩu mới không trùng khớp!', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = 'Đang cập nhật...';
+
+      try {
+        const { error } = await _supabase.auth.updateUser({ password: newPass });
+        if (error) {
+          showPassMsg('Đổi mật khẩu thất bại: ' + error.message, 'error');
+        } else {
+          showPassMsg('Đổi mật khẩu thành công!', 'success');
+          setTimeout(() => { closePasswordModal(); }, 1200);
+        }
+      } catch (err) {
+        showPassMsg('Có lỗi hệ thống xảy ra!', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Cập nhật mật khẩu';
+      }
+    }
+
+    function showPassMsg(text, type) {
+      const msgBox = document.getElementById('pass-modal-msg');
+      msgBox.innerText = text;
+      msgBox.className = 'modal-status-msg ' + type;
+      msgBox.style.display = 'block';
+    }
+
+    async function handleLogout() {
+      localStorage.removeItem('tav_user_session');
+      await _supabase.auth.signOut();
+      window.location.href = 'index.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', checkUserSession);
+  </script>
+  <script src="header.js"></script>
+</body>
+</html>

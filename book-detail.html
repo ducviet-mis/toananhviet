@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh Sách Đề Thi - Gia sư Toán Anh Việt</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .book-header {
+      background: #ffffff;
+      padding: 30px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: center;
+    }
+    .book-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 15px 0;
+    }
+    .search-box-container {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      gap: 10px;
+    }
+    .search-input {
+      flex: 1;
+      padding: 12px 18px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .search-input:focus {
+      border-color: #0284c7;
+    }
+    .search-btn {
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 0 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .search-btn:hover {
+      background: #0369a1;
+    }
+    
+    .tests-container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    
+    .tests-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .test-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    .test-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      border-color: #cbd5e1;
+    }
+    .test-code-badge {
+      display: inline-block;
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .test-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 16px 0;
+      line-height: 1.4;
+    }
+    .test-action-btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 10px 0;
+      background: #0f172a;
+      color: #ffffff;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .test-action-btn:hover {
+      background: #1e293b;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 60px 0;
+      color: #64748b;
+      grid-column: 1/-1;
+    }
+    #error-msg {
+      text-align: center;
+      color: #ef4444;
+      margin-top: 10px;
+      font-weight: 500;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header"></header>
+
+  <div class="book-header">
+    <h1 class="book-title" id="book-title-display">Đang tải thông tin sách...</h1>
+    
+    <div class="search-box-container">
+      <input type="text" id="search-code-input" class="search-input" placeholder="Nhập mã đề (VD: 8G01)...">
+      <button class="search-btn" onclick="handleSearch()">Tìm Kiếm</button>
+    </div>
+    <div id="error-msg"></div>
+  </div>
+
+  <main class="tests-container">
+    <div class="tests-grid" id="tests-grid-container">
+      <div class="empty-state">Đang tải danh sách đề...</div>
+    </div>
+  </main>
+
+  <script>
+    const SUPABASE_URL = 'https://zlltfgfbydgojuuiprsb.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Od5eLUer9_l6i6IzNVBjvg_VAZy-9t2';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let currentAuthUser = null;
+    let currentBookId = null;
+
+    async function initPage() {
+      const urlParams = new URLSearchParams(window.location.search);
+      currentBookId = urlParams.get('book_id');
+
+      if (!currentBookId) {
+        window.location.href = 'my-books.html';
+        return;
+      }
+
+      const { data: { user } } = await _supabase.auth.getUser();
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+      currentAuthUser = user;
+
+      // Check if user has access to this book
+      const { data: codes, error: codesErr } = await _supabase
+        .from('activation_codes')
+        .select('*')
+        .eq('used_by_email', user.email)
+        .eq('book_id', currentBookId)
+        .eq('is_used', true);
+
+      if (codesErr || !codes || codes.length === 0) {
+        alert("Bạn chưa sở hữu hoặc chưa kích hoạt cuốn sách này!");
+        window.location.href = 'my-books.html';
+        return;
+      }
+
+      // Load book title
+      const { data: bookData } = await _supabase
+        .from('books')
+        .select('title')
+        .eq('book_id', currentBookId)
+        .single();
+        
+      if (bookData) {
+        document.getElementById('book-title-display').innerText = bookData.title;
+        document.title = `${bookData.title} - Danh Sách Đề Thi`;
+      }
+
+      // Load tests
+      loadTests();
+    }
+
+    async function loadTests() {
+      const container = document.getElementById('tests-grid-container');
+      
+      try {
+        const { data: tests, error } = await _supabase
+          .from('book_tests')
+          .select('*')
+          .eq('book_id', currentBookId)
+          .order('created_at', { ascending: true });
+
+        if (error) throw error;
+
+        if (!tests || tests.length === 0) {
+          container.innerHTML = '<div class="empty-state">Chưa có đề thi nào được thêm vào sách này.</div>';
+          return;
+        }
+
+        container.innerHTML = tests.map(test => `
+          <div class="test-card">
+            <div>
+              <span class="test-code-badge">Mã: ${test.test_code}</span>
+              <h3 class="test-title">${test.title}</h3>
+            </div>
+            <a href="view-detail.html?test_code=${test.test_code}" class="test-action-btn">Xem & Chữa Đề →</a>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = '<div class="empty-state" style="color:#ef4444;">Lỗi tải dữ liệu. Vui lòng thử lại sau.</div>';
+      }
+    }
+
+    function handleSearch() {
+      const code = document.getElementById('search-code-input').value.trim().toUpperCase();
+      const errorMsg = document.getElementById('error-msg');
+      
+      if (!code) {
+        errorMsg.innerText = 'Vui lòng nhập mã đề!';
+        errorMsg.style.display = 'block';
+        return;
+      }
+      
+      // Chuyển thẳng đến view-detail, bên đó sẽ tự verify xem user có quyền không
+      window.location.href = `view-detail.html?test_code=${code}`;
+    }
+
+    document.getElementById('search-code-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') handleSearch();
+    });
+
+    document.addEventListener('DOMContentLoaded', initPage);
+  </script>
+  
+  <script src="header.js"></script>
+  <script src="footer.js"></script>
+</body>
+</html>
