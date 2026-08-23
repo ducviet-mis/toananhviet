@@ -10,10 +10,13 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     .book-header {
-      background: #ffffff;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
       padding: 30px 20px;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid var(--glass-border);
       text-align: center;
+      margin-bottom: 20px;
     }
     .book-title {
       font-size: 24px;
@@ -66,20 +69,22 @@
     }
     
     .test-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
       border-radius: 12px;
       padding: 20px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: all 0.2s;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      box-shadow: var(--glass-shadow);
     }
     .test-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-      border-color: #cbd5e1;
+      box-shadow: 0 12px 40px rgba(39, 176, 245, 0.2);
+      border-color: rgba(255, 255, 255, 0.9);
     }
     .test-code-badge {
       display: inline-block;

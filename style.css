@@ -1,11 +1,18 @@
-/* Reset CSS & Biến màu sắc */
+/* Reset CSS & Biến màu sắc Glassmorphism */
 :root {
-  --primary-color: #0284c7; /* Xanh dương chủ đạo */
-  --secondary-color: #0f766e; /* Xanh ngọc lục bảo nhạt */
-  --accent-color: #f97316; /* Cam nổi bật nút tải */
-  --text-color: #334155;
-  --bg-color: #f8fafc;
-  --card-bg: #ffffff;
+  --primary-color: #27B0F5;
+  --secondary-color: #1a8fcc;
+  --accent-color: #f97316;
+  --text-color: #1e293b;
+  --text-muted: #64748b;
+  /* Glassmorphism Variables */
+  --bg-color: #f0f7ff;
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-bg-dark: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-shadow: 0 8px 32px 0 rgba(39, 176, 245, 0.15);
+  --glass-blur: blur(16px);
+  --card-bg: var(--glass-bg);
 }
 
 * {
@@ -17,6 +24,12 @@
 
 body {
   background-color: var(--bg-color);
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(202, 100%, 85%, 1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(210, 100%, 90%, 1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(190, 100%, 80%, 1) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(220, 100%, 95%, 1) 0px, transparent 50%);
+  background-attachment: fixed;
   color: var(--text-color);
   line-height: 1.6;
 }
@@ -165,10 +178,13 @@ main {
 }
 
 .doc-card {
-  background-color: var(--card-bg);
-  border-radius: 8px;
+  background-color: var(--glass-bg) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  box-shadow: var(--glass-shadow) !important;
   transition: transform 0.3s, box-shadow 0.3s;
   display: flex;
   flex-direction: column;
@@ -299,15 +315,15 @@ footer a {
 }
 
 :root {
-  --primary-color: #0284c7;
-  --primary-dark: #0369a1;
-  --primary-light: #f0f9ff;
+  --primary-color: #27B0F5;
+  --primary-dark: #1a8fcc;
+  --primary-light: #e6f6ff;
   --accent-color: #f97316;
   --accent-hover: #ea580c;
   --danger-color: #ef4444;
   --text-dark: #1e293b;
   --text-muted: #64748b;
-  --border-light: #eef2f5;
+  --border-light: rgba(255, 255, 255, 0.4);
   --white: #ffffff;
 }
 
@@ -348,10 +364,12 @@ footer a {
 .teacher-image-frame {
   position: relative;
   padding: 12px;
-  background: var(--white);
-  border: 1px solid var(--primary-color);
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(2, 132, 199, 0.15);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: var(--glass-shadow);
   max-width: 360px;
   width: 100%;
   transition: transform 0.3s ease;
@@ -398,12 +416,14 @@ footer a {
 }
 
 .info-card {
-  background: #f8fafd;
-  border: 1px solid var(--border-light);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  box-shadow: var(--glass-shadow);
 }
 
 .info-card h3 {
@@ -449,7 +469,7 @@ footer a {
 }
 
 .timeline-section {
-  background-color: var(--white);
+  background-color: transparent;
   padding: 80px 20px;
 }
 
@@ -506,11 +526,13 @@ footer a {
 }
 
 .timeline-card {
-  background: var(--white);
-  border: 1px solid var(--border-light);
-  border-radius: 8px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
   padding: 15px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  box-shadow: var(--glass-shadow);
   transition: all 0.3s ease;
   width: 90%;
 }
@@ -636,12 +658,12 @@ footer a {
 .book-item {
   width: 90px;
   height: 125px;
-  background: var(--white);
-  border-radius: 4px;
-  box-shadow: 3px 5px 15px rgba(0,0,0,0.15);
+  background: var(--glass-bg);
+  border-radius: 8px;
+  box-shadow: 3px 5px 15px rgba(39,176,245,0.15);
   transition: transform 0.3s;
   overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid var(--glass-border);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -658,11 +680,13 @@ footer a {
 }
 
 .form-column {
-  background: var(--white);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: 16px;
   padding: 35px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-  border: 1px solid var(--border-light);
+  box-shadow: var(--glass-shadow);
+  border: 1px solid var(--glass-border);
 }
 
 .form-column h3 {
@@ -701,12 +725,12 @@ footer a {
 .form-group input,
 .form-group select {
   padding: 10px 14px;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 6px;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
   font-size: 0.95rem;
   color: var(--text-dark);
   outline: none;
-  background-color: var(--white);
+  background-color: rgba(255, 255, 255, 0.5);
   transition: all 0.25s ease;
 }
 
